@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LibreFit</string>
 
@@ -43,7 +44,7 @@
     <string name="label_no_exercise_found">No exercise found</string>
 
 
-    <!--Settings screen-->
+    <!--Settings-->
     <string name="label_appearance">Appearance</string>
     <string name="label_theme">Theme</string>
     <string name="label_theme_system">System</string>
@@ -74,9 +75,6 @@
     <string name="label_primary_muscles">Primary muscles</string>
     <string name="label_secondary_muscles">Secondary muscles</string>
     <string name="label_instructions">Instructions</string>
-
-
-    <!--Dialog -->
     <string name="label_cancel_dialog">Cancel</string>
     <string name="label_exit_dialog">Exit</string>
 
