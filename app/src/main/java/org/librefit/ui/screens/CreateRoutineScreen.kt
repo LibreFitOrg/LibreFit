@@ -94,7 +94,11 @@ fun CreateRoutineScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            showExitDialog = true
+                            if (viewModel.addedExercisesList.isNotEmpty()) {
+                                showExitDialog = true
+                            } else {
+                                navController.popBackStack()
+                            }
                         }
                     ) {
                         Icon(

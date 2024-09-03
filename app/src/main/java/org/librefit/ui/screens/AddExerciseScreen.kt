@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -89,7 +90,13 @@ fun AddExerciseScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { showExitDialog = true }
+                        onClick = {
+                            if(selectedExercisesList.isNotEmpty()){
+                                showExitDialog = true
+                            } else {
+                                navController.popBackStack()
+                            }
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
@@ -185,6 +192,9 @@ private fun AddExerciseScreenContent(
             }
         }
 
+
+        //This is temporary until FiltersCard is ready
+        item { Spacer(modifier = Modifier.height(15.dp)) }
 
         // Card to let the user filter the exercises list
         //item { FiltersCard(isFilterExpanded = isFilterExpanded, viewModel = viewModel) } /*TODO*/

@@ -48,6 +48,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.librefit.R
+import org.librefit.ui.components.HeadlineText
 import org.librefit.util.DataStoreManager
 import org.librefit.util.Language
 import org.librefit.util.ThemeMode
@@ -55,7 +56,7 @@ import org.librefit.util.ThemeMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navController: NavHostController, userPreferences: DataStoreManager) {
-    var selectedTheme = userPreferences.themeMode.collectAsState(initial = ThemeMode.SYSTEM).value
+    val selectedTheme = userPreferences.themeMode.collectAsState(initial = ThemeMode.SYSTEM).value
 
     val keepWorkoutScreenOn = userPreferences.workoutScreenOn.collectAsState(initial = true).value
 
@@ -74,7 +75,7 @@ fun SettingsScreen(navController: NavHostController, userPreferences: DataStoreM
             onDismissRequest = { openPreferenceDialog = false },
             confirmButton = { /*The user doesn't need to confirm*/ },
             text = {
-                LazyColumn (modifier = Modifier.height(350.dp)){
+                LazyColumn{
                     items(Language.entries){ language ->
                         Row (
                             modifier = Modifier.fillMaxWidth(),
@@ -123,15 +124,10 @@ fun SettingsScreen(navController: NavHostController, userPreferences: DataStoreM
                 .padding(innerPadding)
                 .fillMaxSize()
         ){
-            item {
-                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center){
-                    Text(
-                        text = stringResource(id = R.string.label_appearance),
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
+
+
+            item { HeadlineText(text = stringResource(id = R.string.label_appearance)) }
+
             item {
                 Column {
                     Row {
@@ -157,6 +153,7 @@ fun SettingsScreen(navController: NavHostController, userPreferences: DataStoreM
                     }
                 }
             }
+
             item {
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
                     Row (
@@ -231,6 +228,10 @@ fun SettingsScreen(navController: NavHostController, userPreferences: DataStoreM
                     )
                 }
             }
+
+
+
+            item { HeadlineText(text = stringResource(id = R.string.label_settings_general)) }
 
             item{
                 Row (

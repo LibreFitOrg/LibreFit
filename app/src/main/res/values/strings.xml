@@ -10,11 +10,13 @@
     <string name="label_add_exercise">Add exercise</string>
     <string name="label_more_options">More options</string>
 
+
     <!--Home screen-->
     <string name="label_quick_start">Quick start</string>
     <string name="label_routine">Routine</string>
     <string name="label_start_empty_workout">Start empty workout</string>
     <string name="label_create_routine">Create a routine</string>
+
 
     <!--About screen-->
     <string name="label_help_us">Help us</string>
@@ -26,6 +28,8 @@
     <string name="label_source_code">Source code</string>
     <string name="label_privacy_policy">Privacy policy</string>
     <string name="label_license">License</string>
+    <string name="label_url_source_code" translatable="false">https://github.com/IamDg/LibreFit</string>
+
 
     <!--Create routine screen-->
     <string name="label_start_creating_routine">Start by adding an exercise to your routine</string>
@@ -36,6 +40,7 @@
     <string name="label_exercise_card_weight">Weight</string>
     <string name="label_exercise_card_add">Add set</string>
     <string name="label_notes">Notes</string>
+
 
     <!--Add exercise screen-->
     <string name="label_exit_add_exercise">Are you sure you want to exit? Your selected exercises won\'t be added</string>
@@ -57,6 +62,8 @@
     <string name="label_screen_off_desc">Screen does not stay on during workout</string>
     <string name="label_settings_general">General</string>
     <string name="label_language">Language</string>
+    <string name="label_language_english">English</string>
+    <string name="label_language_italian">Italian</string>
 
 
     <!--Profile screen-->
@@ -79,8 +86,5 @@
     <!--Dialog -->
     <string name="label_cancel_dialog">Cancel</string>
     <string name="label_exit_dialog">Exit</string>
-    <string name="label_url_source_code" translatable="false">https://github.com/IamDg/LibreFit</string>
-    <string name="label_language_english">English</string>
-    <string name="label_language_italian">Italian</string>
 
 </resources>

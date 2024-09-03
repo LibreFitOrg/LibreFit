@@ -70,40 +70,39 @@ fun ExerciseDetailModalBottomSheet(
 
             HorizontalDivider()
 
-            Headline(string = stringResource(id = R.string.label_details))
+            HeadlineText(text = stringResource(id = R.string.label_details))
 
 
-            if(exercise.force != null ) Text(text = enumHeadlines("Force", exercise.force))
-            Text(text = enumHeadlines("Level", enum = exercise.level))
-            if(exercise.mechanic != null ) Text(text = enumHeadlines("Mechanic", exercise.mechanic))
-            if(exercise.equipment != null ) Text(text = enumHeadlines("Equipment", exercise.equipment))
-            Text(text = enumHeadlines("Category", exercise.category))
+            if(exercise.force != null ) Text(text = enumHeadlines(stringResource(id = R.string.label_force), exercise.force))
+            Text(text = enumHeadlines(stringResource(id = R.string.label_level), enum = exercise.level))
+            if(exercise.mechanic != null ) Text(text = enumHeadlines(stringResource(id = R.string.label_mechanic), exercise.mechanic))
+            if(exercise.equipment != null ) Text(text = enumHeadlines(stringResource(id = R.string.label_equipment), exercise.equipment))
+            Text(text = enumHeadlines(stringResource(id = R.string.label_category), exercise.category))
 
 
             if (exercise.primaryMuscles.isNotEmpty() || exercise.secondaryMuscles.isNotEmpty()){
                 HorizontalDivider()
-                Headline(string = "Muscles")
+                HeadlineText(text = stringResource(id = R.string.label_muscles))
             }
 
             if(exercise.primaryMuscles.isNotEmpty()){
-                MuscleContent("Primary muscles", musclesList = exercise.primaryMuscles)
+                MuscleContent(stringResource(id = R.string.label_primary_muscles), musclesList = exercise.primaryMuscles)
             }
 
 
             if(exercise.secondaryMuscles.isNotEmpty()){
-                MuscleContent("Secondary muscles", musclesList = exercise.secondaryMuscles)
+                MuscleContent(stringResource(id = R.string.label_secondary_muscles), musclesList = exercise.secondaryMuscles)
             }
             
             HorizontalDivider()
             
-            Headline(string = "Instructions")
+            HeadlineText(text = stringResource(id = R.string.label_instructions))
 
             Text(text = exercise.instructions
                 .mapIndexed{ index, instruction->
                     "${index+1}. $instruction"
                 }.joinToString("\n\n")
             )
-
         }
     }
 }
@@ -129,16 +128,6 @@ private fun formatExerciseEnums(listEnum : List<Enum<*>>? = emptyList(), enum : 
     return null
 }
 
-@Composable
-private fun Headline(string : String){
-    Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-        Text(
-            text = string,
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-    }
-}
 
 @Composable
 private fun AlternatingImages(exercise: Exercise){
