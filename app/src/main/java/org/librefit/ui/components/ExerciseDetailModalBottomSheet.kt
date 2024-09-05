@@ -44,6 +44,7 @@ import org.librefit.R
 import org.librefit.data.Exercise
 import org.librefit.data.Muscle
 import org.librefit.util.exerciseEnumToStringId
+import org.librefit.util.muscleToVectorId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -130,36 +131,10 @@ private fun MuscleContent(title : String, musclesList: List<Muscle>) {
     Text(text = formatDetails(title, list) )
     LazyRow {
         items(musclesList){ muscle ->
-            val vector = when(muscle){
-                Muscle.ABDOMINALS -> ImageVector.vectorResource(id = R.drawable.abdominals)
-                Muscle.ABDUCTORS -> ImageVector.vectorResource(id = R.drawable.abductors)
-                Muscle.ADDUCTORS -> ImageVector.vectorResource(id = R.drawable.adductors)
-                Muscle.BICEPS -> ImageVector.vectorResource(id = R.drawable.biceps)
-                Muscle.CALVES -> ImageVector.vectorResource(id = R.drawable.calves)
-                Muscle.CHEST -> ImageVector.vectorResource(id = R.drawable.chest)
-                Muscle.FOREARMS -> ImageVector.vectorResource(id = R.drawable.forearms)
-                Muscle.GLUTES -> ImageVector.vectorResource(id = R.drawable.glutes)
-                Muscle.HAMSTRINGS -> ImageVector.vectorResource(id = R.drawable.harmstring)
-                Muscle.LATS -> ImageVector.vectorResource(id = R.drawable.lats)
-                Muscle.LOWER_BACK -> ImageVector.vectorResource(id = R.drawable.lower_back)
-                Muscle.MIDDLE_BACK -> ImageVector.vectorResource(id = R.drawable.middle_back)
-                Muscle.NECK -> ImageVector.vectorResource(id = R.drawable.neck)
-                Muscle.QUADRICEPS -> ImageVector.vectorResource(id = R.drawable.quads)
-                Muscle.SHOULDERS -> ImageVector.vectorResource(id = R.drawable.shoulders)
-                Muscle.TRAPS -> ImageVector.vectorResource(id = R.drawable.traps)
-                Muscle.TRICEPS -> ImageVector.vectorResource(id = R.drawable.triceps)
-            }
-            Image(imageVector = vector, contentDescription = "", modifier = Modifier.size(150.dp))
+            val vector = ImageVector.vectorResource(id = muscleToVectorId(muscle))
+            Image(imageVector = vector, contentDescription = null, modifier = Modifier.size(150.dp))
         }
     }
-}
-
-private fun formatDetails(type: String, details : String) : AnnotatedString {
-    val result = buildAnnotatedString {
-        withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)){ append("$type: ") }
-        append(details)
-    }
-    return result
 }
 
 @Composable
@@ -190,5 +165,12 @@ private fun AlternatingImages(exercise: Exercise){
                 .clip(RoundedCornerShape(20.dp))
                 .fillMaxSize()
         )
+    }
+}
+
+private fun formatDetails(type: String, details : String) : AnnotatedString {
+    return buildAnnotatedString {
+        withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)){ append("$type: ") }
+        append(details)
     }
 }

@@ -58,5 +58,27 @@ fun exerciseEnumToStringId(enum : Enum<*>) : Int {
     }
 }
 
+fun muscleToVectorId(muscle: Muscle) : Int {
+    return when(muscle){
+        Muscle.ABDOMINALS -> R.drawable.abdominals
+        Muscle.ABDUCTORS -> R.drawable.abductors
+        Muscle.ADDUCTORS -> R.drawable.adductors
+        Muscle.BICEPS -> R.drawable.biceps
+        Muscle.CALVES -> R.drawable.calves
+        Muscle.CHEST -> R.drawable.chest
+        Muscle.FOREARMS -> R.drawable.forearms
+        Muscle.GLUTES -> R.drawable.glutes
+        Muscle.HAMSTRINGS -> R.drawable.harmstring
+        Muscle.LATS -> R.drawable.lats
+        Muscle.LOWER_BACK -> R.drawable.lower_back
+        Muscle.MIDDLE_BACK -> R.drawable.middle_back
+        Muscle.NECK -> R.drawable.neck
+        Muscle.QUADRICEPS -> R.drawable.quads
+        Muscle.SHOULDERS -> R.drawable.shoulders
+        Muscle.TRAPS -> R.drawable.traps
+        Muscle.TRICEPS -> R.drawable.triceps
+    }
+}
+
 
 
