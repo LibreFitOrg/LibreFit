@@ -196,7 +196,7 @@ private fun AddExerciseScreenContent(
         //This is temporary until FiltersCard is ready
         item { Spacer(modifier = Modifier.height(15.dp)) }
 
-        // Card to let the user filter the exercises list TODO doesn't work properly
+        // Card to let the user filter the exercises list TODO doesn't work properly yet
         item { FiltersCard(isFilterExpanded = isFilterExpanded, viewModel = viewModel) }
 
         if(filteredExercisesList.isNotEmpty()) {

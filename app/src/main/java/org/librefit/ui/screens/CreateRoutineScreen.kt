@@ -110,10 +110,7 @@ fun CreateRoutineScreen(
                 actions = {
                     IconButton(
                         onClick = {
-
-                            //Save exercise to database
-                            
-                            /*TODO*/
+                            //TODO Waiting for ROOM implementation
                             navController.popBackStack()
                         },
                         enabled = ableToSave.value && viewModel.addedExercisesList.isEmpty()
