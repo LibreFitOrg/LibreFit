@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -81,33 +80,31 @@ fun AboutScreen(navController : NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ){
 
-            val size = 170.dp
+            val logoSize = 170.dp
             Image(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_logo),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(size)
+                    .size(logoSize)
                     .border(
                         BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceContainer),
-                        RoundedCornerShape(size)
+                        RoundedCornerShape(logoSize)
                     )
             )
 
 
             HeadlineText(text =  stringResource(R.string.label_help_us))
 
-            AboutItem(Icons.Default.Favorite, stringResource(R.string.label_donate), null)
+            AboutItem(Icons.Default.Favorite, stringResource(R.string.label_donate))
 
             AboutItem(
                 ImageVector.vectorResource(R.drawable.ic_handshake),
-                stringResource(R.string.label_contribute),
-                null
+                stringResource(R.string.label_contribute)
             )
 
             AboutItem(
                 ImageVector.vectorResource(R.drawable.ic_translate),
-                stringResource(R.string.label_translate),
-                null
+                stringResource(R.string.label_translate)
             )
 
 
@@ -115,8 +112,7 @@ fun AboutScreen(navController : NavHostController) {
 
             AboutItem(
                 ImageVector.vectorResource(R.drawable.ic_globe),
-                stringResource(R.string.label_website),
-                null
+                stringResource(R.string.label_website)
             )
 
 
@@ -128,14 +124,12 @@ fun AboutScreen(navController : NavHostController) {
 
             AboutItem(
                 ImageVector.vectorResource(R.drawable.ic_policy),
-                stringResource(R.string.label_privacy_policy),
-                null
+                stringResource(R.string.label_privacy_policy)
             )
 
             AboutItem(
                 ImageVector.vectorResource(R.drawable.ic_license),
-                stringResource(R.string.label_license),
-                null
+                stringResource(R.string.label_license)
             )
 
         }
