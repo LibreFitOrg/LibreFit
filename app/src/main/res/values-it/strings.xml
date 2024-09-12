@@ -21,7 +21,7 @@
     <string name="label_privacy_policy">Informativa sulla privacy</string>
     <string name="label_license">Licenza</string>
     <string name="label_start_creating_routine">Inizia aggiungendo un esercizio alla tua routine</string>
-    <string name="label_exit_create_routine">Sei sicuro di uscire? La tua routine non sarà salvata</string>
+    <string name="label_exit_create_routine">Sei sicuro di voler uscire? La tua routine non sarà salvata</string>
     <string name="label_text_field_title">Titolo</string>
     <string name="label_exercise_card_set">Set</string>
     <string name="label_exercise_card_reps">Ripetizioni</string>
@@ -104,4 +104,8 @@
     <string name="label_equipment_dumbbell">Manubri</string>
     <string name="label_category_stretching">Stretching</string>
     <string name="label_workout">Allenamento</string>
+    <string name="label_navigate_back">Ritorna alla schermata precedente</string>
+    <string name="label_exit_workout">Sei sicuro di voler uscire? Il tuo allenamento non sarà salvato</string>
+    <string name="label_play">Riprendi</string>
+    <string name="label_pause">Pausa</string>
 </resources>

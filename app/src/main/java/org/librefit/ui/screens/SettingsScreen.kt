@@ -111,7 +111,7 @@ fun SettingsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = Icons.AutoMirrored.Default.ArrowBack.name
+                            contentDescription = stringResource(id = R.string.label_navigate_back)
                         )
                     }
                 }

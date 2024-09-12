@@ -124,5 +124,11 @@
     <string name="label_equipment_dumbbell">Dumbbell</string>
     <string name="label_category_stretching">Stretching</string>
     <string name="label_workout">Workout</string>
+    <string name="label_navigate_back">Back to the previous screen</string>
+    <string name="label_navigate_back">Back to the previous screen</string>
+    <string name="label_exit_workout">Are you sure you want to exit? Your workout won\'t be added</string>
+    <string name="label_play">Play</string>
+    <string name="label_pause">Pause</string>
+    <string name="label_pause">P</string>
 
 </resources>

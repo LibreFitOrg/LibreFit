@@ -59,7 +59,7 @@ fun AboutScreen(navigateBack : () -> Unit) {
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = R.string.label_navigate_back)
                         )
                     }
                 }

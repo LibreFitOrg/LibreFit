@@ -78,11 +78,10 @@ fun HomeScreen(
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineSmall
         )
+
         /**
          * List of workout routines created by the user in [CreateRoutineScreen]
          */
-
-
         if(workoutList?.isNotEmpty() == true){
             Column (
                 verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -120,6 +119,8 @@ fun HomeScreen(
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         //"Create a workout routine" button
         TextButton(

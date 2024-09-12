@@ -2,6 +2,7 @@ package org.librefit.ui.screens
 
 import android.app.Activity
 import android.view.WindowManager
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.BottomAppBar
@@ -47,6 +49,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -60,6 +63,7 @@ import kotlinx.coroutines.delay
 import org.librefit.R
 import org.librefit.data.ExerciseDC
 import org.librefit.data.SharedViewModel
+import org.librefit.ui.components.ConfirmExitDialog
 import org.librefit.ui.components.ExerciseDetailModalBottomSheet
 import org.librefit.util.DataStoreManager
 
@@ -88,6 +92,27 @@ fun WorkoutScreen(
         }
     }
 
+    
+
+    var showExitDialog by remember { mutableStateOf(false) }
+    
+    BackHandler (enabled = !showExitDialog){
+        showExitDialog = true
+    }
+
+    if(showExitDialog){
+        ConfirmExitDialog(
+            text = stringResource(id = R.string.label_exit_workout),
+            onExit = {
+                navController.popBackStack()
+                showExitDialog = false
+            },
+            onDismiss = { showExitDialog = false }
+        )
+    }
+    
+    
+
     val workoutWithExercises by sharedViewModel.getWorkoutWithExercises(workoutId).observeAsState()
 
     var isModalSheetOpen by remember { mutableStateOf(false) }
@@ -108,12 +133,12 @@ fun WorkoutScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                            showExitDialog = true
                         }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = R.string.label_navigate_back)
                         )
                     }
                 }
@@ -147,6 +172,7 @@ fun WorkoutScreen(
                     }
                 }
             }
+            item { Spacer(modifier = Modifier.height(5.dp)) }
         }
     }
 
@@ -199,11 +225,16 @@ private fun ExerciseCard(
             ) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(text = stringResource(id = R.string.label_exercise_card_set), color = MaterialTheme.colorScheme.secondary)
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1.2f))
                 Text(text = stringResource(id = R.string.label_exercise_card_reps), color = MaterialTheme.colorScheme.secondary)
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1.3f))
                 Text(text = stringResource(id = R.string.label_exercise_card_weight), color = MaterialTheme.colorScheme.secondary)
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    imageVector = Icons.Default.Done,
+                    contentDescription = null,
+                    modifier = Modifier.weight(1f)
+                )
             }
 
             //Sets
@@ -211,7 +242,15 @@ private fun ExerciseCard(
                 var checked by remember { mutableStateOf(false) }
                 Row(
                     modifier = Modifier
-                        .background(if(checked) MaterialTheme.colorScheme.inversePrimary else Color.Transparent)
+                        .clip(
+                            RoundedCornerShape(
+                                topEndPercent = if (i == 1) 50 else 0,
+                                topStartPercent = if (i == 1) 50 else 0,
+                                bottomEndPercent = if (i == sets) 50 else 0,
+                                bottomStartPercent = if (i == sets) 50 else 0
+                            )
+                        )
+                        .background(if (checked) MaterialTheme.colorScheme.inversePrimary.copy(0.3f) else Color.Transparent)
                         .height(40.dp)
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -222,6 +261,7 @@ private fun ExerciseCard(
                     Checkbox(checked = checked, onCheckedChange = {checked = it})
                 }
             }
+            Spacer(modifier = Modifier.height(10.dp))
 
             HorizontalDivider()
 
@@ -248,7 +288,7 @@ private fun ExerciseCard(
 @Composable
 private fun Stopwatch() {
     var elapsedTime by remember { mutableIntStateOf(0) }
-    var isRunning by remember { mutableStateOf(false) }
+    var isRunning by remember { mutableStateOf(true) }
 
     LaunchedEffect(isRunning) {
         while (isRunning) {
@@ -271,15 +311,13 @@ private fun Stopwatch() {
         Row {
             FilledIconButton(
                 onClick = { isRunning = !isRunning },
-                modifier = Modifier.size(48.dp),
-                shape = RoundedCornerShape(48.dp)
             ) {
                 Icon(
                     imageVector = if (isRunning) {
                         ImageVector.vectorResource(id = R.drawable.ic_pause)
                     } else Icons.Default.PlayArrow ,
-                    contentDescription = if (isRunning) "Paused" else "Play",
-                    modifier = Modifier.size(48.dp)
+                    contentDescription = stringResource(id = if (isRunning) R.string.label_pause else R.string.label_play)
+                    modifier = Modifier.size(40.dp)
                 )
             }
         }
@@ -293,4 +331,3 @@ private fun formatTime(seconds: Int): String {
     val secs = seconds % 60
     return String.format(Locale.current.platformLocale,"%02d:%02d:%02d", hours, minutes, secs)
 }
-

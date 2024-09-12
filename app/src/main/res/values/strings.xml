@@ -9,6 +9,7 @@
     <string name="label_about">About</string>
     <string name="label_add_exercise">Add exercise</string>
     <string name="label_more_options">More options</string>
+    <string name="label_navigate_back">Back to the previous screen</string>
 
 
     <!--Home screen-->
@@ -75,6 +76,9 @@
 
     <!-- Workout screen -->
     <string name="label_workout">Workout</string>
+    <string name="label_exit_workout">Are you sure you want to exit? Your workout won\'t be added</string>
+    <string name="label_play">Play</string>
+    <string name="label_pause">Pause</string>
 
 
     <!--Exercise detail modal bottom sheet-->
