@@ -2,6 +2,7 @@ package org.librefit.db
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -13,7 +14,8 @@ import androidx.room.PrimaryKey
             childColumns = ["workoutId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index("workoutId")]
 )
 data class Exercise(
     @PrimaryKey(true) val id: Int = 0,

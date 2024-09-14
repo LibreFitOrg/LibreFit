@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.2"
+agp = "8.6.0"
 datastore = "1.1.1"
 kotlin = "2.0.0"
 junit = "4.13.2"
