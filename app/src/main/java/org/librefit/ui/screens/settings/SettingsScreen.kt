@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -79,7 +80,7 @@ fun SettingsScreen(
 
     var selectedLanguage by remember {
         mutableStateOf(
-            AppCompatDelegate.getApplicationLocales().toLanguageTags().split("-").first().toString()
+            AppCompatDelegate.getApplicationLocales().toLanguageTags()
         )
     }
 
@@ -100,13 +101,12 @@ fun SettingsScreen(
             onDismissRequest = { openPreferenceDialog = false },
             confirmButton = { /*The user doesn't need to confirm*/ },
             text = {
-                LazyColumn {
+                LazyColumn(Modifier.heightIn(max = 200.dp)) {
                     items(Language.entries) { language ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            /*TODO: when language follows system, its radio button isn't selected, */
                             RadioButton(
                                 selected = language.code == selectedLanguage,
                                 onClick = {

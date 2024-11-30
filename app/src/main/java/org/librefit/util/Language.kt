@@ -1,7 +1,7 @@
 package org.librefit.util
 
 enum class Language(val code: String) {
-    SYSTEM("sy"),
+    SYSTEM(""),
     ENGLISH("en"),
     ITALIAN("it")
 }
