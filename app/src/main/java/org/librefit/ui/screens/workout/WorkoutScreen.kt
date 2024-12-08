@@ -182,7 +182,8 @@ fun WorkoutScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.label_workout) + ": " + workoutTitle,
+                        text = if (workoutTitle.isEmpty()) stringResource(R.string.label_new_workout)
+                        else stringResource(R.string.label_workout) + ": $workoutTitle",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

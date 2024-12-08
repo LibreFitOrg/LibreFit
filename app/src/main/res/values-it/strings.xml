@@ -26,7 +26,7 @@
     <string name="label_privacy_policy">Informativa sulla privacy</string>
     <string name="label_license">Licenza</string>
     <string name="label_contributors">Contributori</string>
-    <string name="label_project_owner">Proprietario del progetto</string>
+    <string name="label_founder">Fondatore</string>
     <string name="label_translators">Traduttori</string>
     <string name="label_contributed_to">"Contribuito a: "</string>
     <string name="label_start_creating_routine">Inizia aggiungendo un esercizio alla tua routine</string>
@@ -54,6 +54,7 @@
     <string name="label_coming_soon">Prossimamente</string>
     <string name="label_add_to_empty_workout">Inizia aggiungendo un esercizio al tuo allenamento</string>
     <string name="label_elapsed_time">Tempo trascorso</string>
+    <string name="label_new_workout">Nuovo allenamento</string>
     <string name="label_details">Dettagli</string>
     <string name="label_force">Forza</string>
     <string name="label_level">Livello</string>

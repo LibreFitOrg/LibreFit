@@ -231,16 +231,6 @@ fun AboutScreen(navController: NavHostController) {
                 )
             }
 
-            item {
-                AboutItem(
-                    ImageVector.vectorResource(R.drawable.ic_source_code),
-                    stringResource(R.string.label_source_code),
-                    onClick = {
-                        url = context.getString(R.string.url_source_code)
-                        showDialog = true
-                    }
-                )
-            }
 
             item {
                 AboutItem(
@@ -254,6 +244,31 @@ fun AboutScreen(navController: NavHostController) {
             }
 
             item {
+                AboutItem(
+                    ImageVector.vectorResource(R.drawable.ic_github),
+                    stringResource(R.string.label_github),
+                    stringResource(R.string.label_source_code),
+                    onClick = {
+                        url = context.getString(R.string.url_source_code)
+                        showDialog = true
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    ImageVector.vectorResource(R.drawable.ic_codeberg),
+                    stringResource(R.string.label_codeberg),
+                    stringResource(R.string.label_source_code),
+                    onClick = {
+                        url = context.getString(R.string.url_codeberg)
+                        showDialog = true
+                    }
+                )
+            }
+
+
+            item {
                 HeadlineText(stringResource(R.string.label_contributors))
             }
 
@@ -261,7 +276,7 @@ fun AboutScreen(navController: NavHostController) {
                 AboutItem(
                     Icons.Default.Person,
                     stringResource(R.string.url_IamDg).split("/").last(),
-                    stringResource(R.string.label_project_owner),
+                    stringResource(R.string.label_founder),
                     onClick = {
                         url = context.getString(R.string.url_IamDg)
                         showDialog = true

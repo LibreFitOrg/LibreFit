@@ -42,7 +42,7 @@
     <string name="url_website" translatable="false">https://iamdg.github.io/LibreFit-website/</string>
     <string name="label_contributors">Contributors</string>
     <string name="url_IamDg" translatable="false">https://github.com/IamDg</string>
-    <string name="label_project_owner">Project owner</string>
+    <string name="label_founder">Founder</string>
     <string name="label_translators">Translators</string>
     <string name="label_contributed_to">Contributed to: </string>
     <string name="label_view_gpl3_online">View online version</string>
@@ -102,6 +102,7 @@
     <string name="label_pause">Pause</string>
     <string name="label_add_to_empty_workout">Start by adding an exercise to your workout</string>
     <string name="label_elapsed_time">Elapsed time</string>
+    <string name="label_new_workout">New workout</string>
 
 
     <!--Exercise detail modal bottom sheet-->
@@ -182,7 +183,9 @@
 
     <!--Util-->
     <string name="label_delete">Delete</string>
-
+    <string name="url_codeberg" translatable="false">https://codeberg.org/IamDg/LibreFit</string>
+    <string name="label_github" translatable="false">GitHub</string>
+    <string name="label_codeberg" translatable="false">Codeberg</string>
 
 
 </resources>

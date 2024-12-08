@@ -60,10 +60,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.librefit.R
 import org.librefit.data.DataStoreManager
-import org.librefit.ui.components.CustomScaffold
-import org.librefit.ui.components.HeadlineText
 import org.librefit.enums.Language
 import org.librefit.enums.ThemeMode
+import org.librefit.ui.components.CustomScaffold
+import org.librefit.ui.components.HeadlineText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -140,7 +140,7 @@ fun SettingsScreen(
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_dark_mode),
                             contentDescription = null,
-                            modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+                            modifier = Modifier.padding(start = 20.dp, end = 20.dp)
                         )
                         Text(
                             text = stringResource(id = R.string.label_theme),
@@ -187,7 +187,7 @@ fun SettingsScreen(
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_material),
                                 contentDescription = "",
-                                modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+                                modifier = Modifier.padding(start = 20.dp, end = 20.dp)
                             )
                             Column(verticalArrangement = Arrangement.Center) {
                                 Text(
@@ -230,7 +230,7 @@ fun SettingsScreen(
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_keep),
                             contentDescription = "",
-                            modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+                            modifier = Modifier.padding(start = 20.dp, end = 20.dp)
                         )
                         Column(Modifier.weight(1f)) {
                             Text(
@@ -272,7 +272,7 @@ fun SettingsScreen(
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_translate),
                         contentDescription = null,
-                        modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp)
                     )
                     Column {
                         Text(
