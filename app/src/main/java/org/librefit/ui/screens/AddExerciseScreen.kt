@@ -66,12 +66,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.librefit.R
-import org.librefit.util.ExerciseDC
 import org.librefit.data.SharedViewModel
-import org.librefit.ui.components.ConfirmExitDialog
+import org.librefit.enums.Category
+import org.librefit.enums.Equipment
+import org.librefit.enums.Level
+import org.librefit.ui.components.ConfirmDialog
 import org.librefit.ui.components.CustomScaffold
 import org.librefit.ui.components.ExerciseDetailModalBottomSheet
 import org.librefit.ui.components.FiltersCard
+import org.librefit.util.ExerciseDC
 import org.librefit.util.exerciseEnumToStringId
 
 
@@ -91,9 +94,10 @@ fun AddExerciseScreen(
     }
 
     if (showExitDialog) {
-        ConfirmExitDialog(
+        ConfirmDialog(
+            title = stringResource(R.string.label_exit_dialog),
             text = stringResource(id = R.string.label_exit_add_exercise),
-            onExit = {
+            onConfirm = {
                 navigateBack()
                 showExitDialog = false
             },
@@ -243,6 +247,7 @@ private fun AddExerciseScreenContent(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Checkbox(
+                    modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                     checked = selectedExercisesList.contains(exercise),
                     onCheckedChange = {
                         if (selectedExercisesList.contains(exercise)) {
@@ -258,7 +263,7 @@ private fun AddExerciseScreenContent(
                 ) {
                     Text(
                         text = exercise.name,
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
                         text = stringResource(id = exerciseEnumToStringId(exercise.category)),
@@ -272,6 +277,7 @@ private fun AddExerciseScreenContent(
                     }
                 }
                 IconButton(
+                    modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                     onClick = {
                         selectedExercise = exercise
                         isModalSheetOpen = true
@@ -285,7 +291,7 @@ private fun AddExerciseScreenContent(
             }
             HorizontalDivider()
         }
-        item{
+        item {
             Spacer(Modifier.height(100.dp))
         }
     }
@@ -300,5 +306,19 @@ private fun AddExerciseScreenContent(
 @Preview
 @Composable
 private fun AddExerciseScreenPreview() {
-    AddExerciseScreen(emptyList(), {}, viewModel())
+    AddExerciseScreen(
+        listOf(
+            ExerciseDC(
+                "0", "Sample",
+                level = Level.INTERMEDIATE,
+                equipment = Equipment.EXERCISE_BALL,
+                primaryMuscles = emptyList(),
+                secondaryMuscles = emptyList(),
+                instructions = emptyList(),
+                category = Category.POWERLIFTING,
+                images = emptyList()
+            )
+        ), {},
+        viewModel()
+    )
 }

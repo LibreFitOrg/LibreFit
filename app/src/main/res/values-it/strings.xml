@@ -115,6 +115,7 @@
     <string name="label_category_plyometrics">Pliometria</string>
     <string name="label_equipment_dumbbell">Manubri</string>
     <string name="label_category_stretching">Stretching</string>
+    <string name="label_nothing_to_show">Ancora niente da mostrare.</string>
     <string name="label_workout">Allenamento</string>
     <string name="label_navigate_back">Ritorna alla schermata precedente</string>
     <string name="label_exit_workout">Sei sicuro di voler uscire? Il tuo allenamento non sarà salvato</string>
@@ -124,7 +125,9 @@
     <string name="error_title_empty">Il titolo non può essere vuoto</string>
     <string name="label_language_english">Inglese</string>
     <string name="label_start_routine">Inizia routine</string>
+    <string name="label_confirm_delete">Sei sicuro di volerlo eliminare? Questa azione non può essere annullata.</string>
     <string name="label_open">Apri</string>
+    <string name="label_ok">OK</string>
     <string name="label_delete">Elimina</string>
     <string name="label_license_desc">LibreFit è distribuito sotto la licenza GNU General Public License v3.0 (GPL-3).</string>
     <string name="label_view_gpl3_online">Visualizza versione online</string>

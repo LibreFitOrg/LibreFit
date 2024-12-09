@@ -81,7 +81,7 @@ import org.librefit.data.DataStoreManager
 import org.librefit.data.SharedViewModel
 import org.librefit.db.Workout
 import org.librefit.nav.Destination
-import org.librefit.ui.components.ConfirmExitDialog
+import org.librefit.ui.components.ConfirmDialog
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.ExerciseDetailModalBottomSheet
 import org.librefit.util.ExerciseDC
@@ -149,9 +149,10 @@ fun WorkoutScreen(
     var showExitDialog by remember { mutableStateOf(false) }
 
     if (showExitDialog) {
-        ConfirmExitDialog(
+        ConfirmDialog(
+            title = stringResource(R.string.label_exit_dialog),
             text = stringResource(id = R.string.label_exit_workout),
-            onExit = {
+            onConfirm = {
                 navController.popBackStack()
                 showExitDialog = false
             },

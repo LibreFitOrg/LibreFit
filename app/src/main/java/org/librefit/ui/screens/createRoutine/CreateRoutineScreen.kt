@@ -61,7 +61,7 @@ import org.librefit.R
 import org.librefit.data.SharedViewModel
 import org.librefit.db.Workout
 import org.librefit.nav.Destination
-import org.librefit.ui.components.ConfirmExitDialog
+import org.librefit.ui.components.ConfirmDialog
 import org.librefit.ui.components.CustomScaffold
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.ExerciseDetailModalBottomSheet
@@ -93,9 +93,10 @@ fun CreateRoutineScreen(
     }
 
     if (showExitDialog) {
-        ConfirmExitDialog(
+        ConfirmDialog(
+            title = stringResource(R.string.label_exit_dialog),
             text = stringResource(id = R.string.label_exit_create_routine),
-            onExit = {
+            onConfirm = {
                 navController.popBackStack()
                 showExitDialog = false
             },

@@ -26,7 +26,7 @@ import java.time.LocalDateTime
 @Entity(tableName = "workouts")
 data class Workout(
     @PrimaryKey(true) val id: Int = 0,
-    val title: String,
+    val title: String = "",
     val routine: Boolean = false,
     val timeElapsed: Int = 0,
     val created: LocalDateTime = LocalDateTime.now(),

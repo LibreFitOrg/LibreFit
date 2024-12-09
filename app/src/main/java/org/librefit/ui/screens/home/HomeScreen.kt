@@ -33,7 +33,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.ElevatedCard
@@ -43,6 +42,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -53,7 +55,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
+import org.librefit.db.Workout
 import org.librefit.nav.Destination
+import org.librefit.ui.components.ConfirmDialog
 import org.librefit.ui.components.CustomTextButton
 
 @Composable
@@ -65,13 +69,29 @@ fun HomeScreen(
 
     val routineList by viewModel.routineList
 
-    LazyColumn (
+    var selectedRoutine by remember { mutableStateOf<Workout>(Workout()) }
+
+    var showConfirmDialog by remember { mutableStateOf(false) }
+
+    if (showConfirmDialog) {
+        ConfirmDialog(
+            title = stringResource(R.string.label_delete),
+            text = stringResource(id = R.string.label_confirm_delete),
+            onConfirm = {
+                viewModel.deleteRoutine(selectedRoutine)
+                showConfirmDialog = false
+            },
+            onDismiss = { showConfirmDialog = false }
+        )
+    }
+
+    LazyColumn(
         modifier = Modifier
             .padding(paddingValues = innerPadding)
             .padding(start = 15.dp, end = 15.dp)
             .fillMaxSize()
     ) {
-        item{
+        item {
             Text(
                 text = stringResource(id = R.string.label_quick_start),
                 color = MaterialTheme.colorScheme.onBackground,
@@ -79,7 +99,7 @@ fun HomeScreen(
             )
         }
 
-        item{
+        item {
             //"Start empty workout" button
             CustomTextButton(
                 text = stringResource(id = R.string.label_start_empty_workout),
@@ -87,11 +107,11 @@ fun HomeScreen(
                 onClick = { navController.navigate(Destination.WorkoutScreen()) },
             )
         }
-        item{
+        item {
             Spacer(modifier = Modifier.height(15.dp))
         }
 
-        item{
+        item {
             Text(
                 text = stringResource(id = R.string.label_your_routines),
                 color = MaterialTheme.colorScheme.onBackground,
@@ -126,21 +146,16 @@ fun HomeScreen(
                             )
                             IconButton(
                                 onClick = {
-                                    //TODO: routine edit
-                                },
-                                enabled = false
-                            ) {
-                                Icon(Icons.Default.Edit, null)
-                            }
-                            IconButton(
-                                onClick = {
                                     //TODO: show exercises of routine
                                 },
                                 enabled = false
                             ) {
                                 Icon(Icons.Default.Info, null)
                             }
-                            IconButton(onClick = { viewModel.deleteRoutine(routine) }) {
+                            IconButton(onClick = {
+                                selectedRoutine = routine
+                                showConfirmDialog = true
+                            }) {
                                 Icon(
                                     Icons.Default.Delete,
                                     stringResource(R.string.label_delete)
@@ -164,11 +179,11 @@ fun HomeScreen(
             }
         }
 
-        item{
+        item {
             Spacer(modifier = Modifier.height(10.dp))
         }
 
-        item{
+        item {
             //"Create a workout routine" button
             CustomTextButton(
                 text = stringResource(id = R.string.label_create_routine),

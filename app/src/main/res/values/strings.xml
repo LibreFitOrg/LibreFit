@@ -18,6 +18,7 @@
     <string name="label_start_empty_workout">Start empty workout</string>
     <string name="label_create_routine">Create a routine</string>
     <string name="label_start_routine">Start routine</string>
+    <string name="label_confirm_delete">Are you certain you want to delete this? This action cannot be reversed.</string>
 
 
     <!--About screen-->
@@ -98,6 +99,7 @@
     <string name="label_your_workouts">Your workouts</string>
     <string name="label_finished_on">Finished on</string>
     <string name="label_duration">Duration</string>
+    <string name="label_nothing_to_show">Nothing to show yet.</string>
 
 
     <!-- Workout screen -->
@@ -185,6 +187,7 @@
     <!--Dialog -->
     <string name="label_cancel_dialog">Cancel</string>
     <string name="label_exit_dialog">Exit</string>
+    <string name="label_ok">OK</string>
 
     <!--Util-->
     <string name="label_delete">Delete</string>

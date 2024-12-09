@@ -27,25 +27,27 @@ import androidx.compose.ui.res.stringResource
 import org.librefit.R
 
 @Composable
-fun ConfirmExitDialog(
+fun ConfirmDialog(
+    title: String,
     text : String,
-    onExit : () -> Unit,
+    onConfirm: () -> Unit,
     onDismiss : () -> Unit
 ){
     AlertDialog(
+        title = { Text(text = title) },
+        text = { Text(text = text) },
         onDismissRequest = onDismiss ,
         confirmButton = {
             TextButton(
-                onClick = onExit
+                onClick = onConfirm
             ){
-                Text(text = stringResource(id = R.string.label_exit_dialog))
+                Text(text = stringResource(R.string.label_ok))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss ){
                 Text(text = stringResource(id = R.string.label_cancel_dialog))
             }
-        },
-        text = { Text(text = text ) }
+        }
     )
 }
