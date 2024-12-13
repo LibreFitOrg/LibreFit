@@ -4,7 +4,7 @@ datastore = "1.1.1"
 kotlin = "2.0.0"
 junit = "4.13.2"
 espressoCore = "3.6.1"
-composeBom = "2024.11.00"
+composeBom = "2024.12.01"
 roomVersion = "2.6.1"
 datastoreCoreAndroid = "1.1.1"
 appcompat = "1.7.0"
@@ -30,7 +30,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.4" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.5" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.7.3" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
