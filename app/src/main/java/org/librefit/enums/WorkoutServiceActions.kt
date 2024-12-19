@@ -1,0 +1,9 @@
+package org.librefit.enums
+
+enum class WorkoutServiceActions(val string: String) {
+    START_CHRONOMETER("START_CHRONOMETER"),
+    PAUSE_CHRONOMETER("PAUSE_CHRONOMETER"),
+    START_REST_TIMER("START_REST_TIMER"),
+    MODIFY_REST_TIMER("PAUSE_REST_TIMER"),
+    STOP_SERVICE("STOP_SERVICE")
+}

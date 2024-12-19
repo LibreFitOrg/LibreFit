@@ -68,7 +68,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -205,6 +204,7 @@ fun WorkoutScreen(
                     }
                 },
                 actions = {
+                    //TODO: replace button with text button for clarity reasons
                     IconButton(
                         onClick = {
                             viewModel.saveExercisesWithWorkout(
@@ -257,6 +257,7 @@ fun WorkoutScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (viewModel.isListEmpty()) {
+                //TODO: lottie animations
                 item {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_monochrome),
@@ -373,7 +374,7 @@ private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
                         imageVector = if (viewModel.isChronometerPaused) Icons.Default.PlayArrow else
                             ImageVector.vectorResource(id = R.drawable.ic_pause),
                         contentDescription = stringResource(if (viewModel.isChronometerPaused) R.string.label_pause else R.string.label_play),
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(40.dp)
                     )
                 }
             }
@@ -389,8 +390,7 @@ private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
-                    text = formatTime(viewModel.timeElapsed),
-                    color = if (viewModel.pulsingChronometer()) Color.Transparent else Color.Unspecified
+                    text = formatTime(viewModel.timeElapsed)
                 )
             }
 

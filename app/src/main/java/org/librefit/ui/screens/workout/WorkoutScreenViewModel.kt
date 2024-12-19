@@ -36,7 +36,8 @@ import org.librefit.MainApplication
 import org.librefit.db.Set
 import org.librefit.db.Workout
 import org.librefit.enums.SetMode
-import org.librefit.services.NotificationService
+import org.librefit.enums.WorkoutServiceActions
+import org.librefit.services.WorkoutService
 import org.librefit.util.ExerciseDC
 import org.librefit.util.ExerciseWithSets
 import kotlin.random.Random
@@ -224,12 +225,11 @@ class WorkoutScreenViewModel(
         private set
     var isChronometerPaused by mutableStateOf(true)
         private set
-    private var pulsingText by mutableIntStateOf(0)
 
 
     private var appContext = context.applicationContext
 
-    val serviceIntent = Intent(appContext, NotificationService::class.java)
+    val workoutServiceIntent = Intent(appContext, WorkoutService::class.java)
 
 
     init {
@@ -238,51 +238,41 @@ class WorkoutScreenViewModel(
     }
 
     private fun observeTimeChanges() {
-        viewModelScope.launch {
-            NotificationService.timeElapsed.collect { elapsed ->
-                timeElapsed = elapsed
+        viewModelScope.launch(Dispatchers.Main) {
+            WorkoutService.timeElapsed.collect {
+                timeElapsed = it
             }
-            NotificationService.isPaused.collect {
-                isChronometerPaused = it
+        }
+        viewModelScope.launch(Dispatchers.Main) {
+            WorkoutService.isChronometerPaused.collect { isPaused ->
+                if (isPaused != isChronometerPaused) {
+                    isChronometerPaused = isPaused
+                }
             }
         }
     }
 
     fun startChronometer() {
-        val service = serviceIntent.apply {
-            action = NotificationService.START_CHRONOMETER
+        val service = workoutServiceIntent.apply {
+            action = WorkoutServiceActions.START_CHRONOMETER.string
         }
         appContext.startForegroundService(service)
-
-        isChronometerPaused = false
     }
 
     fun pauseChronometer() {
-        val service = serviceIntent.apply {
-            action = NotificationService.PAUSE_CHRONOMETER
+        val service = workoutServiceIntent.apply {
+            action = WorkoutServiceActions.PAUSE_CHRONOMETER.string
         }
         appContext.startForegroundService(service)
-
-        isChronometerPaused = true
-
-        viewModelScope.launch(Dispatchers.IO) {
-            while (isChronometerPaused) {
-                pulsingText++
-                delay(600)
-            }
-        }
     }
 
     override fun onCleared() {
         super.onCleared()
-        val service = serviceIntent.apply {
-            action = NotificationService.STOP_CHRONOMETER
+        val service = workoutServiceIntent.apply {
+            action = WorkoutServiceActions.STOP_SERVICE.string
         }
         appContext.startForegroundService(service)
-    }
-
-    fun pulsingChronometer(): Boolean {
-        return isChronometerPaused && pulsingText % 2 == 1
+        appContext.stopService(service)
     }
 
 
@@ -294,6 +284,10 @@ class WorkoutScreenViewModel(
     private var maxTimeValue by mutableIntStateOf(0)
 
     fun startRestTimer(initialValue: Int) {
+        val serviceIntent = workoutServiceIntent.apply {
+            action = WorkoutServiceActions.START_REST_TIMER.string
+        }
+        appContext.startForegroundService(serviceIntent)
         if (!isTimerRunning) {
 
             maxTimeValue = initialValue
@@ -319,7 +313,4 @@ class WorkoutScreenViewModel(
             maxTimeValue = restTime
         }
     }
-
-
-    //TODO: notification when rest time ends
 }

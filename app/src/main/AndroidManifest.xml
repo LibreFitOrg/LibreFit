@@ -43,7 +43,7 @@
         </service>
 
         <service
-            android:name=".services.NotificationService"
+            android:name=".services.WorkoutService"
             android:foregroundServiceType="specialUse">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"

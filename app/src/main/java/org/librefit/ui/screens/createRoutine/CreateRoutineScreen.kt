@@ -191,8 +191,9 @@ private fun CreateRoutineScreen(
         }
         if (viewModel.isListEmpty()) {
             item {
+                //TODO: lottie animations
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_monochrome),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_logo_monochrome),
                     contentDescription = ""
                 )
             }
