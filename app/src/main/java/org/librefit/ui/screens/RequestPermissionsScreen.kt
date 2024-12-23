@@ -63,6 +63,7 @@ import org.librefit.R
 import org.librefit.data.DataStoreManager
 import org.librefit.nav.checkPermissionsBeforeNavigateToWorkout
 import org.librefit.ui.components.CustomScaffold
+import org.librefit.ui.components.animations.PreferencesLottie
 
 @SuppressLint("BatteryLife")
 @OptIn(ExperimentalPermissionsApi::class)
@@ -93,7 +94,7 @@ fun RequestPermissionsScreen(
 
     /**
      * A flow that continuously emits the current state of [android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS].
-     * The [org.librefit.helpers.NotificationHelper.isIgnoringBatteryOptimizations] method checks for permission
+     * The [checkPermissionsBeforeNavigateToWorkout] method checks for permission
      * using [PowerManager.isIgnoringBatteryOptimizations]. Any approach better than this one are welcome
      */
     val isIgnoringBatteryOptimization = remember {
@@ -119,11 +120,17 @@ fun RequestPermissionsScreen(
             verticalArrangement = Arrangement.spacedBy(25.dp)
         ) {
             item {
-                Text(
-                    text = stringResource(R.string.before_starting_the_workout),
-                    style = MaterialTheme.typography.displaySmall,
-                    textAlign = TextAlign.Center
-                )
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    PreferencesLottie()
+                    Text(
+                        text = stringResource(R.string.before_starting_the_workout),
+                        style = MaterialTheme.typography.displaySmall,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
 
             item {

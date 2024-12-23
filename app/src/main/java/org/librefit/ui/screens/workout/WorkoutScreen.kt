@@ -87,6 +87,7 @@ import org.librefit.nav.Destination
 import org.librefit.ui.components.ConfirmDialog
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.ExerciseDetailModalBottomSheet
+import org.librefit.ui.components.animations.AddIconLottie
 import org.librefit.util.ExerciseDC
 import org.librefit.util.ExerciseWithSets
 import org.librefit.util.formatTime
@@ -257,18 +258,12 @@ fun WorkoutScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (viewModel.isListEmpty()) {
-                //TODO: lottie animations
                 item {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_monochrome),
-                        contentDescription = ""
-                    )
-                }
-                item {
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        AddIconLottie()
                         Text(
                             text = stringResource(id = R.string.label_add_to_empty_workout),
                             color = MaterialTheme.colorScheme.onBackground,

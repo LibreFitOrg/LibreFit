@@ -100,6 +100,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
+
     // Kotlin Extensions and Coroutines support for Room
     implementation(libs.androidx.room.ktx)
 
@@ -108,9 +109,12 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.androidx.datastore.preferences)
 
-    //Json
+    //Gson
     implementation(libs.gson)
 
     //Google accompanist to handle permissions in jetpack compose
     implementation(libs.accompanist.permissions)
+
+    //Lottie animations for jetpack compose
+    implementation(libs.lottie.compose)
 }

@@ -23,12 +23,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -46,9 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,6 +52,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.librefit.R
 import org.librefit.db.Workout
 import org.librefit.ui.components.ConfirmDialog
+import org.librefit.ui.components.animations.EmptyLottie
 import org.librefit.util.formatTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -107,18 +103,11 @@ fun ProfileScreen(innerPadding: PaddingValues) {
             item {
                 Column(
                     modifier = Modifier
-                        .height(200.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Spacer(Modifier.height(20.dp))
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_empty_dashboard),
-                        contentDescription = null,
-                        modifier = Modifier.size(70.dp)
-                    )
-                    Spacer(Modifier.height(20.dp))
+                    EmptyLottie()
                     Text(
                         text = stringResource(R.string.label_nothing_to_show),
                         textAlign = TextAlign.Center

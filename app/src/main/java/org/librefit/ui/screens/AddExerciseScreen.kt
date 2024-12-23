@@ -74,6 +74,7 @@ import org.librefit.ui.components.ConfirmDialog
 import org.librefit.ui.components.CustomScaffold
 import org.librefit.ui.components.ExerciseDetailModalBottomSheet
 import org.librefit.ui.components.FiltersCard
+import org.librefit.ui.components.animations.NoResultLottie
 import org.librefit.util.ExerciseDC
 import org.librefit.util.exerciseEnumToStringId
 
@@ -216,7 +217,6 @@ private fun AddExerciseScreenContent(
         ) {
             item { HorizontalDivider() }
         } else {
-            //TODO: lottie animations
             item {
                 Column(
                     modifier = Modifier
@@ -224,6 +224,7 @@ private fun AddExerciseScreenContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
+                    NoResultLottie()
                     Text(
                         text = stringResource(id = R.string.label_no_exercise_found),
                         color = MaterialTheme.colorScheme.onBackground
