@@ -109,7 +109,7 @@ fun SettingsScreen(
 
     if (openPreferenceDialog) {
         AlertDialog(
-            title = { Text(stringResource(id = R.string.label_language)) },
+            title = { Text(stringResource(id = R.string.language)) },
             onDismissRequest = { openPreferenceDialog = false },
             confirmButton = { /*The user doesn't need to confirm*/ },
             text = {
@@ -135,7 +135,7 @@ fun SettingsScreen(
     }
 
     CustomScaffold(
-        title = stringResource(id = R.string.label_settings),
+        title = stringResource(id = R.string.settings),
         navigateBack = navigateBack
     ) { innerPadding ->
         LazyColumn(
@@ -146,18 +146,18 @@ fun SettingsScreen(
         ) {
             val paddingModifier = Modifier.padding(start = 20.dp, end = 20.dp)
 
-            item { HeadlineText(text = stringResource(id = R.string.label_appearance)) }
+            item { HeadlineText(text = stringResource(id = R.string.appearance)) }
 
             item {
                 Column {
                     Row {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_dark_mode),
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.theme),
                             modifier = paddingModifier
                         )
                         Text(
-                            text = stringResource(id = R.string.label_theme),
+                            text = stringResource(id = R.string.theme),
                             style = MaterialTheme.typography.titleMedium
                         )
                     }
@@ -199,17 +199,17 @@ fun SettingsScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_material),
-                                contentDescription = "",
+                                contentDescription = stringResource(R.string.material_you),
                                 modifier = paddingModifier
                             )
                             Column(verticalArrangement = Arrangement.Center) {
                                 Text(
-                                    text = stringResource(id = R.string.label_material_you),
+                                    text = stringResource(id = R.string.material_you),
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
                                     text = stringResource(
-                                        id = if (materialModeOn) R.string.label_dynamic_color_enabled else R.string.label_dynamic_color_disabled
+                                        id = if (materialModeOn) R.string.dynamic_color_enabled else R.string.dynamic_color_disabled
                                     ),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
@@ -242,17 +242,17 @@ fun SettingsScreen(
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_keep),
-                            contentDescription = "",
+                            contentDescription = stringResource(R.string.keep_screen_on),
                             modifier = paddingModifier
                         )
                         Column(Modifier.weight(1f)) {
                             Text(
-                                text = stringResource(id = R.string.label_keep_screen_on),
+                                text = stringResource(id = R.string.keep_screen_on),
                                 style = MaterialTheme.typography.titleMedium,
                             )
                             Text(
                                 text = stringResource(
-                                    id = if (keepWorkoutScreenOn) R.string.label_screen_on_desc else R.string.label_screen_off_desc
+                                    id = if (keepWorkoutScreenOn) R.string.screen_on_desc else R.string.screen_off_desc
                                 ),
                                 style = MaterialTheme.typography.bodyMedium,
                             )
@@ -273,7 +273,7 @@ fun SettingsScreen(
 
 
 
-            item { HeadlineText(text = stringResource(id = R.string.label_settings_general)) }
+            item { HeadlineText(text = stringResource(id = R.string.settings_general)) }
 
             item {
                 Row(
@@ -284,12 +284,12 @@ fun SettingsScreen(
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_translate),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.translate),
                         modifier = paddingModifier
                     )
                     Column {
                         Text(
-                            text = stringResource(id = R.string.label_language),
+                            text = stringResource(id = R.string.language),
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
@@ -315,7 +315,7 @@ fun SettingsScreen(
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_speed),
-                            contentDescription = "",
+                            contentDescription = stringResource(R.string.background_usage),
                             modifier = paddingModifier
                         )
                         Column(Modifier.weight(1f)) {
@@ -359,18 +359,18 @@ fun SettingsScreen(
 
 private fun themeModeToId(themeMode: ThemeMode): Int {
     val id = when (themeMode) {
-        ThemeMode.SYSTEM -> R.string.label_follow_system
-        ThemeMode.LIGHT -> R.string.label_theme_light
-        ThemeMode.DARK -> R.string.label_theme_dark
+        ThemeMode.SYSTEM -> R.string.follow_system
+        ThemeMode.LIGHT -> R.string.theme_light
+        ThemeMode.DARK -> R.string.theme_dark
     }
     return id
 }
 
 private fun languageCodeToId(code: String): Int {
     val result = when (code) {
-        "en" -> R.string.label_language_english_nt
-        "it" -> R.string.label_language_italian_nt
-        else -> R.string.label_follow_system
+        "en" -> R.string.language_english_nt
+        "it" -> R.string.language_italian_nt
+        else -> R.string.follow_system
     }
 
     return result

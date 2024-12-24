@@ -41,12 +41,12 @@ fun ConfirmDialog(
             TextButton(
                 onClick = onConfirm
             ){
-                Text(text = stringResource(R.string.label_ok))
+                Text(text = stringResource(R.string.ok_dialog))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss ){
-                Text(text = stringResource(id = R.string.label_cancel_dialog))
+                Text(text = stringResource(id = R.string.cancel_dialog))
             }
         }
     )

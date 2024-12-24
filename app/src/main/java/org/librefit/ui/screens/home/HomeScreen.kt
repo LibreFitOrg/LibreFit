@@ -85,8 +85,8 @@ fun HomeScreen(
 
     if (showConfirmDialog) {
         ConfirmDialog(
-            title = stringResource(R.string.label_delete),
-            text = stringResource(id = R.string.label_confirm_delete),
+            title = stringResource(R.string.delete),
+            text = stringResource(id = R.string.confirm_delete),
             onConfirm = {
                 viewModel.deleteRoutine(selectedRoutine)
                 showConfirmDialog = false
@@ -103,7 +103,7 @@ fun HomeScreen(
     ) {
         item {
             Text(
-                text = stringResource(id = R.string.label_quick_start),
+                text = stringResource(id = R.string.quick_start),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -112,7 +112,7 @@ fun HomeScreen(
         item {
             //"Start empty workout" button
             CustomTextButton(
-                text = stringResource(id = R.string.label_start_empty_workout),
+                text = stringResource(id = R.string.start_empty_workout),
                 icon = Icons.Default.PlayArrow,
                 onClick = {
                     checkPermissionsBeforeNavigateToWorkout(
@@ -129,7 +129,7 @@ fun HomeScreen(
 
         item {
             Text(
-                text = stringResource(id = R.string.label_your_routines),
+                text = stringResource(id = R.string.your_routines),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -166,7 +166,10 @@ fun HomeScreen(
                                 },
                                 enabled = false
                             ) {
-                                Icon(Icons.Default.Info, null)
+                                Icon(
+                                    imageVector = Icons.Default.Info,
+                                    contentDescription = stringResource(R.string.about)
+                                )
                             }
                             IconButton(onClick = {
                                 selectedRoutine = routine
@@ -174,12 +177,12 @@ fun HomeScreen(
                             }) {
                                 Icon(
                                     Icons.Default.Delete,
-                                    stringResource(R.string.label_delete)
+                                    stringResource(R.string.delete)
                                 )
                             }
                         }
                         CustomTextButton(
-                            text = stringResource(R.string.label_start_routine),
+                            text = stringResource(R.string.start_routine),
                             icon = Icons.Default.PlayArrow,
                             elevated = false
                         ) {
@@ -203,7 +206,7 @@ fun HomeScreen(
         item {
             //"Create a workout routine" button
             CustomTextButton(
-                text = stringResource(id = R.string.label_create_routine),
+                text = stringResource(id = R.string.create_routine),
                 icon = Icons.Default.AddCircle,
                 onClick = { navController.navigate(Destination.CreateRoutineScreen) },
             )

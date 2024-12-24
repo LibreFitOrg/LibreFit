@@ -101,10 +101,10 @@ fun FiltersCard(
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_filter),
-                    contentDescription = null
+                    contentDescription = stringResource(R.string.filters)
                 )
                 Text(
-                    text = stringResource(R.string.label_filters),
+                    text = stringResource(R.string.filters),
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
@@ -116,7 +116,7 @@ fun FiltersCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = Icons.Default.ArrowDropDown.name,
+                    contentDescription = stringResource(R.string.menu),
                     modifier = Modifier.rotate(iconRotation)
                 )
             }
@@ -124,12 +124,12 @@ fun FiltersCard(
 
 
         val titles = listOf(
-            R.string.label_level,
-            R.string.label_force,
-            R.string.label_mechanic,
-            R.string.label_equipment,
-            R.string.label_muscles,
-            R.string.label_category
+            R.string.level,
+            R.string.force,
+            R.string.mechanic,
+            R.string.equipment,
+            R.string.muscles,
+            R.string.category
         )
 
         val options: List<List<Enum<*>?>> = listOf(
@@ -207,7 +207,9 @@ private fun ItemFilter(
             TextField(
                 readOnly = true,
                 value = stringResource(
-                    if (enumFilterValue == null) R.string.label_any else exerciseEnumToStringId(enumFilterValue)
+                    if (enumFilterValue == null) R.string.any else exerciseEnumToStringId(
+                        enumFilterValue
+                    )
                 ),
                 onValueChange = {},
                 singleLine = true,
@@ -223,7 +225,7 @@ private fun ItemFilter(
             ) {
                 options.forEach { enum ->
                     val enumString = stringResource(
-                        if (enum == null) R.string.label_any else exerciseEnumToStringId(enum)
+                        if (enum == null) R.string.any else exerciseEnumToStringId(enum)
                     )
                     DropdownMenuItem(
                         onClick = {
@@ -239,7 +241,7 @@ private fun ItemFilter(
                             {
                                 Icon(
                                     imageVector = Icons.Default.CheckCircle,
-                                    contentDescription = null
+                                    contentDescription = stringResource(R.string.checkbox)
                                 )
                             }
                         } else null,

@@ -92,7 +92,7 @@ fun MainScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
-                            contentDescription = stringResource(id = R.string.label_more_options)
+                            contentDescription = stringResource(id = R.string.more_options)
                         )
                     }
                     DropdownMenu(
@@ -103,10 +103,10 @@ fun MainScreen(
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Settings,
-                                    contentDescription = stringResource(id = R.string.label_settings)
+                                    contentDescription = stringResource(id = R.string.settings)
                                 )
                             },
-                            text = { Text(text = stringResource(id = R.string.label_settings)) },
+                            text = { Text(text = stringResource(id = R.string.settings)) },
                             onClick = {
                                 navController.navigate(Destination.SettingsScreen)
                                 expended = false
@@ -116,10 +116,10 @@ fun MainScreen(
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Info,
-                                    contentDescription = stringResource(id = R.string.label_about)
+                                    contentDescription = stringResource(id = R.string.about)
                                 )
                             },
-                            text = { Text(text = stringResource(id = R.string.label_about)) },
+                            text = { Text(text = stringResource(id = R.string.about)) },
                             onClick = {
                                 navController.navigate(Destination.AboutScreen)
                                 expended = false
@@ -137,12 +137,12 @@ fun MainScreen(
                     icon = {
                         Icon(
                             imageVector = if (homeSelected) Icons.Default.Home else Icons.Outlined.Home,
-                            contentDescription = stringResource(R.string.label_home)
+                            contentDescription = stringResource(R.string.home)
                         )
                     },
                     label = {
                         Text(
-                            text = stringResource(R.string.label_home)
+                            text = stringResource(R.string.home)
                         )
                     }
                 )
@@ -152,12 +152,12 @@ fun MainScreen(
                     icon = {
                         Icon(
                             imageVector = if (!homeSelected) Icons.Default.Person else Icons.Outlined.Person,
-                            contentDescription = stringResource(R.string.label_profile)
+                            contentDescription = stringResource(R.string.profile)
                         )
                     },
                     label = {
                         Text(
-                            text = stringResource(R.string.label_profile)
+                            text = stringResource(R.string.profile)
                         )
                     }
                 )

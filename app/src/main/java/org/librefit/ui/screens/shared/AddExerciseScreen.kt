@@ -95,8 +95,8 @@ fun AddExerciseScreen(
 
     if (showExitDialog) {
         ConfirmDialog(
-            title = stringResource(R.string.label_exit_dialog),
-            text = stringResource(id = R.string.label_exit_add_exercise),
+            title = stringResource(R.string.exit_dialog),
+            text = stringResource(id = R.string.exit_add_exercise),
             onConfirm = {
                 navigateBack()
                 showExitDialog = false
@@ -110,7 +110,7 @@ fun AddExerciseScreen(
     val coroutineScope = rememberCoroutineScope()
 
     CustomScaffold(
-        title = stringResource(id = R.string.label_add_exercise),
+        title = stringResource(id = R.string.add_exercise),
         navigateBack = navigateBack,
         action = {
             viewModel.addSelectedExerciseToList(selectedExercisesList)
@@ -183,19 +183,22 @@ private fun AddExerciseScreenContent(
                     },
                     shape = RoundedCornerShape(40.dp),
                     leadingIcon = {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(R.string.search_exercise_field)
+                        )
                     },
                     trailingIcon = {
                         if (query.isNotEmpty()) {
                             IconButton(onClick = { query = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = Icons.Default.Close.name
+                                    contentDescription = stringResource(R.string.delete)
                                 )
                             }
                         }
                     },
-                    label = { Text(text = stringResource(id = R.string.label_search_exercise_field)) },
+                    label = { Text(text = stringResource(id = R.string.search_exercise_field)) },
                     singleLine = true,
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
@@ -225,7 +228,7 @@ private fun AddExerciseScreenContent(
                 ) {
                     NoResultLottie()
                     Text(
-                        text = stringResource(id = R.string.label_no_exercise_found),
+                        text = stringResource(id = R.string.no_exercise_found),
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -286,7 +289,7 @@ private fun AddExerciseScreenContent(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Info,
-                        contentDescription = Icons.Default.Info.name
+                        contentDescription = stringResource(R.string.details)
                     )
                 }
             }

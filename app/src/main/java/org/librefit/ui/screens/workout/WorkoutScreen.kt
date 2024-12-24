@@ -153,8 +153,8 @@ fun WorkoutScreen(
 
     if (showExitDialog) {
         ConfirmDialog(
-            title = stringResource(R.string.label_exit_dialog),
-            text = stringResource(id = R.string.label_exit_workout),
+            title = stringResource(R.string.exit_dialog),
+            text = stringResource(id = R.string.exit_workout),
             onConfirm = {
                 navController.popBackStack()
                 showExitDialog = false
@@ -182,8 +182,8 @@ fun WorkoutScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = if (workoutTitle.isEmpty()) stringResource(R.string.label_new_workout)
-                        else stringResource(R.string.label_workout) + ": $workoutTitle",
+                        text = if (workoutTitle.isEmpty()) stringResource(R.string.new_workout)
+                        else stringResource(R.string.workout) + ": $workoutTitle",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -200,7 +200,7 @@ fun WorkoutScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = stringResource(id = R.string.label_navigate_back)
+                            contentDescription = stringResource(id = R.string.navigate_back)
                         )
                     }
                 },
@@ -211,7 +211,7 @@ fun WorkoutScreen(
                             viewModel.saveExercisesWithWorkout(
                                 workout = Workout(
                                     title = workoutTitle.ifEmpty {
-                                        context.getString(R.string.label_workout)
+                                        context.getString(R.string.workout)
                                     },
                                     timeElapsed = viewModel.timeElapsed
                                 ),
@@ -224,7 +224,7 @@ fun WorkoutScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Done,
-                            contentDescription = Icons.Default.Done.name
+                            contentDescription = stringResource(R.string.done)
                         )
                     }
                 }
@@ -245,7 +245,7 @@ fun WorkoutScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.label_add_exercise)
+                    contentDescription = stringResource(R.string.add_exercise)
                 )
             }
         }
@@ -265,7 +265,7 @@ fun WorkoutScreen(
                     ) {
                         AddIconLottie()
                         Text(
-                            text = stringResource(id = R.string.label_add_to_empty_workout),
+                            text = stringResource(id = R.string.add_to_empty_workout),
                             color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.Center
                         )
@@ -368,7 +368,7 @@ private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
                     Icon(
                         imageVector = if (viewModel.isChronometerPaused) Icons.Default.PlayArrow else
                             ImageVector.vectorResource(id = R.drawable.ic_pause),
-                        contentDescription = stringResource(if (viewModel.isChronometerPaused) R.string.label_pause else R.string.label_resume),
+                        contentDescription = stringResource(if (viewModel.isChronometerPaused) R.string.pause else R.string.resume),
                         modifier = Modifier.size(40.dp)
                     )
                 }
@@ -381,7 +381,7 @@ private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = stringResource(R.string.label_elapsed_time),
+                    text = stringResource(R.string.elapsed_time),
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
@@ -409,7 +409,7 @@ private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_replay_10),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.add_ten_seconds),
                         modifier = Modifier.size(40.dp)
                     )
                 }
@@ -429,8 +429,7 @@ private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_forward_10),
-                        contentDescription = null,
-                        //TODO: add the necessary descriptions to all icons
+                        contentDescription = stringResource(R.string.reduce_ten_seconds),
                         modifier = Modifier.size(40.dp)
                     )
                 }

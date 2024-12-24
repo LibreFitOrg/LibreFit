@@ -75,8 +75,8 @@ fun ProfileScreen(innerPadding: PaddingValues) {
 
     if (showConfirmDialog) {
         ConfirmDialog(
-            title = stringResource(R.string.label_delete),
-            text = stringResource(id = R.string.label_confirm_delete),
+            title = stringResource(R.string.delete),
+            text = stringResource(id = R.string.confirm_delete),
             onConfirm = {
                 viewModel.deleteWorkout(selectedWorkout)
                 showConfirmDialog = false
@@ -93,7 +93,7 @@ fun ProfileScreen(innerPadding: PaddingValues) {
     ) {
         item {
             Text(
-                text = stringResource(R.string.label_your_workouts),
+                text = stringResource(R.string.your_workouts),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -109,7 +109,7 @@ fun ProfileScreen(innerPadding: PaddingValues) {
                 ) {
                     EmptyLottie()
                     Text(
-                        text = stringResource(R.string.label_nothing_to_show),
+                        text = stringResource(R.string.nothing_to_show),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -138,12 +138,12 @@ fun ProfileScreen(innerPadding: PaddingValues) {
                                 overflow = TextOverflow.Ellipsis,
                             )
                             Text(
-                                text = stringResource(R.string.label_finished_on) + ": "
+                                text = stringResource(R.string.finished_on) + ": "
                                         + workout.completed.format(formatter),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             Text(
-                                text = stringResource(R.string.label_duration) + ": "
+                                text = stringResource(R.string.duration) + ": "
                                         + formatTime(workout.timeElapsed),
                                 style = MaterialTheme.typography.bodyMedium
                             )
@@ -154,7 +154,7 @@ fun ProfileScreen(innerPadding: PaddingValues) {
                             },
                             enabled = false
                         ) {
-                            Icon(Icons.Default.Info, null)
+                            Icon(Icons.Default.Info, stringResource(R.string.about))
                         }
                         IconButton(onClick = {
                             selectedWorkout = workout
@@ -162,7 +162,7 @@ fun ProfileScreen(innerPadding: PaddingValues) {
                         }) {
                             Icon(
                                 Icons.Default.Delete,
-                                stringResource(R.string.label_delete)
+                                stringResource(R.string.delete)
                             )
                         }
                     }

@@ -89,7 +89,7 @@ fun CustomScaffold(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = stringResource(id = R.string.label_navigate_back)
+                            contentDescription = stringResource(id = R.string.navigate_back)
                         )
                     }
                 },

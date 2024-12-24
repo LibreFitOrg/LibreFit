@@ -143,20 +143,20 @@ fun ExerciseCard(
                 IconButton(onClick = onDetail) {
                     Icon(
                         imageVector = Icons.Default.Info,
-                        contentDescription = stringResource(R.string.label_info)
+                        contentDescription = stringResource(R.string.info)
                     )
                 }
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = stringResource(R.string.label_delete)
+                        contentDescription = stringResource(R.string.delete)
                     )
                 }
             }
 
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text(text = stringResource(id = R.string.label_notes)) },
+                label = { Text(text = stringResource(id = R.string.notes)) },
                 value = exerciseWithSets.note,
                 onValueChange = {
                     updateExercise(it, 0)
@@ -167,7 +167,8 @@ fun ExerciseCard(
 
             //Rest timer slider
             var restTime by remember { mutableIntStateOf(exerciseWithSets.restTime) }
-            Text(stringResource(R.string.label_rest_time) + ": " + restTime
+            Text(
+                stringResource(R.string.rest_time) + ": " + restTime
                     + " " + stringResource(R.string.seconds).replaceFirstChar { it.lowercase() })
             Slider(
                 value = restTime.toFloat(),
@@ -185,7 +186,8 @@ fun ExerciseCard(
             Spacer(modifier = Modifier.height(10.dp))
 
             // Set mode selection
-            //TODO: display text to inform user
+            //TODO: add info icon to explain in detail
+            Text(stringResource(R.string.set_mode))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -225,23 +227,22 @@ fun ExerciseCard(
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
-                    text = stringResource(id = R.string.label_set),
+                    text = stringResource(id = R.string.set),
                     color = MaterialTheme.colorScheme.secondary
                 )
                 if (exerciseWithSets.setMode == SetMode.TIME) {
                     Text(
-                        text = stringResource(R.string.label_time),
+                        text = stringResource(R.string.time),
                         color = MaterialTheme.colorScheme.secondary
                     )
                 } else {
                     Text(
-                        text = stringResource(id = R.string.label_reps),
+                        text = stringResource(id = R.string.reps),
                         color = MaterialTheme.colorScheme.secondary
                     )
                     if (exerciseWithSets.setMode == SetMode.WEIGHT) {
-                        /*TODO: insert suffix text in string.xml*/
                         Text(
-                            text = stringResource(id = R.string.label_weight) + " (kg)",
+                            text = stringResource(R.string.weight) + " (" + stringResource(R.string.kg) + ")",
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
@@ -249,7 +250,7 @@ fun ExerciseCard(
                 if (workout) {
                     Icon(
                         imageVector = Icons.Default.Done,
-                        contentDescription = null
+                        contentDescription = stringResource(R.string.done)
                     )
                 }
             }
@@ -310,11 +311,11 @@ fun ExerciseCard(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Delete,
-                                        contentDescription = null,
+                                        contentDescription = stringResource(R.string.delete),
                                     )
                                     Icon(
                                         imageVector = Icons.Default.Delete,
-                                        contentDescription = null,
+                                        contentDescription = stringResource(R.string.delete),
                                     )
                                 }
                             }
@@ -338,6 +339,7 @@ fun ExerciseCard(
                                 )
 
                                 if (exerciseWithSets.setMode == SetMode.TIME) {
+                                    //TODO: a play button to measure time in the text field below
                                     //Time
                                     OutlinedTextField(
                                         modifier = Modifier.width(80.dp),
@@ -443,7 +445,7 @@ fun ExerciseCard(
 
             //Add set button
             CustomTextButton(
-                text = stringResource(id = R.string.label_add_set),
+                text = stringResource(id = R.string.add_set),
                 icon = Icons.Default.AddCircle,
                 onClick = addSet,
                 elevated = false
@@ -454,9 +456,9 @@ fun ExerciseCard(
 
 private fun setModeToStringId(setMode: SetMode): Int {
     return when (setMode) {
-        SetMode.WEIGHT -> R.string.label_weight
-        SetMode.REPS -> R.string.label_reps
-        SetMode.TIME -> R.string.label_time
+        SetMode.WEIGHT -> R.string.weight
+        SetMode.REPS -> R.string.reps
+        SetMode.TIME -> R.string.time
     }
 }
 

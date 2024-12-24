@@ -95,7 +95,7 @@ fun AboutScreen(navController: NavHostController) {
                         showDialog = false
                     }
                 ) {
-                    Text(stringResource(R.string.label_open))
+                    Text(stringResource(R.string.open))
                 }
             },
             dismissButton = {
@@ -106,7 +106,7 @@ fun AboutScreen(navController: NavHostController) {
                         showDialog = false
                     }
                 ) {
-                    Text(stringResource(R.string.label_copy))
+                    Text(stringResource(R.string.copy))
                 }
             },
             text = { Text(text = url) }
@@ -114,7 +114,7 @@ fun AboutScreen(navController: NavHostController) {
     }
 
     CustomScaffold(
-        title = stringResource(id = R.string.label_about),
+        title = stringResource(id = R.string.about),
         navigateBack = { navController.popBackStack() },
     ) { innerPadding ->
         LazyColumn(
@@ -130,7 +130,7 @@ fun AboutScreen(navController: NavHostController) {
             item {
                 Image(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_logo),
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.app_name),
                     modifier = Modifier
                         .size(logoSize)
                         .border(
@@ -169,15 +169,15 @@ fun AboutScreen(navController: NavHostController) {
             }
 
             item {
-                HeadlineText(text = stringResource(R.string.label_support_project))
+                HeadlineText(text = stringResource(R.string.support_project))
             }
 
 
             item {
                 AboutItem(
                     Icons.Default.Favorite,
-                    text = stringResource(R.string.label_donate),
-                    description = stringResource(R.string.label_donate_desc),
+                    text = stringResource(R.string.donate),
+                    description = stringResource(R.string.donate_desc),
                     onClick = {},
                     enabled = false
                 )
@@ -186,8 +186,8 @@ fun AboutScreen(navController: NavHostController) {
             item {
                 AboutItem(
                     ImageVector.vectorResource(R.drawable.ic_handshake),
-                    text = stringResource(R.string.label_contribute),
-                    description = stringResource(R.string.label_contribute_desc),
+                    text = stringResource(R.string.contribute),
+                    description = stringResource(R.string.contribute_desc),
                     onClick = {},
                     enabled = false
                 )
@@ -196,22 +196,22 @@ fun AboutScreen(navController: NavHostController) {
             item {
                 AboutItem(
                     ImageVector.vectorResource(R.drawable.ic_translate),
-                    stringResource(R.string.label_translate),
-                    description = stringResource(R.string.label_translate_desc),
+                    stringResource(R.string.translate),
+                    description = stringResource(R.string.translate_desc),
                     onClick = {},
                     enabled = false
                 )
             }
 
             item {
-                HeadlineText(stringResource(R.string.label_info))
+                HeadlineText(stringResource(R.string.info))
             }
 
             item {
                 AboutItem(
                     ImageVector.vectorResource(R.drawable.ic_policy),
-                    stringResource(R.string.label_privacy_policy),
-                    description = stringResource(R.string.label_privacy_policy_desc),
+                    stringResource(R.string.privacy_policy),
+                    description = stringResource(R.string.privacy_policy_desc),
                     onClick = {
                         url = context.getString(R.string.url_privacy)
                         showDialog = true
@@ -223,7 +223,7 @@ fun AboutScreen(navController: NavHostController) {
             item {
                 AboutItem(
                     ImageVector.vectorResource(R.drawable.ic_globe),
-                    stringResource(R.string.label_website),
+                    stringResource(R.string.website),
                     onClick = {
                         url = context.getString(R.string.url_website)
                         showDialog = true
@@ -235,8 +235,8 @@ fun AboutScreen(navController: NavHostController) {
             item {
                 AboutItem(
                     ImageVector.vectorResource(R.drawable.ic_license),
-                    stringResource(R.string.label_license),
-                    description = stringResource(R.string.label_license_desc),
+                    stringResource(R.string.license),
+                    description = stringResource(R.string.license_desc),
                     onClick = {
                         navController.navigate(Destination.LicenseScreen)
                     }
@@ -246,8 +246,8 @@ fun AboutScreen(navController: NavHostController) {
             item {
                 AboutItem(
                     ImageVector.vectorResource(R.drawable.ic_github),
-                    stringResource(R.string.label_github),
-                    stringResource(R.string.label_source_code),
+                    stringResource(R.string.github),
+                    stringResource(R.string.source_code),
                     onClick = {
                         url = context.getString(R.string.url_source_code)
                         showDialog = true
@@ -258,8 +258,8 @@ fun AboutScreen(navController: NavHostController) {
             item {
                 AboutItem(
                     ImageVector.vectorResource(R.drawable.ic_codeberg),
-                    stringResource(R.string.label_codeberg),
-                    stringResource(R.string.label_source_code),
+                    stringResource(R.string.codeberg),
+                    stringResource(R.string.source_code),
                     onClick = {
                         url = context.getString(R.string.url_codeberg)
                         showDialog = true
@@ -269,14 +269,14 @@ fun AboutScreen(navController: NavHostController) {
 
 
             item {
-                HeadlineText(stringResource(R.string.label_contributors))
+                HeadlineText(stringResource(R.string.contributors))
             }
 
             item {
                 AboutItem(
                     Icons.Default.Person,
                     stringResource(R.string.url_IamDg).split("/").last(),
-                    stringResource(R.string.label_founder),
+                    stringResource(R.string.founder),
                     onClick = {
                         url = context.getString(R.string.url_IamDg)
                         showDialog = true
@@ -285,14 +285,14 @@ fun AboutScreen(navController: NavHostController) {
             }
 
             item {
-                HeadlineText(stringResource(R.string.label_translators))
+                HeadlineText(stringResource(R.string.translators))
             }
 
             item {
                 AboutItem(
                     Icons.Default.Person,
                     stringResource(R.string.url_IamDg).split("/").last(),
-                    stringResource(R.string.label_contributed_to) + stringResource(R.string.label_language_italian),
+                    stringResource(R.string.contributed_to) + stringResource(R.string.language_italian),
                     onClick = {
                         url = context.getString(R.string.url_IamDg)
                         showDialog = true
@@ -324,7 +324,7 @@ private fun AboutItem(
         ) {
             Icon(
                 imageVector = imageVector,
-                contentDescription = "$text icon",
+                contentDescription = text,
                 modifier = Modifier.padding(end = 20.dp)
             )
 

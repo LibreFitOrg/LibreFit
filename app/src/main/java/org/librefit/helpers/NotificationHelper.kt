@@ -138,14 +138,14 @@ class NotificationHelper(context: Context) {
             builder
                 .addAction(
                     android.R.drawable.ic_media_play,
-                    appContext.getString(R.string.label_resume),
+                    appContext.getString(R.string.resume),
                     createWorkoutServiceIntent(WorkoutServiceActions.START_CHRONOMETER.string)
                 )
         } else {
             builder
                 .addAction(
                     R.drawable.ic_pause,
-                    appContext.getString(R.string.label_pause),
+                    appContext.getString(R.string.pause),
                     createWorkoutServiceIntent(WorkoutServiceActions.PAUSE_CHRONOMETER.string)
                 )
         }
@@ -157,7 +157,7 @@ class NotificationHelper(context: Context) {
                     appContext.getString(R.string.rest) + ": " + formatTime(restTime).substring(3)
                 )
                 .setContentText(
-                    appContext.getString(R.string.workout_time) + ": " + formatTime(
+                    appContext.getString(R.string.time) + ": " + formatTime(
                         timeInSeconds
                     )
                 )
@@ -180,7 +180,7 @@ class NotificationHelper(context: Context) {
         } else {
             builder
                 .setContentTitle(
-                    appContext.getString(R.string.workout_time) + ": " + formatTime(
+                    appContext.getString(R.string.time) + ": " + formatTime(
                         timeInSeconds
                     )
                 )

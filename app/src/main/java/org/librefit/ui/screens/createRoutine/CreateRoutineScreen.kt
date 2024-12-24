@@ -94,8 +94,8 @@ fun CreateRoutineScreen(
 
     if (showExitDialog) {
         ConfirmDialog(
-            title = stringResource(R.string.label_exit_dialog),
-            text = stringResource(id = R.string.label_exit_create_routine),
+            title = stringResource(R.string.exit_dialog),
+            text = stringResource(id = R.string.exit_create_routine),
             onConfirm = {
                 navController.popBackStack()
                 showExitDialog = false
@@ -105,7 +105,7 @@ fun CreateRoutineScreen(
     }
 
     CustomScaffold(
-        title = stringResource(id = R.string.label_create_routine),
+        title = stringResource(id = R.string.create_routine),
         navigateBack = {
             if (viewModel.isListEmpty()) {
                 navController.popBackStack()
@@ -127,7 +127,7 @@ fun CreateRoutineScreen(
         fabAction = {
             navController.navigate(Destination.AddExerciseScreen)
         },
-        fabDescription = stringResource(R.string.label_add_exercise)
+        fabDescription = stringResource(R.string.add_exercise)
     ) { innerPadding ->
         CreateRoutineScreen(
             innerPadding = innerPadding,
@@ -168,21 +168,21 @@ private fun CreateRoutineScreen(
                     if (viewModel.isTitleEmpty() || viewModel.isTitleTooLong()) {
                         Icon(
                             imageVector = Icons.Default.Warning,
-                            contentDescription = Icons.Default.Warning.name
+                            contentDescription = stringResource(R.string.warning)
                         )
                     }
                 },
                 isError = viewModel.isTitleEmpty() || viewModel.isTitleTooLong(),
-                label = { Text(text = stringResource(id = R.string.label_text_field_title)) },
+                label = { Text(text = stringResource(id = R.string.title)) },
                 colors = OutlinedTextFieldDefaults.colors(),
                 supportingText = {
                     when {
                         viewModel.isTitleTooLong() -> {
-                            Text(stringResource(R.string.error_title_length_exceeded))
+                            Text(stringResource(R.string.title_length_exceeded_30))
                         }
 
                         viewModel.isTitleEmpty() -> {
-                            Text(stringResource(R.string.error_title_empty))
+                            Text(stringResource(R.string.title_cannot_be_empty))
                         }
                     }
                 }
@@ -196,7 +196,7 @@ private fun CreateRoutineScreen(
                 ) {
                     AddIconLottie()
                     Text(
-                        text = stringResource(id = R.string.label_start_creating_routine),
+                        text = stringResource(id = R.string.start_creating_routine),
                         color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center
                     )

@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -91,47 +90,69 @@ fun ExerciseDetailModalBottomSheet(
 
             HorizontalDivider()
 
-            HeadlineText(text = stringResource(id = R.string.label_details))
+            HeadlineText(text = stringResource(id = R.string.details))
 
 
             if(exercise.force != null )
                 Text(
-                    formatDetails(stringResource( R.string.label_force), stringResource(exerciseEnumToStringId(exercise.force) )
+                    formatDetails(
+                        stringResource(R.string.force),
+                        stringResource(exerciseEnumToStringId(exercise.force))
                 )
             )
-            Text(text = formatDetails( stringResource( R.string.label_level), stringResource(exerciseEnumToStringId(exercise.level)) ) )
+            Text(
+                text = formatDetails(
+                    stringResource(R.string.level),
+                    stringResource(exerciseEnumToStringId(exercise.level))
+                )
+            )
             if(exercise.mechanic != null ) {
                 Text(
-                    formatDetails(stringResource( R.string.label_mechanic), stringResource(exerciseEnumToStringId(exercise.mechanic) ) )
+                    formatDetails(
+                        stringResource(R.string.mechanic),
+                        stringResource(exerciseEnumToStringId(exercise.mechanic))
+                    )
                 )
             }
             if(exercise.equipment != null ) {
                 Text(
-                    formatDetails(stringResource(R.string.label_equipment), stringResource(exerciseEnumToStringId(exercise.equipment)) )
+                    formatDetails(
+                        stringResource(R.string.equipment),
+                        stringResource(exerciseEnumToStringId(exercise.equipment))
+                    )
                 )
             }
             Text(
-                formatDetails(stringResource(R.string.label_category), stringResource(exerciseEnumToStringId(exercise.category)))
+                formatDetails(
+                    stringResource(R.string.category),
+                    stringResource(exerciseEnumToStringId(exercise.category))
+                )
             )
 
 
             if (exercise.primaryMuscles.isNotEmpty() || exercise.secondaryMuscles.isNotEmpty()){
                 HorizontalDivider()
-                HeadlineText(text = stringResource(id = R.string.label_muscles))
+                HeadlineText(text = stringResource(id = R.string.muscles))
             }
 
             if(exercise.primaryMuscles.isNotEmpty()){
-                MuscleContent(stringResource(id = R.string.label_primary_muscles), musclesList = exercise.primaryMuscles)
+                MuscleContent(
+                    stringResource(id = R.string.primary_muscles),
+                    musclesList = exercise.primaryMuscles
+                )
             }
 
 
             if(exercise.secondaryMuscles.isNotEmpty()){
-                MuscleContent(stringResource(id = R.string.label_secondary_muscles), musclesList = exercise.secondaryMuscles)
+                MuscleContent(
+                    stringResource(id = R.string.secondary_muscles),
+                    musclesList = exercise.secondaryMuscles
+                )
             }
             
             HorizontalDivider()
-            
-            HeadlineText(text = stringResource(id = R.string.label_instructions))
+
+            HeadlineText(text = stringResource(id = R.string.instructions))
 
             Text(text = exercise.instructions.mapIndexed{ index, instruction->
                     "${index+1}. $instruction"
@@ -151,7 +172,11 @@ private fun MuscleContent(title : String, musclesList: List<Muscle>) {
     LazyRow {
         items(musclesList){ muscle ->
             val vector = ImageVector.vectorResource(id = muscleToVectorId(muscle))
-            Image(imageVector = vector, contentDescription = null, modifier = Modifier.size(150.dp))
+            Image(
+                imageVector = vector,
+                contentDescription = stringResource(exerciseEnumToStringId(muscle)),
+                modifier = Modifier.size(150.dp)
+            )
         }
     }
 }
@@ -178,10 +203,10 @@ private fun AlternatingImages(exercise: ExerciseDC){
     currentBitmap?.let {
         Image(
             bitmap = it.asImageBitmap(),
-            contentDescription = null,
+            contentDescription = exercise.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
+                .clip(MaterialTheme.shapes.medium)
                 .fillMaxSize()
         )
     }

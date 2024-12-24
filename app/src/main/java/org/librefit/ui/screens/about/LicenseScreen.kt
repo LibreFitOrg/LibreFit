@@ -85,7 +85,7 @@ fun LicenseScreen(navigateBack: () -> Unit) {
                         showDialog = false
                     }
                 ) {
-                    Text(stringResource(R.string.label_open))
+                    Text(stringResource(R.string.open))
                 }
             },
             dismissButton = {
@@ -96,7 +96,7 @@ fun LicenseScreen(navigateBack: () -> Unit) {
                         showDialog = false
                     }
                 ) {
-                    Text(stringResource(R.string.label_copy))
+                    Text(stringResource(R.string.copy))
                 }
             },
             text = { Text(text = url) }
@@ -104,7 +104,7 @@ fun LicenseScreen(navigateBack: () -> Unit) {
     }
 
     CustomScaffold(
-        title = stringResource(id = R.string.label_license),
+        title = stringResource(id = R.string.license),
         navigateBack = navigateBack,
     ) { innerPadding ->
         Column(
@@ -112,7 +112,7 @@ fun LicenseScreen(navigateBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             CustomTextButton(
-                text = stringResource(R.string.label_view_gpl3_online),
+                text = stringResource(R.string.view_online_version),
                 icon = Icons.AutoMirrored.Default.ExitToApp,
                 onClick = { showDialog = true }
             )
