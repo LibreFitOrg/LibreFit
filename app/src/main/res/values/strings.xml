@@ -145,7 +145,7 @@
 
     <!--Info modal bottom sheet-->
     <string name="rest_time_desc">The rest time indicates the beginning of the rest timer. It starts counting down immediately after a set is completed. There\'s will be an alert when the rest period ends.</string>
-    <string name="type_of_set_desc">There are three types of set:\n\n1) Weight set: This involves lifting a specific weight for a designated number of repetitions. It is generally used for bodybuilding exercises.\n\n2) Repetition Set: This type is based on performing a certain number of repetitions without a specific weight, typically used for body weight exercises.\n\n3) Time set: This type is based on performing an exercise for a specific duration. It can be used to measure time execution.</string>
+    <string name="type_of_set_desc">There are three types of set:\n\n1) Weight set: This involves lifting a specific weight for a designated number of repetitions. It is generally used for bodybuilding exercises.\n\n2) Repetition set: This type is based on performing a certain number of repetitions without a specific weight, typically used for body weight exercises.\n\n3) Time set: This type is based on performing an exercise for a specific duration. It can be used to measure time execution.</string>
 
     <!--Exercise detail modal bottom sheet-->
     <string name="details">Details</string>

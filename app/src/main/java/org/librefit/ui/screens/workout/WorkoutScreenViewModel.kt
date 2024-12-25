@@ -263,7 +263,9 @@ class WorkoutScreenViewModel(
         }
         viewModelScope.launch(Dispatchers.Main) {
             WorkoutService.restTime.collect { newRestTime ->
-                restTime = newRestTime.coerceAtLeast(0)
+                if (restTime != newRestTime) {
+                    restTime = newRestTime.coerceAtLeast(0)
+                }
             }
         }
     }
@@ -303,4 +305,8 @@ class WorkoutScreenViewModel(
     fun getRestTimeProgress(): Float {
         return restTime.toFloat() / initialRestTime
     }
+
+
+    var setChronometerIsRunning = mutableStateOf(false)
+    var setWithRunningChronometer = mutableStateOf(Set())
 }

@@ -19,7 +19,6 @@
 
 package org.librefit.ui.components
 
-import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -42,6 +41,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
@@ -61,11 +61,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,11 +76,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.librefit.R
 import org.librefit.db.Set
 import org.librefit.enums.Category
@@ -85,7 +92,7 @@ import org.librefit.enums.Level
 import org.librefit.enums.SetMode
 import org.librefit.util.ExerciseDC
 import org.librefit.util.ExerciseWithSets
-import java.util.Locale
+import org.librefit.util.formatTime
 import kotlin.math.roundToInt
 import kotlin.text.ifEmpty
 import kotlin.text.toInt
@@ -112,6 +119,10 @@ import kotlin.text.toInt
  * [org.librefit.ui.screens.createRoutine.CreateRoutineScreenViewModel.updateExercise].
  * @param showInfo A lambda function executed when info icon next to "type of set" or "rest time" text
  * is clicked. The passed parameter is used by [InfoModalBottomSheet] to show the relevant information
+ * @param setChronometerIsRunning This should be passed only from the workout screen (so [workout]
+ * must be `true`). It allows only one set timer to be running at once.
+ * @param setWithRunningChronometer This should be passed only from the workout screen (so [workout]
+ * must be `true`). It allows only one set timer to be running at once.
  * @param workout A Boolean flag indicating whether a checkbox should be displayed next to each set.
  * This should be set to `true` when the card is used in [org.librefit.ui.screens.workout.WorkoutScreen];
  * otherwise, it should be `false`.
@@ -128,9 +139,11 @@ fun ExerciseCard(
     deleteSet: (Set) -> Unit,
     updateExercise: (String, Int) -> Unit,
     showInfo: (Int) -> Unit,
+    setChronometerIsRunning: MutableState<Boolean> = mutableStateOf(false),
+    setWithRunningChronometer: MutableState<Set> = mutableStateOf(Set()),
     workout: Boolean = false
 ) {
-    Log.d("ExerciseCard", "Recomposition of card id: " + exerciseWithSets.id)
+    val coroutineScope = rememberCoroutineScope()
 
     ElevatedCard(modifier) {
         Column(
@@ -348,15 +361,13 @@ fun ExerciseCard(
                 modifier = Modifier.height(animatedSetsColumnHeight.value)
             ) {
                 itemsIndexed(exerciseWithSets.sets) { i, set ->
+
                     key(set.id) {
-                        var timeValue by remember {
-                            mutableStateOf(
-                                set.elapsedTime.toString().padStart(4, '0')
-                            )
-                        }
+                        var timeValue by remember { mutableIntStateOf(set.elapsedTime) }
 
                         var repValue by remember { mutableStateOf(set.reps.toString()) }
                         var weightValue by remember { mutableStateOf(set.weight.toString()) }
+
                         var timeError by remember { mutableStateOf(false) }
                         var repError by remember { mutableStateOf(false) }
                         var weightError by remember { mutableStateOf(false) }
@@ -421,39 +432,81 @@ fun ExerciseCard(
                                 )
 
                                 if (exerciseWithSets.setMode == SetMode.TIME) {
-                                    //TODO: a play button to measure time in the text field below
-                                    //Time
-                                    OutlinedTextField(
-                                        modifier = Modifier.width(80.dp),
-                                        value = String.format(
-                                            Locale.getDefault(),
-                                            "%s:%s",
-                                            timeValue.substring(0, 2),
-                                            timeValue.substring(2, 4)
-                                        ),
-                                        onValueChange = { string ->
-                                            //It removes the double dots and the leading zeros
-                                            val value = string.filter { it != ':' }
-                                                .replace("^0+".toRegex(), "")
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        if (workout) {
+                                            IconButton(
+                                                enabled = !setChronometerIsRunning.value ||
+                                                        setWithRunningChronometer.value.id == set.id,
+                                                onClick = {
+                                                    if (setChronometerIsRunning.value) {
+                                                        setChronometerIsRunning.value = false
+                                                        setWithRunningChronometer.value = Set()
+                                                    } else {
+                                                        setChronometerIsRunning.value = true
+                                                        setWithRunningChronometer.value = set
 
-                                            if (value.all { it.isDigit() }) {
-                                                if (value.length > 4) {
-                                                    timeError = true
-                                                } else {
-                                                    timeError = false
-                                                    timeValue = value.padStart(4, '0')
-                                                    updateSet(
-                                                        set,
-                                                        timeValue.toInt(),
-                                                        2
-                                                    )
+                                                        coroutineScope.launch {
+                                                            val startTime =
+                                                                System.currentTimeMillis()
+
+                                                            val pastTime = timeValue
+
+                                                            while (setChronometerIsRunning.value) {
+                                                                val currentTime =
+                                                                    System.currentTimeMillis()
+
+                                                                timeValue =
+                                                                    (currentTime - startTime)
+                                                                        .toInt() / 1000 + pastTime
+
+                                                                updateSet(
+                                                                    set,
+                                                                    timeValue,
+                                                                    2
+                                                                )
+
+                                                                delay(1000)
+                                                            }
+                                                        }
+                                                    }
                                                 }
+                                            ) {
+                                                val running = setChronometerIsRunning.value ||
+                                                        setWithRunningChronometer.value.id == set.id
+                                                Icon(
+                                                    imageVector = if (!running) Icons.Default.PlayArrow
+                                                    else ImageVector.vectorResource(R.drawable.ic_pause),
+                                                    contentDescription = if (running)
+                                                        stringResource(R.string.resume) else
+                                                        stringResource(R.string.pause)
+                                                )
                                             }
-                                        },
-                                        singleLine = true,
-                                        isError = timeError,
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    )
+                                        }
+                                        //Time
+                                        OutlinedTextField(
+                                            modifier = Modifier.width(80.dp),
+                                            value = formatTime(timeValue).substring(3),
+                                            onValueChange = { string ->
+                                                val stringValue = string.filter { it != ':' }
+
+                                                val seconds = stringValue.toInt() % 100
+                                                val minutes = (stringValue.toInt() - seconds) / 100
+
+                                                timeValue = minutes * 60 + seconds
+
+                                                updateSet(
+                                                    set,
+                                                    timeValue,
+                                                    2
+                                                )
+
+
+                                            },
+                                            singleLine = true,
+                                            isError = timeError,
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        )
+                                    }
                                 } else {
                                     //Reps
                                     OutlinedTextField(
@@ -547,6 +600,8 @@ private fun setModeToStringId(setMode: SetMode): Int {
 @Preview
 @Composable
 private fun ExerciseCardPreview() {
+    val timerRunning = rememberSaveable { mutableStateOf(false) }
+    val set = rememberSaveable { mutableStateOf(Set()) }
     ExerciseCard(
         Modifier,
         ExerciseWithSets(
@@ -561,7 +616,8 @@ private fun ExerciseCardPreview() {
                 images = listOf("")
             ),
             setMode = SetMode.TIME,
-            sets = listOf(Set())
+            sets = listOf(Set(elapsedTime = 120)),
+            restTime = 120
         ),
         {},
         {},
@@ -570,6 +626,8 @@ private fun ExerciseCardPreview() {
         {},
         { i, j -> },
         {},
-        false
+        timerRunning,
+        set,
+        workout = true
     )
 }

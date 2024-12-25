@@ -35,10 +35,9 @@ import androidx.navigation.NavHostController
  * @param requestPermissionAgain Flag indicating whether to request permissions again (default is false).
  * @param navController The NavHostController used for navigation.
  *
- * If the user lacks [android.Manifest.permission.POST_NOTIFICATIONS] or
- * [android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS] and [requestPermissionAgain] is `true`,
- * the method navigates to the permission request screen. Otherwise, it navigates to the workout screen,
- * popping the permission request screen from the back stack if it exists.
+ * If the user lacks [android.Manifest.permission.POST_NOTIFICATIONS] and [requestPermissionAgain]
+ * is `true`,the method navigates to the permission request screen. Otherwise, it navigates to the
+ * workout screen, popping the permission request screen from the back stack if it exists.
  */
 fun checkPermissionsBeforeNavigateToWorkout(
     workoutId: Int = 0,

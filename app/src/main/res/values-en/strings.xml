@@ -121,7 +121,7 @@
     <string name="add_to_empty_workout">Start by adding an exercise to your workout</string>
     <string name="elapsed_time">Elapsed time</string>
     <string name="new_workout">New workout</string>
-    <string name="type_of_set_desc">There are three types of set:\n\n1) Weight set: This involves lifting a specific weight for a designated number of repetitions. It is generally used for bodybuilding exercises.\n\n2) Repetition Set: This type is based on performing a certain number of repetitions without a specific weight, typically used for body weight exercises.\n\n3) Time set: This type is based on performing an exercise for a specific duration. It can be used to measure time execution.</string>
+    <string name="type_of_set_desc">There are three types of set:\n\n1) Weight set: This involves lifting a specific weight for a designated number of repetitions. It is generally used for bodybuilding exercises.\n\n2) Repetition set: This type is based on performing a certain number of repetitions without a specific weight, typically used for body weight exercises.\n\n3) Time set: This type is based on performing an exercise for a specific duration. It can be used to measure time execution.</string>
     <string name="details">Details</string>
     <string name="force">Force</string>
     <string name="level">Level</string>

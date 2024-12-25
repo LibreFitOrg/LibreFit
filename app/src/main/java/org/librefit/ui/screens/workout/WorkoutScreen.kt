@@ -329,6 +329,8 @@ fun WorkoutScreen(
                                 )
                             },
                             showInfo = { infoMode = it },
+                            setChronometerIsRunning = viewModel.setChronometerIsRunning,
+                            setWithRunningChronometer = viewModel.setWithRunningChronometer,
                             workout = true
                         )
                     }

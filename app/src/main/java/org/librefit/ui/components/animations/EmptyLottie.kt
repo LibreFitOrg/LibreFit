@@ -47,33 +47,33 @@ fun EmptyLottie() {
 
     /*
     // Should be dark
-    val insideBoxColor = MaterialTheme.colorScheme.secondaryContainer.toArgb()
+    val insideBoxColor = Color.Black.toArgb()
 
     // Should be light
     val outerBoxColor = Color.LightGray.copy(alpha = 0.1f).toArgb()
 
     // Should be lighter than left side
-    val rightSideColor = MaterialTheme.colorScheme.onSurface.toArgb()
+    val rightSideColor = Color.LightGray.toArgb()
 
     // Should be darker than right side
-    val leftSideColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
+    val leftSideColor = Color.Gray.toArgb()
     */
 
     val dynamicProperties = rememberLottieDynamicProperties(
         rememberLottieDynamicProperty(
             property = LottieProperty.COLOR,
             value = flyColor,
-            keyPath = arrayOf("fly", "fly", "Group 1", "Fill 1") // Body fly
+            keyPath = arrayOf("ruoi", "ruoi", "Group 1", "Fill 1") // Body fly
         ),
         rememberLottieDynamicProperty(
             property = LottieProperty.STROKE_COLOR,
             value = flyColor,
-            keyPath = arrayOf("fly", "fly", "Group 2", "Stroke 1") // Wing fly
+            keyPath = arrayOf("ruoi", "ruoi", "Group 2", "Stroke 1") // Wing fly
         ),
         rememberLottieDynamicProperty(
             property = LottieProperty.STROKE_COLOR,
             value = flyColor,
-            keyPath = arrayOf("fly", "fly", "Group 3", "Stroke 1") // Wing fly
+            keyPath = arrayOf("ruoi", "ruoi", "Group 3", "Stroke 1") // Wing fly
         ),
         rememberLottieDynamicProperty(
             property = LottieProperty.STROKE_COLOR,
