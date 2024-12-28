@@ -25,6 +25,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
+import android.net.Uri
 import androidx.core.app.NotificationCompat
 import org.librefit.MainActivity
 import org.librefit.R
@@ -95,26 +97,42 @@ class NotificationHelper(context: Context) {
 
 
     private fun createNotificationChannels() {
-        notificationManager.createNotificationChannel(
-            NotificationChannel(
-                WORKOUT_CHANNEL_ID,
-                appContext.getString(R.string.workout_info_channel_title),
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = appContext.getString(R.string.workout_info_channel_desc)
-            }
+        val workoutChannel = NotificationChannel(
+            WORKOUT_CHANNEL_ID,
+            appContext.getString(R.string.workout_info_channel_title),
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = appContext.getString(R.string.workout_info_channel_desc)
+        }
+
+        workoutChannel.setSound(
+            Uri.parse("android.resource://${appContext.packageName}/raw/system_notification"),
+            AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build()
         )
 
+        notificationManager.createNotificationChannel(workoutChannel)
 
-        notificationManager.createNotificationChannel(
-            NotificationChannel(
-                TIMER_CHANNEL_ID,
-                appContext.getString(R.string.rest_timer_channel_title),
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = appContext.getString(R.string.rest_timer_channel_desc)
-            }
+
+        val timerChannel = NotificationChannel(
+            TIMER_CHANNEL_ID,
+            appContext.getString(R.string.rest_timer_channel_title),
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = appContext.getString(R.string.rest_timer_channel_desc)
+        }
+
+        timerChannel.setSound(
+            Uri.parse("android.resource://${appContext.packageName}/raw/alert_notification"),
+            AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
+                .build()
         )
+
+        notificationManager.createNotificationChannel(timerChannel)
     }
 
     fun createWorkoutNotification(): Notification {
