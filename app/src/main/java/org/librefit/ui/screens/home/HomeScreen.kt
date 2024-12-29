@@ -19,6 +19,7 @@
 
 package org.librefit.ui.screens.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,22 +33,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -58,10 +54,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.data.DataStoreManager
-import org.librefit.db.Workout
 import org.librefit.nav.Destination
 import org.librefit.nav.checkPermissionsBeforeNavigateToWorkout
-import org.librefit.ui.components.ConfirmDialog
 import org.librefit.ui.components.CustomTextButton
 
 @Composable
@@ -79,21 +73,7 @@ fun HomeScreen(
 
     val routineList by viewModel.routineList
 
-    var selectedRoutine by remember { mutableStateOf<Workout>(Workout()) }
 
-    var showConfirmDialog by remember { mutableStateOf(false) }
-
-    if (showConfirmDialog) {
-        ConfirmDialog(
-            title = stringResource(R.string.delete),
-            text = stringResource(id = R.string.confirm_delete),
-            onConfirm = {
-                viewModel.deleteRoutine(selectedRoutine)
-                showConfirmDialog = false
-            },
-            onDismiss = { showConfirmDialog = false }
-        )
-    }
 
     LazyColumn(
         modifier = Modifier
@@ -142,6 +122,10 @@ fun HomeScreen(
                 ElevatedCard(
                     modifier = Modifier
                         .padding(5.dp)
+                        .clip(CardDefaults.elevatedShape)
+                        .clickable {
+                            navController.navigate(Destination.InfoRoutineScreen(workoutId = routine.id))
+                        }
                 ) {
                     Column(
                         modifier = Modifier
@@ -151,35 +135,14 @@ fun HomeScreen(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
                                 text = routine.title,
-                                style = MaterialTheme.typography.headlineSmall,
+                                style = MaterialTheme.typography.headlineMedium,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f)
+                                overflow = TextOverflow.Ellipsis
                             )
-                            IconButton(
-                                onClick = {
-                                    //TODO: show exercises of routine
-                                },
-                                enabled = false
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Info,
-                                    contentDescription = stringResource(R.string.about)
-                                )
-                            }
-                            IconButton(onClick = {
-                                selectedRoutine = routine
-                                showConfirmDialog = true
-                            }) {
-                                Icon(
-                                    Icons.Default.Delete,
-                                    stringResource(R.string.delete)
-                                )
-                            }
                         }
                         CustomTextButton(
                             text = stringResource(R.string.start_routine),

@@ -37,6 +37,11 @@ sealed class Destination {
     object CreateRoutineScreen
 
     @Serializable
+    data class InfoRoutineScreen(
+        val workoutId: Int = 0
+    )
+
+    @Serializable
     object MainScreen
 
     @Serializable

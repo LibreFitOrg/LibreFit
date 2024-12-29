@@ -23,7 +23,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.librefit.MainApplication
 import org.librefit.db.Workout
@@ -44,9 +43,4 @@ class HomeScreenViewModel : ViewModel() {
         }
     }
 
-    fun deleteRoutine(workout: Workout){
-        viewModelScope.launch(Dispatchers.IO){
-            workoutDao.deleteWorkout(workout)
-        }
-    }
 }
