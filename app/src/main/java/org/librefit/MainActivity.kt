@@ -94,6 +94,7 @@ class MainActivity : AppCompatActivity() {
         val workoutService = Intent(this, WorkoutService::class.java).apply {
             action = WorkoutServiceActions.STOP_SERVICE.string
         }
+        startForegroundService(workoutService)
         stopService(workoutService)
     }
 }

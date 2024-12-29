@@ -21,6 +21,7 @@ package org.librefit.ui.screens.workout
 
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -31,12 +32,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.librefit.MainApplication
+import org.librefit.R
 import org.librefit.db.Set
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutServiceActions
 import org.librefit.services.WorkoutService
 import org.librefit.services.WorkoutService.Companion.EXTRA_ADD_TEN_SECONDS
 import org.librefit.services.WorkoutService.Companion.EXTRA_INITIAL_REST_TIME
+import org.librefit.services.WorkoutService.Companion.EXTRA_IS_FOCUSED
 import org.librefit.util.ExerciseDC
 import org.librefit.util.ExerciseWithSets
 import kotlin.random.Random
@@ -221,6 +224,7 @@ class WorkoutScreenViewModel(
     var restTime by mutableIntStateOf(0)
         private set
     private var initialRestTime = 1
+    private var isFocused = true
 
     private var appContext = context.applicationContext
 
@@ -258,6 +262,16 @@ class WorkoutScreenViewModel(
             WorkoutService.restTime.collect { newRestTime ->
                 if (restTime != newRestTime) {
                     restTime = newRestTime.coerceAtLeast(0)
+
+                    // When timer is over and screen is visible, it plays alert sound
+                    if (initialRestTime != 1 && restTime == 0 && isFocused) {
+                        val mediaPlayer = MediaPlayer.create(appContext, R.raw.alert_notification)
+                        mediaPlayer.setOnCompletionListener {
+                            it.release()
+                        }
+                        mediaPlayer.start()
+                        initialRestTime = 1
+                    }
                 }
             }
         }
@@ -275,6 +289,20 @@ class WorkoutScreenViewModel(
             action = WorkoutServiceActions.PAUSE_CHRONOMETER.string
         }
         appContext.startForegroundService(service)
+    }
+
+    /**
+     * It ensures that [WorkoutService] sends an alert notification only when the app is focused so
+     * so only when [isFocused] is `false`
+     */
+    fun updateFocus(isFocused: Boolean) {
+        this.isFocused = isFocused
+
+        val serviceIntent = workoutServiceIntent.apply {
+            action = WorkoutServiceActions.WORKOUT_FOCUS.string
+            putExtra(EXTRA_IS_FOCUSED, isFocused)
+        }
+        appContext.startForegroundService(serviceIntent)
     }
 
 

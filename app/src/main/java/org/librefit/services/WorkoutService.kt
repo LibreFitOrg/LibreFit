@@ -47,9 +47,11 @@ class WorkoutService : Service() {
 
         const val EXTRA_INITIAL_REST_TIME = "EXTRA_INITIAL_REST_TIME"
         const val EXTRA_ADD_TEN_SECONDS = "EXTRA_ADD_TEN_SECONDS"
+        const val EXTRA_IS_FOCUSED = "EXTRA_IS_FOCUSED"
     }
 
     private var initialRestTime = 0
+    private var isFocused = true
 
     override fun onCreate() {
         super.onCreate()
@@ -78,6 +80,9 @@ class WorkoutService : Service() {
             WorkoutServiceActions.MODIFY_REST_TIMER -> {
                 val addTenSeconds = intent?.getBooleanExtra(EXTRA_ADD_TEN_SECONDS, true) != false
                 modifyRestTimer(addTenSeconds)
+            }
+            WorkoutServiceActions.WORKOUT_FOCUS -> {
+                isFocused = intent?.getBooleanExtra(EXTRA_IS_FOCUSED, true) != false
             }
             WorkoutServiceActions.STOP_SERVICE -> stopService()
         }
@@ -146,7 +151,9 @@ class WorkoutService : Service() {
                 _restTime.value--
                 delay(1000)
             }
-            notificationHelper.notifyTimerIsOver()
+            if (!isFocused) {
+                notificationHelper.notifyTimerIsOver()
+            }
 
             initialRestTime = 0
         }

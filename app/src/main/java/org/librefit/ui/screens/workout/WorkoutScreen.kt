@@ -73,8 +73,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import org.librefit.R
@@ -326,6 +329,29 @@ fun WorkoutScreen(
             }
 
             item { Spacer(Modifier.height(100.dp)) }
+        }
+    }
+
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val lifecycleObserver = remember {
+        object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                viewModel.updateFocus(isFocused = true)
+            }
+
+            override fun onPause(owner: LifecycleOwner) {
+                viewModel.updateFocus(isFocused = false)
+            }
+        }
+    }
+
+    // Attach the observer to the lifecycle
+    DisposableEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
         }
     }
 }
