@@ -70,6 +70,8 @@
     <string name="exercises">Exercises</string>
     <string name="routine">Routine</string>
     <string name="creation_date">Creation date</string>
+    <string name="label_when">When</string>
+    <string name="select_date">Select date</string>
     <string name="start_creating_routine">Start by adding an exercise to your routine</string>
     <string name="exit_create_routine">Are you sure you want to exit? Your routine won\'t be saved</string>
     <string name="title">Title</string>
@@ -132,7 +134,7 @@
     <string name="elapsed_time">Elapsed time</string>
     <string name="new_workout">New workout</string>
     <string name="type_of_set_desc">There are three types of set:\n\n1) Weight set: This involves lifting a specific weight for a designated number of repetitions. It is generally used for bodybuilding exercises.\n\n2) Repetition set: This type is based on performing a certain number of repetitions without a specific weight, typically used for body weight exercises.\n\n3) Time set: This type is based on performing an exercise for a specific duration. It can be used to measure time execution.</string>
-    <string name="statistics_desc">- Time elapsed refers to the total duration of the workout session. This is the only metric editable by the user.\n\n- Volume is defined as the total amount of weight lifted during a workout, calculated by multiplying for each completed set the number of repetitions performed by the weight lifted. Higher volume is associated with greater muscle hypertrophy and strength gains over time.\n\n- Total sets refers to the cumulative number of sets planned for each exercise in a workout. A set is a group of consecutive repetitions performed without resting.\n\n- Completed sets indicates the number of sets that were successfully finished as planned.</string>
+    <string name="statistics_desc">- Time elapsed refers to the total duration of the workout session.\n\n- The date indicates when the workout was finished.\n\n- Volume is defined as the total amount of weight lifted during a workout, calculated by multiplying for each completed set the number of repetitions performed by the weight lifted. Higher volume is associated with greater muscle hypertrophy and strength gains over time.\n\n- Exercises represent the total count of exercises included in this workout.\n\n- Total sets refers to the cumulative number of sets planned for each exercise in a workout. A set is a group of consecutive repetitions performed without resting.\n\n- Completed sets indicates the number of sets that were finished as planned by the workout.</string>
     <string name="details">Details</string>
     <string name="force">Force</string>
     <string name="level">Level</string>

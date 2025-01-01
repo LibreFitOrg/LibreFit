@@ -28,6 +28,9 @@ import org.librefit.MainApplication
 import org.librefit.db.Workout
 import org.librefit.enums.SetMode
 import org.librefit.util.ExerciseWithSets
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -118,6 +121,25 @@ class BeforeSavingScreenViewModel : ViewModel() {
             workoutId = System.currentTimeMillis()
         )
         routine.value = Workout()
+    }
+
+    fun updateCompletedDate(selectedDateMillis: Long?) {
+        if (selectedDateMillis != null) {
+            workout.value = workout.value.copy(
+                completed = LocalDateTime.ofInstant(
+                    Instant.ofEpochMilli(selectedDateMillis),
+                    ZoneId.systemDefault()
+                )
+            )
+        }
+    }
+
+    fun getCompletedDate(): String {
+        return workout.value.completed.format(
+            DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(
+                Locale.getDefault()
+            )
+        )
     }
 
 

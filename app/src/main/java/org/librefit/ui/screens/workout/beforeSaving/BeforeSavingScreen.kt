@@ -29,16 +29,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -63,6 +69,7 @@ import org.librefit.ui.components.InfoModalBottomSheet
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.util.formatTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BeforeSavingScreen(
     sharedViewModel: SharedViewModel,
@@ -95,6 +102,33 @@ fun BeforeSavingScreen(
 
     if (infoMode != InfoMode.DISMISS) {
         InfoModalBottomSheet(infoMode) { infoMode = InfoMode.DISMISS }
+    }
+
+
+    val datePickerState = rememberDatePickerState()
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    if (showDatePicker == true) {
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.updateCompletedDate(datePickerState.selectedDateMillis)
+                        showDatePicker = false
+                    }
+                ) {
+                    Text(stringResource(R.string.ok_dialog))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
     }
 
 
@@ -205,12 +239,42 @@ fun BeforeSavingScreen(
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
-                    //TODO: add date picker to change completed date
+                    OutlinedTextField(
+                        modifier = Modifier.weight(0.5f),
+                        value = viewModel.getCompletedDate(),
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.label_when)) },
+                        readOnly = true,
+                        trailingIcon = {
+                            IconButton(onClick = { showDatePicker = !showDatePicker }) {
+                                Icon(
+                                    imageVector = Icons.Default.DateRange,
+                                    contentDescription = stringResource(R.string.select_date)
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
                     OutlinedTextField(
                         modifier = Modifier.weight(0.5f),
                         value = viewModel.getVolumeExercises(),
                         label = { Text(stringResource(R.string.volume)) },
                         suffix = { Text(stringResource(R.string.kg)) },
+                        onValueChange = {},
+                        readOnly = true,
+                        singleLine = true,
+                    )
+                    OutlinedTextField(
+                        modifier = Modifier.weight(0.5f),
+                        value = "${viewModel.getExercises().size}",
+                        label = { Text(stringResource(R.string.exercises)) },
                         onValueChange = {},
                         readOnly = true,
                         singleLine = true,
