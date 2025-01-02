@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. LibreFit
+ * Copyright (c) 2024-2025. LibreFit
  *
  * This file is part of LibreFit
  *
@@ -20,18 +20,25 @@
 package org.librefit
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
+import org.librefit.data.ExerciseDeserializer
 import org.librefit.db.WorkoutDatabase
 import org.librefit.helpers.NotificationHelper
+import org.librefit.util.ExerciseDC
 
 class MainApplication : Application() {
     companion object{
         lateinit var workoutDatabase: WorkoutDatabase
         lateinit var notificationHelper: NotificationHelper
+        lateinit var exercisesList: List<ExerciseDC>
     }
 
     override fun onCreate() {
         super.onCreate()
+
         workoutDatabase = Room.databaseBuilder(
             applicationContext,
             WorkoutDatabase::class.java,
@@ -39,5 +46,20 @@ class MainApplication : Application() {
         ).build()
 
         notificationHelper = NotificationHelper(this)
+
+        exercisesList = loadExercisesFromRaw(this)
+    }
+
+    private fun loadExercisesFromRaw(context: Context): List<ExerciseDC> {
+        val inputStream = context.resources.openRawResource(R.raw.exercises)
+
+        return inputStream.bufferedReader().use { reader ->
+            val gson = GsonBuilder()
+                .registerTypeAdapter(ExerciseDC::class.java, ExerciseDeserializer())
+                .create()
+            val listType = object : TypeToken<List<ExerciseDC>>() {}.type
+
+            gson.fromJson(reader, listType)
+        }
     }
 }

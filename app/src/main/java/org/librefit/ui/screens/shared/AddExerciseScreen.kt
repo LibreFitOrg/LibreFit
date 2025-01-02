@@ -65,10 +65,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
+import org.librefit.MainApplication
 import org.librefit.R
-import org.librefit.enums.Category
-import org.librefit.enums.Equipment
-import org.librefit.enums.Level
 import org.librefit.ui.components.ConfirmDialog
 import org.librefit.ui.components.CustomScaffold
 import org.librefit.ui.components.ExerciseDetailModalBottomSheet
@@ -81,7 +79,6 @@ import org.librefit.util.exerciseEnumToStringId
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExerciseScreen(
-    exerciseList: List<ExerciseDC>,
     navigateBack: () -> Unit,
     viewModel: SharedViewModel
 ) {
@@ -128,7 +125,6 @@ fun AddExerciseScreen(
     ) { innerPadding ->
         AddExerciseScreenContent(
             innerPadding = innerPadding,
-            exerciseList = exerciseList,
             selectedExercisesList = selectedExercisesList,
             viewModel = viewModel,
             listState = lazyListState
@@ -139,11 +135,11 @@ fun AddExerciseScreen(
 @Composable
 private fun AddExerciseScreenContent(
     innerPadding: PaddingValues,
-    exerciseList: List<ExerciseDC>,
     selectedExercisesList: MutableList<ExerciseDC>,
     viewModel: SharedViewModel,
     listState: LazyListState
 ) {
+    val exerciseList = MainApplication.exercisesList
     // It deletes previous filters applied each time screen recomposes
     LaunchedEffect(Unit) {
         viewModel.cleanFilter()
@@ -318,18 +314,7 @@ private fun AddExerciseScreenContent(
 @Composable
 private fun AddExerciseScreenPreview() {
     AddExerciseScreen(
-        listOf(
-            ExerciseDC(
-                "0", "Sample",
-                level = Level.INTERMEDIATE,
-                equipment = Equipment.EXERCISE_BALL,
-                primaryMuscles = emptyList(),
-                secondaryMuscles = emptyList(),
-                instructions = emptyList(),
-                category = Category.POWERLIFTING,
-                images = emptyList()
-            )
-        ), {},
+        {},
         viewModel()
     )
 }

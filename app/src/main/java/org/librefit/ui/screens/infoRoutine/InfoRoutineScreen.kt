@@ -66,7 +66,6 @@ import org.librefit.util.formatTime
 fun InfoRoutineScreen(
     workoutId: Int = 0,
     workoutTitle: String = "",
-    list: List<ExerciseDC>,
     navController: NavHostController
 ) {
     /*
@@ -80,7 +79,7 @@ fun InfoRoutineScreen(
                     "Unknown ViewModel class"
                 }
                 @Suppress("UNCHECKED_CAST")
-                return InfoRoutineScreenViewModel(workoutId, list) as T
+                return InfoRoutineScreenViewModel(workoutId) as T
             }
         }
     )
@@ -280,7 +279,6 @@ fun InfoRoutineScreen(
 @Composable
 private fun InfoRoutineScreenPreview() {
     InfoRoutineScreen(
-        list = listOf(),
         navController = rememberNavController()
     )
 }

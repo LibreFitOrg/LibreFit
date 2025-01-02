@@ -40,13 +40,11 @@ import org.librefit.services.WorkoutService
 import org.librefit.services.WorkoutService.Companion.EXTRA_ADD_TEN_SECONDS
 import org.librefit.services.WorkoutService.Companion.EXTRA_INITIAL_REST_TIME
 import org.librefit.services.WorkoutService.Companion.EXTRA_IS_FOCUSED
-import org.librefit.util.ExerciseDC
 import org.librefit.util.ExerciseWithSets
 import kotlin.random.Random
 
 class WorkoutScreenViewModel(
-    workoutId: Int,
-    private val list: List<ExerciseDC>,
+    private val workoutId: Int,
     context: Context
 ) : ViewModel() {
     val exercises = mutableStateListOf<ExerciseWithSets>()
@@ -181,38 +179,28 @@ class WorkoutScreenViewModel(
     private val workoutDao = MainApplication.workoutDatabase.getWorkoutDao()
 
     init {
-        getExercisesFromWorkout(workoutId)
+        getExercisesFromDB()
     }
 
-    private fun getExercisesFromWorkout(workoutId: Int) {
+    private fun getExercisesFromDB() {
         viewModelScope.launch(Dispatchers.IO) {
             val exercises = workoutDao.getExercisesFromWorkout(workoutId)
             exercises.forEach { exercise ->
-                val exerciseDC = list.associateBy { it.id }[exercise.exerciseId]
+                val exerciseDC =
+                    MainApplication.exercisesList.associateBy { it.id }[exercise.exerciseId]
                 if (exerciseDC != null) {
                     addExerciseWithSets(
                         ExerciseWithSets(
                             exerciseDC = exerciseDC,
                             exerciseId = exercise.id,
                             note = exercise.notes,
+                            sets = workoutDao.getSetsFromExercise(exercise.id),
                             setMode = exercise.setMode,
                             restTime = exercise.restTime
                         )
                     )
-
-                    getSetsFromExercise(exercise.id)
                 }
             }
-        }
-    }
-
-    private fun getSetsFromExercise(exerciseId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val sets = workoutDao.getSetsFromExercise(exerciseId)
-            //TODO: fix crash ConcurrentModificationException
-            val exercise = exercises.find { it.exerciseId == exerciseId }!!
-            val index = exercises.indexOf(exercise)
-            exercises[index] = exercise.copy(sets = sets.map { it.copy(id = Random.nextInt()) })
         }
     }
 

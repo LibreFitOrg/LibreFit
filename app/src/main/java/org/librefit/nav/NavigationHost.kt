@@ -43,10 +43,9 @@ import org.librefit.ui.screens.shared.SuccessScreen
 import org.librefit.ui.screens.workout.RequestPermissionsScreen
 import org.librefit.ui.screens.workout.WorkoutScreen
 import org.librefit.ui.screens.workout.beforeSaving.BeforeSavingScreen
-import org.librefit.util.ExerciseDC
 
 @Composable
-fun NavigationHost(exerciseList: List<ExerciseDC>, userPreferences: DataStoreManager) {
+fun NavigationHost(userPreferences: DataStoreManager) {
 
     val navController = rememberNavController()
 
@@ -66,7 +65,6 @@ fun NavigationHost(exerciseList: List<ExerciseDC>, userPreferences: DataStoreMan
         }
         composable<Destination.AddExerciseScreen> {
             AddExerciseScreen(
-                exerciseList = exerciseList,
                 navigateBack = { navController.popBackStack() },
                 viewModel = sharedViewModel
             )
@@ -87,7 +85,6 @@ fun NavigationHost(exerciseList: List<ExerciseDC>, userPreferences: DataStoreMan
             InfoRoutineScreen(
                 workoutId = it.toRoute<Destination.InfoRoutineScreen>().workoutId,
                 workoutTitle = it.toRoute<Destination.InfoRoutineScreen>().workoutTitle,
-                list = exerciseList,
                 navController = navController
             )
         }
@@ -126,7 +123,6 @@ fun NavigationHost(exerciseList: List<ExerciseDC>, userPreferences: DataStoreMan
                 workoutId = it.toRoute<Destination.WorkoutScreen>().workoutId,
                 workoutTitle = it.toRoute<Destination.WorkoutScreen>().workoutTitle,
                 navController = navController,
-                list = exerciseList,
                 sharedViewModel = sharedViewModel
             )
         }

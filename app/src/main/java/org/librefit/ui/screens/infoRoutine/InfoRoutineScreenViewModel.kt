@@ -28,7 +28,6 @@ import kotlinx.coroutines.launch
 import org.librefit.MainApplication
 import org.librefit.db.Workout
 import org.librefit.enums.SetMode
-import org.librefit.util.ExerciseDC
 import org.librefit.util.ExerciseWithSets
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -36,8 +35,7 @@ import java.util.Locale
 import kotlin.random.Random
 
 class InfoRoutineScreenViewModel(
-    workoutId: Int,
-    private val list: List<ExerciseDC>
+    private val workoutId: Int
 ) : ViewModel() {
     private val routine = mutableStateOf(Workout())
 
@@ -108,44 +106,36 @@ class InfoRoutineScreenViewModel(
     private val workoutDao = MainApplication.workoutDatabase.getWorkoutDao()
 
     init {
-        getExercisesFromWorkout(workoutId)
-        getRoutineFromDB(workoutId)
+        getExercisesFromDB()
+        getRoutineFromDB()
     }
 
-    private fun getExercisesFromWorkout(workoutId: Int) {
+    private fun getExercisesFromDB() {
         viewModelScope.launch(Dispatchers.IO) {
             val exercises = workoutDao.getExercisesFromWorkout(workoutId)
             exercises.forEach { exercise ->
-                val exerciseDC = list.associateBy { it.id }[exercise.exerciseId]
+                val exerciseDC =
+                    MainApplication.exercisesList.associateBy { it.id }[exercise.exerciseId]
                 if (exerciseDC != null) {
                     addExerciseWithSets(
                         ExerciseWithSets(
                             exerciseDC = exerciseDC,
                             exerciseId = exercise.id,
                             note = exercise.notes,
+                            sets = workoutDao.getSetsFromExercise(exercise.id),
                             setMode = exercise.setMode,
                             restTime = exercise.restTime
                         )
                     )
-
-                    getSetsFromExercise(exercise.id)
                 }
             }
         }
     }
 
-    private fun getSetsFromExercise(exerciseId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val sets = workoutDao.getSetsFromExercise(exerciseId)
-            val exercise = exercises.find { it.exerciseId == exerciseId }!!
-            val index = exercises.indexOf(exercise)
-            exercises[index] = exercise.copy(sets = sets.map { it.copy(id = Random.nextInt()) })
-        }
-    }
 
-    private fun getRoutineFromDB(id: Int) {
+    private fun getRoutineFromDB() {
         viewModelScope.launch(Dispatchers.IO) {
-            routine.value = workoutDao.getWorkout(id)
+            routine.value = workoutDao.getWorkout(workoutId)
         }
     }
 

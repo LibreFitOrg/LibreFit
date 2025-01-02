@@ -57,7 +57,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -96,14 +95,12 @@ import org.librefit.util.formatTime
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Stable
 @Composable
 fun WorkoutScreen(
     userPreferences: DataStoreManager,
     workoutId: Int = 0,
     workoutTitle: String,
     navController: NavHostController,
-    list: List<ExerciseDC>,
     sharedViewModel: SharedViewModel
 ) {
     val context = LocalContext.current
@@ -118,7 +115,7 @@ fun WorkoutScreen(
                     "Unknown ViewModel class"
                 }
                 @Suppress("UNCHECKED_CAST")
-                return WorkoutScreenViewModel(workoutId, list, context) as T
+                return WorkoutScreenViewModel(workoutId, context) as T
             }
         }
     )
