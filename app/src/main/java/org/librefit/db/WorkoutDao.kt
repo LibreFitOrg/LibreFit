@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. LibreFit
+ * Copyright (c) 2024-2025. LibreFit
  *
  * This file is part of LibreFit
  *
@@ -66,9 +66,9 @@ interface WorkoutDao {
     @Transaction
     suspend fun addWorkoutWithExercises(workout: Workout, exercises: List<ExerciseWithSets>) {
         val workoutId = if (workout.routine) {
-            addWorkout(workout.copy(completed = LocalDateTime.now())).toInt()
+            addWorkout(workout.copy(id = 0, completed = LocalDateTime.now())).toInt()
         } else {
-            addWorkout(workout.copy(created = LocalDateTime.now())).toInt()
+            addWorkout(workout.copy(id = 0, created = LocalDateTime.now())).toInt()
         }
         exercises.forEach {
             val exerciseId = addExercise(
@@ -81,7 +81,12 @@ interface WorkoutDao {
                 )
             )
             it.sets.forEach { set ->
-                addSet(set.copy(exerciseId = exerciseId.toInt()))
+                addSet(
+                    set.copy(
+                        id = 0,
+                        exerciseId = exerciseId.toInt()
+                    )
+                )
             }
         }
     }

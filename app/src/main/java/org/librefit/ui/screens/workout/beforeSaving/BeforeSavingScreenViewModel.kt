@@ -174,7 +174,7 @@ class BeforeSavingScreenViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             workoutDao.addWorkoutWithExercises(
-                workout = workout.value.copy(id = 0),
+                workout = workout.value,
                 exercises = list
             )
         }
