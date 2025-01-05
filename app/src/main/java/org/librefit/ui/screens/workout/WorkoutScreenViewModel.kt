@@ -31,7 +31,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.librefit.MainApplication
 import org.librefit.R
 import org.librefit.db.Set
 import org.librefit.enums.SetMode
@@ -44,10 +43,18 @@ import org.librefit.util.ExerciseWithSets
 import kotlin.random.Random
 
 class WorkoutScreenViewModel(
-    private val workoutId: Int,
+    //TODO: dependency injection using hilt
     context: Context
 ) : ViewModel() {
+    var initialized = false
     val exercises = mutableStateListOf<ExerciseWithSets>()
+
+    fun initializeExercises(newExercises: List<ExerciseWithSets>) {
+        if (!initialized) {
+            exercises.addAll(newExercises)
+            initialized = true
+        }
+    }
 
     fun getExercises(): List<ExerciseWithSets> {
         return exercises.toList()
@@ -176,36 +183,6 @@ class WorkoutScreenViewModel(
     }
 
 
-    private val workoutDao = MainApplication.workoutDatabase.getWorkoutDao()
-
-    init {
-        getExercisesFromDB()
-    }
-
-    private fun getExercisesFromDB() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val exercises = workoutDao.getExercisesFromWorkout(workoutId)
-            exercises.forEach { exercise ->
-                val exerciseDC =
-                    MainApplication.exercisesList.associateBy { it.id }[exercise.exerciseId]
-                if (exerciseDC != null) {
-                    addExerciseWithSets(
-                        ExerciseWithSets(
-                            exerciseDC = exerciseDC,
-                            exerciseId = exercise.id,
-                            note = exercise.notes,
-                            sets = workoutDao.getSetsFromExercise(exercise.id),
-                            setMode = exercise.setMode,
-                            restTime = exercise.restTime
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-
-
     var timeElapsed by mutableIntStateOf(0)
         private set
     var isChronometerPaused by mutableStateOf(true)
@@ -217,6 +194,7 @@ class WorkoutScreenViewModel(
 
     private var appContext = context.applicationContext
 
+    //TODO: intents should be handled by activities, not by view models
     val workoutServiceIntent = Intent(appContext, WorkoutService::class.java)
 
 

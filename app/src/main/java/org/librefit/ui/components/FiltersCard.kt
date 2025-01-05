@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. LibreFit
+ * Copyright (c) 2024-2025. LibreFit
  *
  * This file is part of LibreFit
  *
@@ -81,6 +81,7 @@ fun FiltersCard(
     isFilterExpanded: MutableState<Boolean>,
     viewModel: SharedViewModel
 ) {
+    //TODO: move FiltersCard to ExercisesScreen and remove method from SharedViewModel
     var iconRotation by rememberSaveable { mutableFloatStateOf(0f) }
 
     OutlinedCard(

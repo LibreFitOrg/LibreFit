@@ -77,8 +77,9 @@ fun BeforeSavingScreen(
     val viewModel: BeforeSavingScreenViewModel = viewModel()
 
     LaunchedEffect(Unit) {
-        viewModel.savePassedWorkout(sharedViewModel.getPassedWorkout())
+        viewModel.initializeWorkout(sharedViewModel.getPassedWorkout())
         viewModel.initializeExercises(sharedViewModel.getPassedExercises())
+        viewModel.initializeRoutine(sharedViewModel.getPassedRoutine())
     }
 
 

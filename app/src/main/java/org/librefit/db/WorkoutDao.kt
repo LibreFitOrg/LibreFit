@@ -24,6 +24,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import org.librefit.util.ExerciseWithSets
 import java.time.LocalDateTime
@@ -41,6 +42,9 @@ interface WorkoutDao {
 
     @Insert
     fun addWorkout(workout: Workout) : Long
+
+    @Update
+    fun updateWorkout(workout: Workout)
 
     @Delete
     fun deleteWorkout(workout: Workout)

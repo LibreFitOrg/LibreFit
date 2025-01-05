@@ -52,6 +52,7 @@ import org.librefit.nav.Destination
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.animations.EmptyLottie
 import org.librefit.ui.components.bottomMargin
+import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.util.formatTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -59,8 +60,9 @@ import java.util.Locale
 
 @Composable
 fun ProfileScreen(
+    innerPadding: PaddingValues,
     navController: NavHostController,
-    innerPadding: PaddingValues
+    sharedViewModel: SharedViewModel
 ) {
 
     val viewModel: ProfileScreenViewModel = viewModel()
@@ -132,12 +134,8 @@ fun ProfileScreen(
                         }
                         IconButton(
                             onClick = {
-                                navController.navigate(
-                                    Destination.InfoRoutineScreen(
-                                        workoutId = workout.id,
-                                        workoutTitle = workout.title
-                                    )
-                                )
+                                sharedViewModel.updateWorkoutId(workout.id)
+                                navController.navigate(Destination.InfoRoutineScreen)
                             },
                         ) {
                             Icon(Icons.Default.Info, stringResource(R.string.about))
@@ -156,6 +154,7 @@ fun ProfileScreen(
 private fun ProfileScreenPreview() {
     ProfileScreen(
         navController = rememberNavController(),
-        innerPadding = PaddingValues(20.dp)
+        innerPadding = PaddingValues(20.dp),
+        sharedViewModel = viewModel()
     )
 }

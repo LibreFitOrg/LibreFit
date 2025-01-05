@@ -83,15 +83,15 @@ fun NavigationHost(userPreferences: DataStoreManager) {
         }
         composable<Destination.InfoRoutineScreen> {
             InfoWorkoutScreen(
-                workoutId = it.toRoute<Destination.InfoRoutineScreen>().workoutId,
-                workoutTitle = it.toRoute<Destination.InfoRoutineScreen>().workoutTitle,
+                sharedViewModel = sharedViewModel,
                 navController = navController
             )
         }
         composable<Destination.MainScreen> {
             MainScreen(
                 navController = navController,
-                userPreferences = userPreferences
+                userPreferences = userPreferences,
+                sharedViewModel = sharedViewModel
             )
         }
         composable<Destination.LicenseScreen> {
@@ -100,8 +100,6 @@ fun NavigationHost(userPreferences: DataStoreManager) {
         composable<Destination.RequestPermissionsScreen> {
             RequestPermissionsScreen(
                 userPreferences = userPreferences,
-                workoutId = it.toRoute<Destination.RequestPermissionsScreen>().workoutId,
-                workoutTitle = it.toRoute<Destination.RequestPermissionsScreen>().workoutTitle,
                 navController = navController
             )
         }
@@ -120,8 +118,6 @@ fun NavigationHost(userPreferences: DataStoreManager) {
         composable<Destination.WorkoutScreen> {
             WorkoutScreen(
                 userPreferences = userPreferences,
-                workoutId = it.toRoute<Destination.WorkoutScreen>().workoutId,
-                workoutTitle = it.toRoute<Destination.WorkoutScreen>().workoutTitle,
                 navController = navController,
                 sharedViewModel = sharedViewModel
             )

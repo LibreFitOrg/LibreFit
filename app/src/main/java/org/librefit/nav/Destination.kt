@@ -37,19 +37,13 @@ sealed class Destination {
     object ExercisesScreen
 
     @Serializable
-    data class InfoRoutineScreen(
-        val workoutId: Int = 0,
-        val workoutTitle: String = ""
-    )
+    object InfoRoutineScreen
 
     @Serializable
     object MainScreen
 
     @Serializable
-    data class RequestPermissionsScreen(
-        val workoutId: Int = 0,
-        val workoutTitle: String = ""
-    )
+    object RequestPermissionsScreen
 
     @Serializable
     object LicenseScreen
@@ -63,8 +57,5 @@ sealed class Destination {
     )
 
     @Serializable
-    data class WorkoutScreen(
-        val workoutId: Int = 0,
-        val workoutTitle: String = ""
-    )
+    object WorkoutScreen
 }

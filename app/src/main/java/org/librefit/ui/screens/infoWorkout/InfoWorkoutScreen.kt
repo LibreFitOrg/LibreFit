@@ -41,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,8 +52,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -63,31 +62,27 @@ import org.librefit.ui.components.CustomScaffold
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.modalBottomSheets.ExerciseDetailModalBottomSheet
+import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.util.ExerciseDC
 import org.librefit.util.formatDetails
 import org.librefit.util.formatTime
 
 @Composable
 fun InfoWorkoutScreen(
-    workoutId: Int = 0,
-    workoutTitle: String = "",
+    sharedViewModel: SharedViewModel,
     navController: NavHostController
 ) {
     /*
     This will pass "workoutId" to the view model so it can load and link
     exercises from db just one time (in initialization)
      */
-    val viewModel: InfoWorkoutScreenViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                require(modelClass == InfoWorkoutScreenViewModel::class.java) {
-                    "Unknown ViewModel class"
-                }
-                @Suppress("UNCHECKED_CAST")
-                return InfoWorkoutScreenViewModel(workoutId) as T
-            }
-        }
-    )
+    val viewModel: InfoWorkoutScreenViewModel = viewModel()
+
+    LaunchedEffect(Unit) {
+        viewModel.initializeWorkout(sharedViewModel.getPassedWorkout())
+        viewModel.initializeExercises(sharedViewModel.getPassedExercises())
+        viewModel.initializeRoutine(sharedViewModel.getPassedRoutine())
+    }
 
 
     var showConfirmDialog by remember { mutableStateOf(false) }
@@ -129,7 +124,7 @@ fun InfoWorkoutScreen(
     var isModalSheetOpen by remember { mutableStateOf(false) }
 
     CustomScaffold(
-        title = workoutTitle,
+        title = viewModel.getWorkoutTitle(),
         navigateBack = { navController.popBackStack() },
         actions = listOf(
             {
@@ -252,7 +247,7 @@ fun InfoWorkoutScreen(
 
 
             item { HeadlineText(stringResource(R.string.exercises)) }
-            items(viewModel.getExercises()) { exercise ->
+            items(viewModel.exercises) { exercise ->
                 ElevatedCard {
                     Column(
                         modifier = Modifier
@@ -377,6 +372,7 @@ fun InfoWorkoutScreen(
 @Composable
 private fun InfoRoutineScreenPreview() {
     InfoWorkoutScreen(
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        sharedViewModel = viewModel()
     )
 }

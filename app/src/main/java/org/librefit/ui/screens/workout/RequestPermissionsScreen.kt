@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. LibreFit
+ * Copyright (c) 2024-2025. LibreFit
  *
  * This file is part of LibreFit
  *
@@ -20,7 +20,6 @@
 package org.librefit.ui.screens.workout
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -58,13 +57,11 @@ import org.librefit.nav.checkPermissionsBeforeNavigateToWorkout
 import org.librefit.ui.components.CustomScaffold
 import org.librefit.ui.components.animations.PreferencesLottie
 
-@SuppressLint("BatteryLife")
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RequestPermissionsScreen(
     userPreferences: DataStoreManager,
-    workoutId: Int = 0,
-    workoutTitle: String,
     navController: NavHostController
 ) {
 
@@ -194,8 +191,6 @@ fun RequestPermissionsScreen(
                                 )
                             }
                             checkPermissionsBeforeNavigateToWorkout(
-                                workoutId = workoutId,
-                                title = workoutTitle,
                                 navController = navController,
                                 appContext = context.applicationContext
                             )
@@ -212,8 +207,6 @@ fun RequestPermissionsScreen(
                         colors = ButtonDefaults.buttonColors(),
                         onClick = {
                             checkPermissionsBeforeNavigateToWorkout(
-                                workoutId = workoutId,
-                                title = workoutTitle,
                                 navController = navController,
                                 appContext = context.applicationContext
                             )
@@ -235,7 +228,6 @@ fun RequestPermissionsScreen(
 private fun RequestPermissionsScreenPreview() {
     RequestPermissionsScreen(
         DataStoreManager(LocalContext.current),
-        workoutTitle = "",
         navController = rememberNavController()
     )
 }

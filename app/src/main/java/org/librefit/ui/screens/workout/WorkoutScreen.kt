@@ -79,7 +79,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import org.librefit.R
 import org.librefit.data.DataStoreManager
-import org.librefit.db.Workout
 import org.librefit.enums.InfoMode
 import org.librefit.nav.Destination
 import org.librefit.ui.components.ConfirmDialog
@@ -98,8 +97,6 @@ import java.time.LocalDateTime
 @Composable
 fun WorkoutScreen(
     userPreferences: DataStoreManager,
-    workoutId: Int = 0,
-    workoutTitle: String,
     navController: NavHostController,
     sharedViewModel: SharedViewModel
 ) {
@@ -115,14 +112,17 @@ fun WorkoutScreen(
                     "Unknown ViewModel class"
                 }
                 @Suppress("UNCHECKED_CAST")
-                return WorkoutScreenViewModel(workoutId, context) as T
+                return WorkoutScreenViewModel(context) as T
             }
         }
     )
 
 
-    //It adds the selected exercises from AddExerciseScreen
     LaunchedEffect(Unit) {
+        //It retrieves data from DB
+        viewModel.initializeExercises(sharedViewModel.getPassedExercises())
+
+        //It adds the selected exercises from AddExerciseScreen
         sharedViewModel.getSelectedExercisesList().forEach { exerciseDC ->
             viewModel.addExerciseWithSets(
                 ExerciseWithSets(
@@ -220,13 +220,12 @@ fun WorkoutScreen(
                     Button(
                         onClick = {
                             sharedViewModel.setPassedData(
-                                workout = Workout(
-                                    id = workoutId,
-                                    title = workoutTitle,
+                                workout = sharedViewModel.getPassedWorkout().copy(
                                     timeElapsed = viewModel.timeElapsed,
-                                    completed = LocalDateTime.now()
+                                    completed = LocalDateTime.now(),
+                                    routine = false
                                 ),
-                                exercises = viewModel.getExercises()
+                                exercises = viewModel.getExercises(),
                             )
                             navController.navigate(Destination.BeforeSavingScreen)
                         },

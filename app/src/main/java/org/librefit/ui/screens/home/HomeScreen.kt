@@ -60,12 +60,14 @@ import org.librefit.nav.checkPermissionsBeforeNavigateToWorkout
 import org.librefit.ui.components.CustomTextButton
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.bottomMargin
+import org.librefit.ui.screens.shared.SharedViewModel
 
 @Composable
 fun HomeScreen(
     innerPadding: PaddingValues,
     navController: NavHostController,
-    userPreferences: DataStoreManager
+    userPreferences: DataStoreManager,
+    sharedViewModel: SharedViewModel,
 ) {
     val viewModel: HomeScreenViewModel = viewModel()
 
@@ -96,6 +98,7 @@ fun HomeScreen(
                     checkPermissionsBeforeNavigateToWorkout(
                         requestPermissionAgain = requestPermissionAgain.value,
                         navController = navController,
+                        sharedViewModel = sharedViewModel,
                         appContext = context.applicationContext
                     )
                 },
@@ -117,12 +120,8 @@ fun HomeScreen(
                         .padding(5.dp)
                         .clip(CardDefaults.elevatedShape)
                         .clickable {
-                            navController.navigate(
-                                Destination.InfoRoutineScreen(
-                                    workoutId = routine.id,
-                                    workoutTitle = routine.title
-                                )
-                            )
+                            sharedViewModel.updateWorkoutId(routine.id)
+                            navController.navigate(Destination.InfoRoutineScreen)
                         }
                 ) {
                     Column(
@@ -143,12 +142,8 @@ fun HomeScreen(
                             )
                             IconButton(
                                 onClick = {
-                                    navController.navigate(
-                                        Destination.InfoRoutineScreen(
-                                            workoutId = routine.id,
-                                            workoutTitle = routine.title
-                                        )
-                                    )
+                                    sharedViewModel.updateWorkoutId(routine.id)
+                                    navController.navigate(Destination.InfoRoutineScreen)
                                 }
                             ) {
                                 Icon(
@@ -167,6 +162,7 @@ fun HomeScreen(
                                 title = routine.title,
                                 requestPermissionAgain = requestPermissionAgain.value,
                                 navController = navController,
+                                sharedViewModel = sharedViewModel,
                                 appContext = context.applicationContext
                             )
                         }
@@ -198,6 +194,7 @@ fun HomeScreenPreview() {
     HomeScreen(
         innerPadding = PaddingValues(20.dp),
         rememberNavController(),
-        DataStoreManager(LocalContext.current)
+        DataStoreManager(LocalContext.current),
+        viewModel()
     )
 }

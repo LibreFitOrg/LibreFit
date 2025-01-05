@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. LibreFit
+ * Copyright (c) 2024-2025. LibreFit
  *
  * This file is part of LibreFit
  *
@@ -25,6 +25,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavHostController
+import org.librefit.ui.screens.shared.SharedViewModel
 
 /**
  * Navigates to the [org.librefit.ui.screens.workout.WorkoutScreen] or [org.librefit.ui.screens.workout.RequestPermissionsScreen]
@@ -33,6 +34,7 @@ import androidx.navigation.NavHostController
  * @param workoutId The ID of the [org.librefit.db.Workout] to open in [org.librefit.ui.screens.workout.WorkoutScreen].
  * @param title The title of the workout.
  * @param requestPermissionAgain Flag indicating whether to request permissions again (default is false).
+ * @param sharedViewModel It loads the exercises from the routine/workouts. See [SharedViewModel.getDataFromDB]
  * @param navController The NavHostController used for navigation.
  *
  * If the user lacks [android.Manifest.permission.POST_NOTIFICATIONS] and [requestPermissionAgain]
@@ -44,6 +46,7 @@ fun checkPermissionsBeforeNavigateToWorkout(
     title: String = "",
     requestPermissionAgain: Boolean = false,
     navController: NavHostController,
+    sharedViewModel: SharedViewModel? = null,
     appContext: Context
 ) {
 
@@ -57,13 +60,15 @@ fun checkPermissionsBeforeNavigateToWorkout(
         true
     }
 
+    sharedViewModel?.updateWorkoutId(workoutId)
+
     val requestPermission = !hasNotificationPermission && requestPermissionAgain
 
     if (requestPermission) {
-        navController.navigate(Destination.RequestPermissionsScreen(workoutId, title))
+        navController.navigate(Destination.RequestPermissionsScreen)
     } else {
-        navController.navigate(Destination.WorkoutScreen(workoutId, title)) {
-            popUpTo(Destination.RequestPermissionsScreen(workoutId, title)) { inclusive = true }
+        navController.navigate(Destination.WorkoutScreen) {
+            popUpTo(Destination.RequestPermissionsScreen) { inclusive = true }
         }
     }
 }

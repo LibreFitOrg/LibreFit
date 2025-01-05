@@ -19,6 +19,7 @@
 
 package org.librefit.ui.screens.workout.beforeSaving
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,10 +38,10 @@ import java.util.Locale
 
 class BeforeSavingScreenViewModel : ViewModel() {
 
-    private var exercises = emptyList<ExerciseWithSets>()
+    private var exercises = mutableStateListOf<ExerciseWithSets>()
 
     fun initializeExercises(exercises: List<ExerciseWithSets>) {
-        this.exercises = exercises
+        this.exercises.addAll(exercises)
     }
 
     fun getExercises(): List<ExerciseWithSets> {
@@ -73,19 +74,16 @@ class BeforeSavingScreenViewModel : ViewModel() {
     private val workout = mutableStateOf(Workout())
 
 
+    fun initializeWorkout(workout: Workout) {
+        this.workout.value = workout
+    }
+
     fun getTimeElapsed(): Int {
         return workout.value.timeElapsed
     }
 
     fun setTimeElapsed(timeElapsed: Int) {
         workout.value = workout.value.copy(timeElapsed = timeElapsed)
-    }
-
-    fun savePassedWorkout(workout: Workout) {
-        this.workout.value = workout
-        if (workout.id != 0) {
-            getRoutineFromDB(workout.id)
-        }
     }
 
     fun updateWorkoutTitle(string: String) {
@@ -145,6 +143,10 @@ class BeforeSavingScreenViewModel : ViewModel() {
 
     private var routine = mutableStateOf(Workout())
 
+    fun initializeRoutine(routine: Workout) {
+        this.routine.value = routine
+    }
+
     fun getRoutineTitle(): String {
         return routine.value.title
     }
@@ -176,19 +178,6 @@ class BeforeSavingScreenViewModel : ViewModel() {
             workoutDao.addWorkoutWithExercises(
                 workout = workout.value,
                 exercises = list
-            )
-        }
-    }
-
-    private fun getRoutineFromDB(id: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            routine.value = workoutDao.getWorkout(id)
-
-
-            workout.value = workout.value.copy(
-                notes = routine.value.notes,
-                workoutId = routine.value.workoutId,
-                created = routine.value.created
             )
         }
     }
