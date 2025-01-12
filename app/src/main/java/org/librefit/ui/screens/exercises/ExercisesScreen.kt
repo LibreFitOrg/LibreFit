@@ -301,7 +301,7 @@ private fun AddExerciseScreenContent(
                     )
                 }
             }
-            HorizontalDivider()
+            HorizontalDivider(Modifier.animateItem())
         }
         bottomMargin()
     }

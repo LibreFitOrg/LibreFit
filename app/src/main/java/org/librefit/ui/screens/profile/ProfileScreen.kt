@@ -102,9 +102,14 @@ fun ProfileScreen(
             }
         }
 
-        items(workoutList) { workout ->
+        items(
+            items = workoutList,
+            key = { it.id }
+        ) { workout ->
             ElevatedCard(
-                modifier = Modifier.padding(5.dp)
+                modifier = Modifier
+                    .animateItem()
+                    .padding(5.dp)
             ) {
                 Column(
                     modifier = Modifier

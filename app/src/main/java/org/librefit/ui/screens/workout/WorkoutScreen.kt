@@ -72,8 +72,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -101,21 +99,10 @@ fun WorkoutScreen(
     sharedViewModel: SharedViewModel
 ) {
     val context = LocalContext.current
-    /*
-    This will pass "workoutId", "list" and context to the view model so it can load and link
-    exercises from db just one time (in initialization)
-     */
-    val viewModel: WorkoutScreenViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                require(modelClass == WorkoutScreenViewModel::class.java) {
-                    "Unknown ViewModel class"
-                }
-                @Suppress("UNCHECKED_CAST")
-                return WorkoutScreenViewModel(context) as T
-            }
-        }
-    )
+
+    val viewModel: WorkoutScreenViewModel = viewModel()
+
+    viewModel.initializeService(context.applicationContext)
 
 
     LaunchedEffect(Unit) {
@@ -463,5 +450,4 @@ private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
 
         }
     }
-
 }

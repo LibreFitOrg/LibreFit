@@ -42,17 +42,14 @@ import org.librefit.services.WorkoutService.Companion.EXTRA_IS_FOCUSED
 import org.librefit.util.ExerciseWithSets
 import kotlin.random.Random
 
-class WorkoutScreenViewModel(
-    //TODO: dependency injection using hilt
-    context: Context
-) : ViewModel() {
-    private var initialized = false
+class WorkoutScreenViewModel : ViewModel() {
+    private var passed = false
     val exercises = mutableStateListOf<ExerciseWithSets>()
 
     fun initializeExercises(newExercises: List<ExerciseWithSets>) {
-        if (!initialized) {
+        if (!passed) {
             exercises.addAll(newExercises)
-            initialized = true
+            passed = true
         }
     }
 
@@ -192,16 +189,21 @@ class WorkoutScreenViewModel(
     private var initialRestTime = 1
     private var isFocused = true
 
-    private var appContext = context.applicationContext
+    private lateinit var appContext: Context
+    private lateinit var workoutServiceIntent: Intent
+    private var initialized = false
 
-    //TODO: intents should be handled by activities, not by view models
-    val workoutServiceIntent = Intent(appContext, WorkoutService::class.java)
+    fun initializeService(appContext: Context) {
+        if (!initialized) {
+            this@WorkoutScreenViewModel.appContext = appContext
+            workoutServiceIntent = Intent(appContext, WorkoutService::class.java)
+            startChronometer()
+            observeChanges()
 
-
-    init {
-        startChronometer()
-        observeChanges()
+            initialized = true
+        }
     }
+
 
     override fun onCleared() {
         super.onCleared()
