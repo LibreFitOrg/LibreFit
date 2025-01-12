@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. LibreFit
+ * Copyright (c) 2024-2025. LibreFit
  *
  * This file is part of LibreFit
  *
@@ -120,4 +120,7 @@ dependencies {
 
     //Splash screen API
     implementation(libs.androidx.core.splashscreen)
+
+    // M3 Compose charts
+    implementation(libs.compose.m3)
 }
