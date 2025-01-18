@@ -12,6 +12,10 @@ accompanistPermissions = "0.37.0"
 lottieCompose = "6.6.2"
 coreSplashscreen = "1.0.1"
 composeM3 = "2.0.0-beta.7"
+hiltAndroidPlugin = "2.55"
+hiltAndroidVersion = "2.55"
+hiltAndroidCompiler = "2.55"
+hiltNavigationCompose = "1.1.0-alpha01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.15.0" }
@@ -41,6 +45,9 @@ accompanist-permissions = { group = "com.google.accompanist", name = "accompanis
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "composeM3" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroidVersion" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -48,3 +55,4 @@ jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = 
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroidPlugin" }

@@ -25,6 +25,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -92,11 +93,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    //Navigation
+    // Navigation
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
 
-    //Room
+    // Room
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
@@ -105,22 +106,27 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
 
-    //DataStore
+    // DataStore
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.androidx.datastore.preferences)
 
-    //Gson
+    // Gson
     implementation(libs.gson)
 
-    //Google accompanist to handle permissions in jetpack compose
+    // Google accompanist to handle permissions in jetpack compose
     implementation(libs.accompanist.permissions)
 
-    //Lottie animations for jetpack compose
+    // Lottie animations for jetpack compose
     implementation(libs.lottie.compose)
 
-    //Splash screen API
+    // Splash screen API
     implementation(libs.androidx.core.splashscreen)
 
-    // M3 Compose charts
+    // M3 Compose vico charts
     implementation(libs.compose.m3)
+
+    // Dagger - Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 }
