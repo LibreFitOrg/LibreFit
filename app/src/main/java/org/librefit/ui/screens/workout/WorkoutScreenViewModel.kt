@@ -53,6 +53,11 @@ class WorkoutScreenViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val userPreferences: DataStoreManager
 ) : ViewModel() {
+    // Used by set chronometer
+    var setChronometerIsRunning = mutableStateOf(false)
+    var setWithRunningChronometer = mutableStateOf(Set())
+
+
     private var passed = false
     val exercises = mutableStateListOf<ExerciseWithSets>()
 
@@ -136,6 +141,11 @@ class WorkoutScreenViewModel @Inject constructor(
         exercises[index] = exercise.copy(
             sets = exercise.sets.filter { it.id != set.id }
         )
+
+        if (setWithRunningChronometer.value == set) {
+            setWithRunningChronometer.value = Set()
+            setChronometerIsRunning.value = false
+        }
     }
 
     /**
@@ -299,10 +309,6 @@ class WorkoutScreenViewModel @Inject constructor(
         return restTime.toFloat() / initialRestTime
     }
 
-
-    // Used by set chronometer
-    var setChronometerIsRunning = mutableStateOf(false)
-    var setWithRunningChronometer = mutableStateOf(Set())
 
 
     private val _keepScreenOn = MutableStateFlow(true)
