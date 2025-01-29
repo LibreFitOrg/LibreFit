@@ -235,6 +235,36 @@ fun SettingsScreen(
                 }
             }
 
+
+            item { HeadlineText(text = stringResource(id = R.string.settings_general)) }
+
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showPreferenceDialog = true },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_translate),
+                        contentDescription = stringResource(R.string.translate),
+                        modifier = paddingModifier
+                    )
+                    Column {
+                        Text(
+                            text = stringResource(id = R.string.language),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = stringResource(id = languageCodeToId(selectedLanguage)),
+                            style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+
             item {
                 Row(
                     modifier = Modifier
@@ -278,37 +308,6 @@ fun SettingsScreen(
                             )
                         }
                     )
-                }
-            }
-
-
-
-            item { HeadlineText(text = stringResource(id = R.string.settings_general)) }
-
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { showPreferenceDialog = true },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_translate),
-                        contentDescription = stringResource(R.string.translate),
-                        modifier = paddingModifier
-                    )
-                    Column {
-                        Text(
-                            text = stringResource(id = R.string.language),
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = stringResource(id = languageCodeToId(selectedLanguage)),
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
                 }
             }
 
