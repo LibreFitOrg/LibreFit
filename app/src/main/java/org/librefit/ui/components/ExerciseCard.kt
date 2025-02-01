@@ -558,7 +558,7 @@ fun ExerciseCard(
                                                 weightValue = beforeFirstDot + afterFirstDot
                                             }
 
-
+                                            if (weightValue == ".") weightValue = "0.0"
 
                                             updateSet(
                                                 set,
