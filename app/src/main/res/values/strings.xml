@@ -119,6 +119,8 @@
     <string name="measurements">Measurements</string>
     <string name="calendar">Calendar</string>
     <string name="min">min</string>
+    <string name="complete_workout_to_display_chart">Complete at least one workout to display this chart</string>
+    <string name="week_streak">Week streak:</string>
 
 
     <!--Permission request screen-->

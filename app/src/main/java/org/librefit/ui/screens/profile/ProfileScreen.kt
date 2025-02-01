@@ -20,6 +20,7 @@
 package org.librefit.ui.screens.profile
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -39,10 +40,13 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -76,11 +80,14 @@ import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import kotlinx.coroutines.delay
 import org.librefit.R
 import org.librefit.nav.Destination
 import org.librefit.ui.components.CustomTextButton
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.animations.EmptyLottie
+import org.librefit.ui.components.animations.StatsLottie
+import org.librefit.ui.components.animations.StreakLottie
 import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.rememberMarker
 import org.librefit.ui.screens.shared.SharedViewModel
@@ -112,6 +119,41 @@ fun ProfileScreen(
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+        item {
+            var clicks = rememberSaveable { mutableIntStateOf(0) }
+
+            LaunchedEffect(Unit) {
+                while (true) {
+                    delay(500)
+                    clicks.intValue = clicks.intValue.dec().coerceAtLeast(0)
+                }
+            }
+            OutlinedCard(
+                onClick = {
+                    clicks.intValue++
+                }
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(modifier = Modifier.weight(0.25f)) {
+                        StreakLottie(viewModel.getWeekStreak() + clicks.intValue)
+                    }
+                    Column(
+                        modifier = Modifier.weight(0.75f),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.week_streak) + " " + viewModel.getWeekStreak(),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                }
+            }
+        }
+
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -162,78 +204,98 @@ fun ProfileScreen(
 
         item { HeadlineText(stringResource(R.string.overview)) }
 
-        item {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(3) { index ->
-                    FilterChip(
-                        selected = viewModel.getChartMode() == index,
-                        onClick = { viewModel.updateChartMode(index) },
-                        label = {
-                            Text(
-                                stringResource(
-                                    when (index) {
-                                        0 -> R.string.duration
-                                        1 -> R.string.volume
-                                        else -> R.string.reps
-                                    }
+        if (viewModel.workoutList.isNotEmpty()) {
+
+            item {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    items(3) { index ->
+                        FilterChip(
+                            selected = viewModel.getChartMode() == index,
+                            onClick = { viewModel.updateChartMode(index) },
+                            label = {
+                                Text(
+                                    stringResource(
+                                        when (index) {
+                                            0 -> R.string.duration
+                                            1 -> R.string.volume
+                                            else -> R.string.reps
+                                        }
+                                    )
                                 )
-                            )
-                        },
-                        leadingIcon = {
-                            if (viewModel.getChartMode() == index) {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = null
-                                )
+                            },
+                            leadingIcon = {
+                                if (viewModel.getChartMode() == index) {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = null
+                                    )
+                                }
                             }
-                        }
+                        )
+                    }
+                }
+            }
+
+            item {
+                ProvideVicoTheme(rememberM3VicoTheme()) {
+                    val format = when (viewModel.getChartMode()) {
+                        0 -> DecimalFormat("# " + stringResource(R.string.min))
+                        1 -> DecimalFormat("#.## " + stringResource(R.string.kg))
+                        else -> DecimalFormat()
+                    }
+                    CartesianChartHost(
+                        chart = rememberCartesianChart(
+                            rememberColumnCartesianLayer(
+                                columnProvider = ColumnCartesianLayer.ColumnProvider.series(
+                                    rememberLineComponent(
+                                        fill = fill(MaterialTheme.colorScheme.primary),
+                                        thickness = 32.dp,
+                                        shape = CorneredShape.rounded(32, 32)
+                                    )
+                                ),
+                                columnCollectionSpacing = 64.dp
+                            ),
+                            marker = rememberMarker(
+                                DefaultCartesianMarker.ValueFormatter.default(format)
+
+                            ),
+                            startAxis = VerticalAxis.rememberStart(
+                                valueFormatter = CartesianValueFormatter.decimal(format)
+                            ),
+                            bottomAxis = HorizontalAxis.rememberBottom(
+                                valueFormatter = CartesianValueFormatter { context, x, _ ->
+                                    context.model.extraStore.getOrNull(labelListKey)?.get(x.toInt())
+                                        ?: LocalDateTime.now().format(viewModel.shortFormatter)
+                                }
+                            ),
+                        ),
+                        zoomState = rememberVicoZoomState(
+                            zoomEnabled = false,
+                            minZoom = Zoom.fixed(),
+                            maxZoom = Zoom.fixed()
+                        ),
+                        modelProducer = modelProducer,
+                    )
+                }
+            }
+        } else {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    StatsLottie()
+                    Text(
+                        text = stringResource(R.string.complete_workout_to_display_chart),
+                        textAlign = TextAlign.Center
                     )
                 }
             }
         }
 
-        item {
-            ProvideVicoTheme(rememberM3VicoTheme()) {
-                val format = when (viewModel.getChartMode()) {
-                    0 -> DecimalFormat("# " + stringResource(R.string.min))
-                    1 -> DecimalFormat("#.## " + stringResource(R.string.kg))
-                    else -> DecimalFormat()
-                }
-                CartesianChartHost(
-                    chart = rememberCartesianChart(
-                        rememberColumnCartesianLayer(
-                            columnProvider = ColumnCartesianLayer.ColumnProvider.series(
-                                rememberLineComponent(
-                                    fill = fill(MaterialTheme.colorScheme.primary),
-                                    thickness = 32.dp,
-                                    shape = CorneredShape.rounded(32, 32)
-                                )
-                            ),
-                            columnCollectionSpacing = 64.dp
-                        ),
-                        marker = rememberMarker(
-                            DefaultCartesianMarker.ValueFormatter.default(format)
 
-                        ),
-                        startAxis = VerticalAxis.rememberStart(
-                            valueFormatter = CartesianValueFormatter.decimal(format)
-                        ),
-                        bottomAxis = HorizontalAxis.rememberBottom(
-                            valueFormatter = CartesianValueFormatter { context, x, _ ->
-                                context.model.extraStore.getOrNull(labelListKey)?.get(x.toInt())
-                                    ?: LocalDateTime.now().format(viewModel.shortFormatter)
-                            }
-                        ),
-                    ),
-                    zoomState = rememberVicoZoomState(
-                        zoomEnabled = false,
-                        minZoom = Zoom.fixed(),
-                        maxZoom = Zoom.fixed()
-                    ),
-                    modelProducer = modelProducer,
-                )
-            }
-        }
 
         item { HeadlineText(stringResource(R.string.your_workouts)) }
 

@@ -29,8 +29,10 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.librefit.db.Workout
 import org.librefit.db.WorkoutDao
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 import javax.inject.Inject
 
@@ -106,4 +108,29 @@ class ProfileScreenViewModel @Inject constructor(
                 }
         }
     }
+
+
+    fun getWeekStreak(): Int {
+        if (workoutList.size < 2) return 0
+
+        if (ChronoUnit.DAYS.between(workoutList.first().completed, LocalDateTime.now()) > 7) {
+            return 0
+        }
+
+        var index = workoutList.lastIndex
+
+        for (i in 0 until workoutList.size - 1) {
+            if (ChronoUnit.DAYS.between(
+                    workoutList[i + 1].completed,
+                    workoutList[i].completed
+                ) > 7
+            ) {
+                index = i
+                break
+            }
+        }
+
+        return ChronoUnit.WEEKS.between(workoutList[index].completed, LocalDateTime.now()).toInt()
+    }
+
 }
