@@ -66,7 +66,7 @@ fun exerciseEnumToStringId(enum: Enum<*>?): Int {
         Muscle.HAMSTRINGS -> R.string.muscle_hamstrings
         Muscle.LATS -> R.string.muscle_lats
         Muscle.LOWER_BACK -> R.string.muscle_lower_back
-        Muscle.MIDDLE_BACK -> R.string.muscle_lower_back
+        Muscle.MIDDLE_BACK -> R.string.muscle_middle_back
         Muscle.NECK -> R.string.muscle_neck
         Muscle.QUADRICEPS -> R.string.muscle_quadriceps
         Muscle.SHOULDERS -> R.string.muscle_shoulders
