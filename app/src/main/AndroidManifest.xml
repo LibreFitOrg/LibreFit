@@ -40,6 +40,7 @@
         android:theme="@style/Theme.LibreFit.SplashScreen"
         android:localeConfig="@xml/locale_config"
         tools:targetApi="tiramisu">
+        <!--TODO: android 16 won't allow locked screen orientation -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

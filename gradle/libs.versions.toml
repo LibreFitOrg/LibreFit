@@ -1,10 +1,10 @@
 [versions]
-agp = "8.8.0"
+agp = "8.8.1"
 datastore = "1.1.2"
 kotlin = "2.0.20"
 junit = "4.13.2"
 espressoCore = "3.6.1"
-composeBom = "2025.01.00"
+composeBom = "2025.02.00"
 roomVersion = "2.6.1"
 appcompat = "1.7.0"
 ksp = "2.0.20-1.0.25"
