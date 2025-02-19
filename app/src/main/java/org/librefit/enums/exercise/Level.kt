@@ -17,10 +17,10 @@
  * along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.librefit.enums
+package org.librefit.enums.exercise
 
-enum class Force {
-    STATIC,
-    PULL,
-    PUSH
+enum class Level {
+    BEGINNER,
+    INTERMEDIATE,
+    EXPERT
 }

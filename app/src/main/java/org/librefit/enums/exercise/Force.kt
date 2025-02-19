@@ -17,26 +17,10 @@
  * along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.librefit.util
+package org.librefit.enums.exercise
 
-import org.librefit.enums.Category
-import org.librefit.enums.Equipment
-import org.librefit.enums.Force
-import org.librefit.enums.Level
-import org.librefit.enums.Mechanic
-import org.librefit.enums.Muscle
-
-data class ExerciseDC(
-    val id: String,
-    val name: String,
-    val force: Force? = null,
-    val level: Level,
-    val mechanic: Mechanic? = null,
-    val equipment: Equipment? = null,
-    val primaryMuscles: List<Muscle>,
-    val secondaryMuscles: List<Muscle>,
-    val instructions: List<String>,
-    val category: Category,
-    val images: List<String>
-)
-
+enum class Force {
+    STATIC,
+    PULL,
+    PUSH
+}

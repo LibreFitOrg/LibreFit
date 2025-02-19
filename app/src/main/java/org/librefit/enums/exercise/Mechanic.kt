@@ -17,14 +17,9 @@
  * along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.librefit.enums
+package org.librefit.enums.exercise
 
-enum class Category {
-    POWERLIFTING,
-    STRENGTH,
-    STRETCHING,
-    CARDIO,
-    OLYMPIC_WEIGHTLIFTING,
-    STRONGMAN,
-    PLYOMETRICS
+enum class Mechanic {
+    ISOLATION,
+    COMPOUND
 }

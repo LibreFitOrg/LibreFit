@@ -17,24 +17,26 @@
  * along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.librefit.enums
+package org.librefit.util
 
-enum class Muscle {
-    ABDOMINALS,
-    ABDUCTORS,
-    ADDUCTORS,
-    BICEPS,
-    CALVES,
-    CHEST,
-    FOREARMS,
-    GLUTES,
-    HAMSTRINGS,
-    LATS,
-    LOWER_BACK,
-    MIDDLE_BACK,
-    NECK,
-    QUADRICEPS,
-    SHOULDERS,
-    TRAPS,
-    TRICEPS
-}
+import org.librefit.enums.exercise.Category
+import org.librefit.enums.exercise.Equipment
+import org.librefit.enums.exercise.Force
+import org.librefit.enums.exercise.Level
+import org.librefit.enums.exercise.Mechanic
+import org.librefit.enums.exercise.Muscle
+
+data class ExerciseDC(
+    val id: String,
+    val name: String,
+    val force: Force? = null,
+    val level: Level,
+    val mechanic: Mechanic? = null,
+    val equipment: Equipment? = null,
+    val primaryMuscles: List<Muscle>,
+    val secondaryMuscles: List<Muscle>,
+    val instructions: List<String>,
+    val category: Category,
+    val images: List<String>
+)
+

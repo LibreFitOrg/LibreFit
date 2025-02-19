@@ -42,7 +42,7 @@ import org.librefit.ui.components.animations.StatsLottie
 import org.librefit.ui.components.animations.TrainingLottie
 
 /** A modal bottom sheet used in [org.librefit.ui.screens.workout.WorkoutScreen] and
- * [org.librefit.ui.screens.edit.EditScreen] to explain the types of set
+ * [org.librefit.ui.screens.edit.EditWorkoutScreen] to explain the types of set
  * and rest time in [ExerciseCard].
  * @param infoMode A [InfoMode] enum holding the info to display
  * @param onDismiss A lambda function in which [infoMode] should be set to [InfoMode.DISMISS]

@@ -39,7 +39,7 @@ sealed class Destination {
     )
 
     @Serializable
-    object InfoRoutineScreen
+    object InfoWorkoutScreen
 
     @Serializable
     object MainScreen

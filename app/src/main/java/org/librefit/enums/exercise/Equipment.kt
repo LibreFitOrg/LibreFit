@@ -17,9 +17,19 @@
  * along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.librefit.enums
+package org.librefit.enums.exercise
 
-enum class Mechanic {
-    ISOLATION,
-    COMPOUND
+enum class Equipment {
+    MEDICINE_BALL,
+    DUMBBELL,
+    BODY_ONLY,
+    BANDS,
+    KETTLEBELLS,
+    FOAM_ROLL,
+    CABLE,
+    MACHINE,
+    BARBELL,
+    EXERCISE_BALL,
+    E_Z_CURL_BAR,
+    OTHER
 }

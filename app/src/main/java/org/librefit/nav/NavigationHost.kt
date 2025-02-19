@@ -34,7 +34,7 @@ import org.librefit.ui.screens.MainScreen
 import org.librefit.ui.screens.about.AboutScreen
 import org.librefit.ui.screens.about.LicenseScreen
 import org.librefit.ui.screens.beforeSaving.BeforeSavingScreen
-import org.librefit.ui.screens.edit.EditScreen
+import org.librefit.ui.screens.edit.EditWorkoutScreen
 import org.librefit.ui.screens.exercises.ExercisesScreen
 import org.librefit.ui.screens.infoWorkout.InfoWorkoutScreen
 import org.librefit.ui.screens.requestPermission.RequestPermissionScreen
@@ -70,7 +70,7 @@ fun NavigationHost() {
             )
         }
         composable<Destination.EditWorkoutScreen> {
-            EditScreen(
+            EditWorkoutScreen(
                 sharedViewModel = sharedViewModel,
                 navController = navController
             )
@@ -82,7 +82,7 @@ fun NavigationHost() {
                 sharedViewModel = sharedViewModel
             )
         }
-        composable<Destination.InfoRoutineScreen> {
+        composable<Destination.InfoWorkoutScreen> {
             InfoWorkoutScreen(
                 sharedViewModel = sharedViewModel,
                 navController = navController

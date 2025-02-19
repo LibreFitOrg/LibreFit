@@ -58,7 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.librefit.R
-import org.librefit.enums.Muscle
+import org.librefit.enums.exercise.Muscle
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.bottomMargin
 import org.librefit.util.ExerciseDC

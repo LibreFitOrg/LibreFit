@@ -66,12 +66,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.librefit.R
-import org.librefit.enums.Category
-import org.librefit.enums.Equipment
-import org.librefit.enums.Force
-import org.librefit.enums.Level
-import org.librefit.enums.Mechanic
-import org.librefit.enums.Muscle
+import org.librefit.enums.exercise.Category
+import org.librefit.enums.exercise.Equipment
+import org.librefit.enums.exercise.Force
+import org.librefit.enums.exercise.Level
+import org.librefit.enums.exercise.Mechanic
+import org.librefit.enums.exercise.Muscle
 import org.librefit.util.Formatter.exerciseEnumToStringId
 
 @OptIn(ExperimentalLayoutApi::class)

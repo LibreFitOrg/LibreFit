@@ -25,12 +25,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import org.librefit.R
-import org.librefit.enums.Category
-import org.librefit.enums.Equipment
-import org.librefit.enums.Force
-import org.librefit.enums.Level
-import org.librefit.enums.Mechanic
-import org.librefit.enums.Muscle
+import org.librefit.enums.exercise.Category
+import org.librefit.enums.exercise.Equipment
+import org.librefit.enums.exercise.Force
+import org.librefit.enums.exercise.Level
+import org.librefit.enums.exercise.Mechanic
+import org.librefit.enums.exercise.Muscle
 import java.util.Locale
 
 object Formatter {

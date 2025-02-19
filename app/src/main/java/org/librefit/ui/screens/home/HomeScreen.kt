@@ -134,7 +134,7 @@ fun HomeScreen(
                     .clip(CardDefaults.elevatedShape)
                     .clickable {
                         sharedViewModel.updateWorkoutId(routine.id)
-                        navController.navigate(Destination.InfoRoutineScreen)
+                        navController.navigate(Destination.InfoWorkoutScreen)
                     }
             ) {
                 Column(
@@ -157,7 +157,7 @@ fun HomeScreen(
                         IconButton(
                             onClick = {
                                 sharedViewModel.updateWorkoutId(routine.id)
-                                navController.navigate(Destination.InfoRoutineScreen)
+                                navController.navigate(Destination.InfoWorkoutScreen)
                             }
                         ) {
                             Icon(

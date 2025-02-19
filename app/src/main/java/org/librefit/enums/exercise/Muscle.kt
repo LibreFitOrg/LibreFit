@@ -17,10 +17,24 @@
  * along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.librefit.enums
+package org.librefit.enums.exercise
 
-enum class Level {
-    BEGINNER,
-    INTERMEDIATE,
-    EXPERT
+enum class Muscle {
+    ABDOMINALS,
+    ABDUCTORS,
+    ADDUCTORS,
+    BICEPS,
+    CALVES,
+    CHEST,
+    FOREARMS,
+    GLUTES,
+    HAMSTRINGS,
+    LATS,
+    LOWER_BACK,
+    MIDDLE_BACK,
+    NECK,
+    QUADRICEPS,
+    SHOULDERS,
+    TRAPS,
+    TRICEPS
 }

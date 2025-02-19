@@ -35,7 +35,7 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 @HiltViewModel
-class EditScreenViewModel @Inject constructor(
+class EditWorkoutScreenViewModel @Inject constructor(
     private val workoutDao: WorkoutDao
 ) : ViewModel() {
     val exercises = mutableStateListOf<ExerciseWithSets>()

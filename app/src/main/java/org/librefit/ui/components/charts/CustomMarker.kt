@@ -17,7 +17,7 @@
  * along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.librefit.ui.components
+package org.librefit.ui.components.charts
 
 import android.text.Layout
 import androidx.compose.material3.MaterialTheme

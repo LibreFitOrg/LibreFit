@@ -95,10 +95,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.librefit.R
 import org.librefit.db.Set
-import org.librefit.enums.Category
 import org.librefit.enums.InfoMode
-import org.librefit.enums.Level
 import org.librefit.enums.SetMode
+import org.librefit.enums.exercise.Category
+import org.librefit.enums.exercise.Level
 import org.librefit.util.ExerciseDC
 import org.librefit.util.ExerciseWithSets
 import org.librefit.util.Formatter.formatTime
@@ -121,11 +121,11 @@ import kotlin.text.toInt
  * the removal of the card.
  * @param updateSet A function to update a specific set. For more details, refer to
  * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateSet] and
- * [org.librefit.ui.screens.edit.EditScreenViewModel.updateSet].
+ * [org.librefit.ui.screens.edit.EditWorkoutScreenViewModel.updateSet].
  * @param deleteSet A function called when the user swipes the set to remove it.
  * @param updateExercise A function to update the exercise details. For further information,
  * see [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExercise] and
- * [org.librefit.ui.screens.edit.EditScreenViewModel.updateExercise].
+ * [org.librefit.ui.screens.edit.EditWorkoutScreenViewModel.updateExercise].
  * @param showInfo A lambda function executed when info icon next to "type of set" or "rest time" text
  * is clicked. The passed parameter is used by [org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet] to show the relevant information.
  * @param setChronometerIsRunning This should be passed only from the workout screen (so [workout]

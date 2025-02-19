@@ -70,11 +70,11 @@ import org.librefit.util.ExerciseWithSets
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditScreen(
+fun EditWorkoutScreen(
     sharedViewModel: SharedViewModel,
     navController: NavHostController
 ) {
-    val viewModel: EditScreenViewModel = hiltViewModel()
+    val viewModel: EditWorkoutScreenViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
         sharedViewModel.getSelectedExercisesList().forEach { exerciseDC ->
@@ -148,7 +148,7 @@ fun EditScreen(
         },
         fabDescription = stringResource(R.string.add_exercise)
     ) { innerPadding ->
-        EditScreen(
+        EditWorkoutScreen(
             innerPadding = innerPadding,
             viewModel = viewModel
         )
@@ -156,9 +156,9 @@ fun EditScreen(
 }
 
 @Composable
-private fun EditScreen(
+private fun EditWorkoutScreen(
     innerPadding: PaddingValues,
-    viewModel: EditScreenViewModel
+    viewModel: EditWorkoutScreenViewModel
 ) {
 
     /**
@@ -296,5 +296,5 @@ private fun EditScreen(
 @Preview
 @Composable
 private fun CreateRoutineScreenPreview() {
-    EditScreen(viewModel(), rememberNavController())
+    EditWorkoutScreen(viewModel(), rememberNavController())
 }
