@@ -74,7 +74,7 @@ fun ExerciseDetailModalBottomSheet(
         onDismissRequest = onDismiss
     ) {
         LazyColumn(
-            modifier = Modifier.padding(start = 15.dp, end = 15.dp),
+            modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
