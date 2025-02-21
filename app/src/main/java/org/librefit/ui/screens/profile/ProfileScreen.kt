@@ -45,7 +45,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,9 +59,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import kotlinx.coroutines.delay
 import org.librefit.R
 import org.librefit.enums.ChartMode
@@ -87,15 +83,6 @@ fun ProfileScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getWorkoutListFromDB()
-    }
-
-    val labelListKey = ExtraStore.Key<List<String>>()
-    val modelProducer = remember { CartesianChartModelProducer() }
-    LaunchedEffect(viewModel.getChartMode()) {
-        modelProducer.runTransaction {
-            columnSeries { series(viewModel.getYAxisDataChart()) }
-            extras { it[labelListKey] = viewModel.getXAxisDataChart() }
-        }
     }
 
     LazyColumn(
@@ -191,7 +178,6 @@ fun ProfileScreen(
         item { HeadlineText(stringResource(R.string.overview)) }
 
         if (viewModel.workoutList.isNotEmpty()) {
-
             item {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(ChartMode.entries) { chartMode ->
@@ -234,13 +220,9 @@ fun ProfileScreen(
                     columns = true
                 )
             }
-        }
 
-
-
-        item { HeadlineText(stringResource(R.string.your_workouts)) }
-
-        if (viewModel.workoutList.isEmpty()) {
+            item { HeadlineText(stringResource(R.string.your_workouts)) }
+        } else {
             item {
                 Column(
                     modifier = Modifier

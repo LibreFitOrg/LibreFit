@@ -90,13 +90,18 @@ class ProfileScreenViewModel @Inject constructor(
 
                     volume.clear()
                     reps.clear()
-                    workoutList.forEach {
-                        workoutDao.getExercisesFromWorkout(it.id).forEach { exercise ->
-                            workoutDao.getSetsFromExercise(exercise.id).forEach { set ->
-                                volume += if (set.completed) set.weight * set.reps else 0f
-                                reps += if (set.completed) set.reps else 0
+                    workoutList.forEach { workout ->
+                        // For each exercise, fetch its sets. Then flatten the nested list of sets into one list.
+                        val allSets = workoutDao.getExercisesFromWorkout(workout.id)
+                            .flatMap { workoutDao.getSetsFromExercise(it.id) }
+                        // Calculate workoutVolume and workoutReps only from the completed sets.
+                        val (workoutVolume, workoutReps) = allSets.asSequence()
+                            .filter { it.completed }
+                            .fold(0f to 0) { (volumeAcc, repsAcc), set ->
+                                (volumeAcc + set.weight * set.reps) to (repsAcc + set.reps)
                             }
-                        }
+                        volume.add(workoutVolume)
+                        reps.add(workoutReps)
                     }
                 }
         }
