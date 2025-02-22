@@ -19,7 +19,6 @@
 
 package org.librefit.ui.screens.infoWorkout
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,11 +31,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +46,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,10 +55,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.enums.ChartMode
-import org.librefit.enums.SetMode
 import org.librefit.nav.Destination
 import org.librefit.ui.components.ConfirmDialog
 import org.librefit.ui.components.CustomScaffold
+import org.librefit.ui.components.ExerciseCardSmall
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.charts.CustomCartesianChart
@@ -71,7 +66,6 @@ import org.librefit.ui.components.modalBottomSheets.ExerciseDetailModalBottomShe
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.util.ExerciseDC
 import org.librefit.util.Formatter.formatDetails
-import org.librefit.util.Formatter.formatTime
 import java.text.DecimalFormat
 
 @Composable
@@ -297,113 +291,9 @@ fun InfoWorkoutScreen(
 
             item { HeadlineText(stringResource(R.string.exercises)) }
             items(viewModel.exercises) { exercise ->
-                //TODO: a unique composable function to display exercises outside workouts
-                ElevatedCard(Modifier.padding(5.dp)) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = exercise.exerciseDC.name,
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            IconButton(
-                                onClick = {
-                                    selectedExercise = exercise.exerciseDC
-                                    isModalSheetOpen = true
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Info,
-                                    contentDescription = stringResource(R.string.info)
-                                )
-                            }
-                        }
-
-
-                        if (exercise.note.isNotBlank()) {
-                            HorizontalDivider()
-
-                            Text(formatDetails(stringResource(R.string.notes), exercise.note))
-                        }
-
-                        if (exercise.restTime != 0) {
-                            HorizontalDivider()
-                            Text(
-                                formatDetails(
-                                    stringResource(R.string.rest_time), exercise.restTime.toString()
-                                            + " " + stringResource(R.string.seconds).replaceFirstChar { it.lowercase() })
-                            )
-                        }
-
-                        if (exercise.sets.isNotEmpty()) {
-                            HorizontalDivider()
-
-                            val setMode = exercise.setMode
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceAround
-                            ) {
-                                Text(stringResource(R.string.set))
-                                if (setMode == SetMode.TIME) {
-                                    Text(stringResource(R.string.time))
-                                } else {
-                                    Text(stringResource(R.string.reps))
-                                    if (setMode == SetMode.WEIGHT) {
-                                        Text(
-                                            stringResource(R.string.weight) + "(" + stringResource(
-                                                R.string.kg
-                                            ) + ")"
-                                        )
-                                    }
-                                }
-                                if (!viewModel.isRoutine()) {
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = stringResource(R.string.done)
-                                    )
-                                }
-                            }
-
-                            exercise.sets.forEachIndexed { index, set ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clip(MaterialTheme.shapes.small)
-                                        .background(
-                                            if (!viewModel.isRoutine() && set.completed) MaterialTheme.colorScheme.secondaryContainer
-                                            else MaterialTheme.colorScheme.surfaceContainerLow
-                                        ),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceAround
-                                ) {
-                                    Text("${index + 1}")
-                                    if (setMode == SetMode.TIME) {
-                                        Text(formatTime(set.elapsedTime).substring(3))
-                                    } else {
-                                        Text("${set.reps}")
-                                        if (setMode == SetMode.WEIGHT) {
-                                            Text("${set.weight}")
-                                        }
-                                    }
-                                    if (!viewModel.isRoutine()) {
-                                        Checkbox(
-                                            checked = set.completed,
-                                            onCheckedChange = null
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
+                ExerciseCardSmall(exercise, viewModel.isRoutine()) {
+                    selectedExercise = exercise.exerciseDC
+                    isModalSheetOpen = true
                 }
             }
             bottomMargin()

@@ -20,7 +20,6 @@
 package org.librefit.ui.components.modalBottomSheets
 
 import android.graphics.BitmapFactory
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -64,7 +63,7 @@ import org.librefit.ui.components.bottomMargin
 import org.librefit.util.ExerciseDC
 import org.librefit.util.Formatter
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseDetailModalBottomSheet(
     exercise: ExerciseDC,
