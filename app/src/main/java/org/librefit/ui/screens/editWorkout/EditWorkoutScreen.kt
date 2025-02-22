@@ -17,7 +17,7 @@
  * along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.librefit.ui.screens.edit
+package org.librefit.ui.screens.editWorkout
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
