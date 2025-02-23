@@ -89,7 +89,7 @@ class InfoWorkoutScreenViewModel @Inject constructor(
 
 
     private var routine = mutableStateOf(Workout())
-    
+
 
     fun getRoutineTitle(): String {
         return routine.value.title
@@ -149,7 +149,7 @@ class InfoWorkoutScreenViewModel @Inject constructor(
                 ChartMode.VOLUME -> if (index < volume.lastIndex) volume[index] else 0f
                 ChartMode.REPS -> if (index < reps.lastIndex) reps[index].toFloat() else 0f
             }
-        }.ifEmpty { listOf(0f) }
+        }
     }
 
     fun getXAxisDataChart(): List<String> {

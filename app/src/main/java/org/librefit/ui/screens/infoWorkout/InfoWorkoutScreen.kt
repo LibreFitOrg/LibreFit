@@ -207,7 +207,7 @@ fun InfoWorkoutScreen(
                 }
             }
 
-            if (viewModel.getYAxisDataChart() != listOf(0f)) {
+            if (viewModel.getYAxisDataChart().isNotEmpty()) {
                 item { HeadlineText(stringResource(R.string.past_workouts)) }
 
                 item {

@@ -174,7 +174,7 @@ fun ProfileScreen(
 
         item { HeadlineText(stringResource(R.string.overview)) }
 
-        if (viewModel.workoutList.isNotEmpty()) {
+        if (viewModel.getYAxisDataChart().isNotEmpty()) {
             item {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(ChartMode.entries) { chartMode ->
