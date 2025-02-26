@@ -32,7 +32,7 @@ import org.librefit.db.Workout
 import org.librefit.db.WorkoutDao
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -51,21 +51,18 @@ class CalendarScreenViewModel @Inject constructor(
     fun getSelectableDatesFromWorkouts(): SelectableDates {
         return object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                val day = Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneId.of("UTC")).toLocalDate()
-                return workoutList.map { it.completed.toLocalDate() }.contains(day)
+                val date = Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate()
+                return workoutList.map { it.completed.toLocalDate() }.contains(date)
             }
         }
     }
 
     fun getWorkoutsFromDate(utcTimeMillis: Long?): List<Workout> {
-        if (utcTimeMillis == null) return listOf()
+        if (utcTimeMillis == null) return emptyList()
 
-        return workoutList.filter {
-            it.completed.toLocalDate() == Instant
-                .ofEpochMilli(utcTimeMillis)
-                .atZone(ZoneId.of("UTC"))
-                .toLocalDate()
-        }
+        val date = Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate()
+
+        return workoutList.filter { it.completed.toLocalDate() == date }
     }
 
     fun getTimeFromLocalDateTime(date: LocalDateTime): String {
