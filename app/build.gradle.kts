@@ -107,13 +107,9 @@ dependencies {
     // Kotlin Extensions and Coroutines support for Room
     implementation(libs.androidx.room.ktx)
 
-
     // DataStore
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.androidx.datastore.preferences)
-
-    // Gson
-    implementation(libs.gson)
 
     // Google accompanist to handle permissions in jetpack compose
     implementation(libs.accompanist.permissions)
@@ -131,7 +127,6 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-
 
     // Moshi to parse json file
     implementation(libs.moshi)
