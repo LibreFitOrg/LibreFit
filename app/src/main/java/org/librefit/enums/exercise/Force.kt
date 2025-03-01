@@ -19,8 +19,13 @@
 
 package org.librefit.enums.exercise
 
+import com.squareup.moshi.Json
+
 enum class Force {
+    @Json(name = "static")
     STATIC,
+    @Json(name = "pull")
     PULL,
+    @Json(name = "push")
     PUSH
 }

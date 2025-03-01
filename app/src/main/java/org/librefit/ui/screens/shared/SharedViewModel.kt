@@ -23,8 +23,8 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +35,6 @@ import org.librefit.data.ExerciseDC
 import org.librefit.data.ExerciseWithSets
 import org.librefit.db.Workout
 import org.librefit.db.WorkoutRepository
-import org.librefit.util.ExerciseDeserializer
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -48,17 +47,19 @@ class SharedViewModel @Inject constructor(
     val exercisesList: List<ExerciseDC> = loadExercisesFromRaw(context)
 
     private fun loadExercisesFromRaw(context: Context): List<ExerciseDC> {
-        val inputStream = context.resources.openRawResource(R.raw.exercises)
-
-        // TODO: use Moshi instead of Gson
-        return inputStream.bufferedReader().use { reader ->
-            val gson = GsonBuilder()
-                .registerTypeAdapter(ExerciseDC::class.java, ExerciseDeserializer())
-                .create()
-            val listType = object : TypeToken<List<ExerciseDC>>() {}.type
-
-            gson.fromJson(reader, listType)
+        val jsonFile = context.resources.openRawResource(R.raw.exercises).bufferedReader().use {
+            it.readText()
         }
+
+        val moshi = Moshi.Builder().build()
+        val listType = Types.newParameterizedType(List::class.java, ExerciseDC::class.java)
+        val adapter = moshi.adapter<List<ExerciseDC>>(listType)
+
+        // ExerciseDC adapter is auto generated. All entries of all
+        // enums must be annotated with @Json with its corresponding value in json file
+        val exercises = adapter.fromJson(jsonFile)!!
+
+        return exercises
     }
 
 

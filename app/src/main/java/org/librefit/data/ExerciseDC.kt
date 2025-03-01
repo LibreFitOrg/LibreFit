@@ -19,6 +19,7 @@
 
 package org.librefit.data
 
+import com.squareup.moshi.JsonClass
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.exercise.Force
@@ -26,6 +27,7 @@ import org.librefit.enums.exercise.Level
 import org.librefit.enums.exercise.Mechanic
 import org.librefit.enums.exercise.Muscle
 
+@JsonClass(generateAdapter = true)
 data class ExerciseDC(
     val id: String,
     val name: String,

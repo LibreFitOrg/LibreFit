@@ -19,7 +19,11 @@
 
 package org.librefit.enums.exercise
 
+import com.squareup.moshi.Json
+
 enum class Mechanic {
+    @Json(name = "isolation")
     ISOLATION,
+    @Json(name = "compound")
     COMPOUND
 }

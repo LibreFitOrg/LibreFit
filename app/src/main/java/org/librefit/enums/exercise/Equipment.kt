@@ -19,17 +19,31 @@
 
 package org.librefit.enums.exercise
 
+import com.squareup.moshi.Json
+
 enum class Equipment {
+    @Json(name = "medicine ball")
     MEDICINE_BALL,
+    @Json(name = "dumbbell")
     DUMBBELL,
+    @Json(name = "body only")
     BODY_ONLY,
+    @Json(name = "bands")
     BANDS,
+    @Json(name = "kettlebells")
     KETTLEBELLS,
+    @Json(name = "foam roll")
     FOAM_ROLL,
+    @Json(name = "cable")
     CABLE,
+    @Json(name = "machine")
     MACHINE,
+    @Json(name = "barbell")
     BARBELL,
+    @Json(name = "exercise ball")
     EXERCISE_BALL,
+    @Json(name = "e-z curl bar")
     E_Z_CURL_BAR,
+    @Json(name = "other")
     OTHER
 }

@@ -19,8 +19,13 @@
 
 package org.librefit.enums.exercise
 
+import com.squareup.moshi.Json
+
 enum class Level {
+    @Json(name = "beginner")
     BEGINNER,
+    @Json(name = "intermediate")
     INTERMEDIATE,
+    @Json(name = "expert")
     EXPERT
 }

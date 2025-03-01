@@ -19,22 +19,41 @@
 
 package org.librefit.enums.exercise
 
+import com.squareup.moshi.Json
+
 enum class Muscle {
-    ABDOMINALS,
-    ABDUCTORS,
-    ADDUCTORS,
-    BICEPS,
-    CALVES,
-    CHEST,
-    FOREARMS,
-    GLUTES,
-    HAMSTRINGS,
-    LATS,
-    LOWER_BACK,
-    MIDDLE_BACK,
-    NECK,
-    QUADRICEPS,
-    SHOULDERS,
-    TRAPS,
-    TRICEPS
+    @Json(name = "abdominals")
+    ABDOMINALS(),
+    @Json(name = "abductors")
+    ABDUCTORS(),
+    @Json(name = "adductors")
+    ADDUCTORS(),
+    @Json(name = "biceps")
+    BICEPS(),
+    @Json(name = "calves")
+    CALVES(),
+    @Json(name = "chest")
+    CHEST(),
+    @Json(name = "forearms")
+    FOREARMS(),
+    @Json(name = "glutes")
+    GLUTES(),
+    @Json(name = "hamstrings")
+    HAMSTRINGS(),
+    @Json(name = "lats")
+    LATS(),
+    @Json(name = "lower back")
+    LOWER_BACK(),
+    @Json(name = "middle back")
+    MIDDLE_BACK(),
+    @Json(name = "neck")
+    NECK(),
+    @Json(name = "quadriceps")
+    QUADRICEPS(),
+    @Json(name = "shoulders")
+    SHOULDERS(),
+    @Json(name = "traps")
+    TRAPS(),
+    @Json(name = "triceps")
+    TRICEPS();
 }

@@ -19,12 +19,21 @@
 
 package org.librefit.enums.exercise
 
+import com.squareup.moshi.Json
+
 enum class Category {
-    POWERLIFTING,
-    STRENGTH,
-    STRETCHING,
-    CARDIO,
-    OLYMPIC_WEIGHTLIFTING,
-    STRONGMAN,
-    PLYOMETRICS
+    @Json(name = "powerlifting")
+    POWERLIFTING(),
+    @Json(name = "strength")
+    STRENGTH(),
+    @Json(name = "stretching")
+    STRETCHING(),
+    @Json(name = "cardio")
+    CARDIO(),
+    @Json(name = "olympic weightlifting")
+    OLYMPIC_WEIGHTLIFTING(),
+    @Json(name = "strongman")
+    STRONGMAN(),
+    @Json(name = "plyometrics")
+    PLYOMETRICS();
 }
