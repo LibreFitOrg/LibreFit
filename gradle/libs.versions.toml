@@ -1,6 +1,6 @@
 [versions]
-agp = "8.8.1"
-datastore = "1.1.2"
+agp = "8.8.2"
+datastore = "1.1.3"
 kotlin = "2.0.20"
 junit = "4.13.2"
 espressoCore = "3.6.1"
@@ -8,10 +8,10 @@ composeBom = "2025.02.00"
 roomVersion = "2.6.1"
 appcompat = "1.7.0"
 ksp = "2.0.20-1.0.25"
-accompanistPermissions = "0.37.0"
+accompanistPermissions = "0.37.2"
 lottieCompose = "6.6.2"
 coreSplashscreen = "1.0.1"
-composeM3 = "2.0.0-beta.7"
+composeM3 = "2.0.2"
 hiltAndroidPlugin = "2.55"
 hiltAndroidVersion = "2.55"
 hiltAndroidCompiler = "2.55"
@@ -29,7 +29,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version = "1.2.1" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.8.7" }
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.10.0" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.10.1" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
@@ -38,9 +38,9 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.5" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.8" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.8.0" }
-androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version = "1.1.2" }
+androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version = "1.1.3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
