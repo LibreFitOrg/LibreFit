@@ -36,7 +36,6 @@ import org.librefit.data.WorkoutWithExercisesAndSets
  *
  */
 class WorkoutRepository(private val workoutDao: WorkoutDao) {
-    //TODO: add kdoc
     val completedWorkouts = workoutDao.getCompletedWorkouts()
 
     val routines = workoutDao.getRoutines()
@@ -54,6 +53,9 @@ class WorkoutRepository(private val workoutDao: WorkoutDao) {
         workoutDao.deleteWorkout(workout)
     }
 
+    /**
+     * Refer to [WorkoutDao.getCompletedWorkoutsWithExercisesAndSets]
+     */
     suspend fun getCompletedWorkoutsWithExercisesAndSets(): List<WorkoutWithExercisesAndSets> {
         return workoutDao.getCompletedWorkoutsWithExercisesAndSets()
     }
