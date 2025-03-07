@@ -239,72 +239,73 @@ private fun AddExerciseScreenContent(
         ) { index, exercise ->
             if (index == 0) {
                 HorizontalDivider(Modifier.animateItem())
-            } else {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .animateItem()
-                        .height(100.dp)
-                        .clickable(
-                            enabled = addExercises
-                        ) {
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateItem()
+                    .height(100.dp)
+                    .clickable(
+                        enabled = addExercises
+                    ) {
+                        if (selectedExercisesList.contains(exercise)) {
+                            selectedExercisesList.remove(exercise)
+                        } else {
+                            selectedExercisesList.add(exercise)
+                        }
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (addExercises) {
+                    Checkbox(
+                        modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                        checked = selectedExercisesList.contains(exercise),
+                        onCheckedChange = {
                             if (selectedExercisesList.contains(exercise)) {
                                 selectedExercisesList.remove(exercise)
                             } else {
                                 selectedExercisesList.add(exercise)
                             }
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
+                        }
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = if (addExercises) 0.dp else 20.dp),
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    if (addExercises) {
-                        Checkbox(
-                            modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                            checked = selectedExercisesList.contains(exercise),
-                            onCheckedChange = {
-                                if (selectedExercisesList.contains(exercise)) {
-                                    selectedExercisesList.remove(exercise)
-                                } else {
-                                    selectedExercisesList.add(exercise)
-                                }
-                            }
-                        )
-                    }
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = if (addExercises) 0.dp else 20.dp),
-                        verticalArrangement = Arrangement.Center
-                    ) {
+                    Text(
+                        text = exercise.name,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = stringResource(exerciseEnumToStringId(exercise.category)),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    if (exercise.equipment != null) {
                         Text(
-                            text = exercise.name,
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        Text(
-                            text = stringResource(exerciseEnumToStringId(exercise.category)),
+                            text = stringResource(exerciseEnumToStringId(exercise.equipment)),
                             style = MaterialTheme.typography.bodyMedium
-                        )
-                        if (exercise.equipment != null) {
-                            Text(
-                                text = stringResource(exerciseEnumToStringId(exercise.equipment)),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                    IconButton(
-                        modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                        onClick = {
-                            selectedExercise = exercise
-                            isModalSheetOpen = true
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = stringResource(R.string.details)
                         )
                     }
                 }
-                HorizontalDivider(Modifier.animateItem())
+                IconButton(
+                    modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                    onClick = {
+                        selectedExercise = exercise
+                        isModalSheetOpen = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = stringResource(R.string.details)
+                    )
+                }
             }
+            HorizontalDivider(Modifier.animateItem())
+
         }
         bottomMargin()
     }
