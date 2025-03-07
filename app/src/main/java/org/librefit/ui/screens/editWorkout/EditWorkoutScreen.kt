@@ -163,11 +163,11 @@ private fun EditWorkoutScreen(
     /**
      * Used to display information about the selected exercise in [ExerciseDetailModalBottomSheet]
      */
-    var selectedExercise by remember { mutableStateOf<ExerciseDC?>(null) }
+    var selectedExercise by remember { mutableStateOf<ExerciseDC>(ExerciseDC()) }
     var isModalSheetOpen by remember { mutableStateOf(false) }
 
     if (isModalSheetOpen) {
-        ExerciseDetailModalBottomSheet(exercise = selectedExercise!!) { isModalSheetOpen = false }
+        ExerciseDetailModalBottomSheet(exercise = selectedExercise) { isModalSheetOpen = false }
     }
 
 
