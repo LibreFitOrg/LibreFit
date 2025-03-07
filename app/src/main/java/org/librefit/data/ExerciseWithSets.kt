@@ -25,7 +25,18 @@ import androidx.room.Relation
 import org.librefit.db.Exercise
 import org.librefit.db.Set
 
-data class ExerciseWithSets( //TODO: add kdoc
+/**
+ * A data class representing an [Exercise] with its associated [Set]s.
+ *
+ * This class is used by Room to retrieve all the data associated with an exercise and
+ * the sets associated with it. The actual exercise data is stored in [ExerciseDC] which is provided
+ * by [org.librefit.ui.screens.shared.SharedViewModel] based on [Exercise.exerciseId]
+ *
+ * @property exercise It contains the user related data associated with this [Exercise].
+ * @property sets The list of [Set] associated with the [exercise] containing all the user related data.
+ * @property exerciseDC The actual features of the exercise itself. Details at [ExerciseDC]
+ */
+data class ExerciseWithSets(
     @Embedded var exercise: Exercise = Exercise(),
     @Relation(
         parentColumn = "id",

@@ -24,19 +24,21 @@ import androidx.room.PrimaryKey
 import java.time.LocalDateTime
 
 /**
- * Represents a workout.
+ * Entity representing an workout record in the "workouts" table.
  *
  * @property id The unique identifier for the workout. This is the primary key and is auto-incremented.
- * @property routineId An identifier used for statistics to if the it has a parent routine. So every
- * workout from a single routine will share the same [routineId]. It is used for statistics.
- * @property title The title of the workout visible to the user.
- * @property notes A user note about the routine or workout.
+ * @property routineId An identifier used for statistics and to determine if the workout has a parent routine.
+ * This means every workout from a single routine will share the same [routineId].
+ * @property title The title of the workout visible to the user. The user can modify it in [org.librefit.ui.screens.workout.WorkoutScreen]
+ * and [org.librefit.ui.screens.editWorkout.EditWorkoutScreen]
+ * @property notes A user note about the routine or workout. The user can modify it in [org.librefit.ui.screens.workout.WorkoutScreen]
+ *  * and [org.librefit.ui.screens.editWorkout.EditWorkoutScreen]
  * @property routine A boolean flag indicating whether the workout is a routine.
- * If `true`, the workout will be displayed as a playable routine in the [org.librefit.ui.screens.home.HomeScreen].
+ * If `true`, the workout will be displayed as a playable routine in the [org.librefit.ui.screens.home.HomeScreen]
+ * and the info in [org.librefit.ui.screens.infoWorkout.InfoWorkoutScreen] will be shown differently
  * @property timeElapsed The total time elapsed during the workout, measured in seconds by
  * [org.librefit.services.WorkoutService] chronometer during a workout session.
  * @property created The timestamp indicating when a routine was created.
- * This is set to the current date and time by default.
  * @property completed The timestamp indicating when the workout was completed.
  * This is set to the current date and time by default, but it is updated when the workout is
  * finished in the [org.librefit.ui.screens.workout.WorkoutScreen].
