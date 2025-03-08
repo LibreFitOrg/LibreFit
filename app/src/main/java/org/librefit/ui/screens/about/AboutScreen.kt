@@ -23,7 +23,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -62,6 +61,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
@@ -90,7 +90,7 @@ fun AboutScreen(navController: NavHostController) {
                 TextButton(
                     onClick = {
                         val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = Uri.parse(url)
+                            data = url.toUri()
                         }
                         context.startActivity(intent)
                         showUrlDialog = false
@@ -102,7 +102,7 @@ fun AboutScreen(navController: NavHostController) {
             dismissButton = {
                 TextButton(
                     onClick = {
-                        val clip = ClipData.newPlainText("Copied Url", url)
+                        val clip = ClipData.newPlainText("Website url", url)
                         clipboardManager.setPrimaryClip(clip)
                         showUrlDialog = false
                     }
@@ -154,7 +154,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-                val version = pInfo.versionName.toString()
+                val version = pInfo?.versionName.toString()
                 Text(stringResource(R.string.version) + ": " + version)
             }
 
