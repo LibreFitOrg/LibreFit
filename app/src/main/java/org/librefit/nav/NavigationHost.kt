@@ -111,7 +111,7 @@ fun NavigationHost() {
         }
         composable<Destination.SettingsScreen> {
             SettingsScreen(
-                navigateBack = { navController.popBackStack() }
+                navController = navController
             )
         }
         composable<Destination.SuccessScreen> {

@@ -56,6 +56,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -115,7 +116,7 @@ fun AboutScreen(navController: NavHostController) {
     }
 
     CustomScaffold(
-        title = stringResource(id = R.string.about),
+        title = AnnotatedString(stringResource(id = R.string.about)),
         navigateBack = { navController.popBackStack() },
     ) { innerPadding ->
         LazyColumn(

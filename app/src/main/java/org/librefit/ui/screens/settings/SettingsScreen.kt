@@ -22,7 +22,6 @@ package org.librefit.ui.screens.settings
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
@@ -37,6 +36,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -60,14 +61,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.core.view.HapticFeedbackConstantsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.enums.Language
 import org.librefit.enums.ThemeMode
+import org.librefit.nav.Destination
 import org.librefit.ui.components.CustomScaffold
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.bottomMargin
@@ -76,7 +82,7 @@ import org.librefit.ui.components.bottomMargin
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    navigateBack: () -> Unit
+    navController: NavHostController
 ) {
 
     val viewModel: SettingsScreenViewModel = hiltViewModel()
@@ -136,8 +142,11 @@ fun SettingsScreen(
     val view = LocalView.current
 
     CustomScaffold(
-        title = stringResource(id = R.string.settings),
-        navigateBack = navigateBack
+        title = AnnotatedString(stringResource(id = R.string.settings)),
+        navigateBack = { navController.popBackStack() },
+        actions = listOf { navController.navigate(Destination.AboutScreen) },
+        actionsIcons = listOf(Icons.Default.Info),
+        actionsElevated = listOf(false),
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -353,13 +362,11 @@ fun SettingsScreen(
                             if (!viewModel.isIgnoringBatteryOptimization.value) {
                                 intent =
                                     Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                                        data = Uri.parse("package:${context.packageName}")
+                                        data = "package:${context.packageName}".toUri()
                                     }
                             } else {
                                 intent =
-                                    Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
-
-                                    }
+                                    Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
                             }
                             context.startActivity(intent)
                         }
@@ -395,5 +402,5 @@ private fun languageCodeToId(code: String): Int {
 @Preview
 @Composable
 fun SettingsScreenPreview() {
-    SettingsScreen({})
+    SettingsScreen(rememberNavController())
 }

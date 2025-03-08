@@ -39,23 +39,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -70,8 +65,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -85,6 +80,7 @@ import org.librefit.db.Exercise
 import org.librefit.enums.InfoMode
 import org.librefit.nav.Destination
 import org.librefit.ui.components.ConfirmDialog
+import org.librefit.ui.components.CustomScaffold
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.animations.DumbbellLottie
 import org.librefit.ui.components.bottomMargin
@@ -176,69 +172,37 @@ fun WorkoutScreen(
         }
     }
 
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.workout),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            if (viewModel.isListEmpty()) {
-                                navController.popBackStack()
-                            } else {
-                                showExitDialog = true
-                            }
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = stringResource(id = R.string.navigate_back)
-                        )
-                    }
-                },
-                actions = {
-                    Button(
-                        onClick = {
-                            sharedViewModel.setPassedData(
-                                workout = sharedViewModel.getPassedWorkout().copy(
-                                    id = 0,
-                                    timeElapsed = timeElapsed,
-                                    completed = LocalDateTime.now(),
-                                    routine = false
-                                ),
-                                exercises = viewModel.getExercises(),
-                            )
-                            navController.navigate(Destination.BeforeSavingScreen)
-                        },
-                        enabled = !viewModel.isListEmpty(),
-                    ) {
-                        Text(stringResource(R.string.done))
-                    }
-                }
-            )
+    CustomScaffold(
+        title = AnnotatedString(stringResource(R.string.workout)),
+        navigateBack = {
+            if (viewModel.isListEmpty()) {
+                navController.popBackStack()
+            } else {
+                showExitDialog = true
+            }
         },
+        actions = listOf {
+            sharedViewModel.setPassedData(
+                workout = sharedViewModel.getPassedWorkout().copy(
+                    id = 0,
+                    timeElapsed = timeElapsed,
+                    completed = LocalDateTime.now(),
+                    routine = false
+                ),
+                exercises = viewModel.getExercises(),
+            )
+            navController.navigate(Destination.BeforeSavingScreen)
+        },
+        actionsEnabled = listOf(!viewModel.isListEmpty()),
+        actionsDescription = listOf(stringResource(R.string.done)),
+        fabIcon = Icons.Default.Add,
+        fabAction = {
+            navController.navigate(Destination.ExercisesScreen(addExercises = true))
+        },
+        fabDescription = stringResource(R.string.add_exercise),
         bottomBar = {
             BottomAppBar {
                 BottomAppBarContent(viewModel)
-            }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate(Destination.ExercisesScreen(addExercises = true))
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_exercise)
-                )
             }
         }
     ) { paddingValues ->

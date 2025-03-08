@@ -36,6 +36,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.view.HapticFeedbackConstantsCompat
 import org.librefit.R
 
@@ -44,9 +46,9 @@ import org.librefit.R
  * A reusable [Scaffold] component designed for multiple screens to minimize boilerplate code
  * and maintain a consistent design across the application.
  *
- * @param title The title displayed in the [TopAppBar].
+ * @param title The title displayed in the [TopAppBar]. By default the title isn't shown
  * @param navigateBack A callback function invoked when the navigation icon in the [TopAppBar] is clicked.
- * This should typically handle back navigation gesture.
+ * This should typically trigger back navigation. By default the back navigation icon is not displayed
  * @param actions A list of callback functions executed when the relative action button in the [TopAppBar] is clicked.
  * It must be passed in order to show the action button.
  * @param actionsEnabled A list of booleans that controls whether the relative action button is enabled or disabled.
@@ -61,13 +63,14 @@ import org.librefit.R
  * @param fabIcon An optional [ImageVector] representing the icon displayed in the [FloatingActionButton].
  * @param fabDescription An optional string that provides a description of the [fabIcon] and [fabAction]
  * for accessibility purposes. Read mode at [Icon] and [FloatingActionButton]
+ * @param bottomBar The bottom bar of the scaffold. By default there's no bottom bar.
  * @param content A composable lambda that defines the main content of the screen.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomScaffold(
-    title: String,
-    navigateBack: () -> Unit,
+    title: AnnotatedString? = null,
+    navigateBack: (() -> Unit)? = null,
     actions: List<() -> Unit> = listOf(),
     actionsEnabled: List<Boolean> = listOf(),
     actionsDescription: List<String?> = listOf(),
@@ -76,22 +79,31 @@ fun CustomScaffold(
     fabAction: () -> Unit = {},
     fabIcon: ImageVector? = null,
     fabDescription: String? = null,
+    bottomBar: @Composable (() -> Unit)? = null,
     content: @Composable ((PaddingValues) -> Unit),
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = title)
+                    if (title != null) {
+                        Text(
+                            text = title,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = navigateBack
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = stringResource(id = R.string.navigate_back)
-                        )
+                    if (navigateBack != null) {
+                        IconButton(
+                            onClick = navigateBack
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                                contentDescription = stringResource(id = R.string.navigate_back)
+                            )
+                        }
                     }
                 },
                 actions = {
@@ -154,7 +166,8 @@ fun CustomScaffold(
                     )
                 }
             }
-        }
+        },
+        bottomBar = { bottomBar?.invoke() }
     ) {
         content(it)
     }

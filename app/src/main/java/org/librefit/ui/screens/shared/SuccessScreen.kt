@@ -25,15 +25,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import org.librefit.R
 import org.librefit.enums.SuccessMessage
+import org.librefit.ui.components.CustomScaffold
 import org.librefit.ui.components.animations.SuccessLottie
 
 @Composable
@@ -41,7 +42,7 @@ fun SuccessScreen(
     message: SuccessMessage,
     navigateBack: () -> Unit
 ) {
-    Scaffold(modifier = Modifier.fillMaxSize()) {
+    CustomScaffold {
         Column(
             modifier = Modifier
                 .padding(it)
@@ -58,6 +59,7 @@ fun SuccessScreen(
                 textAlign = TextAlign.Center
             )
             SuccessLottie()
+            // TODO: add donation notice when workout is saved
             Button(
                 onClick = navigateBack
             ) {
@@ -65,4 +67,10 @@ fun SuccessScreen(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun SuccessScreenPreview() {
+    SuccessScreen(SuccessMessage.WORKOUT_SAVED) { }
 }

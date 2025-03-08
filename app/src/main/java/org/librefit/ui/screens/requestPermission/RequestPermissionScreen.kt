@@ -79,7 +79,6 @@ fun RequestPermissionScreen(
 
 
     CustomScaffold(
-        title = "",
         navigateBack = { navController.popBackStack() }
     ) {
         LazyColumn(

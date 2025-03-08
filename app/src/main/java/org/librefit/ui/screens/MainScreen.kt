@@ -20,35 +20,24 @@
 package org.librefit.ui.screens
 
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -59,6 +48,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.nav.Destination
+import org.librefit.ui.components.CustomScaffold
 import org.librefit.ui.screens.home.HomeScreen
 import org.librefit.ui.screens.profile.ProfileScreen
 import org.librefit.ui.screens.shared.SharedViewModel
@@ -70,68 +60,25 @@ fun MainScreen(
     navController: NavHostController,
     sharedViewModel: SharedViewModel
 ) {
-
-    var expended by remember { mutableStateOf(false) }
-
     var homeSelected by rememberSaveable { mutableStateOf(true) }
 
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                            append(stringResource(id = R.string.app_name).removeRange(5, 8))
-                        }
-                        append(stringResource(id = R.string.app_name).removeRange(0, 5))
-                    }
-                    )
-                },
-                actions = {
-                    IconButton(
-                        onClick = { expended = true }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = stringResource(id = R.string.more_options)
-                        )
-                    }
-                    DropdownMenu(
-                        expanded = expended,
-                        onDismissRequest = { expended = false },
-                    ) {
-                        DropdownMenuItem(
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = stringResource(id = R.string.settings)
-                                )
-                            },
-                            text = { Text(text = stringResource(id = R.string.settings)) },
-                            onClick = {
-                                navController.navigate(Destination.SettingsScreen)
-                                expended = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Info,
-                                    contentDescription = stringResource(id = R.string.about)
-                                )
-                            },
-                            text = { Text(text = stringResource(id = R.string.about)) },
-                            onClick = {
-                                navController.navigate(Destination.AboutScreen)
-                                expended = false
-                            }
-                        )
-                    }
-                }
-            )
+    CustomScaffold(
+        title = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                append(stringResource(id = R.string.app_name).removeRange(5, 8))
+            }
+            append(stringResource(id = R.string.app_name).removeRange(0, 5))
         },
+        actions = listOf { navController.navigate(Destination.SettingsScreen) },
+        actionsIcons = listOf(Icons.Default.Settings),
+        actionsElevated = listOf(false),
+        fabAction = {
+            sharedViewModel.updateWorkoutId(0)
+            navController.navigate(Destination.EditWorkoutScreen)
+        },
+        fabIcon = Icons.Default.Add,
+        fabDescription = stringResource(R.string.create_routine),
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
@@ -143,11 +90,7 @@ fun MainScreen(
                             contentDescription = stringResource(R.string.home)
                         )
                     },
-                    label = {
-                        Text(
-                            text = stringResource(R.string.home)
-                        )
-                    }
+                    label = { Text(stringResource(R.string.home)) }
                 )
                 NavigationBarItem(
                     selected = !homeSelected,
@@ -158,27 +101,8 @@ fun MainScreen(
                             contentDescription = stringResource(R.string.profile)
                         )
                     },
-                    label = {
-                        Text(
-                            text = stringResource(R.string.profile)
-                        )
-                    }
+                    label = { Text(stringResource(R.string.profile)) }
                 )
-            }
-        },
-        floatingActionButton = {
-            if (homeSelected) {
-                FloatingActionButton(
-                    onClick = {
-                        sharedViewModel.updateWorkoutId(0)
-                        navController.navigate(Destination.EditWorkoutScreen)
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.create_routine)
-                    )
-                }
             }
         }
     ) { innerPadding ->
