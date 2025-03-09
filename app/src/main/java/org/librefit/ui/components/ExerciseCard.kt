@@ -74,7 +74,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,6 +93,8 @@ import androidx.core.view.HapticFeedbackConstantsCompat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.librefit.R
+import org.librefit.data.ExerciseDC
+import org.librefit.db.entity.Exercise
 import org.librefit.db.entity.Set
 import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.enums.InfoMode
@@ -349,6 +350,7 @@ fun ExerciseCard(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
+                    //TODO: add toggle to apply body weight
                 }
                 if (workout) {
                     Icon(
@@ -694,11 +696,19 @@ private fun setModeToStringId(setMode: SetMode): Int {
 @Preview
 @Composable
 private fun ExerciseCardPreview() {
-    val timerRunning = rememberSaveable { mutableStateOf(false) }
-    val set = rememberSaveable { mutableStateOf(Set()) }
+    val timerRunning = remember { mutableStateOf(false) }
+    val set = remember { mutableStateOf(Set()) }
     ExerciseCard(
         Modifier,
-        ExerciseWithSets(),
+        ExerciseWithSets(
+            exercise = Exercise(
+                notes = "This is a test note!",
+                restTime = 90,
+                setMode = SetMode.TIME
+            ),
+            sets = listOf(Set(), Set()),
+            exerciseDC = ExerciseDC(name = "Test exercise")
+        ),
         {},
         {},
         {},

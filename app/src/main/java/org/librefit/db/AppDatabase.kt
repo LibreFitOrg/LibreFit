@@ -22,13 +22,15 @@ package org.librefit.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import org.librefit.db.dao.MeasurementDao
 import org.librefit.db.dao.WorkoutDao
 import org.librefit.db.entity.Exercise
+import org.librefit.db.entity.Measurement
 import org.librefit.db.entity.Set
 import org.librefit.db.entity.Workout
 
 @Database(
-    entities = [Workout::class, Exercise::class, Set::class],
+    entities = [Workout::class, Exercise::class, Set::class, Measurement::class],
     version = 1,
     exportSchema = false
 )
@@ -39,4 +41,6 @@ abstract class AppDatabase : RoomDatabase() {
     }
 
     abstract fun getWorkoutDao(): WorkoutDao
+
+    abstract fun getMeasurementDao(): MeasurementDao
 }
