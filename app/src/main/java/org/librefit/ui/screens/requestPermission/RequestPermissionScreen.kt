@@ -49,6 +49,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import org.librefit.R
@@ -75,6 +76,23 @@ fun RequestPermissionScreen(
         null
     }
 
+    RequestPermissionsScreenContent(
+        navController = navController,
+        requestPermissionAgain = requestPermissionAgain,
+        notificationPermissionState = notificationPermissionState
+    ) {
+        viewModel.saveRequestPermissionAgainPreference(it)
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun RequestPermissionsScreenContent(
+    navController: NavHostController,
+    requestPermissionAgain: Boolean,
+    notificationPermissionState: PermissionState?,
+    saveRequestPermissionAgainPreference: (Boolean) -> Unit
+) {
     val context = LocalContext.current
 
 
@@ -86,7 +104,7 @@ fun RequestPermissionScreen(
                 .padding(it)
                 .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(25.dp)
+            verticalArrangement = Arrangement.spacedBy(40.dp)
         ) {
             item {
                 Column(
@@ -158,7 +176,7 @@ fun RequestPermissionScreen(
                         enabled = notificationPermissionState?.status?.isGranted == false,
                         checked = !requestPermissionAgain,
                         onCheckedChange = {
-                            viewModel.saveRequestPermissionAgainPreference(value = !it)
+                            saveRequestPermissionAgainPreference(!it)
                         }
                     )
                     Spacer(Modifier.width(10.dp))
@@ -176,7 +194,7 @@ fun RequestPermissionScreen(
                 ) {
                     TextButton(
                         onClick = {
-                            viewModel.saveRequestPermissionAgainPreference(value = true)
+                            saveRequestPermissionAgainPreference(true)
                             checkPermissionsBeforeNavigateToWorkout(
                                 navController = navController,
                                 appContext = context.applicationContext
@@ -210,10 +228,15 @@ fun RequestPermissionScreen(
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Composable
 private fun RequestPermissionsScreenPreview() {
-    RequestPermissionScreen(
-        navController = rememberNavController()
-    )
+    RequestPermissionsScreenContent(
+        navController = rememberNavController(),
+        requestPermissionAgain = true,
+        notificationPermissionState = null
+    ) {
+
+    }
 }
