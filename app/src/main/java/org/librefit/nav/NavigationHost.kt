@@ -38,6 +38,7 @@ import org.librefit.ui.screens.calendar.CalendarScreen
 import org.librefit.ui.screens.editWorkout.EditWorkoutScreen
 import org.librefit.ui.screens.exercises.ExercisesScreen
 import org.librefit.ui.screens.infoWorkout.InfoWorkoutScreen
+import org.librefit.ui.screens.measurements.MeasurementScreen
 import org.librefit.ui.screens.requestPermission.RequestPermissionScreen
 import org.librefit.ui.screens.settings.SettingsScreen
 import org.librefit.ui.screens.shared.SharedViewModel
@@ -100,6 +101,9 @@ fun NavigationHost() {
                 navController = navController,
                 sharedViewModel = sharedViewModel
             )
+        }
+        composable<Destination.MeasurementScreen> {
+            MeasurementScreen { navController.popBackStack() }
         }
         composable<Destination.LicenseScreen> {
             LicenseScreen(navigateBack = { navController.popBackStack() })

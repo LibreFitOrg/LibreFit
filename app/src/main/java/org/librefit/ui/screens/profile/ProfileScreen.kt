@@ -159,7 +159,7 @@ fun ProfileScreen(
                     modifier = Modifier.weight(0.5f),
                     elevated = false
                 ) {
-                    //TODO: body measurements
+                    navController.navigate(Destination.MeasurementScreen)
                 }
                 CustomButton(
                     text = stringResource(R.string.calendar),

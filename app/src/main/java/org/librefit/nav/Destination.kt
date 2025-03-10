@@ -48,6 +48,9 @@ sealed class Destination {
     object MainScreen
 
     @Serializable
+    object MeasurementScreen
+
+    @Serializable
     object RequestPermissionScreen
 
     @Serializable
