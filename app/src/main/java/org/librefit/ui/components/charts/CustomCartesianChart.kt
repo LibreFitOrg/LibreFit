@@ -19,13 +19,16 @@
 
 package org.librefit.ui.components.charts
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +37,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -65,7 +71,6 @@ import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import org.librefit.R
 import org.librefit.data.ChartData
-import org.librefit.ui.components.animations.StatsLottie
 import org.librefit.ui.theme.LibreFitTheme
 import java.text.DecimalFormat
 import kotlin.random.Random
@@ -100,7 +105,8 @@ fun CustomCartesianChart(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(15.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             if (yValues.isNotEmpty()) {
                 LaunchedEffect(yValues) {
@@ -193,8 +199,15 @@ fun CustomCartesianChart(
 
                 }
             } else {
-                StatsLottie()
-                Text(stringResource(R.string.not_enough_data))
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_database_off),
+                    modifier = Modifier.size(60.dp),
+                    contentDescription = null
+                )
+                Text(
+                    text = stringResource(R.string.not_enough_data),
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }
