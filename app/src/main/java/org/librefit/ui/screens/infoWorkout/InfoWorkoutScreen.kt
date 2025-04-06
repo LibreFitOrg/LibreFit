@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -36,6 +37,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -79,6 +81,7 @@ import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+import kotlin.random.Random
 
 @Composable
 fun InfoWorkoutScreen(
@@ -254,49 +257,49 @@ private fun InfoWorkoutScreenContent(
                     }
                 }
 
-                if (listChartData.size > 1) {
-                    item { HeadlineText(stringResource(R.string.past_workouts)) }
+                item { HeadlineText(stringResource(R.string.past_workouts)) }
 
-                    item {
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            items(ChartMode.entries) {
-                                FilterChip(
-                                    selected = chartMode == it,
-                                    onClick = { updateChartMode(it) },
-                                    label = {
-                                        Text(
-                                            stringResource(
-                                                id = when (it) {
-                                                    ChartMode.DURATION -> R.string.duration
-                                                    ChartMode.VOLUME -> R.string.volume
-                                                    ChartMode.REPS -> R.string.reps
-                                                }
-                                            )
+                item {
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        items(ChartMode.entries) {
+                            FilterChip(
+                                selected = chartMode == it,
+                                onClick = { updateChartMode(it) },
+                                label = {
+                                    Text(
+                                        stringResource(
+                                            id = when (it) {
+                                                ChartMode.DURATION -> R.string.duration
+                                                ChartMode.VOLUME -> R.string.volume
+                                                ChartMode.REPS -> R.string.reps
+                                            }
                                         )
-                                    },
-                                    leadingIcon = {
-                                        if (chartMode == it) {
-                                            Icon(
-                                                imageVector = Icons.Default.Check,
-                                                contentDescription = null
-                                            )
-                                        }
+                                    )
+                                },
+                                leadingIcon = {
+                                    if (chartMode == it) {
+                                        Icon(
+                                            modifier = Modifier.size(FilterChipDefaults.IconSize),
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = null
+                                        )
                                     }
-                                )
-                            }
+                                },
+                                enabled = listChartData.isNotEmpty()
+                            )
                         }
                     }
+                }
 
-                    item {
-                        CustomCartesianChart(
-                            format = when (chartMode) {
-                                ChartMode.DURATION -> DecimalFormat("# " + stringResource(R.string.min))
-                                ChartMode.VOLUME -> DecimalFormat("#.## " + stringResource(R.string.kg))
-                                ChartMode.REPS -> DecimalFormat()
-                            },
-                            listChartData = listChartData
-                        )
-                    }
+                item {
+                    CustomCartesianChart(
+                        format = when (chartMode) {
+                            ChartMode.DURATION -> DecimalFormat("# " + stringResource(R.string.min))
+                            ChartMode.VOLUME -> DecimalFormat("#.## " + stringResource(R.string.kg))
+                            ChartMode.REPS -> DecimalFormat()
+                        },
+                        listChartData = listChartData
+                    )
                 }
 
 
@@ -382,7 +385,7 @@ private fun InfoRoutineScreenPreview() {
                     sets = listOf(Set(), Set())
                 )
             ),
-            listChartData = listOf<Float>(1f, 2f).map(::ChartData),
+            listChartData = (0..10).map { ChartData(Random.nextFloat()) },
             detachWorkoutFromRoutine = {},
             updateChartMode = {},
         )
