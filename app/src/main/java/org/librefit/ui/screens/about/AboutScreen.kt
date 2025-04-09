@@ -19,10 +19,6 @@
 
 package org.librefit.ui.screens.about
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -37,18 +33,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -61,7 +53,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
@@ -69,6 +60,7 @@ import org.librefit.nav.Route
 import org.librefit.ui.components.CustomScaffold
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.bottomMargin
+import org.librefit.ui.components.dialogs.UrlActionDialog
 import org.librefit.ui.theme.LibreFitTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,41 +69,9 @@ fun AboutScreen(navController: NavHostController) {
 
     val context = LocalContext.current
 
-    val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    var url = remember { mutableStateOf("") }
 
-    var url by remember { mutableStateOf("") }
-
-    if (url != "") {
-        AlertDialog(
-            onDismissRequest = { url = "" },
-            title = { Text(stringResource(R.string.link)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = url.toUri()
-                        }
-                        context.startActivity(intent)
-                        url = ""
-                    }
-                ) {
-                    Text(stringResource(R.string.open))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        val clip = ClipData.newPlainText("Website url", url)
-                        clipboardManager.setPrimaryClip(clip)
-                        url = ""
-                    }
-                ) {
-                    Text(stringResource(R.string.copy))
-                }
-            },
-            text = { Text(text = url) }
-        )
-    }
+    UrlActionDialog(url)
 
     CustomScaffold(
         title = AnnotatedString(stringResource(id = R.string.about)),
@@ -208,7 +168,7 @@ fun AboutScreen(navController: NavHostController) {
                         stringResource(R.string.privacy_policy),
                         description = stringResource(R.string.privacy_policy_desc),
                         onClick = {
-                            url = context.getString(R.string.url_privacy)
+                            url.value = context.getString(R.string.url_privacy)
                         }
 
                     )
@@ -219,7 +179,7 @@ fun AboutScreen(navController: NavHostController) {
                         ImageVector.vectorResource(R.drawable.ic_globe),
                         stringResource(R.string.website),
                         onClick = {
-                            url = context.getString(R.string.url_website)
+                            url.value = context.getString(R.string.url_website)
                         }
                     )
                 }
@@ -242,7 +202,7 @@ fun AboutScreen(navController: NavHostController) {
                         stringResource(R.string.github),
                         stringResource(R.string.source_code),
                         onClick = {
-                            url = context.getString(R.string.url_source_code)
+                            url.value = context.getString(R.string.url_source_code)
                         }
                     )
                 }
@@ -268,7 +228,7 @@ fun AboutScreen(navController: NavHostController) {
                         stringResource(R.string.url_IamDg).split("/").last(),
                         stringResource(R.string.founder),
                         onClick = {
-                            url = context.getString(R.string.url_IamDg)
+                            url.value = context.getString(R.string.url_IamDg)
                         }
                     )
                 }
@@ -283,7 +243,7 @@ fun AboutScreen(navController: NavHostController) {
                         stringResource(R.string.url_IamDg).split("/").last(),
                         stringResource(R.string.contributed_to) + stringResource(R.string.language_italian),
                         onClick = {
-                            url = context.getString(R.string.url_IamDg)
+                            url.value = context.getString(R.string.url_IamDg)
                         }
                     )
                 }

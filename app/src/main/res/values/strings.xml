@@ -275,7 +275,7 @@
     <string name="cancel_dialog">Cancel</string>
     <string name="exit">Exit</string>
     <string name="ok_dialog">OK</string>
-    <string name="link">Link</string>
+    <string name="url">URL</string>
 
     <!--Util-->
     <string name="delete">Delete</string>

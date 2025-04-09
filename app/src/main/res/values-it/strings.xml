@@ -185,7 +185,7 @@
     <string name="confirm_delete">Sei sicuro di volerlo eliminare? Questa azione non può essere annullata.</string>
     <string name="open">Apri</string>
     <string name="ok_dialog">OK</string>
-    <string name="link">Link</string>
+    <string name="url">URL</string>
     <string name="delete">Elimina</string>
     <string name="license_desc">LibreFit è distribuito sotto la licenza GNU General Public License v3.0 (GPL-3).</string>
     <string name="view_online_version">Visualizza versione online</string>
