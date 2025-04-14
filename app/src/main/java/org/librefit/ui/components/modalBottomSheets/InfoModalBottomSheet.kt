@@ -38,10 +38,10 @@ import org.librefit.ui.components.animations.AlarmLottie
 import org.librefit.ui.components.animations.StatsLottie
 import org.librefit.ui.components.animations.TrainingLottie
 
-/** A modal bottom sheet used in [org.librefit.ui.screens.workout.WorkoutScreen] and
- * [org.librefit.ui.screens.editWorkout.EditWorkoutScreen] to explain concepts to the user.
- * @param infoMode A [InfoMode] enum holding the info to display
- * @param onDismiss A lambda function in which [infoMode] should be set to [InfoMode.DISMISS]
+/** A modal bottom sheet which explains concepts to the user.
+ * @param infoMode A [InfoMode] enum holding the info to display. If [infoMode] is equal to
+ * [InfoMode.DISMISS], then InfoModalBottomSheet is not displayed
+ * @param onDismiss A lambda function triggered when user leaves [InfoModalBottomSheet]
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,47 +49,48 @@ fun InfoModalBottomSheet(
     infoMode: InfoMode,
     onDismiss: () -> Unit
 ) {
-    val title = when (infoMode) {
-        InfoMode.REST_TIMER -> stringResource(R.string.rest_time)
-        InfoMode.TYPE_OF_SET -> stringResource(R.string.type_of_set)
-        InfoMode.BEFORE_SAVING_STATS -> stringResource(R.string.statistics)
-        InfoMode.DISMISS -> ""
-    }
+    if (infoMode != InfoMode.DISMISS) {
+        val title = when (infoMode) {
+            InfoMode.REST_TIMER -> stringResource(R.string.rest_time)
+            InfoMode.TYPE_OF_SET -> stringResource(R.string.type_of_set)
+            InfoMode.BEFORE_SAVING_STATS -> stringResource(R.string.statistics)
+            else -> ""
+        }
 
+        val text = when (infoMode) {
+            InfoMode.REST_TIMER -> stringResource(R.string.rest_time_desc)
+            InfoMode.TYPE_OF_SET -> stringResource(R.string.type_of_set_desc)
+            InfoMode.BEFORE_SAVING_STATS -> stringResource(R.string.statistics_desc)
+            else -> ""
+        }
 
-    val text = when (infoMode) {
-        InfoMode.REST_TIMER -> stringResource(R.string.rest_time_desc)
-        InfoMode.TYPE_OF_SET -> stringResource(R.string.type_of_set_desc)
-        InfoMode.BEFORE_SAVING_STATS -> stringResource(R.string.statistics_desc)
-        InfoMode.DISMISS -> ""
-    }
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss
-    ) {
-        LazyColumn(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        ModalBottomSheet(
+            onDismissRequest = onDismiss
         ) {
-            item {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineLarge
-                )
-            }
-            item {
-                HorizontalDivider()
-            }
-            item {
-                Text(text)
-            }
-            item {
-                when (infoMode) {
-                    InfoMode.REST_TIMER -> AlarmLottie()
-                    InfoMode.TYPE_OF_SET -> TrainingLottie()
-                    InfoMode.BEFORE_SAVING_STATS -> StatsLottie()
-                    InfoMode.DISMISS -> {}
+            LazyColumn(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.headlineLarge
+                    )
+                }
+                item {
+                    HorizontalDivider()
+                }
+                item {
+                    Text(text)
+                }
+                item {
+                    when (infoMode) {
+                        InfoMode.REST_TIMER -> AlarmLottie()
+                        InfoMode.TYPE_OF_SET -> TrainingLottie()
+                        InfoMode.BEFORE_SAVING_STATS -> StatsLottie()
+                        InfoMode.DISMISS -> {}
+                    }
                 }
             }
         }

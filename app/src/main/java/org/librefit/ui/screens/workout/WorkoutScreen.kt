@@ -147,9 +147,7 @@ fun WorkoutScreen(
 
     var infoMode by remember { mutableStateOf(InfoMode.DISMISS) }
 
-    if (infoMode != InfoMode.DISMISS) {
-        InfoModalBottomSheet(infoMode) { infoMode = InfoMode.DISMISS }
-    }
+    InfoModalBottomSheet(infoMode) { infoMode = InfoMode.DISMISS }
 
 
     BackHandler(enabled = !showExitDialog && !viewModel.isListEmpty()) {

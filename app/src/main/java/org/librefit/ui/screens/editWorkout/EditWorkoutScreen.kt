@@ -165,9 +165,7 @@ private fun EditWorkoutScreenContent(
 
     var infoMode by remember { mutableStateOf(InfoMode.DISMISS) }
 
-    if (infoMode != InfoMode.DISMISS) {
-        InfoModalBottomSheet(infoMode) { infoMode = InfoMode.DISMISS }
-    }
+    InfoModalBottomSheet(infoMode) { infoMode = InfoMode.DISMISS }
 
     CustomScaffold(
         title = AnnotatedString(
