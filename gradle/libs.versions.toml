@@ -4,7 +4,7 @@ datastore = "1.1.4"
 kotlin = "2.0.20"
 junit = "4.13.2"
 espressoCore = "3.6.1"
-composeBom = "2025.03.01"
+composeBom = "2025.04.00"
 roomVersion = "2.6.1"
 appcompat = "1.7.0"
 ksp = "2.0.20-1.0.25"
@@ -14,7 +14,7 @@ coreSplashscreen = "1.0.1"
 composeM3 = "2.0.2"
 hiltAndroidPlugin = "2.55"
 hiltAndroidVersion = "2.55"
-hiltAndroidCompiler = "2.55"
+hiltAndroidCompiler = "2.56.1"
 hiltNavigationCompose = "1.2.0"
 moshi = "1.15.2"
 moshiKotlinCodegen = "1.15.2"
@@ -41,7 +41,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.8" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.8.0" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.8.1" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version = "1.1.4" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
