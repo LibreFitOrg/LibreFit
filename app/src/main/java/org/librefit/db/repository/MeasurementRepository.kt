@@ -36,12 +36,16 @@ import org.librefit.db.entity.Measurement
  */
 class MeasurementRepository(private val measurementDao: MeasurementDao) {
 
-    suspend fun insertMeasurement(measurement: Measurement) {
-        measurementDao.insertMeasurement(measurement)
+    suspend fun upsertMeasurement(measurement: Measurement) {
+        measurementDao.upsertMeasurement(measurement)
     }
 
     suspend fun deleteMeasurement(measurement: Measurement) {
         measurementDao.deleteMeasurement(measurement)
+    }
+
+    suspend fun deleteById(id: Long) {
+        measurementDao.deleteById(id)
     }
 
     fun getAllMeasurements(): Flow<List<Measurement>> {
