@@ -1,6 +1,6 @@
 [versions]
 agp = "8.9.2"
-datastore = "1.1.4"
+datastore = "1.1.5"
 kotlin = "2.0.20"
 junit = "4.13.2"
 espressoCore = "3.6.1"
@@ -12,12 +12,12 @@ accompanistPermissions = "0.37.2"
 lottieCompose = "6.6.2"
 coreSplashscreen = "1.0.1"
 composeM3 = "2.0.2"
-hiltAndroid = "2.56.1"
+hiltAndroid = "2.56.2"
 hiltNavigationCompose = "1.2.0"
 moshi = "1.15.2"
 moshiKotlinCodegen = "1.15.2"
 aboutLibraries = "12.0.0-a04"
-aboutlibrariesComposeM3 = "12.1.0-rc01"
+aboutlibrariesComposeM3 = "12.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.16.0" }
@@ -40,7 +40,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.9" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.8.1" }
-androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version = "datastore" }
+androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
