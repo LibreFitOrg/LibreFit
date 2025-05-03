@@ -461,7 +461,7 @@ private fun MeasurementScreenContent(
                 items(measurements, key = { it.id }) {
                     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-                    ElevatedCard {
+                    ElevatedCard(Modifier.animateItem()) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
