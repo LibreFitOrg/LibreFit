@@ -264,8 +264,8 @@ private fun MeasurementScreenContent(
                     CustomCartesianChart(
                         format = when (measurementChart) {
                             MeasurementChart.BODY_WEIGHT -> DecimalFormat("# " + stringResource(R.string.kg))
-                            MeasurementChart.FAT_MASS -> DecimalFormat("# %")
-                            MeasurementChart.LEAN_MASS -> DecimalFormat("# %")
+                            MeasurementChart.FAT_MASS -> DecimalFormat("0' %'")
+                            MeasurementChart.LEAN_MASS -> DecimalFormat("0' %'")
                         },
                         listChartData = listChartData
                     )
