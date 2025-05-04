@@ -258,49 +258,50 @@ private fun InfoWorkoutScreenContent(
                     }
                 }
 
-                item { HeadlineText(stringResource(R.string.past_workouts)) }
+                if (workout.routine) {
+                    item { HeadlineText(stringResource(R.string.past_workouts)) }
 
-                item {
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        items(WorkoutChart.entries) {
-                            FilterChip(
-                                selected = workoutChart == it && listChartData.isNotEmpty(),
-                                onClick = { updateChartMode(it) },
-                                label = {
-                                    Text(
-                                        stringResource(
-                                            id = when (it) {
-                                                WorkoutChart.DURATION -> R.string.duration
-                                                WorkoutChart.VOLUME -> R.string.volume
-                                                WorkoutChart.REPS -> R.string.reps
-                                            }
+                    item {
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            items(WorkoutChart.entries) {
+                                FilterChip(
+                                    selected = workoutChart == it && listChartData.isNotEmpty(),
+                                    onClick = { updateChartMode(it) },
+                                    label = {
+                                        Text(
+                                            stringResource(
+                                                id = when (it) {
+                                                    WorkoutChart.DURATION -> R.string.duration
+                                                    WorkoutChart.VOLUME -> R.string.volume
+                                                    WorkoutChart.REPS -> R.string.reps
+                                                }
+                                            )
                                         )
-                                    )
-                                },
-                                leadingIcon = {
-                                    if (workoutChart == it && listChartData.isNotEmpty()) {
-                                        Icon(
-                                            modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                            imageVector = ImageVector.vectorResource(R.drawable.ic_check),
-                                            contentDescription = null
-                                        )
-                                    }
-                                },
-                                enabled = listChartData.isNotEmpty()
-                            )
+                                    },
+                                    leadingIcon = {
+                                        if (workoutChart == it && listChartData.isNotEmpty()) {
+                                            Icon(
+                                                modifier = Modifier.size(FilterChipDefaults.IconSize),
+                                                imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                                                contentDescription = null
+                                            )
+                                        }
+                                    },
+                                    enabled = listChartData.isNotEmpty()
+                                )
+                            }
                         }
                     }
-                }
-
-                item {
-                    CustomCartesianChart(
-                        format = when (workoutChart) {
-                            WorkoutChart.DURATION -> DecimalFormat("# " + stringResource(R.string.min))
-                            WorkoutChart.VOLUME -> DecimalFormat("#.## " + stringResource(R.string.kg))
-                            WorkoutChart.REPS -> DecimalFormat()
-                        },
-                        listChartData = listChartData
-                    )
+                    item {
+                        CustomCartesianChart(
+                            format = when (workoutChart) {
+                                WorkoutChart.DURATION -> DecimalFormat("# " + stringResource(R.string.min))
+                                WorkoutChart.VOLUME -> DecimalFormat("#.## " + stringResource(R.string.kg))
+                                WorkoutChart.REPS -> DecimalFormat()
+                            },
+                            listChartData = listChartData
+                        )
+                    }
                 }
 
 
