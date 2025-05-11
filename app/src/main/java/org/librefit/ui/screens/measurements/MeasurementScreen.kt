@@ -54,6 +54,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,6 +75,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import org.librefit.R
 import org.librefit.data.ChartData
 import org.librefit.db.entity.Measurement
+import org.librefit.enums.MeasurementCardState
 import org.librefit.enums.chart.MeasurementChart
 import org.librefit.ui.components.CustomButton
 import org.librefit.ui.components.CustomScaffold
@@ -139,7 +141,8 @@ fun MeasurementScreen(
         }
     }
 
-    // When 0, the measurement is new otherwise is already present
+    val measurementCardState = rememberSaveable { mutableStateOf(MeasurementCardState.NEW) }
+
     val idMeasurement = rememberSaveable { mutableLongStateOf(0L) }
 
     val showConfirmDialog = remember { mutableStateOf(false) }
@@ -152,6 +155,7 @@ fun MeasurementScreen(
                 viewModel.deleteMeasurementById(idMeasurement.longValue)
                 idMeasurement.longValue = 0L
                 showConfirmDialog.value = false
+                measurementCardState.value = MeasurementCardState.NEW
             },
             onDismiss = {
                 showConfirmDialog.value = false
@@ -166,6 +170,7 @@ fun MeasurementScreen(
         date = date,
         showDatePickerDialog = showDatePickerDialog,
         showConfirmDialog = showConfirmDialog,
+        measurementCardState = measurementCardState,
         upsertMeasurement = viewModel::upsertMeasurementToDB,
         updateChartMode = viewModel::updateMeasurementChart,
         measurementChart = viewModel.getMeasurementChart(),
@@ -183,6 +188,7 @@ private fun MeasurementScreenContent(
     measurementChart: MeasurementChart,
     showDatePickerDialog: MutableState<Boolean>,
     showConfirmDialog: MutableState<Boolean>,
+    measurementCardState: MutableState<MeasurementCardState>,
     upsertMeasurement: (Measurement) -> Unit,
     updateChartMode: (MeasurementChart) -> Unit,
     navigateBack: () -> Unit,
@@ -201,9 +207,11 @@ private fun MeasurementScreenContent(
     var leanMass by rememberSaveable { mutableStateOf("") }
     var notes by rememberSaveable { mutableStateOf("") }
 
-    LaunchedEffect(idMeasurement.longValue) {
-        // Triggered when a measurement is deleted or when edit is dismissed
-        if (idMeasurement.longValue == 0L && !showConfirmDialog.value) {
+    var trigger by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(measurementCardState.value, trigger) {
+        if (measurementCardState.value == MeasurementCardState.NEW) {
+            idMeasurement.longValue = 0L
             bodyWeight = ""
             fatMass = ""
             leanMass = ""
@@ -290,7 +298,7 @@ private fun MeasurementScreenContent(
                             ) {
                                 Text(
                                     text = stringResource(
-                                        if (idMeasurement.longValue == 0L || bodyWeight == "")
+                                        if (measurementCardState.value == MeasurementCardState.NEW)
                                             R.string.new_measurement else R.string.edit_measurement
                                     ),
                                     style = MaterialTheme.typography.headlineSmall
@@ -399,11 +407,11 @@ private fun MeasurementScreenContent(
                                 CustomButton(
                                     modifier = Modifier.weight(1f),
                                     text = stringResource(
-                                        if (idMeasurement.longValue == 0L || bodyWeight == "")
+                                        if (measurementCardState.value == MeasurementCardState.NEW)
                                             R.string.add else R.string.save
                                     ),
                                     icon = ImageVector.vectorResource(
-                                        if (idMeasurement.longValue == 0L || bodyWeight == "")
+                                        if (measurementCardState.value == MeasurementCardState.NEW)
                                             R.drawable.ic_add else R.drawable.ic_edit
                                     ),
                                     enabled = bodyWeight.isNotBlank()
@@ -419,15 +427,16 @@ private fun MeasurementScreenContent(
                                             notes = notes
                                         )
                                     )
-                                    // Reset state of Add Measurement card (see the launched effect above)
-                                    idMeasurement.longValue = 0L
+
+                                    measurementCardState.value = MeasurementCardState.NEW
+
+                                    trigger++
                                 }
-                                AnimatedVisibility(idMeasurement.longValue != 0L && bodyWeight != "") {
+                                AnimatedVisibility(measurementCardState.value == MeasurementCardState.EDIT) {
                                     IconButton(
                                         modifier = Modifier.weight(1f),
                                         onClick = {
-                                            // Reset state of Add Measurement card (see the launched effect above)
-                                            idMeasurement.longValue = 0L
+                                            measurementCardState.value = MeasurementCardState.NEW
                                         }
                                     ) {
                                         Icon(ImageVector.vectorResource(R.drawable.ic_cancel), null)
@@ -518,6 +527,8 @@ private fun MeasurementScreenContent(
                                                         .toString().takeIf { it != "0.0" } ?: ""
                                                     notes = it.notes
                                                     date.value = it.date
+                                                    measurementCardState.value =
+                                                        MeasurementCardState.EDIT
                                                 }
                                             ) {
                                                 Icon(
@@ -632,6 +643,7 @@ private fun MeasurementScreenPreview() {
             measurementChart = measurementChart,
             showDatePickerDialog = remember { mutableStateOf(false) },
             showConfirmDialog = remember { mutableStateOf(false) },
+            measurementCardState = remember { mutableStateOf(MeasurementCardState.NEW) },
             upsertMeasurement = {},
             updateChartMode = {},
             navigateBack = {}
