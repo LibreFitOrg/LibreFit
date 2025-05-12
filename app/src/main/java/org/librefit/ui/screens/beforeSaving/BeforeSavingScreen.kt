@@ -91,8 +91,8 @@ fun BeforeSavingScreen(
 
     if (showUnlikeRoutineDialog.value) {
         ConfirmDialog(
-            title = stringResource(R.string.unlink_routine),
-            text = stringResource(R.string.unlink_routine_desc),
+            title = stringResource(R.string.unlink_routine_question),
+            text = stringResource(R.string.unlink_routine_text),
             onConfirm = {
                 viewModel.detachWorkoutFromRoutine()
                 showUnlikeRoutineDialog.value = false

@@ -32,6 +32,7 @@ import org.librefit.R
 fun ConfirmDialog(
     title: String,
     text: String,
+    confirmText: String? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -48,7 +49,7 @@ fun ConfirmDialog(
                     onConfirm()
                 }
             ) {
-                Text(text = stringResource(R.string.ok_dialog))
+                Text(text = confirmText ?: stringResource(R.string.ok_dialog))
             }
         },
         dismissButton = {

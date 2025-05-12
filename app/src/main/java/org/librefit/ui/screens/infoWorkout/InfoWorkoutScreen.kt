@@ -129,8 +129,15 @@ private fun InfoWorkoutScreenContent(
 
     if (showConfirmDialog) {
         ConfirmDialog(
-            title = stringResource(R.string.delete),
-            text = stringResource(id = R.string.confirm_delete),
+            title = stringResource(
+                if (workout.routine) R.string.delete_routine_question
+                else R.string.delete_workout_question
+            ),
+            text = stringResource(
+                if (workout.routine) R.string.delete_routine_text
+                else R.string.delete_workout_text
+            ),
+            confirmText = stringResource(R.string.delete),
             onConfirm = {
                 deleteWorkout()
                 showConfirmDialog = false
@@ -145,8 +152,9 @@ private fun InfoWorkoutScreenContent(
 
     if (showUnlikeRoutineDialog) {
         ConfirmDialog(
-            title = stringResource(R.string.unlink_routine),
-            text = stringResource(R.string.unlink_routine_desc),
+            title = stringResource(R.string.unlink_routine_question),
+            text = stringResource(R.string.unlink_routine_text),
+            confirmText = stringResource(R.string.unlink_dialog),
             onConfirm = {
                 detachWorkoutFromRoutine()
                 showUnlikeRoutineDialog = false

@@ -50,8 +50,8 @@
     <string name="contributed_to">"Contribuito a: "</string>
     <string name="version">Versione</string>
     <string name="libraries">Librerie</string>
-    <string name="unlink_routine">Scollega routine</string>
-    <string name="unlink_routine_desc">Il collegamento delle routine consente di misurare i progressi degli allenamenti nel tempo. Se si scollega un allenamento da una routine, questo non verrà cancellato e tutti gli allenamenti collegati a quella routine rimarranno invariati. Lo scollegamento avrà effetto solo sull\'allenamento corrente.</string>
+    <string name="unlink_routine_question">Scollegare routine?</string>
+    <string name="unlink_routine_text">Il collegamento delle routine consente di misurare i progressi degli allenamenti nel tempo. Se si scollega un allenamento da una routine, questo non verrà cancellato e tutti gli allenamenti collegati a quella routine rimarranno invariati. Lo scollegamento avrà effetto solo sull\'allenamento corrente.</string>
     <string name="overview">Panoramica</string>
     <string name="statistics">Statistiche</string>
     <string name="volume">Volume</string>
@@ -68,7 +68,8 @@
     <string name="set">Serie</string>
     <string name="add_set">Aggiungi serie</string>
     <string name="notes">Note</string>
-    <string name="exit_add_exercise">Sei sicuro di voler uscire? I tuoi esercizi selezionati non saranno salvati</string>
+    <string name="quit_adding_exercises_question">Interrompere l\'aggiunta degli esercizi?</string>
+    <string name="quit_adding_exercises_text">Sei sicuro di voler uscire? I tuoi esercizi selezionati non saranno salvati</string>
     <string name="search_exercise_field">Cerca un esercizio</string>
     <string name="no_exercise_found">Nessun esercizio trovato</string>
     <string name="filters">Filtri</string>
@@ -106,7 +107,7 @@
     <string name="settings_general">Generale</string>
     <string name="language">Lingua</string>
     <string name="cancel_dialog">Annulla</string>
-    <string name="exit">Esci</string>
+    <string name="quit_dialog">Abbandona</string>
     <string name="rest_time">Tempo di riposo</string>
     <string name="type_of_set">Tipologia di serie</string>
     <string name="not_enough_data">Dati non sufficienti per mostrare questo grafico</string>
@@ -168,6 +169,7 @@
     <string name="past_measurement">Misurazioni passate</string>
     <string name="new_measurement">Nuova misurazione</string>
     <string name="edit_measurement">Modifica misurazione</string>
+    <string name="delete_measurement_text">Sei sicuro di voler eliminare questa misurazione? Questa azione non può essere annullata</string>
     <string name="before_starting_the_workout">Prima di iniziare l\'allenamento</string>
     <string name="best_experience_permissions">Per la migliore esperienza in LibreFit, deve essere concesso il seguente permesso:</string>
     <string name="notifications_permission_desc">Consente di inviare notifiche sugli allenamenti in corso e sugli intervalli di riposo.</string>
@@ -179,7 +181,8 @@
     <string name="label_continue">Continua</string>
     <string name="workout">Allenamento</string>
     <string name="navigate_back">Ritorna alla schermata precedente</string>
-    <string name="exit_workout">Sei sicuro di voler uscire? Il tuo allenamento non sarà salvato</string>
+    <string name="quit_workout_question">Abbandonare allenamento?</string>
+    <string name="quit_workout_text">Sei sicuro di voler abbandonare? Il tuo allenamento non sarà salvato</string>
     <string name="resume">Riprendi</string>
     <string name="pause">Pausa</string>
     <string name="title_length_exceeded_30">"Il titolo "</string>
@@ -189,7 +192,8 @@
     <string name="confirm_delete">Sei sicuro di volerlo eliminare? Questa azione non può essere annullata.</string>
     <string name="open">Apri</string>
     <string name="ok_dialog">OK</string>
-    <string name="url">URL</string>
+    <string name="url_dialog">URL</string>
+    <string name="discard_changes_text">Sei sicuro di voler abbandonare? Le tue modifiche non saranno salvate</string>
     <string name="delete">Elimina</string>
     <string name="license_desc">LibreFit è distribuito sotto la licenza GNU General Public License v3.0 (GPL-3).</string>
     <string name="view_online_version">Visualizza versione online</string>
@@ -222,7 +226,16 @@
     <string name="privacy_notice_battery_perm">**Ignora l\'ottimizzazione della batteria**: Questa autorizzazione permette all\'app di essere più resiliente a politiche di risparmio energetico aggressive, che potrebbero causare la chiusura forzata della stessa durante un allenamento.</string>
     <string name="privacy_notice_default_perm">Autorizzazione concessa di default</string>
     <string name="privacy_notice_foreground_perm">**Servizio in primo piano**: Questa autorizzazione viene concessa automaticamente quando si installa LibreFit e gli consente di funzionare in primo piano durante un allenamento.</string>
+    <string name="delete_routine_text">Sei sicuro di voler eliminare questa routine? Questa azione non può essere annullata</string>
     <string name="body_weight">Peso corporeo</string>
     <string name="fat_mass">Massa grassa</string>
+    <string name="quit_routine_creation_question">Interrompere creazione routine?</string>
+    <string name="delete_workout_question">Eliminare allenamento?</string>
+    <string name="delete_workout_text">Sei sicuro di voler eliminare questo allenamento? Questa azione non può essere annullata</string>
+    <string name="delete_routine_question">Eliminare routine?</string>
+    <string name="delete_measurement_question">Eliminare misurazione?</string>
+    <string name="unlink_dialog">Scollega</string>
+    <string name="discard_changes_question">Scartare modifiche?</string>
+    <string name="discard_dialog">Scarta</string>
 
 </resources>

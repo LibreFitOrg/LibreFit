@@ -130,18 +130,19 @@ fun WorkoutScreen(
     }
 
 
-    var showExitDialog by remember { mutableStateOf(false) }
+    var showConfirmDialog by remember { mutableStateOf(false) }
 
-    if (showExitDialog) {
+    if (showConfirmDialog) {
         ConfirmDialog(
-            title = stringResource(R.string.exit),
-            text = stringResource(id = R.string.exit_workout),
+            title = stringResource(R.string.quit_workout_question),
+            text = stringResource(R.string.quit_workout_text),
+            confirmText = stringResource(R.string.quit_dialog),
             onConfirm = {
                 viewModel.stopWorkoutService()
                 navController.popBackStack()
-                showExitDialog = false
+                showConfirmDialog = false
             },
-            onDismiss = { showExitDialog = false }
+            onDismiss = { showConfirmDialog = false }
         )
     }
 
@@ -152,8 +153,8 @@ fun WorkoutScreen(
 
 
     BackHandler {
-        if (!showExitDialog && !viewModel.isListEmpty()) {
-            showExitDialog = true
+        if (!showConfirmDialog && !viewModel.isListEmpty()) {
+            showConfirmDialog = true
         } else {
             viewModel.stopWorkoutService()
             navController.popBackStack()
@@ -180,7 +181,7 @@ fun WorkoutScreen(
             if (viewModel.isListEmpty()) {
                 navController.popBackStack()
             } else {
-                showExitDialog = true
+                showConfirmDialog = true
             }
         },
         actions = listOf {

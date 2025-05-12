@@ -30,13 +30,6 @@
     <string name="navigate_back">Back to the previous screen</string>
 
 
-    <!--Add exercise screen-->
-    <string name="exit_add_exercise">Are you sure you want to exit? Your selected exercises won\'t be added</string>
-    <string name="search_exercise_field">Search for an exercise</string>
-    <string name="no_exercise_found">No exercise found</string>
-    <string name="filters">Filters</string>
-    <string name="warning">Warning</string>
-
 
     <!--About screen-->
     <string name="open">Open</string>
@@ -71,8 +64,8 @@
 
 
     <!--Before saving screen-->
-    <string name="unlink_routine">Unlink routine</string>
-    <string name="unlink_routine_desc">Linking routines allows to measure progress of workouts over time. If you unlink a workout from a routine, it will not be deleted, and any workout linked to that routine will remain unchanged. The unlink will only affect the current workout.</string>
+    <string name="unlink_routine_question">Unlink routine?</string>
+    <string name="unlink_routine_text">Linking routines allows to measure progress of workouts over time. If you unlink a workout from a routine, it will not be deleted, and any workout linked to that routine will remain unchanged. The unlink will only affect the current workout.</string>
     <string name="overview">Overview</string>
     <string name="statistics">Statistics</string>
     <string name="volume">Volume</string>
@@ -85,9 +78,9 @@
     <string name="select_date">Select date</string>
 
 
-    <!--Edit screen-->
+    <!--Edit workout screen-->
     <string name="start_adding_exercises">Start by adding an exercise to your routine</string>
-    <string name="exit_create_routine">Are you sure you want to exit? Your routine won\'t be saved</string>
+    <string name="exit_create_routine">Are you sure you want to quit? Your routine won\'t be saved</string>
     <string name="title">Title</string>
     <string name="set">Set</string>
     <string name="reps">Reps</string>
@@ -98,6 +91,16 @@
     <string name="title_length_exceeded_30">Title cannot exceed 30 characters</string>
     <string name="edit_routine">Edit routine</string>
     <string name="edit_workout">Edit workout</string>
+    <string name="quit_routine_creation_question">Quit routine creation?</string>
+
+
+    <!--Exercises screen-->
+    <string name="quit_adding_exercises_question">Quit adding exercises?</string>
+    <string name="quit_adding_exercises_text">Are you sure you want to quit? Your selected exercises won\'t be added</string>
+    <string name="search_exercise_field">Search for an exercise</string>
+    <string name="no_exercise_found">No exercise found</string>
+    <string name="filters">Filters</string>
+    <string name="warning">Warning</string>
 
 
     <!--Home screen-->
@@ -112,6 +115,10 @@
 
     <!--Info screen-->
     <string name="past_workouts">Past workouts</string>
+    <string name="delete_workout_question">Delete workout?</string>
+    <string name="delete_workout_text">Are you sure you want to delete this workout? This action cannot be undone</string>
+    <string name="delete_routine_question">Delete routine?</string>
+    <string name="delete_routine_text">Are you sure you want to delete this routine? This action cannot be undone</string>
 
 
     <!--Measurement screen-->
@@ -121,6 +128,8 @@
     <string name="past_measurement">Past measurement</string>
     <string name="new_measurement">New measurement</string>
     <string name="edit_measurement">Edit measurement</string>
+    <string name="delete_measurement_question">Delete measurement?</string>
+    <string name="delete_measurement_text">Are you sure you want to delete this measurement? This action cannot be undone</string>
 
 
     <!--Permission request screen-->
@@ -160,7 +169,8 @@
 
     <!-- Workout screen -->
     <string name="workout">Workout</string>
-    <string name="exit_workout">Are you sure you want to exit? Your workout won\'t be saved</string>
+    <string name="quit_workout_question">Quit workout?</string>
+    <string name="quit_workout_text">Are you sure you want to quit? Your workout won\'t be saved</string>
     <string name="resume">Resume</string>
     <string name="pause">Pause</string>
     <string name="add_to_empty_workout">Start by adding an exercise to your workout</string>
@@ -292,9 +302,13 @@
 
     <!--Dialog -->
     <string name="cancel_dialog">Cancel</string>
-    <string name="exit">Exit</string>
+    <string name="quit_dialog">Quit</string>
     <string name="ok_dialog">OK</string>
-    <string name="url">URL</string>
+    <string name="url_dialog">URL</string>
+    <string name="unlink_dialog">Unlink</string>
+    <string name="discard_changes_question">Discard changes?</string>
+    <string name="discard_dialog">Discard</string>
+    <string name="discard_changes_text">Are you sure you want to quit? Your changes won\'t be saved</string>
 
     <!--Util-->
     <string name="delete">Delete</string>

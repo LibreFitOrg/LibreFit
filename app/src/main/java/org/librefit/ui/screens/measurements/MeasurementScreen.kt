@@ -149,8 +149,9 @@ fun MeasurementScreen(
 
     if (showConfirmDialog.value) {
         ConfirmDialog(
-            title = stringResource(R.string.delete),
-            text = stringResource(R.string.confirm_delete),
+            title = stringResource(R.string.delete_measurement_question),
+            text = stringResource(R.string.delete_measurement_text),
+            confirmText = stringResource(R.string.delete),
             onConfirm = {
                 viewModel.deleteMeasurementById(idMeasurement.longValue)
                 idMeasurement.longValue = 0L

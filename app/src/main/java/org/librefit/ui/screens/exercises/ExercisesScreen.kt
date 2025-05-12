@@ -88,21 +88,22 @@ fun ExercisesScreen(
 ) {
     val selectedExercisesList = remember { mutableStateListOf<ExerciseDC>() }
 
-    var showExitDialog by remember { mutableStateOf(false) }
+    var showConfirmDialog by remember { mutableStateOf(false) }
 
-    BackHandler(enabled = !showExitDialog && selectedExercisesList.isNotEmpty()) {
-        showExitDialog = true
+    BackHandler(enabled = !showConfirmDialog && selectedExercisesList.isNotEmpty()) {
+        showConfirmDialog = true
     }
 
-    if (showExitDialog) {
+    if (showConfirmDialog) {
         ConfirmDialog(
-            title = stringResource(R.string.exit),
-            text = stringResource(id = R.string.exit_add_exercise),
+            title = stringResource(R.string.quit_adding_exercises_question),
+            text = stringResource(R.string.quit_adding_exercises_text),
+            confirmText = stringResource(R.string.quit_dialog),
             onConfirm = {
                 navigateBack()
-                showExitDialog = false
+                showConfirmDialog = false
             },
-            onDismiss = { showExitDialog = false }
+            onDismiss = { showConfirmDialog = false }
         )
     }
 

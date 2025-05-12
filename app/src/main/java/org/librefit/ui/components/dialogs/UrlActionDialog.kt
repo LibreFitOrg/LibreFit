@@ -62,7 +62,7 @@ fun UrlActionDialog(
 
         AlertDialog(
             onDismissRequest = { url.value = "" },
-            title = { Text(stringResource(R.string.url)) },
+            title = { Text(stringResource(R.string.url_dialog)) },
             confirmButton = {
                 TextButton(
                     onClick = {

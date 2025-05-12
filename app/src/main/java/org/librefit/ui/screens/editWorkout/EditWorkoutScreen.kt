@@ -133,22 +133,29 @@ private fun EditWorkoutScreenContent(
     saveWorkoutWithExercisesInDB: () -> Unit
 ) {
 
-    var showExitDialog by remember { mutableStateOf(false) }
+    var showConfirmDialog by remember { mutableStateOf(false) }
 
-    BackHandler(enabled = !showExitDialog && exercisesWithSets.isNotEmpty()) {
-        showExitDialog = true
+    BackHandler(enabled = !showConfirmDialog && exercisesWithSets.isNotEmpty()) {
+        showConfirmDialog = true
     }
 
-    if (showExitDialog) {
+    if (showConfirmDialog) {
         ConfirmDialog(
-            title = stringResource(R.string.exit),
-            text = if (typeOfEdit == false) stringResource(id = R.string.exit_workout)
-            else stringResource(id = R.string.exit_create_routine),
+            title = stringResource(
+                if (typeOfEdit == null) R.string.quit_routine_creation_question
+                else R.string.discard_changes_question
+            ),
+            text = stringResource(
+                if (typeOfEdit == null) R.string.exit_create_routine else R.string.discard_changes_text
+            ),
+            confirmText = stringResource(
+                if (typeOfEdit == null) R.string.quit_dialog else R.string.discard_dialog
+            ),
             onConfirm = {
                 navController.popBackStack()
-                showExitDialog = false
+                showConfirmDialog = false
             },
-            onDismiss = { showExitDialog = false }
+            onDismiss = { showConfirmDialog = false }
         )
     }
 
@@ -179,7 +186,7 @@ private fun EditWorkoutScreenContent(
             if (exercisesWithSets.isEmpty()) {
                 navController.popBackStack()
             } else {
-                showExitDialog = true
+                showConfirmDialog = true
             }
         },
         actions = listOf {
