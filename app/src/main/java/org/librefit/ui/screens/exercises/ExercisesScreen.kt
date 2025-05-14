@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -104,13 +103,10 @@ fun ExercisesScreen(
         )
     }
 
-    val lazyListState = rememberLazyListState()
-
 
     ExercisesScreenContent(
         addExercises = addExercises,
         selectedExercisesList = selectedExercisesList,
-        lazyListState = lazyListState,
         exerciseList = sharedViewModel.exercisesList,
         actions = if (addExercises) listOf {
             sharedViewModel.addSelectedExerciseToList(selectedExercisesList)
@@ -125,7 +121,6 @@ fun ExercisesScreen(
 private fun ExercisesScreenContent(
     addExercises: Boolean,
     selectedExercisesList: MutableList<ExerciseDC>,
-    lazyListState: LazyListState,
     exerciseList: List<ExerciseDC>,
     actions: List<() -> Unit>,
     navigateBack: () -> Unit
@@ -134,6 +129,8 @@ private fun ExercisesScreenContent(
     val coroutineScope = rememberCoroutineScope()
 
     val viewModel: ExercisesScreenViewModel = viewModel()
+
+    val lazyListState = rememberLazyListState()
 
 
     var isFilterExpanded = rememberSaveable { mutableStateOf(false) }
@@ -163,7 +160,7 @@ private fun ExercisesScreenContent(
         },
         fabIcon = ImageVector.vectorResource(R.drawable.ic_keyboard_double_arrow_up),
     ) { innerPadding ->
-        CustomLazyColumn(innerPadding, 0.dp, 0.dp) {
+        CustomLazyColumn(innerPadding, 0.dp, 0.dp, lazyListState) {
             // Search bar
             item {
                 Row(
@@ -337,7 +334,6 @@ private fun ExercisesScreenPreview() {
         ExercisesScreenContent(
             addExercises = false,
             selectedExercisesList = remember { mutableStateListOf() },
-            lazyListState = rememberLazyListState(),
             exerciseList = List(0) { ExerciseDC(id = "$it", name = "Exercise $it") },
             actions = listOf {},
             navigateBack = {}
