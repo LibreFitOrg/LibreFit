@@ -319,6 +319,7 @@ private fun MeasurementScreenContent(
                             label = { Text(text = stringResource(R.string.body_weight) + " *") },
                             suffix = { Text(stringResource(R.string.kg)) },
                             isError = bodyWeight.isBlank(),
+                            singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             onValueChange = {
                                 bodyWeight = processFloatValue(it, 0f, 200f)
