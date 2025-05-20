@@ -148,8 +148,8 @@
     <string name="add_to_empty_workout">Start by adding an exercise to your workout</string>
     <string name="elapsed_time">Elapsed time</string>
     <string name="new_workout">New workout</string>
-    <string name="type_of_set_desc">There are three types of set:\n\n1) Weight: Lifting a specific weight for a designated number of repetitions.\n\n2) Repetition: A set with a certain number of repetitions without a specific weight.\n\n3) Time: It is used to measure time execution of the reps.</string>
-    <string name="statistics_desc">- Time elapsed refers to the total duration of the workout session.\n\n- The date indicates when the workout was finished.\n\n- Volume is defined as the total amount of weight lifted during a workout, calculated by multiplying for each completed set the number of repetitions performed by the weight lifted. Higher volume is associated with greater muscle hypertrophy and strength gains over time.\n\n- Exercises represent the total count of exercises included in this workout.\n\n- Total sets refers to the cumulative number of sets planned for each exercise in a workout. A set is a group of consecutive repetitions performed without resting.\n\n- Completed sets indicates the number of sets that were finished as planned by the workout.</string>
+    <string name="type_of_set_desc">- **Weight**: Lifting a specific weight for a designated number of repetitions.\n- **Repetition**: A set with a certain number of repetitions without a specific weight.\n- **Time**: It is used to measure time execution of the reps.</string>
+    <string name="statistics_desc">- **Time elapsed**: the total duration of the workout session.\n- **Date**: indicates the date on which the workout was completed.\n- **Volume**: the total amount of weight lifted during a workout, calculated by multiplying for each completed set the number of repetitions performed by the weight lifted. Higher volume is associated with greater muscle hypertrophy and strength gains over time.\n- **Exercises**: the total count of exercises included in this workout.\n- **Total sets**: the cumulative number of sets planned for each exercise in a workout. A set is a group of consecutive repetitions performed without resting.\n- **Completed sets**: the number of sets that were finished as planned by the workout.</string>
     <string name="details">Details</string>
     <string name="force">Force</string>
     <string name="level">Level</string>
@@ -247,7 +247,7 @@
     <string name="done">Done</string>
     <string name="menu">Menu</string>
     <string name="routine_saved">Routine saved</string>
-    <string name="rest_time_desc">The rest time indicates the beginning of the rest timer. It starts counting down immediately after a set is completed. There\'s will be an alert when the rest period ends.</string>
+    <string name="rest_time_desc">The rest period is activated upon completion of a set, immediately starting the countdown. An alert is issued when the rest ends.</string>
     <string name="add">Add</string>
     <string name="save">Save</string>
     <string name="workout_saved">Workout saved</string>

@@ -92,8 +92,8 @@
     <string name="add_to_empty_workout">Inizia aggiungendo un esercizio al tuo allenamento</string>
     <string name="elapsed_time">Tempo trascorso</string>
     <string name="new_workout">Nuovo allenamento</string>
-    <string name="type_of_set_desc">Ci sono tre tipologie di serie:\n\n1) Peso: Sollevamento di un peso specifico per un numero designato di ripetizioni.\n\n2) Ripetizioni: Un numero designato di ripetizioni senza un peso specifico.\n\n3) Tempo: Utilizzato per misurare il tempo d\'esecuzione delle ripetizioni.</string>
-    <string name="statistics_desc">- Il tempo trascorso si riferisce alla durata totale della sessione di allenamento.\n\n- La data indica quando l\'allenamento è stato completato.\n\n- Gli esercizi rappresentano il numero totale di esercizi inclusi in questo allenamento.\n\n- Il volume è definito come la quantità totale di peso sollevato durante un allenamento, calcolato moltiplicando per ogni serie completata il numero di ripetizioni eseguite per il peso sollevato. Un alto volume è associato a una maggiore ipertrofia muscolare e a un aumento della forza nel tempo.\n\n- Per serie totali si intende il numero cumulativo di serie previsti per ogni esercizio in un allenamento. Una serie è un gruppo di ripetizioni consecutive eseguite senza riposo.\n\n- Serie completate indicano il numero di serie portate a termine come programmato dall\'allenamento.</string>
+    <string name="type_of_set_desc">- **Peso**: Sollevamento di un peso specifico per un certo numero di ripetizioni.\n- **Ripetizioni**: Un certo numero di ripetizioni senza un peso specifico.\n- **Tempo**: Utilizzato per misurare il tempo d\'esecuzione della serie.</string>
+    <string name="statistics_desc">- **Tempo trascorso**: indica la durata totale della sessione di allenamento.\n- **Data**: indica la data nella quale l\'allenamento è stato completato.\n- **Esercizi**: rappresentano il numero totale di esercizi inclusi in questo allenamento.\n- **Volume**: La quantità totale di peso sollevato durante un allenamento, calcolato moltiplicando per ogni serie completata il numero di ripetizioni eseguite per il peso sollevato. Un alto volume è associato a una maggiore ipertrofia muscolare e a un aumento della forza nel tempo.\n- **Serie totali**: Il numero cumulativo di serie previsti per ogni esercizio in un allenamento. Una serie è un gruppo di ripetizioni consecutive eseguite senza riposo.\n- **Serie completate**: il numero di serie portate a termine come programmato dall\'allenamento.</string>
     <string name="details">Dettagli</string>
     <string name="force">Forza</string>
     <string name="level">Livello</string>
@@ -213,7 +213,7 @@
     <string name="done">Fatto</string>
     <string name="menu">Menu</string>
     <string name="routine_saved">Routine salvata</string>
-    <string name="rest_time_desc">Il tempo di riposo indica l\'inizio del timer di riposo. Inizia a contare alla rovescia immediatamente dopo il completamento di una serie. Ci sarà un avviso quando il periodo di riposo termina.</string>
+    <string name="rest_time_desc">Il periodo di riposo si attiva al completamento di una serie, avviando immediatamente il conto alla rovescia. Al termine del riposo, viene emesso un avviso.</string>
     <string name="add">Aggiungi</string>
     <string name="save">Salva</string>
     <string name="workout_saved">Allenamento salvato</string>
