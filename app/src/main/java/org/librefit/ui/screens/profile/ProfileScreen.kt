@@ -19,6 +19,7 @@
 
 package org.librefit.ui.screens.profile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -48,6 +50,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -272,7 +275,15 @@ private fun ProfileScreenContent(
             items = workoutsWithExercises.map { it.workout },
             key = { it.id }
         ) { workout ->
-            ElevatedCard {
+            ElevatedCard(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .clip(CardDefaults.elevatedShape)
+                    .clickable {
+                        updateWorkoutId(workout.id)
+                        navController.navigate(Route.InfoWorkoutScreen)
+                    }
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
