@@ -25,7 +25,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -72,7 +71,7 @@ import org.librefit.enums.exercise.Muscle
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter.exerciseEnumToStringId
 
-@OptIn(ExperimentalLayoutApi::class)
+
 @Composable
 fun FiltersCard(
     isFilterExpanded: MutableState<Boolean>,

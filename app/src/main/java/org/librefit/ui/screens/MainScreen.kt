@@ -20,7 +20,6 @@
 package org.librefit.ui.screens
 
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -46,7 +45,6 @@ import org.librefit.ui.screens.profile.ProfileScreen
 import org.librefit.ui.screens.shared.SharedViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     navController: NavHostController,

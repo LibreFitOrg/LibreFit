@@ -23,7 +23,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -67,7 +66,6 @@ import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditWorkoutScreen(
     sharedViewModel: SharedViewModel,

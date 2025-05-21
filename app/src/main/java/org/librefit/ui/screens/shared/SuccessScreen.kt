@@ -22,7 +22,6 @@ package org.librefit.ui.screens.shared
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredSize
@@ -47,7 +46,6 @@ import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.SuccessLottie
 import org.librefit.ui.theme.LibreFitTheme
 
-@OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun SuccessScreen(
