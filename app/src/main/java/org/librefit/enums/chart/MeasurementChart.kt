@@ -19,7 +19,7 @@
 
 package org.librefit.enums.chart
 
-enum class MeasurementChart {
+enum class MeasurementChart : ChartMode {
     BODY_WEIGHT,
     FAT_MASS,
     LEAN_MASS

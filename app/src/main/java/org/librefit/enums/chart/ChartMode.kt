@@ -19,8 +19,4 @@
 
 package org.librefit.enums.chart
 
-enum class WorkoutChart : ChartMode {
-    DURATION,
-    VOLUME,
-    REPS
-}
+sealed interface ChartMode
