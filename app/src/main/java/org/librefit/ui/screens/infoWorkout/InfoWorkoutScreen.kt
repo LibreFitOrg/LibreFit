@@ -24,12 +24,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -255,44 +251,15 @@ private fun InfoWorkoutScreenContent(
                 item { HeadlineText(stringResource(R.string.past_workouts)) }
 
                 item {
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        items(WorkoutChart.entries) {
-                            FilterChip(
-                                selected = workoutChart == it && listChartData.isNotEmpty(),
-                                onClick = { updateChartMode(it) },
-                                label = {
-                                    Text(
-                                        stringResource(
-                                            id = when (it) {
-                                                WorkoutChart.DURATION -> R.string.duration
-                                                WorkoutChart.VOLUME -> R.string.volume
-                                                WorkoutChart.REPS -> R.string.reps
-                                            }
-                                        )
-                                    )
-                                },
-                                leadingIcon = {
-                                    if (workoutChart == it && listChartData.isNotEmpty()) {
-                                        Icon(
-                                            modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                            imageVector = ImageVector.vectorResource(R.drawable.ic_check),
-                                            contentDescription = null
-                                        )
-                                    }
-                                },
-                                enabled = listChartData.isNotEmpty()
-                            )
-                        }
-                    }
-                }
-                item {
                     LibreFitCartesianChart(
                         format = when (workoutChart) {
                             WorkoutChart.DURATION -> DecimalFormat("# " + stringResource(R.string.min))
                             WorkoutChart.VOLUME -> DecimalFormat("#.## " + stringResource(R.string.kg))
                             WorkoutChart.REPS -> DecimalFormat()
                         },
-                        listChartData = listChartData
+                        listChartData = listChartData,
+                        chartMode = workoutChart,
+                        updateChartMode = { updateChartMode(it as WorkoutChart) }
                     )
                 }
             }

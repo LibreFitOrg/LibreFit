@@ -25,8 +25,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -35,8 +33,6 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -236,47 +232,17 @@ private fun MeasurementScreenContent(
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding, lazyListState = lazyListState) {
             item {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    items(MeasurementChart.entries) { mode ->
-                        FilterChip(
-                            selected = measurementChart == mode,
-                            onClick = { updateChartMode(mode) },
-                            label = {
-                                Text(
-                                    stringResource(
-                                        when (mode) {
-                                            MeasurementChart.BODY_WEIGHT -> R.string.body_weight
-                                            MeasurementChart.FAT_MASS -> R.string.fat_mass
-                                            MeasurementChart.LEAN_MASS -> R.string.lean_mass
-                                        }
-                                    )
-                                )
-                            },
-                            leadingIcon = {
-                                if (measurementChart == mode) {
-                                    Icon(
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_check),
-                                        contentDescription = null
-                                    )
-                                }
-                            }
-                        )
-                    }
-                }
-            }
-
-            item {
                 LibreFitCartesianChart(
                     format = when (measurementChart) {
                         MeasurementChart.BODY_WEIGHT -> DecimalFormat("# " + stringResource(R.string.kg))
                         MeasurementChart.FAT_MASS -> DecimalFormat("0' %'")
                         MeasurementChart.LEAN_MASS -> DecimalFormat("0' %'")
                     },
-                    listChartData = listChartData
+                    listChartData = listChartData,
+                    chartMode = measurementChart,
+                    updateChartMode = { updateChartMode(it as MeasurementChart) }
                 )
             }
-
 
             // Add/edit measurement card
             item {
@@ -512,7 +478,7 @@ private fun MeasurementScreenContent(
 
 
                                         coroutineScope.launch {
-                                            lazyListState.animateScrollToItem(index = 0)
+                                            lazyListState.animateScrollToItem(index = 1)
                                             focusRequester.requestFocus()
                                         }
                                     }

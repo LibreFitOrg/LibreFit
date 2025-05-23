@@ -27,13 +27,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -209,37 +205,6 @@ private fun ProfileScreenContent(
         }
 
         item { HeadlineText(stringResource(R.string.overview)) }
-        item {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(WorkoutChart.entries) { mode ->
-                    FilterChip(
-                        selected = workoutChart == mode && listChartData.isNotEmpty(),
-                        onClick = { updateChartMode(mode) },
-                        label = {
-                            Text(
-                                stringResource(
-                                    when (mode) {
-                                        WorkoutChart.DURATION -> R.string.duration
-                                        WorkoutChart.VOLUME -> R.string.volume
-                                        WorkoutChart.REPS -> R.string.reps
-                                    }
-                                )
-                            )
-                        },
-                        leadingIcon = {
-                            if (workoutChart == mode && listChartData.isNotEmpty()) {
-                                Icon(
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_check),
-                                    contentDescription = null
-                                )
-                            }
-                        },
-                        enabled = listChartData.isNotEmpty()
-                    )
-                }
-            }
-        }
 
         item {
             LibreFitCartesianChart(
@@ -249,7 +214,9 @@ private fun ProfileScreenContent(
                     WorkoutChart.REPS -> DecimalFormat()
                 },
                 listChartData = listChartData,
-                columns = true
+                useColumns = true,
+                chartMode = workoutChart,
+                updateChartMode = { updateChartMode(it as WorkoutChart) }
             )
         }
 
