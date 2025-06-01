@@ -577,7 +577,7 @@ private fun processFloatValue(string: String, max: Float): String {
     return value.toFloat().coerceAtMost(maximumValue = max).toString()
 }
 
-@Preview(locale = "it")
+@Preview
 @Composable
 private fun MeasurementScreenPreview() {
     val shortDate: DateTimeFormatter? = DateTimeFormatter

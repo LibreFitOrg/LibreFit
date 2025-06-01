@@ -331,12 +331,14 @@ private fun InfoWorkoutScreenContent(
 @Preview
 @Composable
 private fun InfoRoutineScreenPreview() {
+    var routine by remember { mutableStateOf(Workout(title = "Title routine")) }
+
     LibreFitTheme(false, true) {
         InfoWorkoutScreenContent(
             navController = rememberNavController(),
             deleteWorkout = {},
             workout = Workout(title = "Title workout"),
-            routine = Workout(title = "Title routine"),
+            routine = routine,
             workoutDate = "DD/MM/YY",
             volumeExercises = "100",
             workoutChart = WorkoutChart.REPS,
@@ -347,7 +349,9 @@ private fun InfoRoutineScreenPreview() {
                 )
             ),
             listChartData = (0..10).map { ChartData(Random.nextFloat()) },
-            detachWorkoutFromRoutine = {},
+            detachWorkoutFromRoutine = {
+                routine = Workout()
+            },
             updateChartMode = {},
         )
     }

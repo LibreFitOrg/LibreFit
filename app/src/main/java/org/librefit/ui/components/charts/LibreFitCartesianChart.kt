@@ -80,8 +80,6 @@ import org.librefit.data.ChartData
 import org.librefit.enums.chart.ChartMode
 import org.librefit.enums.chart.MeasurementChart
 import org.librefit.enums.chart.WorkoutChart
-import org.librefit.ui.components.LibreFitLazyColumn
-import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.theme.LibreFitTheme
 import java.text.DecimalFormat
 import kotlin.random.Random
@@ -291,24 +289,18 @@ private fun CustomCartesianChartPreview() {
             listOf(
                 *WorkoutChart.entries.toTypedArray(),
                 *MeasurementChart.entries.toTypedArray()
-            ).randomOrNull()
+            ).random()
         )
     }
 
     LibreFitTheme(false, true) {
-        LibreFitScaffold {
-            LibreFitLazyColumn(innerPadding = it) {
-                item {
-                    LibreFitCartesianChart(
-                        listChartData = (0..10).map { ChartData(Random.nextFloat()) },
-                        useColumns = false,
-                        chartMode = chartMode.value,
-                        updateChartMode = {
-                            chartMode.value = it
-                        }
-                    )
-                }
+        LibreFitCartesianChart(
+            listChartData = (0..10).map { ChartData(Random.nextFloat()) },
+            useColumns = false,
+            chartMode = chartMode.value,
+            updateChartMode = {
+                chartMode.value = it
             }
-        }
+        )
     }
 }
