@@ -319,7 +319,7 @@ private fun InfoWorkoutScreenContent(
                                 onClick = { showUnlikeRoutineDialog = true }
                             ) {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_unlink),
                                     contentDescription = stringResource(R.string.delete)
                                 )
                             }
