@@ -325,7 +325,9 @@ fun StreakCard(weekStreak: Int) {
                     easing = LinearEasing
                 )
             ) { value, _ ->
-                animationProgress = value
+                if (speed != 0) {
+                    animationProgress = value
+                }
             }
         }
     }
@@ -434,7 +436,7 @@ private fun ProfileScreenPreview() {
             ProfileScreenContent(
                 innerPadding = it,
                 navController = rememberNavController(),
-                weekStreak = 90,
+                weekStreak = 0,
                 listChartData = (0..10).map { ChartData(Random.nextFloat()) },
                 workoutChart = WorkoutChart.DURATION,
                 workoutsWithExercises = remember {
