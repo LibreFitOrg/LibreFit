@@ -85,6 +85,7 @@
     <string name="set">Set</string>
     <string name="reps">Reps</string>
     <string name="load_only">Load only</string>
+    <string name="load_and_body_weight">Load and body weight</string>
     <string name="load">Load</string>
     <string name="add_set">Add set</string>
     <string name="notes">Notes</string>
@@ -206,7 +207,7 @@
 
     <!--Info modal bottom sheet-->
     <string name="rest_time_desc">The rest period is activated upon completion of a set, immediately starting the countdown. An alert is issued when the rest ends.</string>
-    <string name="type_of_set_desc">- **Load only**: A specified number of repetitions performed against an external resistance. *Examples: bench press, dumbbell curls.*\n- **Repetition**: A specified number of repetitions performed using the body as a resistance. *Examples: pullups, pushups, sit ups.*\n- **Duration**: It measures time execution of the reps. *Examples: planks, warm up, stretching.*</string>
+    <string name="type_of_set_desc">- **Load only**: A specified number of repetitions performed against an external resistance. *Examples: bench press, dumbbell curls.*\n- **Repetition**: A specified number of repetitions performed using the body as a resistance. *Examples: pullups, pushups, sit ups.*\n- **Load and body weight**: A specified number of repetitions performed using the body and a load as resistance. *Examples: weighted pullups, weighted dips.*\n- **Duration**: It measures time execution of the reps. *Examples: planks, warm up, stretching.*</string>
     <string name="statistics_desc">- **Time elapsed**: the total duration of the workout session.\n- **Date**: indicates the date on which the workout was completed.\n- **Volume**: the total amount of weight lifted during a workout, calculated by multiplying for each completed set the number of repetitions performed by the weight lifted. Higher volume is associated with greater muscle hypertrophy and strength gains over time.\n- **Exercises**: the total count of exercises included in this workout.\n- **Total sets**: the cumulative number of sets planned for each exercise in a workout. A set is a group of consecutive repetitions performed without resting.\n- **Completed sets**: the number of sets that were finished as planned by the workout.</string>
 
 

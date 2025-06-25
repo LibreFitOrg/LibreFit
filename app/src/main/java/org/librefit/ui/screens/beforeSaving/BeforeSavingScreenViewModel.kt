@@ -59,6 +59,7 @@ class BeforeSavingScreenViewModel @Inject constructor(
     fun getVolumeExercises(): String {
         return exercises.sumOf {
             it.sets.sumOf { set ->
+                // TODO: fix volume here and in InfoWorkoutViewModel
                 if (it.exercise.setMode == SetMode.LOAD_ONLY && set.completed) {
                     set.load.toDouble() * set.reps
                 } else 0.0
@@ -171,6 +172,7 @@ class BeforeSavingScreenViewModel @Inject constructor(
                 when (exercise.exercise.setMode) {
                     SetMode.DURATION -> it.copy(reps = 0, load = 0f)
                     SetMode.REPS -> it.copy(elapsedTime = 0, load = 0f)
+                    SetMode.LOAD_AND_BODY_WEIGHT -> it.copy(elapsedTime = 0)
                     SetMode.LOAD_ONLY -> it.copy(elapsedTime = 0)
                 }
             })

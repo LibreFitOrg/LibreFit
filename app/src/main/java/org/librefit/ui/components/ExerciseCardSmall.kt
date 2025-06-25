@@ -124,9 +124,9 @@ fun ExerciseCardSmall(
                         Text(stringResource(R.string.time))
                     } else {
                         Text(stringResource(R.string.reps))
-                        if (setMode == SetMode.LOAD_ONLY) {
+                        if (setMode == SetMode.LOAD_ONLY || setMode == SetMode.LOAD_AND_BODY_WEIGHT) {
                             Text(
-                                stringResource(R.string.load) + "(" + stringResource(
+                                stringResource(R.string.load) + " (" + stringResource(
                                     R.string.kg
                                 ) + ")"
                             )
@@ -170,7 +170,7 @@ fun ExerciseCardSmall(
                                 Text(formatTime(set.elapsedTime).substring(3))
                             } else {
                                 Text("${set.reps}")
-                                if (setMode == SetMode.LOAD_ONLY) {
+                                if (setMode == SetMode.LOAD_ONLY || setMode == SetMode.LOAD_AND_BODY_WEIGHT) {
                                     Text("${set.load}")
                                 }
                             }

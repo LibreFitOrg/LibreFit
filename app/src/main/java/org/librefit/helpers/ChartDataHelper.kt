@@ -47,12 +47,12 @@ class ChartDataHelper @Inject constructor(
      * Each entry’s X-value is the formatted completion date of the workout, and Y-value is:
      *  - [WorkoutChart.DURATION]: total minutes elapsed in the workout
      *  - [WorkoutChart.VOLUME] : total volume lifted, computed as sum(weight * reps) for completed sets.
-     *      When an exercise’s set mode is [SetMode.REPS], the user’s body weight at the time
-     *      of the workout is added to the plate weight.
+     *      When an exercise’s set mode is `SetMode.REPS` or `SetMode.LOAD_AND_BODY_WEIGHT`,
+     *      the user’s body weight at the time of the workout is added.
      *  - [WorkoutChart.REPS]: total number of reps completed in the workout
      *
      * This function concurrently:
-     *  1. Retrieves the latest user’s [org.librefit.db.entity.Measurement.bodyWeight] at each workout’s completion date.
+     *  1. Retrieves the latest user’s [org.librefit.db.entity.Measurement.bodyWeight] at each [org.librefit.db.entity.Workout.completed] date.
      *  2. Builds the corresponding [ChartData] items.
      *
      * @param workoutChart The metric to chart (duration, volume, or reps).
@@ -80,13 +80,15 @@ class ChartDataHelper @Inject constructor(
                             WorkoutChart.DURATION -> it.workout.timeElapsed / 60f
                             WorkoutChart.VOLUME -> it.exercisesWithSets.sumOf { exe ->
                                 exe.sets.filter { it.completed }.sumOf {
-                                    (it.load + if (exe.exercise.setMode == SetMode.REPS) bodyWeights[index]
-                                    else 0f) * it.reps.toDouble()
+                                    (it.load + if (exe.exercise.setMode == SetMode.REPS ||
+                                        exe.exercise.setMode == SetMode.LOAD_AND_BODY_WEIGHT
+                                    )
+                                        bodyWeights[index] else 0f) * it.reps.toDouble()
                                 }
                             }
 
-                            WorkoutChart.REPS -> it.exercisesWithSets.sumOf {
-                                it.sets.filter { it.completed }.sumOf { it.reps }
+                            WorkoutChart.REPS -> it.exercisesWithSets.sumOf { exe ->
+                                exe.sets.filter { it.completed }.sumOf { it.reps }
                             }
                         }.toFloat(),
                         xValue = it.workout.completed.format(shortFormatter)

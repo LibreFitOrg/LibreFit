@@ -19,8 +19,23 @@
 
 package org.librefit.enums
 
+import org.librefit.enums.SetMode.DURATION
+import org.librefit.enums.SetMode.LOAD_AND_BODY_WEIGHT
+import org.librefit.enums.SetMode.LOAD_ONLY
+import org.librefit.enums.SetMode.REPS
+
+
+/**
+ * Enum representing the mode for the [org.librefit.db.entity.Set]s of an [org.librefit.db.entity.Exercise].
+ *
+ * @property LOAD_ONLY            A set that uses an external load only (e.g., barbell squat, dumbbell curl).
+ * @property REPS                 A set measured by a count of repetitions (commonly body-weight or un-loaded exercises).
+ * @property LOAD_AND_BODY_WEIGHT A set that combines an external load with the user’s body weight (e.g., weighted pull-ups, weighted dips).
+ * @property DURATION             A set measured by elapsed time rather (e.g., plank, jumping jacks).
+ */
 enum class SetMode {
     LOAD_ONLY,
     REPS,
+    LOAD_AND_BODY_WEIGHT,
     DURATION
 }
