@@ -338,9 +338,9 @@ fun ExerciseCard(
                         text = stringResource(id = R.string.reps),
                         color = MaterialTheme.colorScheme.secondary
                     )
-                    if (exerciseWithSets.exercise.setMode == SetMode.WEIGHT) {
+                    if (exerciseWithSets.exercise.setMode == SetMode.LOAD_ONLY) {
                         Text(
-                            text = stringResource(R.string.weight) + " (" + stringResource(R.string.kg) + ")",
+                            text = stringResource(R.string.load) + " (" + stringResource(R.string.kg) + ")",
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
@@ -402,7 +402,7 @@ private fun Sets(
         ) { i, set ->
             var timeValue by remember { mutableIntStateOf(set.elapsedTime) }
             var repValue by remember { mutableStateOf(set.reps.toString()) }
-            var weightValue by remember { mutableStateOf(set.weight.toString()) }
+            var weightValue by remember { mutableStateOf(set.load.toString()) }
 
             val swipeToDismissBoxState = rememberSwipeToDismissBoxState(
                 confirmValueChange = {
@@ -612,7 +612,7 @@ private fun Sets(
                                 disabledBorderColor = Color.Transparent
                             )
                         )
-                        if (exerciseWithSets.exercise.setMode == SetMode.WEIGHT) {
+                        if (exerciseWithSets.exercise.setMode == SetMode.LOAD_ONLY) {
                             //Weight
                             OutlinedTextField(
                                 modifier = Modifier.width(80.dp),
@@ -682,7 +682,7 @@ private fun Sets(
 
 private fun setModeToStringId(setMode: SetMode): Int {
     return when (setMode) {
-        SetMode.WEIGHT -> R.string.weight
+        SetMode.LOAD_ONLY -> R.string.load_only
         SetMode.REPS -> R.string.reps
         SetMode.TIME -> R.string.time
     }

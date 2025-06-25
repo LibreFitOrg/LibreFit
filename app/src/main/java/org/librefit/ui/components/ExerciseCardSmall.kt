@@ -58,7 +58,7 @@ import org.librefit.util.Formatter.formatTime
  *
  * @param exerciseWithSets A [ExerciseWithSets] that holds the data
  * @param isRoutine When `false`, the card shows checkboxes of set completion
- * @param onDetail A lambda function triggered when the [Info] icon is clicked, which should open
+ * @param onDetail A lambda function triggered when the `Info` icon is clicked, which should open
  * the [org.librefit.ui.components.modalBottomSheets.ExerciseDetailModalBottomSheet].
  */
 @Composable
@@ -124,9 +124,9 @@ fun ExerciseCardSmall(
                         Text(stringResource(R.string.time))
                     } else {
                         Text(stringResource(R.string.reps))
-                        if (setMode == SetMode.WEIGHT) {
+                        if (setMode == SetMode.LOAD_ONLY) {
                             Text(
-                                stringResource(R.string.weight) + "(" + stringResource(
+                                stringResource(R.string.load) + "(" + stringResource(
                                     R.string.kg
                                 ) + ")"
                             )
@@ -170,8 +170,8 @@ fun ExerciseCardSmall(
                                 Text(formatTime(set.elapsedTime).substring(3))
                             } else {
                                 Text("${set.reps}")
-                                if (setMode == SetMode.WEIGHT) {
-                                    Text("${set.weight}")
+                                if (setMode == SetMode.LOAD_ONLY) {
+                                    Text("${set.load}")
                                 }
                             }
                             if (!isRoutine) {

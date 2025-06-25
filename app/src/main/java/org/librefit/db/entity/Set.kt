@@ -32,15 +32,15 @@ import kotlin.random.Random
  * The foreign key constraint ensures that when a [Exercise] is deleted, all related sets are also deleted (CASCADE deletion).
  *
  * ### Note
- * - The value of [reps],[weight] and [elapsedTime] are exclusive between each other and it depends
+ * - The value of [reps],[load] and [elapsedTime] are exclusive between each other and it depends
  * by the [Exercise.setMode] value when saving in db. For instance if `setMode = SetMode.WEIGHT`
  * then [reps] and [elapsedTime] are assigned 0.
- * - These properties [reps],[weight] and [elapsedTime] can be edited by the user in
+ * - These properties [reps],[load] and [elapsedTime] can be edited by the user in
  *  [org.librefit.ui.screens.workout.WorkoutScreen] and [org.librefit.ui.screens.editWorkout.EditWorkoutScreen]
  *
  *
  * @property id The unique identifier for the set. It is auto-generated and serves as the primary key.
- * @property weight The weight used for the set, in kilograms.
+ * @property load The weight of the set, in kilograms.
  * @property reps The number of repetitions performed in the set.
  * @property elapsedTime The time taken to complete the set, in seconds.
  * @property completed Indicates whether the set has been completed.
@@ -61,7 +61,7 @@ import kotlin.random.Random
 )
 data class Set(
     @PrimaryKey(true) val id: Long = Random.Default.nextLong() + System.currentTimeMillis(),
-    val weight: Float = 0f,
+    val load: Float = 0f,
     val reps: Int = 0,
     val elapsedTime: Int = 0,
     val completed: Boolean = false,

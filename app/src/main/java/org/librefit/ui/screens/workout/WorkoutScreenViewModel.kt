@@ -90,7 +90,7 @@ class WorkoutScreenViewModel @Inject constructor(
      * @param value The new value to assign to the specified attribute of the [Set].
      * @param mode An integer that defines which attribute of the [Set] should be updated.
      * The following modes correspond to specific attributes:
-     *  - 0: [Set.weight]
+     *  - 0: [Set.load]
      *  - 1: [Set.reps]
      *  - 2: [Set.elapsedTime]
      *  - 3: [Set.completed] (where a [value] of 1 indicates 'true')
@@ -104,7 +104,7 @@ class WorkoutScreenViewModel @Inject constructor(
             sets = exerciseWithSets.sets.map {
                 if (it.id == set.id) {
                     when (mode) {
-                        0 -> set.copy(weight = value)
+                        0 -> set.copy(load = value)
                         1 -> set.copy(reps = value.toInt())
                         2 -> set.copy(elapsedTime = value.toInt())
                         3 -> set.copy(completed = value == 1f)
@@ -152,22 +152,22 @@ class WorkoutScreenViewModel @Inject constructor(
      *  - 2: [org.librefit.db.entity.Exercise.restTime]
      *
      * Note: When updating [org.librefit.db.entity.Exercise.setMode], the [value] should be one of the following string representations:
-     *  - [SetMode.WEIGHT].name
+     *  - [SetMode.LOAD_ONLY].name
      *  - [SetMode.TIME].name
      *  - [SetMode.REPS].name;
-     * If an invalid string is provided, the default value [SetMode.WEIGHT] will be assigned.
+     * If an invalid string is provided, the default value [SetMode.LOAD_ONLY] will be assigned.
      */
     fun updateExercise(index: Int, value: String, mode: Int) {
         val exerciseWithSets = exercisesWithSets[index]
         exercisesWithSets[index] = when (mode) {
-            0 -> exerciseWithSets.copy(exercise = exerciseWithSets.exercise.copy(notes = value.toString()))
+            0 -> exerciseWithSets.copy(exercise = exerciseWithSets.exercise.copy(notes = value))
             1 -> exerciseWithSets.copy(
                 exercise = exerciseWithSets.exercise.copy(
                     setMode = when (value) {
-                        SetMode.WEIGHT.name -> SetMode.WEIGHT
+                        SetMode.LOAD_ONLY.name -> SetMode.LOAD_ONLY
                         SetMode.TIME.name -> SetMode.TIME
                         SetMode.REPS.name -> SetMode.REPS
-                        else -> SetMode.WEIGHT
+                        else -> SetMode.LOAD_ONLY
                     }
                 )
             )

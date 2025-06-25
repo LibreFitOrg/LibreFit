@@ -80,7 +80,7 @@ class ChartDataHelper @Inject constructor(
                             WorkoutChart.DURATION -> it.workout.timeElapsed / 60f
                             WorkoutChart.VOLUME -> it.exercisesWithSets.sumOf { exe ->
                                 exe.sets.filter { it.completed }.sumOf {
-                                    (it.weight + if (exe.exercise.setMode == SetMode.REPS) bodyWeights[index]
+                                    (it.load + if (exe.exercise.setMode == SetMode.REPS) bodyWeights[index]
                                     else 0f) * it.reps.toDouble()
                                 }
                             }

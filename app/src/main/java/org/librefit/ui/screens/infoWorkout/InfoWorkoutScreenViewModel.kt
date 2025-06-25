@@ -96,12 +96,12 @@ class InfoWorkoutScreenViewModel @Inject constructor(
     fun getVolumeExercises(): String {
         val value = exercises.value.sumOf {
             it.sets.sumOf { set ->
-                if (it.exercise.setMode == SetMode.WEIGHT) {
+                if (it.exercise.setMode == SetMode.LOAD_ONLY) {
                     if (isRoutine()) {
-                        (set.weight * set.reps).toDouble()
+                        (set.load * set.reps).toDouble()
                     } else {
                         if (set.completed) {
-                            (set.weight * set.reps).toDouble()
+                            (set.load * set.reps).toDouble()
                         } else 0.0
                     }
                 } else 0.0

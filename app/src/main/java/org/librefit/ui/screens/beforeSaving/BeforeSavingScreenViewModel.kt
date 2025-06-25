@@ -59,8 +59,8 @@ class BeforeSavingScreenViewModel @Inject constructor(
     fun getVolumeExercises(): String {
         return exercises.sumOf {
             it.sets.sumOf { set ->
-                if (it.exercise.setMode == SetMode.WEIGHT && set.completed) {
-                    set.weight.toDouble() * set.reps
+                if (it.exercise.setMode == SetMode.LOAD_ONLY && set.completed) {
+                    set.load.toDouble() * set.reps
                 } else 0.0
             }
         }.toFloat().toString().format(Locale.getDefault(), "%.2f")
@@ -169,9 +169,9 @@ class BeforeSavingScreenViewModel @Inject constructor(
             exercise.copy(sets = exercise.sets.map {
                 // This keeps only relevant data on the actual type of set
                 when (exercise.exercise.setMode) {
-                    SetMode.TIME -> it.copy(reps = 0, weight = 0f)
-                    SetMode.REPS -> it.copy(elapsedTime = 0, weight = 0f)
-                    SetMode.WEIGHT -> it.copy(elapsedTime = 0)
+                    SetMode.TIME -> it.copy(reps = 0, load = 0f)
+                    SetMode.REPS -> it.copy(elapsedTime = 0, load = 0f)
+                    SetMode.LOAD_ONLY -> it.copy(elapsedTime = 0)
                 }
             })
         }
