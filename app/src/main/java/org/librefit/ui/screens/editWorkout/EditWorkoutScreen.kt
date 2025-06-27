@@ -74,11 +74,7 @@ fun EditWorkoutScreen(
     val viewModel: EditWorkoutScreenViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
-        sharedViewModel.getSelectedExercisesList().forEach { exerciseDC ->
-            viewModel.addExerciseWithSets(
-                ExerciseWithSets(Exercise(exerciseId = exerciseDC.id), exerciseDC = exerciseDC)
-            )
-        }
+        sharedViewModel.getSelectedExercisesList().forEach(viewModel::addExerciseWithSets)
         viewModel.initialize(
             workout = sharedViewModel.getPassedWorkout(),
             newExercises = sharedViewModel.getPassedExercises(),

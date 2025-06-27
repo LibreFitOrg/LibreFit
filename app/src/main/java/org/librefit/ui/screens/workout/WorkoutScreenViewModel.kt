@@ -34,9 +34,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.librefit.R
 import org.librefit.data.DataStoreManager
+import org.librefit.data.ExerciseDC
+import org.librefit.db.entity.Exercise
 import org.librefit.db.entity.Set
 import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.enums.SetMode
+import org.librefit.enums.exercise.Category
+import org.librefit.enums.exercise.Equipment
 import org.librefit.services.WorkoutService
 import org.librefit.services.WorkoutServiceManager
 import javax.inject.Inject
@@ -67,8 +71,25 @@ class WorkoutScreenViewModel @Inject constructor(
         return exercisesWithSets.toList()
     }
 
-    fun addExerciseWithSets(exerciseWithSets: ExerciseWithSets) {
-        exercisesWithSets.add(exerciseWithSets)
+    fun addExerciseWithSets(exerciseDC: ExerciseDC) {
+        exercisesWithSets.add(
+            ExerciseWithSets(
+                exercise = Exercise(
+                    exerciseId = exerciseDC.id,
+                    setMode = when (exerciseDC.category) {
+                        Category.STRETCHING -> SetMode.DURATION
+                        Category.CARDIO -> SetMode.DURATION
+                        else -> when (exerciseDC.equipment) {
+                            Equipment.BODY_ONLY -> SetMode.REPS
+                            Equipment.FOAM_ROLL -> SetMode.REPS
+                            Equipment.EXERCISE_BALL -> SetMode.REPS
+                            else -> SetMode.LOAD_ONLY
+                        }
+                    }
+                ),
+                exerciseDC = exerciseDC
+            )
+        )
     }
 
     fun addSetToExercise(index: Int) {

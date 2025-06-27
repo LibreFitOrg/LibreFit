@@ -70,8 +70,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import org.librefit.R
 import org.librefit.data.ExerciseDC
-import org.librefit.db.entity.Exercise
-import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.enums.InfoMode
 import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
@@ -99,11 +97,7 @@ fun WorkoutScreen(
         viewModel.initializeExercises(sharedViewModel.getPassedExercises())
 
         //It adds the selected exercises from AddExerciseScreen
-        sharedViewModel.getSelectedExercisesList().forEach { exerciseDC ->
-            viewModel.addExerciseWithSets(
-                ExerciseWithSets(Exercise(exerciseId = exerciseDC.id), exerciseDC = exerciseDC)
-            )
-        }
+        sharedViewModel.getSelectedExercisesList().forEach(viewModel::addExerciseWithSets)
     }
 
     val timeElapsed by viewModel.timeElapsed.collectAsState()
