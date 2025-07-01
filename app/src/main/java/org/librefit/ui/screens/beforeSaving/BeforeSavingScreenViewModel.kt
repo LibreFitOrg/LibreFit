@@ -174,7 +174,7 @@ class BeforeSavingScreenViewModel @Inject constructor(
                     SetMode.DURATION -> it.copy(reps = 0, load = 0f)
                     SetMode.BODYWEIGHT -> it.copy(elapsedTime = 0, load = 0f)
                     SetMode.BODYWEIGHT_WITH_LOAD -> it.copy(elapsedTime = 0)
-                    SetMode.LOAD_ONLY -> it.copy(elapsedTime = 0)
+                    SetMode.LOAD -> it.copy(elapsedTime = 0)
                 }
             })
         }

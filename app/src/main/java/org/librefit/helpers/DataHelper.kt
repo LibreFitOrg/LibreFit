@@ -111,7 +111,7 @@ class DataHelper @Inject constructor(
         return workout.exercisesWithSets.sumOf { exe ->
             exe.sets.sumOf { set ->
                 val volumeForEachRep = when (exe.exercise.setMode) {
-                    SetMode.LOAD_ONLY -> if (isRoutine || set.completed) set.load else 0f
+                    SetMode.LOAD -> if (isRoutine || set.completed) set.load else 0f
                     SetMode.BODYWEIGHT -> if (isRoutine || set.completed) bodyWeight else 0f
                     SetMode.BODYWEIGHT_WITH_LOAD -> (if (isRoutine || set.completed) set.load else 0f) + bodyWeight
                     SetMode.DURATION -> 0f

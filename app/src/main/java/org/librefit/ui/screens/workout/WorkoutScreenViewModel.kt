@@ -83,7 +83,7 @@ class WorkoutScreenViewModel @Inject constructor(
                             Equipment.BODY_ONLY -> SetMode.BODYWEIGHT
                             Equipment.FOAM_ROLL -> SetMode.BODYWEIGHT
                             Equipment.EXERCISE_BALL -> SetMode.BODYWEIGHT
-                            else -> SetMode.LOAD_ONLY
+                            else -> SetMode.LOAD
                         }
                     }
                 ),
@@ -173,10 +173,10 @@ class WorkoutScreenViewModel @Inject constructor(
      *  - 2: [org.librefit.db.entity.Exercise.restTime]
      *
      * Note: When updating [org.librefit.db.entity.Exercise.setMode], the [value] should be one of the following string representations:
-     *  - [SetMode.LOAD_ONLY].name
+     *  - [SetMode.LOAD].name
      *  - [SetMode.DURATION].name
      *  - [SetMode.BODYWEIGHT].name;
-     * If an invalid string is provided, the default value [SetMode.LOAD_ONLY] will be assigned.
+     * If an invalid string is provided, the default value [SetMode.LOAD] will be assigned.
      */
     fun updateExercise(index: Int, value: String, mode: Int) {
         val exerciseWithSets = exercisesWithSets[index]
@@ -185,11 +185,11 @@ class WorkoutScreenViewModel @Inject constructor(
             1 -> exerciseWithSets.copy(
                 exercise = exerciseWithSets.exercise.copy(
                     setMode = when (value) {
-                        SetMode.LOAD_ONLY.name -> SetMode.LOAD_ONLY
+                        SetMode.LOAD.name -> SetMode.LOAD
                         SetMode.BODYWEIGHT_WITH_LOAD.name -> SetMode.BODYWEIGHT_WITH_LOAD
                         SetMode.DURATION.name -> SetMode.DURATION
                         SetMode.BODYWEIGHT.name -> SetMode.BODYWEIGHT
-                        else -> SetMode.LOAD_ONLY
+                        else -> SetMode.LOAD
                     }
                 )
             )

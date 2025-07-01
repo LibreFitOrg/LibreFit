@@ -336,7 +336,7 @@ fun ExerciseCard(
                         text = stringResource(id = R.string.reps),
                         color = MaterialTheme.colorScheme.secondary
                     )
-                    if (exerciseWithSets.exercise.setMode == SetMode.LOAD_ONLY ||
+                    if (exerciseWithSets.exercise.setMode == SetMode.LOAD ||
                         exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
                     ) {
                         Text(
@@ -612,7 +612,7 @@ private fun Sets(
                                 disabledBorderColor = Color.Transparent
                             )
                         )
-                        if (exerciseWithSets.exercise.setMode == SetMode.LOAD_ONLY ||
+                        if (exerciseWithSets.exercise.setMode == SetMode.LOAD ||
                             exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
                         ) {
                             //Weight
@@ -684,7 +684,7 @@ private fun Sets(
 
 private fun setModeToStringId(setMode: SetMode): Int {
     return when (setMode) {
-        SetMode.LOAD_ONLY -> R.string.load_only
+        SetMode.LOAD -> R.string.load
         SetMode.BODYWEIGHT_WITH_LOAD -> R.string.bodyweight_with_load
         SetMode.BODYWEIGHT -> R.string.bodyweight
         SetMode.DURATION -> R.string.duration

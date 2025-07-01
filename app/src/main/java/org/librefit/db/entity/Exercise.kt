@@ -61,7 +61,7 @@ data class Exercise(
     @PrimaryKey(true) val id: Long = Random.nextLong() + System.currentTimeMillis(),
     val exerciseId: String = "",
     val notes: String = "",
-    val setMode: SetMode = SetMode.LOAD_ONLY,
+    val setMode: SetMode = SetMode.LOAD,
     val restTime: Int = 0,
     val workoutId: Long = 0// Foreign key reference to Workout
 )
