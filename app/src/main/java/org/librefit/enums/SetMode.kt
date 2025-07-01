@@ -22,6 +22,6 @@ package org.librefit.enums
 enum class SetMode {
     LOAD_ONLY,
     BODYWEIGHT,
-    LOAD_AND_BODY_WEIGHT,
+    BODYWEIGHT_WITH_LOAD,
     DURATION
 }

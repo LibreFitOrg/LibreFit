@@ -81,7 +81,7 @@ class DataHelper @Inject constructor(
                             WorkoutChart.VOLUME -> it.exercisesWithSets.sumOf { exe ->
                                 exe.sets.filter { it.completed }.sumOf {
                                     (it.load + if (exe.exercise.setMode == SetMode.BODYWEIGHT ||
-                                        exe.exercise.setMode == SetMode.LOAD_AND_BODY_WEIGHT
+                                        exe.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
                                     )
                                         bodyWeights[index] else 0f) * it.reps.toDouble()
                                 }
@@ -113,7 +113,7 @@ class DataHelper @Inject constructor(
                 val volumeForEachRep = when (exe.exercise.setMode) {
                     SetMode.LOAD_ONLY -> if (isRoutine || set.completed) set.load else 0f
                     SetMode.BODYWEIGHT -> if (isRoutine || set.completed) bodyWeight else 0f
-                    SetMode.LOAD_AND_BODY_WEIGHT -> (if (isRoutine || set.completed) set.load else 0f) + bodyWeight
+                    SetMode.BODYWEIGHT_WITH_LOAD -> (if (isRoutine || set.completed) set.load else 0f) + bodyWeight
                     SetMode.DURATION -> 0f
                 }
 

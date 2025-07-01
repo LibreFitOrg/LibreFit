@@ -186,7 +186,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 exercise = exerciseWithSets.exercise.copy(
                     setMode = when (value) {
                         SetMode.LOAD_ONLY.name -> SetMode.LOAD_ONLY
-                        SetMode.LOAD_AND_BODY_WEIGHT.name -> SetMode.LOAD_AND_BODY_WEIGHT
+                        SetMode.BODYWEIGHT_WITH_LOAD.name -> SetMode.BODYWEIGHT_WITH_LOAD
                         SetMode.DURATION.name -> SetMode.DURATION
                         SetMode.BODYWEIGHT.name -> SetMode.BODYWEIGHT
                         else -> SetMode.LOAD_ONLY

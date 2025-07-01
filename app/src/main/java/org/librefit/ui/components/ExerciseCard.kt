@@ -337,7 +337,7 @@ fun ExerciseCard(
                         color = MaterialTheme.colorScheme.secondary
                     )
                     if (exerciseWithSets.exercise.setMode == SetMode.LOAD_ONLY ||
-                        exerciseWithSets.exercise.setMode == SetMode.LOAD_AND_BODY_WEIGHT
+                        exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
                     ) {
                         Text(
                             text = stringResource(R.string.load) + " (" + stringResource(R.string.kg) + ")",
@@ -613,7 +613,7 @@ private fun Sets(
                             )
                         )
                         if (exerciseWithSets.exercise.setMode == SetMode.LOAD_ONLY ||
-                            exerciseWithSets.exercise.setMode == SetMode.LOAD_AND_BODY_WEIGHT
+                            exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
                         ) {
                             //Weight
                             OutlinedTextField(
@@ -685,7 +685,7 @@ private fun Sets(
 private fun setModeToStringId(setMode: SetMode): Int {
     return when (setMode) {
         SetMode.LOAD_ONLY -> R.string.load_only
-        SetMode.LOAD_AND_BODY_WEIGHT -> R.string.load_and_body_weight
+        SetMode.BODYWEIGHT_WITH_LOAD -> R.string.bodyweight_with_load
         SetMode.BODYWEIGHT -> R.string.bodyweight
         SetMode.DURATION -> R.string.duration
     }
