@@ -25,13 +25,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +50,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -177,7 +178,11 @@ private fun ExercisesScreenContent(
         fabAction = if (isAtTop) null else scrollToTop,
         fabIcon = ImageVector.vectorResource(R.drawable.ic_keyboard_double_arrow_up),
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding, 0.dp, 0.dp, lazyListState) {
+        LibreFitLazyColumn(
+            innerPadding = innerPadding,
+            verticalSpacing = 15.dp,
+            lazyListState = lazyListState
+        ) {
             // Search bar
             item {
                 Row(
@@ -186,9 +191,7 @@ private fun ExercisesScreenContent(
                 ) {
                     TextField(
                         value = query,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 15.dp, end = 15.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         onValueChange = updateQuery,
                         shape = RoundedCornerShape(40.dp),
                         leadingIcon = {
@@ -250,15 +253,10 @@ private fun ExercisesScreenContent(
                 items = filteredExerciseList,
                 key = { index, exercise -> exercise.id }
             ) { index, exercise ->
-                if (index == 0) {
-                    HorizontalDivider(Modifier.animateItem())
-                }
-
-                Row(
+                ElevatedCard(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .animateItem()
-                        .height(100.dp)
+                        .clip(CardDefaults.elevatedShape)
                         .clickable(
                             enabled = addExercises
                         ) {
@@ -268,57 +266,63 @@ private fun ExercisesScreenContent(
                                 selectedExercisesList.add(exercise)
                             }
                         },
-                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (addExercises) {
-                        Checkbox(
-                            modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                            checked = selectedExercisesList.contains(exercise),
-                            onCheckedChange = {
-                                if (selectedExercisesList.contains(exercise)) {
-                                    selectedExercisesList.remove(exercise)
-                                } else {
-                                    selectedExercisesList.add(exercise)
-                                }
-                            }
-                        )
-                    }
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = if (addExercises) 0.dp else 20.dp),
-                        verticalArrangement = Arrangement.Center
+                    Row(
+                        modifier = Modifier.padding(
+                            top = 20.dp,
+                            bottom = 20.dp,
+                            start = 10.dp,
+                            end = 10.dp
+                        ),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(
-                            text = exercise.name,
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        Text(
-                            text = stringResource(exerciseEnumToStringId(exercise.category)),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        if (exercise.equipment != null) {
+                        if (addExercises) {
+                            Checkbox(
+                                checked = selectedExercisesList.contains(exercise),
+                                onCheckedChange = {
+                                    if (selectedExercisesList.contains(exercise)) {
+                                        selectedExercisesList.remove(exercise)
+                                    } else {
+                                        selectedExercisesList.add(exercise)
+                                    }
+                                }
+                            )
+                        }
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 10.dp),
+                            verticalArrangement = Arrangement.Center
+                        ) {
                             Text(
-                                text = stringResource(exerciseEnumToStringId(exercise.equipment)),
+                                text = exercise.name,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                text = stringResource(exerciseEnumToStringId(exercise.category)),
                                 style = MaterialTheme.typography.bodyMedium
+                            )
+                            if (exercise.equipment != null) {
+                                Text(
+                                    text = stringResource(exerciseEnumToStringId(exercise.equipment)),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+                        IconButton(
+                            modifier = Modifier.padding(start = 10.dp),
+                            onClick = {
+                                selectedExercise = exercise
+                                isModalSheetOpen = true
+                            }
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_info),
+                                contentDescription = stringResource(R.string.details)
                             )
                         }
                     }
-                    IconButton(
-                        modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                        onClick = {
-                            selectedExercise = exercise
-                            isModalSheetOpen = true
-                        }
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_info),
-                            contentDescription = stringResource(R.string.details)
-                        )
-                    }
                 }
-                HorizontalDivider(Modifier.animateItem())
-
             }
             bottomMargin()
         }
@@ -334,15 +338,19 @@ private fun ExercisesScreenContent(
 @Preview
 @Composable
 private fun ExercisesScreenPreview() {
+    var query by remember { mutableStateOf("") }
+
+    var filterValue by remember { mutableStateOf(FilterValue()) }
+
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
         ExercisesScreenContent(
             addExercises = false,
             selectedExercisesList = remember { mutableStateListOf() },
             filteredExerciseList = List(20) { ExerciseDC(id = "$it", name = "Exercise $it") },
-            query = "MyQuery",
-            updateQuery = {},
-            updateFilter = {},
-            filterValue = FilterValue(),
+            query = query,
+            updateQuery = { query = it },
+            updateFilter = { filterValue = it },
+            filterValue = filterValue,
             actions = listOf {},
             navigateBack = {},
         )

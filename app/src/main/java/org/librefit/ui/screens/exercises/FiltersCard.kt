@@ -82,11 +82,7 @@ fun FiltersCard(
 ) {
     var iconRotation by rememberSaveable { mutableFloatStateOf(0f) }
 
-    OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(15.dp),
-    ) {
+    OutlinedCard {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
