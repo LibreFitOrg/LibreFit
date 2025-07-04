@@ -25,11 +25,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
@@ -45,16 +47,27 @@ class ExercisesScreenViewModel @Inject constructor(
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()
 
+    @OptIn(FlowPreview::class)
+    val debouncedQuery: StateFlow<String> = _query
+        .debounce(300L)
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = ""
+        )
+
     fun updateQuery(newQuery: String) {
         _query.value = newQuery
     }
+
 
     private var _filterValue = MutableStateFlow(FilterValue())
     var filterValue = _filterValue.asStateFlow()
 
     val filteredExerciseList: StateFlow<List<ExerciseDC>> =
         combine(
-            query,
+            debouncedQuery,
             filterValue
         ) { q, _ ->
             exercisesList
@@ -70,6 +83,7 @@ class ExercisesScreenViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = exercisesList
             )
+
 
     /**
      * Refer to [FuzzySearch.partialRatio]
