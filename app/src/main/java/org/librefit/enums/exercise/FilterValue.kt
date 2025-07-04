@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025. LibreFit
+ * Copyright (c) 2025. LibreFit
  *
  * This file is part of LibreFit
  *
@@ -19,11 +19,11 @@
 
 package org.librefit.enums.exercise
 
-import com.squareup.moshi.Json
-
-enum class Mechanic : ExerciseProperty {
-    @Json(name = "isolation")
-    ISOLATION,
-    @Json(name = "compound")
-    COMPOUND
-}
+data class FilterValue(
+    val force: Force? = null,
+    val level: Level? = null,
+    val mechanic: Mechanic? = null,
+    val equipment: Equipment? = null,
+    val muscles: Muscle? = null,
+    val category: Category? = null,
+)

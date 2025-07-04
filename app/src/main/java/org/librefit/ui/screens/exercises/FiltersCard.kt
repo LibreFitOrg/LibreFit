@@ -42,7 +42,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,19 +62,23 @@ import androidx.compose.ui.unit.dp
 import org.librefit.R
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
+import org.librefit.enums.exercise.ExerciseProperty
+import org.librefit.enums.exercise.FilterValue
 import org.librefit.enums.exercise.Force
 import org.librefit.enums.exercise.Level
 import org.librefit.enums.exercise.Mechanic
 import org.librefit.enums.exercise.Muscle
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter.exerciseEnumToStringId
+import kotlin.reflect.KClass
 
 
 @Composable
 fun FiltersCard(
-    isFilterExpanded: MutableState<Boolean>,
-    updateFilter: (Enum<*>?, Int) -> Unit,
-    getFilter: (Int) -> Enum<*>?
+    isFilterExpanded: Boolean,
+    updateCardExpansion: () -> Unit,
+    updateFilter: (FilterValue) -> Unit,
+    filterValue: FilterValue
 ) {
     var iconRotation by rememberSaveable { mutableFloatStateOf(0f) }
 
@@ -106,8 +109,8 @@ fun FiltersCard(
             }
             IconButton(
                 onClick = {
-                    isFilterExpanded.value = !isFilterExpanded.value
-                    iconRotation = if (isFilterExpanded.value) 180f else 0f
+                    updateCardExpansion()
+                    iconRotation = if (isFilterExpanded) 0f else 180f
                 }
             ) {
                 Icon(
@@ -119,30 +122,8 @@ fun FiltersCard(
         }
 
 
-        val titles = listOf(
-            R.string.level,
-            R.string.force,
-            R.string.mechanic,
-            R.string.equipment,
-            R.string.muscles,
-            R.string.category
-        )
-
-        val options: List<List<Enum<*>?>> = listOf(
-            Level.entries + null,
-            Force.entries + null,
-            Mechanic.entries + null,
-            Equipment.entries + null,
-            Muscle.entries + null,
-            Category.entries + null
-        ).map {
-            //This will move the last element (null) in the first place
-            listOf(it.last()) + it.dropLast(1)
-        }
-
-
         //Animation to display the filters
-        AnimatedVisibility(visible = isFilterExpanded.value) {
+        AnimatedVisibility(visible = isFilterExpanded) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -155,12 +136,11 @@ fun FiltersCard(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    for (i in 0..5) {
+                    ExerciseProperty.propertiesPairsByEnum.forEach { propertiesPair ->
                         ItemFilter(
-                            title = stringResource(titles[i]),
-                            options = options[i],
-                            changeEnum = { updateFilter(it, i) },
-                            enumFilterValue = getFilter(i)
+                            pair = propertiesPair,
+                            update = updateFilter,
+                            value = filterValue
                         )
                     }
                 }
@@ -172,11 +152,24 @@ fun FiltersCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ItemFilter(
-    title: String,
-    options: List<Enum<*>?>,
-    changeEnum: (Enum<*>?) -> Unit,
-    enumFilterValue: Enum<*>?
+    pair: Pair<List<ExerciseProperty?>, KClass<out ExerciseProperty>>,
+    update: (FilterValue) -> Unit,
+    value: FilterValue
 ) {
+    val options: List<ExerciseProperty?> = pair.first
+
+    val enumType = pair.second
+
+    val propertyFilterValue: ExerciseProperty? = when (enumType) {
+        Level::class -> value.level
+        Force::class -> value.force
+        Mechanic::class -> value.mechanic
+        Muscle::class -> value.muscles
+        Equipment::class -> value.equipment
+        Category::class -> value.category
+        else -> null
+    }
+
     var expanded by remember { mutableStateOf(false) }
 
     val focusRequester = remember { FocusRequester() }
@@ -185,7 +178,19 @@ private fun ItemFilter(
         modifier = Modifier.width(150.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(title)
+        Text(
+            text = stringResource(
+                id = when (propertyFilterValue) {
+                    is Level -> R.string.level
+                    is Force -> R.string.force
+                    is Mechanic -> R.string.mechanic
+                    is Muscle -> R.string.mechanic
+                    is Equipment -> R.string.equipment
+                    is Category -> R.string.category
+                    null -> R.string.any
+                }
+            )
+        )
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = it },
@@ -199,11 +204,7 @@ private fun ItemFilter(
         ) {
             OutlinedTextField(
                 readOnly = true,
-                value = stringResource(
-                    if (enumFilterValue == null) R.string.any else exerciseEnumToStringId(
-                        enumFilterValue
-                    )
-                ),
+                value = stringResource(exerciseEnumToStringId(propertyFilterValue)),
                 onValueChange = {},
                 singleLine = true,
                 trailingIcon = {
@@ -217,20 +218,25 @@ private fun ItemFilter(
                 onDismissRequest = { expanded = false }
             ) {
                 options.forEach { enum ->
-                    val enumString = stringResource(
-                        if (enum == null) R.string.any else exerciseEnumToStringId(enum)
-                    )
                     DropdownMenuItem(
                         onClick = {
-                            changeEnum(enum)
+                            when (enumType) {
+                                Force::class -> update(value.copy(force = enum as Force?))
+                                Level::class -> update(value.copy(level = enum as Level?))
+                                Mechanic::class -> update(value.copy(mechanic = enum as Mechanic?))
+                                Muscle::class -> update(value.copy(muscles = enum as Muscle?))
+                                Equipment::class -> update(value.copy(equipment = enum as Equipment?))
+                                Category::class -> update(value.copy(category = enum as Category?))
+                                else -> {}
+                            }
                             expanded = false
                         },
                         text = {
                             Text(
-                                text = enumString
+                                text = stringResource(exerciseEnumToStringId(enum))
                             )
                         },
-                        trailingIcon = if (enumFilterValue == enum) {
+                        trailingIcon = if (propertyFilterValue == enum) {
                             {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_check),
@@ -239,9 +245,8 @@ private fun ItemFilter(
                             }
                         } else null,
                         modifier = Modifier.background(
-                            if (enumFilterValue == enum) MaterialTheme.colorScheme.inversePrimary.copy(
-                                0.3f
-                            ) else Color.Unspecified
+                            if (propertyFilterValue == enum) MaterialTheme.colorScheme.inversePrimary
+                                .copy(0.3f) else Color.Unspecified
                         )
                     )
                 }
@@ -255,11 +260,16 @@ private fun ItemFilter(
 @Preview
 @Composable
 fun FiltersCardPreview() {
+    var filterValue by remember { mutableStateOf(FilterValue()) }
+
+    var isFilterExpanded by remember { mutableStateOf(true) }
+
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
         FiltersCard(
-            remember { mutableStateOf(true) },
-            updateFilter = { _, _ -> },
-            getFilter = { x -> null },
+            isFilterExpanded = isFilterExpanded,
+            updateCardExpansion = { isFilterExpanded = !isFilterExpanded },
+            updateFilter = { filterValue = it },
+            filterValue = filterValue
         )
     }
 }

@@ -21,7 +21,7 @@ package org.librefit.enums.exercise
 
 import com.squareup.moshi.Json
 
-enum class Equipment {
+enum class Equipment : ExerciseProperty {
     @Json(name = "medicine ball")
     MEDICINE_BALL,
     @Json(name = "dumbbell")

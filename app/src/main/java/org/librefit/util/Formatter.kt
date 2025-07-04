@@ -27,6 +27,7 @@ import androidx.compose.ui.text.withStyle
 import org.librefit.R
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
+import org.librefit.enums.exercise.ExerciseProperty
 import org.librefit.enums.exercise.Force
 import org.librefit.enums.exercise.Level
 import org.librefit.enums.exercise.Mechanic
@@ -34,7 +35,7 @@ import org.librefit.enums.exercise.Muscle
 import java.util.Locale
 
 object Formatter {
-    fun exerciseEnumToStringId(enum: Enum<*>?): Int {
+    fun exerciseEnumToStringId(enum: ExerciseProperty?): Int {
         return when (enum) {
             Force.PUSH -> R.string.force_push
             Force.PULL -> R.string.force_pull
@@ -80,7 +81,7 @@ object Formatter {
             Category.OLYMPIC_WEIGHTLIFTING -> R.string.category_olympic_weightlifting
             Category.STRONGMAN -> R.string.category_strongman
             Category.PLYOMETRICS -> R.string.category_plyometrics
-            else -> -1
+            else -> R.string.any
         }
     }
 

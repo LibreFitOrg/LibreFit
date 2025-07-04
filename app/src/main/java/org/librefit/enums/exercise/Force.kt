@@ -21,7 +21,7 @@ package org.librefit.enums.exercise
 
 import com.squareup.moshi.Json
 
-enum class Force {
+enum class Force : ExerciseProperty {
     @Json(name = "static")
     STATIC,
     @Json(name = "pull")

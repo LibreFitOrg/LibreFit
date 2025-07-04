@@ -62,6 +62,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.librefit.R
 import org.librefit.data.ExerciseDC
+import org.librefit.enums.exercise.FilterValue
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.NoResultLottie
@@ -111,6 +112,8 @@ fun ExercisesScreen(
 
     val query by viewModel.query.collectAsState()
 
+    val filterValue by viewModel.filterValue.collectAsState()
+
 
     ExercisesScreenContent(
         addExercises = addExercises,
@@ -119,7 +122,7 @@ fun ExercisesScreen(
         query = query,
         updateQuery = viewModel::updateQuery,
         updateFilter = viewModel::updateFilter,
-        getFilter = viewModel::getFilter,
+        filterValue = filterValue,
         actions = if (addExercises) listOf {
             sharedViewModel.addSelectedExerciseToList(selectedExercisesList)
             navigateBack()
@@ -136,8 +139,8 @@ private fun ExercisesScreenContent(
     filteredExerciseList: List<ExerciseDC>,
     query: String,
     updateQuery: (String) -> Unit,
-    updateFilter: (Enum<*>?, Int) -> Unit,
-    getFilter: (Int) -> Enum<*>?,
+    updateFilter: (FilterValue) -> Unit,
+    filterValue: FilterValue,
     actions: List<() -> Unit>,
     navigateBack: () -> Unit
 ) {
@@ -160,14 +163,14 @@ private fun ExercisesScreenContent(
     }
 
 
-    val isFilterExpanded = rememberSaveable { mutableStateOf(false) }
+    var isFilterExpanded by rememberSaveable { mutableStateOf(false) }
 
     /**
      * Holds the information to show in [ExerciseDetailModalBottomSheet]
      */
     var selectedExercise by remember { mutableStateOf(ExerciseDC()) }
 
-    var isModalSheetOpen by remember { mutableStateOf(false) }
+    var isModalSheetOpen by rememberSaveable { mutableStateOf(false) }
 
 
     LibreFitScaffold(
@@ -224,8 +227,9 @@ private fun ExercisesScreenContent(
             item {
                 FiltersCard(
                     isFilterExpanded = isFilterExpanded,
+                    updateCardExpansion = { isFilterExpanded = !isFilterExpanded },
                     updateFilter = updateFilter,
-                    getFilter = getFilter
+                    filterValue = filterValue
                 )
             }
 
@@ -340,12 +344,12 @@ private fun ExercisesScreenPreview() {
             addExercises = false,
             selectedExercisesList = remember { mutableStateListOf() },
             filteredExerciseList = List(20) { ExerciseDC(id = "$it", name = "Exercise $it") },
-            actions = listOf {},
-            navigateBack = {},
             query = "MyQuery",
             updateQuery = {},
-            updateFilter = { _, _ -> },
-            getFilter = { _ -> null }
+            updateFilter = {},
+            filterValue = FilterValue(),
+            actions = listOf {},
+            navigateBack = {},
         )
     }
 }

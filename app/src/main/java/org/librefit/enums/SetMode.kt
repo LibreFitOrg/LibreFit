@@ -24,4 +24,5 @@ enum class SetMode {
     BODYWEIGHT,
     BODYWEIGHT_WITH_LOAD,
     DURATION
+    //TODO: DURATION_WITH_DISTANCE
 }

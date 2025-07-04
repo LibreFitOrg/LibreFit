@@ -21,7 +21,7 @@ package org.librefit.enums.exercise
 
 import com.squareup.moshi.Json
 
-enum class Level {
+enum class Level : ExerciseProperty {
     @Json(name = "beginner")
     BEGINNER,
     @Json(name = "intermediate")
