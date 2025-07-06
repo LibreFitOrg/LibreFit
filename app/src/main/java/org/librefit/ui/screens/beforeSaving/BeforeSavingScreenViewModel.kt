@@ -19,15 +19,17 @@
 
 package org.librefit.ui.screens.beforeSaving
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
+import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import org.librefit.db.entity.Workout
-import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.SetMode
@@ -36,72 +38,58 @@ import org.librefit.services.WorkoutServiceManager
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class BeforeSavingScreenViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val workoutRepository: WorkoutRepository,
-    private val workoutServiceManager: WorkoutServiceManager
+    private val workoutServiceManager: WorkoutServiceManager,
+    private val dataHelper: DataHelper
 ) : ViewModel() {
 
-    private var exercises = mutableStateListOf<ExerciseWithSets>()
-
-    fun initializeExercises(exercises: List<ExerciseWithSets>) {
-        this.exercises.addAll(exercises)
+    companion object {
+        private const val WORKOUT_WITH_EXERCISES_AND_SET_KEY = "workoutWithExercisesAndSets"
     }
 
-    fun getExercises(): List<ExerciseWithSets> {
-        return exercises
-    }
+    private val workoutWithExercisesAndSetsJson = savedStateHandle
+        .get<String>(WORKOUT_WITH_EXERCISES_AND_SET_KEY)
+        ?: throw IllegalArgumentException("Invalid WORKOUT_WITH_EXERCISES_AND_SET_KEY")
 
-    @Inject
-    lateinit var dataHelper: DataHelper
 
-    suspend fun getVolumeExercises(passedExercises: List<ExerciseWithSets>): String {
-        val volume = dataHelper.fetchVolumeFromWorkout(
-            WorkoutWithExercisesAndSets(Workout(), passedExercises)
-        )
+    private val workoutWithExercisesAndSets: WorkoutWithExercisesAndSets =
+        workoutWithExercisesAndSetsJson
+            .let { it ->
+                Json.decodeFromString<WorkoutWithExercisesAndSets>(Uri.decode(it))
+            }
 
-        return String.format(Locale.getDefault(), "%.2f", volume)
-    }
+    val exercises = workoutWithExercisesAndSets.exercisesWithSets
 
-    fun getTotalSets(): Int {
-        return exercises.sumOf {
-            it.sets.size
+    private val _volume = MutableStateFlow("0.00")
+    val volume = _volume.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val volume = dataHelper.fetchVolumeFromWorkout(
+                WorkoutWithExercisesAndSets(Workout(), exercises)
+            )
+
+            _volume.value = String.format(Locale.getDefault(), "%.2f", volume)
         }
     }
 
-    fun getCompletedSets(): Int {
-        return exercises.sumOf { exercise ->
-            exercise.sets.filter { it.completed }.size
-        }
-    }
 
+    private val _workout = MutableStateFlow(workoutWithExercisesAndSets.workout)
+    val workout = _workout.asStateFlow()
 
-    private val workout = mutableStateOf(Workout())
-
-
-    fun initializeWorkout(workout: Workout) {
-        this.workout.value = workout
-    }
-
-    fun getTimeElapsed(): Int {
-        return workout.value.timeElapsed
-    }
 
     fun setTimeElapsed(timeElapsed: Int) {
-        workout.value = workout.value.copy(timeElapsed = timeElapsed)
+        _workout.value = workout.value.copy(timeElapsed = timeElapsed)
     }
 
     fun updateWorkoutTitle(string: String) {
-        workout.value = workout.value.copy(title = string)
-    }
-
-    fun getWorkoutTitle(): String {
-        return workout.value.title
+        _workout.value = workout.value.copy(title = string)
     }
 
     fun isTitleEmpty(): Boolean {
@@ -113,23 +101,19 @@ class BeforeSavingScreenViewModel @Inject constructor(
     }
 
     fun updateWorkoutNotes(newNotes: String) {
-        workout.value = workout.value.copy(notes = newNotes)
-    }
-
-    fun getWorkoutNotes(): String {
-        return workout.value.notes
+        _workout.value = workout.value.copy(notes = newNotes)
     }
 
     fun detachWorkoutFromRoutine() {
-        workout.value = workout.value.copy(
+        _workout.value = workout.value.copy(
             routineId = System.currentTimeMillis()
         )
-        routine.value = Workout()
+        _routine.value = Workout()
     }
 
     fun updateCompletedDate(selectedDateMillis: Long?) {
         if (selectedDateMillis != null) {
-            workout.value = workout.value.copy(
+            _workout.value = workout.value.copy(
                 completed = LocalDateTime.ofInstant(
                     Instant.ofEpochMilli(selectedDateMillis),
                     ZoneId.systemDefault()
@@ -138,32 +122,16 @@ class BeforeSavingScreenViewModel @Inject constructor(
         }
     }
 
-    fun getCompletedDate(): String {
-        return workout.value.completed.format(
-            DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(
-                Locale.getDefault()
-            )
-        )
+
+    private val _routine = MutableStateFlow(Workout())
+    val routine = _routine.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _routine.value = workoutRepository.getRoutineFromRoutineID(workout.value.routineId)
+        }
     }
 
-
-    private var routine = mutableStateOf(Workout())
-
-    fun initializeRoutine(routine: Workout) {
-        this.routine.value = routine
-    }
-
-    fun getRoutineTitle(): String {
-        return routine.value.title
-    }
-
-    fun getRoutineDate(): String {
-        return routine.value.created.format(
-            DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(
-                Locale.getDefault()
-            )
-        )
-    }
 
 
     fun saveExercisesWithWorkout() {

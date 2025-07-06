@@ -38,11 +38,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -57,6 +57,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.data.ExerciseDC
+import org.librefit.db.entity.Workout
 import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SuccessMessage
@@ -66,29 +67,22 @@ import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.dialogs.ConfirmDialog
-import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
+import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BeforeSavingScreen(
-    sharedViewModel: SharedViewModel,
     navController: NavHostController
 ) {
     val viewModel: BeforeSavingScreenViewModel = hiltViewModel()
 
-    val volume = rememberSaveable { mutableStateOf("") }
+    val volume by viewModel.volume.collectAsState()
 
-    LaunchedEffect(Unit) {
-        volume.value = viewModel.getVolumeExercises(sharedViewModel.getPassedExercises())
-    }
+    val workout by viewModel.workout.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.initializeWorkout(sharedViewModel.getPassedWorkout())
-        viewModel.initializeExercises(sharedViewModel.getPassedExercises())
-        viewModel.initializeRoutine(sharedViewModel.getPassedRoutine())
-    }
+    val routine by viewModel.routine.collectAsState()
 
 
     val showUnlikeRoutineDialog = remember { mutableStateOf(false) }
@@ -137,16 +131,10 @@ fun BeforeSavingScreen(
         navController = navController,
         showUnlikeRoutineDialog = showUnlikeRoutineDialog,
         showDatePickerDialog = showDatePickerDialog,
-        exercises = viewModel.getExercises(),
-        timeElapsed = viewModel.getTimeElapsed(),
-        totalSets = viewModel.getTotalSets(),
-        completedSets = viewModel.getCompletedSets(),
-        volumeExercises = volume.value,
-        routineTitle = viewModel.getRoutineTitle(),
-        workoutTitle = viewModel.getWorkoutTitle(),
-        workoutNotes = viewModel.getWorkoutNotes(),
-        completedDate = viewModel.getCompletedDate(),
-        routineDate = viewModel.getRoutineDate(),
+        exercises = viewModel.exercises,
+        workout = workout,
+        routine = routine,
+        volumeExercises = volume,
         isTitleTooLong = viewModel.isTitleTooLong(),
         isTitleEmpty = viewModel.isTitleEmpty(),
         updateWorkoutTitle = viewModel::updateWorkoutTitle,
@@ -162,15 +150,9 @@ fun BeforeSavingScreenContent(
     showUnlikeRoutineDialog: MutableState<Boolean>,
     showDatePickerDialog: MutableState<Boolean>,
     exercises: List<ExerciseWithSets>,
-    timeElapsed: Int,
-    totalSets: Int,
-    completedSets: Int,
+    workout: Workout = Workout(),
+    routine: Workout = Workout(),
     volumeExercises: String,
-    routineTitle: String,
-    workoutTitle: String,
-    workoutNotes: String,
-    completedDate: String,
-    routineDate: String,
     isTitleTooLong: Boolean,
     isTitleEmpty: Boolean,
     updateWorkoutTitle: (String) -> Unit,
@@ -178,6 +160,9 @@ fun BeforeSavingScreenContent(
     saveExercisesWithWorkout: () -> Unit,
     setTimeElapsed: (Int) -> Unit
 ) {
+    val routineTitle = routine.title
+
+
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.overview)),
         navigateBack = { navController.popBackStack() },
@@ -193,7 +178,7 @@ fun BeforeSavingScreenContent(
         LibreFitLazyColumn(innerPadding) {
             item {
                 OutlinedTextField(
-                    value = workoutTitle,
+                    value = workout.title,
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     onValueChange = updateWorkoutTitle,
@@ -222,7 +207,7 @@ fun BeforeSavingScreenContent(
             }
             item {
                 OutlinedTextField(
-                    value = workoutNotes,
+                    value = workout.notes,
                     modifier = Modifier.fillMaxWidth(),
                     onValueChange = updateWorkoutNotes,
                     label = { Text(text = stringResource(id = R.string.notes)) },
@@ -240,7 +225,7 @@ fun BeforeSavingScreenContent(
 
                     OutlinedTextField(
                         modifier = Modifier.weight(0.5f),
-                        value = formatTime(timeElapsed),
+                        value = formatTime(workout.timeElapsed),
                         label = { Text(stringResource(R.string.elapsed_time)) },
                         onValueChange = { string ->
                             val stringValue = string.filter { it.isDigit() }.takeLast(6)
@@ -257,7 +242,7 @@ fun BeforeSavingScreenContent(
                     )
                     OutlinedTextField(
                         modifier = Modifier.weight(0.5f),
-                        value = completedDate,
+                        value = Formatter.getShortDateFromLocalDate(workout.completed),
                         onValueChange = {},
                         label = { Text(stringResource(R.string.label_when)) },
                         readOnly = true,
@@ -307,7 +292,7 @@ fun BeforeSavingScreenContent(
                 ) {
                     OutlinedTextField(
                         modifier = Modifier.weight(0.5f),
-                        value = "$totalSets",
+                        value = "${exercises.sumOf { it.sets.size }}",
                         label = { Text(stringResource(R.string.total_sets)) },
                         onValueChange = {},
                         readOnly = true,
@@ -315,7 +300,11 @@ fun BeforeSavingScreenContent(
                     )
                     OutlinedTextField(
                         modifier = Modifier.weight(0.5f),
-                        value = "$completedSets",
+                        value = "${
+                            exercises.sumOf { exercise ->
+                                exercise.sets.filter { it.completed }.size
+                            }
+                        }",
                         label = { Text(stringResource(R.string.completed_sets)) },
                         onValueChange = {},
                         readOnly = true,
@@ -333,7 +322,7 @@ fun BeforeSavingScreenContent(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(10.dp),
+                                .padding(15.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column(
@@ -344,13 +333,16 @@ fun BeforeSavingScreenContent(
                                     text = stringResource(R.string.title) + " : " + routineTitle,
                                     style = MaterialTheme.typography.titleMedium
                                 )
-                                Text(stringResource(R.string.creation_date) + " : " + routineDate)
+                                Text(
+                                    stringResource(R.string.creation_date) + " : "
+                                            + Formatter.getShortDateFromLocalDate(routine.created)
+                                )
                             }
                             IconButton(
                                 onClick = { showUnlikeRoutineDialog.value = true }
                             ) {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_unlink),
                                     contentDescription = stringResource(R.string.delete)
                                 )
                             }
@@ -409,7 +401,7 @@ fun BeforeSavingScreenContent(
 @Preview
 @Composable
 private fun BeforeSavingScreenPreview() {
-    LibreFitTheme(false, true) {
+    LibreFitTheme(dynamicColor = false, darkTheme = true) {
         BeforeSavingScreenContent(
             navController = rememberNavController(),
             showUnlikeRoutineDialog = remember { mutableStateOf(false) },
@@ -419,15 +411,7 @@ private fun BeforeSavingScreenPreview() {
                     exerciseDC = ExerciseDC(name = "Pullup")
                 )
             ),
-            timeElapsed = 100,
-            totalSets = 10,
-            completedSets = 2,
             volumeExercises = "100 kg",
-            routineTitle = "Name routine",
-            workoutTitle = "Title workout",
-            workoutNotes = "This is a note",
-            completedDate = "DD/MM/YY",
-            routineDate = "DD/MM/YY",
             isTitleTooLong = false,
             isTitleEmpty = false,
             updateWorkoutTitle = {},

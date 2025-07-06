@@ -32,6 +32,9 @@ import org.librefit.enums.exercise.Force
 import org.librefit.enums.exercise.Level
 import org.librefit.enums.exercise.Mechanic
 import org.librefit.enums.exercise.Muscle
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
 
 object Formatter {
@@ -122,6 +125,14 @@ object Formatter {
             withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)) { append("$boldText: ") }
             append(text)
         }
+    }
+
+    fun getShortDateFromLocalDate(date: LocalDateTime): String {
+        return date.format(
+            DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(
+                Locale.getDefault()
+            )
+        )
     }
 }
 

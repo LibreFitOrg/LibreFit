@@ -52,6 +52,7 @@ import org.librefit.db.entity.Exercise
 import org.librefit.db.entity.Set
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.ExerciseWithSets
+import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
 import org.librefit.enums.SuccessMessage
@@ -90,7 +91,6 @@ fun EditWorkoutScreen(
         workout = workout,
         isTitleTooLong = viewModel.isTitleTooLong(),
         isTitleEmpty = viewModel.isTitleEmpty(),
-        setPassedData = sharedViewModel::setPassedData,
         updateTitle = viewModel::updateTitle,
         updateNotes = viewModel::updateNotes,
         addSetToExercise = viewModel::addSetToExercise,
@@ -111,7 +111,6 @@ private fun EditWorkoutScreenContent(
     workout: Workout,
     isTitleTooLong: Boolean,
     isTitleEmpty: Boolean,
-    setPassedData: (Workout?, List<ExerciseWithSets>) -> Unit,
     updateTitle: (String) -> Unit,
     updateNotes: (String) -> Unit,
     addSetToExercise: (Int) -> Unit,
@@ -180,8 +179,14 @@ private fun EditWorkoutScreenContent(
         },
         actions = listOf {
             if (typeOfEdit == false) {
-                setPassedData(workout, exercisesWithSets)
-                navController.navigate(Route.BeforeSavingScreen)
+                navController.navigate(
+                    Route.BeforeSavingScreen(
+                        WorkoutWithExercisesAndSets(
+                            workout = workout,
+                            exercisesWithSets = exercisesWithSets
+                        )
+                    )
+                )
             } else {
                 saveWorkoutWithExercisesInDB()
                 navController.navigate(Route.SuccessScreen(SuccessMessage.ROUTINE_SAVED)) {
@@ -315,7 +320,6 @@ private fun EditWorkoutScreenPreview() {
             workout = Workout(title = "Title workout", notes = "This is a note"),
             isTitleTooLong = false,
             isTitleEmpty = false,
-            setPassedData = { _, _ -> },
             updateTitle = { _ -> },
             updateNotes = { _ -> },
             addSetToExercise = { _ -> },

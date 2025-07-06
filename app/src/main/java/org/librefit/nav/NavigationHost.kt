@@ -30,6 +30,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.ui.screens.MainScreen
 import org.librefit.ui.screens.about.AboutScreen
 import org.librefit.ui.screens.about.LibrariesScreen
@@ -46,6 +47,7 @@ import org.librefit.ui.screens.settings.SettingsScreen
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.screens.shared.SuccessScreen
 import org.librefit.ui.screens.workout.WorkoutScreen
+import kotlin.reflect.typeOf
 
 @Composable
 fun NavigationHost() {
@@ -67,9 +69,12 @@ fun NavigationHost() {
         composable<Route.AboutScreen> {
             AboutScreen(navController = navController)
         }
-        composable<Route.BeforeSavingScreen> {
+        composable<Route.BeforeSavingScreen>(
+            typeMap = mapOf(
+                typeOf<WorkoutWithExercisesAndSets>() to WorkoutWithExercisesAndSetsNavType()
+            )
+        ) {
             BeforeSavingScreen(
-                sharedViewModel = sharedViewModel,
                 navController = navController
             )
         }

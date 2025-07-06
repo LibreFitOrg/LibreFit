@@ -70,6 +70,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import org.librefit.R
 import org.librefit.data.ExerciseDC
+import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.InfoMode
 import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
@@ -177,16 +178,19 @@ fun WorkoutScreen(
             }
         },
         actions = listOf {
-            sharedViewModel.setPassedData(
-                workout = sharedViewModel.getPassedWorkout().copy(
-                    id = 0,
-                    timeElapsed = timeElapsed,
-                    completed = LocalDateTime.now(),
-                    routine = false
-                ),
-                exercises = viewModel.getExercises(),
+            navController.navigate(
+                Route.BeforeSavingScreen(
+                    WorkoutWithExercisesAndSets(
+                        workout = sharedViewModel.getPassedWorkout().copy(
+                            id = 0,
+                            timeElapsed = timeElapsed,
+                            completed = LocalDateTime.now(),
+                            routine = false
+                        ),
+                        exercisesWithSets = viewModel.getExercises(),
+                    )
+                )
             )
-            navController.navigate(Route.BeforeSavingScreen)
         },
         actionsEnabled = listOf(!viewModel.isListEmpty()),
         actionsDescription = listOf(stringResource(R.string.done)),

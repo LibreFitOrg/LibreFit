@@ -20,6 +20,7 @@
 package org.librefit.nav
 
 import kotlinx.serialization.Serializable
+import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.SuccessMessage
 
 
@@ -28,7 +29,9 @@ sealed class Route {
     object AboutScreen
 
     @Serializable
-    object BeforeSavingScreen
+    data class BeforeSavingScreen(
+        val workoutWithExercisesAndSets: WorkoutWithExercisesAndSets
+    )
 
     @Serializable
     object CalendarScreen
