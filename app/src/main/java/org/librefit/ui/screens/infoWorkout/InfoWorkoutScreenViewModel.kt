@@ -19,14 +19,19 @@
 
 package org.librefit.ui.screens.infoWorkout
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.librefit.data.ChartData
 import org.librefit.data.ExerciseDC
@@ -36,8 +41,7 @@ import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
+import org.librefit.util.Formatter
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.random.Random
@@ -55,6 +59,10 @@ class InfoWorkoutScreenViewModel @Inject constructor(
 
     private val workoutId = savedStateHandle.get<Long>(WORKOUT_ID_KEY)
         ?: throw IllegalArgumentException("Invalid WORKOUT_ID_KEY")
+
+
+    private val _volume = MutableStateFlow("")
+    val volume = _volume.asStateFlow()
 
     init {
         require(workoutId != 0L) { "workoutId must be not equal to 0" }
@@ -82,20 +90,24 @@ class InfoWorkoutScreenViewModel @Inject constructor(
             } else {
                 _routine.value = workoutRepository.getRoutineFromRoutineID(workout.value.routineId)
             }
+
+
+            // Calculate volume
+            val volumeValue = dataHelper.fetchVolumeFromWorkout(
+                WorkoutWithExercisesAndSets(workout.value, exercises.value)
+            )
+
+            _volume.value = String.format(Locale.getDefault(), "%.2f", volumeValue)
         }
     }
 
 
-    private var _workout = MutableStateFlow(Workout())
+    private val _workout = MutableStateFlow(Workout())
     val workout = _workout.asStateFlow()
 
     fun getDate(): String {
         val date = if (isRoutine()) workout.value.created else workout.value.completed
-        return date.format(
-            DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(
-                Locale.getDefault()
-            )
-        )
+        return Formatter.getLongDateFromLocalDate(date)
     }
 
     fun isRoutine(): Boolean {
@@ -110,7 +122,7 @@ class InfoWorkoutScreenViewModel @Inject constructor(
 
     fun detachWorkoutFromRoutine() {
         _workout.value = workout.value.copy(
-            routineId = Random.Default.nextLong() + System.currentTimeMillis()
+            routineId = Random.Default.nextLong()
         )
 
         _routine.value = Workout()
@@ -121,48 +133,35 @@ class InfoWorkoutScreenViewModel @Inject constructor(
     }
 
 
-
-
-    private var _routine = MutableStateFlow(Workout())
+    private val _routine = MutableStateFlow(Workout())
     val routine = _routine.asStateFlow()
 
 
-    private var _exercises = MutableStateFlow<List<ExerciseWithSets>>(emptyList())
+    private val _exercises = MutableStateFlow<List<ExerciseWithSets>>(emptyList())
     val exercises = _exercises.asStateFlow()
 
-
-    suspend fun getVolumeExercises(): String {
-        val volume = dataHelper.fetchVolumeFromWorkout(
-            WorkoutWithExercisesAndSets(workout.value, exercises.value)
-        )
-
-        return String.format(Locale.getDefault(), "%.2f", volume)
-    }
 
 
     private val _completedWorkoutsWithExercises =
         MutableStateFlow<List<WorkoutWithExercisesAndSets>>(emptyList())
     private val completedWorkoutsWithExercises = _completedWorkoutsWithExercises.asStateFlow()
 
-    private var workoutChart = mutableStateOf(WorkoutChart.DURATION)
+    private val _workoutChart = MutableStateFlow(WorkoutChart.DURATION)
+    val workoutChart = _workoutChart.asStateFlow()
 
-    private val _listChartData = MutableStateFlow<List<ChartData>>(emptyList())
-    val listChartData = _listChartData.asStateFlow()
-
-
-    suspend fun fetchListChartData() {
-        _listChartData.value = dataHelper.fetchListChartData(
-            workoutChart = workoutChart.value,
-            workoutsWithExercises = completedWorkoutsWithExercises.value
+    val listChartData: StateFlow<List<ChartData>> = combine(
+        workoutChart,
+        completedWorkoutsWithExercises
+    ) { w, ce -> dataHelper.fetchListChartData(workoutChart = w, workoutsWithExercises = ce) }
+        .flowOn(Dispatchers.IO)
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
         )
-    }
 
     fun updateChartMode(value: WorkoutChart) {
-        workoutChart.value = value
+        _workoutChart.value = value
     }
-
-    fun getChartMode(): WorkoutChart {
-        return workoutChart.value
-    }
-
 }

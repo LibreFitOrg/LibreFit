@@ -33,12 +33,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,34 +80,28 @@ fun InfoWorkoutScreen(
 ) {
     val viewModel: InfoWorkoutScreenViewModel = hiltViewModel()
 
-    val listChartData = viewModel.listChartData.collectAsState()
+    val listChartData by viewModel.listChartData.collectAsState()
 
-    val workout = viewModel.workout.collectAsState()
+    val workout by viewModel.workout.collectAsState()
 
-    val routine = viewModel.routine.collectAsState()
+    val routine by viewModel.routine.collectAsState()
 
-    val exercises = viewModel.exercises.collectAsState()
+    val exercises by viewModel.exercises.collectAsState()
 
-    val volume = rememberSaveable { mutableStateOf("") }
+    val workoutChartMode by viewModel.workoutChart.collectAsState()
 
-    LaunchedEffect(Unit, viewModel.getChartMode(), exercises.value) {
-        viewModel.fetchListChartData()
-    }
-
-    LaunchedEffect(exercises.value) {
-        volume.value = viewModel.getVolumeExercises()
-    }
+    val volume by viewModel.volume.collectAsState()
 
 
     InfoWorkoutScreenContent(
         navController = navController,
-        workout = workout.value,
-        routine = routine.value,
+        workout = workout,
+        routine = routine,
         workoutDate = viewModel.getDate(),
-        volumeExercises = volume.value,
-        workoutChart = viewModel.getChartMode(),
-        exercises = exercises.value,
-        listChartData = listChartData.value,
+        volumeExercises = volume,
+        workoutChart = workoutChartMode,
+        exercises = exercises,
+        listChartData = listChartData,
         deleteWorkout = viewModel::deleteWorkout,
         updateChartMode = viewModel::updateChartMode,
         detachWorkoutFromRoutine = viewModel::detachWorkoutFromRoutine,

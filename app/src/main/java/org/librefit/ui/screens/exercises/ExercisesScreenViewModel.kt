@@ -76,7 +76,7 @@ class ExercisesScreenViewModel @Inject constructor(
                 .sortedByDescending { it.second }
                 .fastMap { it.first }
         }
-            .flowOn(Dispatchers.Default)
+            .flowOn(Dispatchers.IO)
             .distinctUntilChanged()
             .stateIn(
                 scope = viewModelScope,
