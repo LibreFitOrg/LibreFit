@@ -21,5 +21,6 @@ package org.librefit.data
 
 data class ChartData(
     val yValue: Float,
-    val xValue: String = ""
+    val xValue: String = "",
+    val workoutId: Long? = null
 )

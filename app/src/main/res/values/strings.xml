@@ -233,6 +233,8 @@
 
     <!--Chart-->
     <string name="not_enough_data">"Not enough data to display this chart"</string>
+    <string name="tap_a_workout">Tap a workout to select it</string>
+    <string name="open_the_workout">Open the workout of</string>
 
 
     <!--Filter card-->

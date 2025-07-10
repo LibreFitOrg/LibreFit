@@ -85,8 +85,8 @@ fun LibreFitButton(
 
 @Preview
 @Composable
-fun LibreFitButtonPreview() {
-    LibreFitTheme(false, true) {
+private fun LibreFitButtonPreview() {
+    LibreFitTheme(dynamicColor = false, darkTheme = true) {
         LibreFitButton(
             text = stringResource(R.string.start_routine),
             icon = ImageVector.vectorResource(R.drawable.ic_play_arrow)

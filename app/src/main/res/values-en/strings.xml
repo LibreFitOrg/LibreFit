@@ -166,6 +166,7 @@
     <string name="rest_time">Rest time</string>
     <string name="type_of_set">Type of set</string>
     <string name="not_enough_data">Not enough data to display this chart</string>
+    <string name="open_the_workout">Open the workout of</string>
     <string name="any">Any</string>
     <string name="rest_time_is_over">Rest time is over!</string>
     <string name="rest">Rest</string>
@@ -276,6 +277,7 @@
     <string name="unlink_dialog">Unlink</string>
     <string name="discard_changes_question">Discard changes?</string>
     <string name="discard_dialog">Discard</string>
+    <string name="tap_a_workout">Tap a workout to select it</string>
 
 
 </resources>

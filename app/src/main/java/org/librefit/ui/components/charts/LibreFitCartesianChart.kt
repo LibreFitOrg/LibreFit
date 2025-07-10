@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,6 +50,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
@@ -71,6 +74,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
@@ -80,6 +85,8 @@ import org.librefit.data.ChartData
 import org.librefit.enums.chart.ChartMode
 import org.librefit.enums.chart.MeasurementChart
 import org.librefit.enums.chart.WorkoutChart
+import org.librefit.nav.Route
+import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.theme.LibreFitTheme
 import java.text.DecimalFormat
 import kotlin.random.Random
@@ -102,10 +109,15 @@ fun LibreFitCartesianChart(
     listChartData: List<ChartData>,
     useColumns: Boolean = false,
     chartMode: ChartMode? = null,
-    updateChartMode: ((ChartMode) -> Unit)? = null
+    updateChartMode: ((ChartMode) -> Unit)? = null,
+    navController: NavHostController? = null
 ) {
     val labelListKey = ExtraStore.Key<List<String>>()
     val modelProducer = remember { CartesianChartModelProducer() }
+
+    val selectedWorkoutId = rememberSaveable { mutableStateOf<Long?>(null) }
+
+    val selectedWorkoutDate = rememberSaveable { mutableStateOf<String?>(null) }
 
     val yValues = listChartData.map { it.yValue }
     val xValues = listChartData.map { it.xValue }
@@ -217,6 +229,34 @@ fun LibreFitCartesianChart(
                                         format
                                     )
                                 ),
+                                markerVisibilityListener = object :
+                                    CartesianMarkerVisibilityListener {
+                                    override fun onShown(
+                                        marker: CartesianMarker,
+                                        targets: List<CartesianMarker.Target>,
+                                    ) {
+                                        selectedWorkoutId.value =
+                                            listChartData[targets.first().x.toInt()].workoutId
+
+                                        selectedWorkoutDate.value =
+                                            listChartData[targets.first().x.toInt()].xValue
+
+                                        super.onShown(marker, listOf(targets.first()))
+                                    }
+
+                                    override fun onUpdated(
+                                        marker: CartesianMarker,
+                                        targets: List<CartesianMarker.Target>,
+                                    ) {
+                                        selectedWorkoutId.value =
+                                            listChartData[targets.first().x.toInt()].workoutId
+
+                                        selectedWorkoutDate.value =
+                                            listChartData[targets.first().x.toInt()].xValue
+
+                                        super.onShown(marker, listOf(targets.first()))
+                                    }
+                                },
                                 startAxis = VerticalAxis.rememberStart(
                                     valueFormatter = remember(format) {
                                         CartesianValueFormatter.decimal(
@@ -244,7 +284,7 @@ fun LibreFitCartesianChart(
                             ),
                             modelProducer = modelProducer,
                         ) {
-                            // Shown when loading modelProducer
+                            // Shown when modelProducer is loading
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -277,13 +317,25 @@ fun LibreFitCartesianChart(
                     }
                 }
             }
+
+            if (navController != null) {
+                LibreFitButton(
+                    elevated = false,
+                    enabled = selectedWorkoutId.value != null,
+                    text = if (selectedWorkoutDate.value == null) stringResource(R.string.tap_a_workout)
+                    else stringResource(R.string.open_the_workout) + " ${selectedWorkoutDate.value}",
+                    icon = ImageVector.vectorResource(R.drawable.ic_open_new)
+                ) {
+                    navController.navigate(Route.InfoWorkoutScreen(selectedWorkoutId.value!!))
+                }
+            }
         }
     }
 }
 
 @Preview
 @Composable
-private fun CustomCartesianChartPreview() {
+private fun LibreFitCartesianChartPreview() {
     val chartMode = remember {
         mutableStateOf<ChartMode?>(
             listOf(
@@ -293,14 +345,17 @@ private fun CustomCartesianChartPreview() {
         )
     }
 
-    LibreFitTheme(false, true) {
+    LibreFitTheme(dynamicColor = false, darkTheme = true) {
         LibreFitCartesianChart(
-            listChartData = (0..10).map { ChartData(Random.nextFloat()) },
+            listChartData = (0..10).map {
+                ChartData(Random.nextFloat(), "$it", Random.nextLong())
+            },
             useColumns = false,
             chartMode = chartMode.value,
             updateChartMode = {
                 chartMode.value = it
-            }
+            },
+            navController = rememberNavController()
         )
     }
 }
