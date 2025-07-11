@@ -180,7 +180,7 @@ private fun ItemFilter(
                     Level::class -> R.string.level
                     Force::class -> R.string.force
                     Mechanic::class -> R.string.mechanic
-                    Muscle::class -> R.string.mechanic
+                    Muscle::class -> R.string.muscles
                     Equipment::class -> R.string.equipment
                     Category::class -> R.string.category
                     else -> R.string.any
