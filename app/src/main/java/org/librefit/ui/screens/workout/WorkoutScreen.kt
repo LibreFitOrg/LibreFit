@@ -49,6 +49,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +71,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import org.librefit.R
 import org.librefit.data.ExerciseDC
+import org.librefit.db.entity.Set
+import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.InfoMode
 import org.librefit.nav.Route
@@ -94,17 +97,22 @@ fun WorkoutScreen(
 
 
     LaunchedEffect(Unit) {
-        //It retrieves data from DB
-        viewModel.initializeExercises(sharedViewModel.getPassedExercises())
-
         //It adds the selected exercises from AddExerciseScreen
         sharedViewModel.getSelectedExercisesList().forEach(viewModel::addExerciseWithSets)
     }
 
     val timeElapsed by viewModel.timeElapsed.collectAsState()
 
+    val isChronometerPaused by viewModel.isChronometerPaused.collectAsState()
+
+    val exerciseWithSets by viewModel.exercises.collectAsState()
 
     val keepWorkoutScreenOn by viewModel.keepScreenOn.collectAsState()
+
+    val workout by viewModel.workout.collectAsState()
+
+    val restTime by viewModel.restTime.collectAsState()
+    
 
     //It keeps the screen turned on
     if (keepWorkoutScreenOn) {
@@ -120,6 +128,7 @@ fun WorkoutScreen(
             }
         }
     }
+
 
 
     var showConfirmDialog by remember { mutableStateOf(false) }
@@ -145,7 +154,7 @@ fun WorkoutScreen(
 
 
     BackHandler {
-        if (!showConfirmDialog && !viewModel.isListEmpty()) {
+        if (!showConfirmDialog && exerciseWithSets.isNotEmpty()) {
             showConfirmDialog = true
         } else {
             viewModel.stopWorkoutService()
@@ -154,122 +163,70 @@ fun WorkoutScreen(
     }
 
 
-    var isExerciseDetailsOpen by remember { mutableStateOf(false) }
-
     /**
      * It holds [ExerciseDC] for [ExerciseDetailModalBottomSheet]
      */
-    var selectedExercise by remember { mutableStateOf(ExerciseDC()) }
+    var selectedExercise by remember { mutableStateOf<ExerciseDC?>(null) }
 
-    if (isExerciseDetailsOpen) {
-        ExerciseDetailModalBottomSheet(exercise = selectedExercise) {
-            isExerciseDetailsOpen = false
+    selectedExercise?.let {
+        ExerciseDetailModalBottomSheet(exercise = it) {
+            selectedExercise = null
         }
     }
 
-    LibreFitScaffold(
-        title = AnnotatedString(stringResource(R.string.workout)),
+
+    val setChronometerIsRunning = viewModel.setChronometerIsRunning
+    val setWithRunningChronometer = viewModel.setWithRunningChronometer
+
+
+
+    WorkoutScreenContent(
+        timeElapsed = timeElapsed,
+        isChronometerPaused = isChronometerPaused,
+        isListEmpty = exerciseWithSets.isEmpty(),
+        exercisesWithSets = exerciseWithSets,
+        progress = viewModel.getProgress(),
+        setWithRunningChronometer = setWithRunningChronometer,
+        setChronometerIsRunning = setChronometerIsRunning,
+        timerProgress = viewModel.getRestTimeProgress(),
+        restTime = restTime,
         navigateBack = {
-            if (viewModel.isListEmpty()) {
+            if (exerciseWithSets.isEmpty()) {
                 viewModel.stopWorkoutService()
                 navController.popBackStack()
             } else {
                 showConfirmDialog = true
             }
         },
-        actions = listOf {
+        fabAction = {
+            navController.navigate(Route.ExercisesScreen(addExercises = true))
+        },
+        action = {
             navController.navigate(
                 Route.BeforeSavingScreen(
                     WorkoutWithExercisesAndSets(
-                        workout = sharedViewModel.getPassedWorkout().copy(
-                            id = 0,
+                        workout = workout.copy(
                             timeElapsed = timeElapsed,
-                            completed = LocalDateTime.now(),
-                            routine = false
+                            completed = LocalDateTime.now()
                         ),
-                        exercisesWithSets = viewModel.getExercises(),
+                        exercisesWithSets = exerciseWithSets,
                     )
                 )
             )
         },
-        actionsEnabled = listOf(!viewModel.isListEmpty()),
-        actionsDescription = listOf(stringResource(R.string.done)),
-        fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
-        fabAction = {
-            navController.navigate(Route.ExercisesScreen(addExercises = true))
+        infoExercise = {
+            selectedExercise = it
         },
-        fabDescription = stringResource(R.string.add_exercise),
-        bottomBar = {
-            BottomAppBar {
-                BottomAppBarContent(viewModel)
-            }
-        }
-    ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
-            if (viewModel.isListEmpty()) {
-                item {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        DumbbellLottie()
-                        Text(
-                            text = stringResource(id = R.string.add_to_empty_workout),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            } else {
-                itemsIndexed(
-                    items = viewModel.exercisesWithSets,
-                    key = { i, exercise -> exercise.exercise.id }
-                ) { i, exerciseWithSets ->
-                    ExerciseCard(
-                        modifier = Modifier.animateItem(),
-                        exerciseWithSets = exerciseWithSets,
-                        addSet = {
-                            viewModel.addSetToExercise(i)
-                        },
-                        onDetail = {
-                            selectedExercise = exerciseWithSets.exerciseDC
-                            isExerciseDetailsOpen = true
-                        },
-                        onDelete = {
-                            viewModel.deleteExercise(i)
-                        },
-                        updateSet = { set, value, mode ->
-                            viewModel.updateSet(
-                                index = i,
-                                set = set,
-                                value = value,
-                                mode = mode
-                            )
-                        },
-                        deleteSet = { set ->
-                            viewModel.deleteSet(
-                                index = i,
-                                set = set
-                            )
-                        },
-                        updateExercise = { value, mode ->
-                            viewModel.updateExercise(
-                                index = i,
-                                value = value,
-                                mode = mode
-                            )
-                        },
-                        showInfo = { infoMode = it },
-                        setChronometerIsRunning = viewModel.setChronometerIsRunning,
-                        setWithRunningChronometer = viewModel.setWithRunningChronometer,
-                        workout = true
-                    )
-                }
-            }
-
-            bottomMargin()
-        }
-    }
+        startChronometer = viewModel::startChronometer,
+        pauseChronometer = viewModel::pauseChronometer,
+        addSetToExercise = viewModel::addSetToExercise,
+        deleteExercise = viewModel::deleteExercise,
+        updateSet = viewModel::updateSet,
+        deleteSet = viewModel::deleteSet,
+        updateExercise = viewModel::updateExercise,
+        showInfo = { infoMode = it },
+        modifyRestTime = viewModel::modifyRestTime
+    )
 
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -296,16 +253,126 @@ fun WorkoutScreen(
 }
 
 
+@Composable
+private fun WorkoutScreenContent(
+    timeElapsed: Int,
+    isChronometerPaused: Boolean,
+    exercisesWithSets: List<ExerciseWithSets>,
+    progress: Float,
+    isListEmpty: Boolean,
+    setWithRunningChronometer: MutableState<Set>,
+    setChronometerIsRunning: MutableState<Boolean>,
+    timerProgress: Float,
+    restTime: Int,
+    navigateBack: () -> Unit,
+    fabAction: () -> Unit,
+    action: () -> Unit,
+    startChronometer: () -> Unit,
+    pauseChronometer: () -> Unit,
+    addSetToExercise: (Int) -> Unit,
+    infoExercise: (ExerciseDC) -> Unit,
+    deleteExercise: (Int) -> Unit,
+    updateSet: (Int, Set, Float, Int) -> Unit,
+    deleteSet: (Int, Set) -> Unit,
+    updateExercise: (Int, String, Int) -> Unit,
+    showInfo: (InfoMode) -> Unit,
+    modifyRestTime: (Boolean) -> Unit
+) {
+    LibreFitScaffold(
+        title = AnnotatedString(stringResource(R.string.workout)),
+        navigateBack = navigateBack,
+        actions = listOf { action() },
+        actionsEnabled = listOf(!isListEmpty),
+        actionsDescription = listOf(stringResource(R.string.done)),
+        fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
+        fabAction = fabAction,
+        fabDescription = stringResource(R.string.add_exercise),
+        bottomBar = {
+            BottomAppBar {
+                BottomAppBarContent(
+                    timeElapsed = timeElapsed,
+                    isChronometerPaused = isChronometerPaused,
+                    progress = progress,
+                    timerProgress = timerProgress,
+                    restTime = restTime,
+                    startChronometer = startChronometer,
+                    pauseChronometer = pauseChronometer,
+                    modifyRestTime = modifyRestTime
+                )
+            }
+        }
+    ) { innerPadding ->
+        LibreFitLazyColumn(innerPadding) {
+            if (isListEmpty) {
+                item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        DumbbellLottie()
+                        Text(
+                            text = stringResource(id = R.string.add_to_empty_workout),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            } else {
+                itemsIndexed(
+                    items = exercisesWithSets,
+                    key = { i, exercise -> exercise.exercise.id }
+                ) { i, exerciseWithSets ->
+                    ExerciseCard(
+                        modifier = Modifier.animateItem(),
+                        exerciseWithSets = exerciseWithSets,
+                        addSet = {
+                            addSetToExercise(i)
+                        },
+                        onDetail = {
+                            infoExercise(exerciseWithSets.exerciseDC)
+                        },
+                        onDelete = {
+                            deleteExercise(i)
+                        },
+                        updateSet = { set, value, mode ->
+                            updateSet(i, set, value, mode)
+                        },
+                        deleteSet = { set ->
+                            deleteSet(i, set)
+                        },
+                        updateExercise = { value, mode ->
+                            updateExercise(i, value, mode)
+                        },
+                        showInfo = showInfo,
+                        setChronometerIsRunning = setChronometerIsRunning,
+                        setWithRunningChronometer = setWithRunningChronometer,
+                        workout = true
+                    )
+                }
+            }
+
+            bottomMargin()
+        }
+    }
+}
+
+
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
-    val timeElapsed by viewModel.timeElapsed.collectAsState()
-
-    val isChronometerPaused by viewModel.isChronometerPaused.collectAsState()
+private fun BottomAppBarContent(
+    timeElapsed: Int,
+    isChronometerPaused: Boolean,
+    progress: Float,
+    timerProgress: Float,
+    restTime: Int,
+    startChronometer: () -> Unit,
+    pauseChronometer: () -> Unit,
+    modifyRestTime: (Boolean) -> Unit
+) {
 
     Column(modifier = Modifier.fillMaxSize()) {
         val animatedProgress = animateFloatAsState(
-            targetValue = viewModel.getProgress(),
+            targetValue = progress,
             animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
             label = ""
         )
@@ -339,8 +406,8 @@ private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
                 //Play button
                 FilledIconButton(
                     onClick = {
-                        if (isChronometerPaused) viewModel.startChronometer()
-                        else viewModel.pauseChronometer()
+                        if (isChronometerPaused) startChronometer()
+                        else pauseChronometer()
                     },
                     modifier = Modifier
                         .height(maxHeight.dp)
@@ -372,7 +439,7 @@ private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
 
 
             val timerProgress = animateFloatAsState(
-                targetValue = viewModel.getRestTimeProgress(),
+                targetValue = timerProgress,
                 animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
                 label = "timerAnimation"
             )
@@ -385,8 +452,8 @@ private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = { viewModel.modifyRestTime(false) },
-                    enabled = viewModel.restTime != 0
+                    onClick = { modifyRestTime(false) },
+                    enabled = restTime != 0
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_replay_10),
@@ -402,11 +469,11 @@ private fun BottomAppBarContent(viewModel: WorkoutScreenViewModel) {
                         progress = { timerProgress.value },
                         strokeWidth = 5.dp
                     )
-                    Text("${viewModel.restTime}")
+                    Text("$restTime")
                 }
                 IconButton(
-                    onClick = { viewModel.modifyRestTime(true) },
-                    enabled = viewModel.restTime != 0
+                    onClick = { modifyRestTime(true) },
+                    enabled = restTime != 0
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_forward_10),

@@ -100,14 +100,14 @@ fun HomeScreen(
         routines = routines,
         updateWorkoutId = sharedViewModel::updateWorkoutId,
         navigateToRoutine = { workoutId ->
-            val hasNotificationPermission = notificationPermissionState?.status?.isGranted == true
+            val hasNotificationPermission = notificationPermissionState?.status?.isGranted != false
 
             val requestPermission = !hasNotificationPermission && requestPermissionAgain
 
             if (requestPermission) {
                 navController.navigate(Route.RequestPermissionScreen(workoutId = workoutId))
             } else {
-                navController.navigate(Route.WorkoutScreen) {
+                navController.navigate(Route.WorkoutScreen(workoutId = workoutId)) {
                     popUpTo(Route.RequestPermissionScreen(workoutId = workoutId)) {
                         inclusive = true
                     }

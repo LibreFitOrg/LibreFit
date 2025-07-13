@@ -83,7 +83,7 @@ fun RequestPermissionScreen(
         notificationPermissionState = notificationPermissionState,
         saveRequestPermissionAgainPreference = viewModel::saveRequestPermissionAgainPreference,
         navigateToWorkoutScreen = {
-            navController.navigate(Route.WorkoutScreen) {
+            navController.navigate(Route.WorkoutScreen(workoutId = workoutId)) {
                 popUpTo(Route.RequestPermissionScreen(workoutId = workoutId)) { inclusive = true }
             }
         }
