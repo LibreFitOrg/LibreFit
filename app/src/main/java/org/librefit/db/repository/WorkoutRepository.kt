@@ -19,6 +19,7 @@
 
 package org.librefit.db.repository
 
+import kotlinx.coroutines.flow.Flow
 import org.librefit.db.dao.WorkoutDao
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.ExerciseWithSets
@@ -66,7 +67,7 @@ class WorkoutRepository(private val workoutDao: WorkoutDao) {
     /**
      * Refer to [WorkoutDao.getCompletedWorkoutsWithExercisesAndSets]
      */
-    suspend fun getCompletedWorkoutsWithExercisesAndSets(): List<WorkoutWithExercisesAndSets> {
+    fun getCompletedWorkoutsWithExercisesAndSets(): Flow<List<WorkoutWithExercisesAndSets>> {
         return workoutDao.getCompletedWorkoutsWithExercisesAndSets()
     }
 

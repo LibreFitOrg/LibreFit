@@ -145,6 +145,14 @@ object Formatter {
         )
     }
 
+    fun getFullDateFromLocalDate(date: LocalDateTime): String {
+        return date.format(
+            DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
+                Locale.getDefault()
+            )
+        )
+    }
+
     /**
      * It is used to process user input in [org.librefit.ui.components.ExerciseCard] and [org.librefit.ui.screens.measurements.MeasurementScreen]
      * text field and return the corresponding float. If [string] fulfills the requirements then a

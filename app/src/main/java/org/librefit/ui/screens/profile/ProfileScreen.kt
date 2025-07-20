@@ -104,25 +104,22 @@ fun ProfileScreen(
 ) {
     val viewModel: ProfileScreenViewModel = hiltViewModel()
 
-    val listChartData = viewModel.listChartData.collectAsState()
+    val listChartData by viewModel.listChartData.collectAsState()
 
-    val workoutsWithExercises = viewModel.workoutsWithExercises.collectAsState()
+    val workoutChart by viewModel.workoutChart.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchWorkoutListFromDB()
-    }
+    val workoutsWithExercises by viewModel.workoutsWithExercises.collectAsState()
 
-    LaunchedEffect(Unit, viewModel.getChartMode(), workoutsWithExercises.value) {
-        viewModel.fetchListChartData()
-    }
+    val weekStreak by viewModel.weekStreak.collectAsState()
+
 
     ProfileScreenContent(
         innerPadding = innerPadding,
         navController = navController,
-        weekStreak = viewModel.getWeekStreak(),
-        listChartData = listChartData.value,
-        workoutsWithExercises = workoutsWithExercises.value,
-        workoutChart = viewModel.getChartMode(),
+        weekStreak = weekStreak,
+        listChartData = listChartData,
+        workoutsWithExercises = workoutsWithExercises,
+        workoutChart = workoutChart,
         updateChartMode = viewModel::updateChartMode
     )
 }

@@ -19,15 +19,20 @@
 
 package org.librefit.ui.screens.profile
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import org.librefit.data.ChartData
-import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
@@ -37,70 +42,83 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileScreenViewModel @Inject constructor(
-    private val workoutRepository: WorkoutRepository
+    workoutRepository: WorkoutRepository,
+    dataHelper: DataHelper
 ) : ViewModel() {
-    private var _workoutsWithExercises =
-        MutableStateFlow<List<WorkoutWithExercisesAndSets>>(emptyList())
-    val workoutsWithExercises = _workoutsWithExercises.asStateFlow()
+    val workoutsWithExercises = workoutRepository.getCompletedWorkoutsWithExercisesAndSets()
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
-    private var workoutChart = mutableStateOf(WorkoutChart.DURATION)
+    private val _workoutChart = MutableStateFlow(WorkoutChart.DURATION)
+    val workoutChart = _workoutChart.asStateFlow()
 
-    private val _listChartData = MutableStateFlow<List<ChartData>>(emptyList())
-    val listChartData = _listChartData.asStateFlow()
-
-    @Inject
-    lateinit var dataHelper: DataHelper
-
-    suspend fun fetchListChartData() = coroutineScope {
-        _listChartData.value =
-            dataHelper.fetchListChartData(workoutChart.value, workoutsWithExercises.value)
-    }
 
     fun updateChartMode(value: WorkoutChart) {
-        workoutChart.value = value
-    }
-
-    fun getChartMode(): WorkoutChart {
-        return workoutChart.value
+        _workoutChart.value = value
     }
 
 
-    suspend fun fetchWorkoutListFromDB() = coroutineScope {
-        launch {
-            val workoutsFromDb = workoutRepository.getCompletedWorkoutsWithExercisesAndSets()
-            if (workoutsWithExercises != workoutsFromDb) {
-                _workoutsWithExercises.value = workoutsFromDb
+    val listChartData: StateFlow<List<ChartData>> = combine(
+        workoutsWithExercises,
+        workoutChart
+    ) { we, wc ->
+        dataHelper.fetchListChartData(wc, we)
+    }
+        .distinctUntilChanged()
+        .flowOn(Dispatchers.Default)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    val weekStreak: StateFlow<Int> = workoutsWithExercises
+        .map { workouts ->
+            if (workouts.isEmpty()) {
+                return@map 0
             }
-        }
-    }
 
+            val mostRecentWorkoutDate = workouts.first().workout.completed
 
-    fun getWeekStreak(): Int {
-        if (workoutsWithExercises.value.size < 2 || ChronoUnit.DAYS.between(
-                workoutsWithExercises.value.first().workout.completed,
-                LocalDateTime.now()
-            ) > 7
-        ) {
-            return 0
-        }
-
-        var index = workoutsWithExercises.value.lastIndex
-
-        for (i in 0 until workoutsWithExercises.value.size - 1) {
-            if (ChronoUnit.DAYS.between(
-                    workoutsWithExercises.value[i + 1].workout.completed,
-                    workoutsWithExercises.value[i].workout.completed
-                ) > 7
-            ) {
-                index = i
-                break
+            // If the most recent workout was over a week ago, the streak is 0.
+            if (ChronoUnit.DAYS.between(mostRecentWorkoutDate, LocalDateTime.now()) > 7) {
+                return@map 0
             }
+
+            //  Find the first "break" in the streak using functional operators
+            // `windowed(2)` creates pairs of adjacent workouts: [[w0, w1], [w1, w2], ...]
+            // `indexOfFirst` finds the index of the first pair that breaks the streak.
+            val breakIndex =
+                workouts.windowed(size = 2).indexOfFirst { (newerWorkout, olderWorkout) ->
+                    val daysBetween = ChronoUnit.DAYS.between(
+                        olderWorkout.workout.completed,
+                        newerWorkout.workout.completed
+                    )
+                    daysBetween > 7
+                }
+
+            // Determine the start date of the current streak
+            val streakStartDate = if (breakIndex == -1) {
+                // No break was found; the streak includes all workouts. The start is the oldest one.
+                workouts.last().workout.completed
+            } else {
+                // A break was found. The valid streak starts with the "newer" workout of the pair that broke the streak.
+                // The index of this workout is the same as the index of the window.
+                workouts[breakIndex].workout.completed
+            }
+
+            //  Calculate the final streak in weeks
+            ChronoUnit.WEEKS.between(streakStartDate, LocalDateTime.now()).toInt()
         }
-
-        return ChronoUnit.WEEKS.between(
-            workoutsWithExercises.value[index].workout.completed,
-            LocalDateTime.now()
-        ).toInt()
-    }
-
+        .distinctUntilChanged()
+        .flowOn(Dispatchers.Default)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0
+        )
 }

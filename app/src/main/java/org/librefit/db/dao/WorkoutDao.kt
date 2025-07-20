@@ -87,12 +87,12 @@ interface WorkoutDao {
     suspend fun deleteSet(set: Set)
 
     /**
-     * Retrieves the list of completed [org.librefit.db.relations.WorkoutWithExercisesAndSets]s which are not routines so
+     * Returns a flow list of completed [org.librefit.db.relations.WorkoutWithExercisesAndSets]s which are not routines so
      * those who have [Workout.routine] = `false`.
      */
     @Transaction
     @Query("SELECT * FROM workouts WHERE routine = 0 ORDER BY completed DESC")
-    suspend fun getCompletedWorkoutsWithExercisesAndSets(): List<WorkoutWithExercisesAndSets>
+    fun getCompletedWorkoutsWithExercisesAndSets(): Flow<List<WorkoutWithExercisesAndSets>>
 
 
     /**
