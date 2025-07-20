@@ -36,6 +36,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+import kotlin.math.min
 
 object Formatter {
     fun exerciseEnumToStringId(enum: ExerciseProperty?): Int {
@@ -111,10 +112,11 @@ object Formatter {
     }
 
     fun formatTime(seconds: Int): String {
-        val hours = seconds / 3600
-        val minutes = (seconds % 3600) / 60
-        val secs = seconds % 60
-        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, secs)
+        val h = (seconds / 3600).toString().padStart(2, '0')
+        val m = ((seconds % 3600) / 60).toString().padStart(2, '0')
+        val s = (seconds % 60).toString().padStart(2, '0')
+
+        return "$h:$m:$s"
     }
 
     /**
@@ -141,6 +143,88 @@ object Formatter {
                 Locale.getDefault()
             )
         )
+    }
+
+    /**
+     * It is used to process user input in [org.librefit.ui.components.ExerciseCard] and [org.librefit.ui.screens.measurements.MeasurementScreen]
+     * text field and return the corresponding float. If [string] fulfills the requirements then a
+     * [Float] is returned otherwise it returns `null`.
+     * @return A float value corresponding to the sanitized [string]. Returns `null` if the format is invalid.
+     */
+    fun parseFloatValueInput(
+        string: String,
+        maxIntegerDigits: Int = 3,
+        maxDecimalDigits: Int = 2
+    ): Float? {
+        val sanitizedString = string.replace(',', '.')
+
+        // Regex to allow a valid float format with up to 2 decimal place.
+        // e.g. : 123.45
+        val regex = Regex("^\\d{0,${maxIntegerDigits}}\\.?\\d{0,${maxDecimalDigits}}$")
+
+        if (sanitizedString.isEmpty() || regex.matches(sanitizedString)) {
+            return sanitizedString.toFloatOrNull() ?: 0f
+        }
+
+        return null
+    }
+
+    /**
+     * It is used to process user input in UI components like text fields and return the
+     * corresponding integer. If [string] fulfills the requirements, an [Int] is returned;
+     * otherwise, it returns `null` to indicate invalid input.
+     *
+     * @param string The input string from a text field.
+     * @return An integer value if the string is empty or a valid integer format (up to 3 digits).
+     * Returns `null` if the format is invalid.
+     */
+    fun parseIntegerValueInput(string: String, maxDigits: Int = 4): Int? {
+        val regex = Regex("^\\d{0,${maxDigits}}$")
+
+        if (regex.matches(string)) {
+            return string.toIntOrNull() ?: 0
+        }
+
+        return null
+    }
+
+    /**
+     * This function parses a raw digit string, treating it like a calculator input,
+     * and converts it into a total number of seconds for an HH:MM:SS format.
+     *
+     * It is robust, readable, and follows best practices for integer parsing.
+     *
+     * Examples:
+     * ```
+     *   parseTimeInputToSeconds("0")            -> 0
+     *   parseTimeInputToSeconds("59")           -> 59
+     *   parseTimeInputToSeconds("1:23")         -> 83
+     *   parseTimeInputToSeconds("1:23:45")      -> 4525
+     *   parseTimeInputToSeconds("12:34:56")     -> 45296
+     *   parseTimeInputToSeconds("12:34:75")     -> 45299
+     * ```
+     */
+    fun parseTimeInputToSeconds(input: String): Int {
+        val digitsOnly = input.filter { it.isDigit() }
+        val relevantDigits = digitsOnly.takeLast(6)
+
+        if (relevantDigits.isEmpty()) {
+            return 0
+        }
+
+        val number = relevantDigits.toInt()
+
+
+        val s = number % 100
+        val m = (number / 100) % 100
+        val h = number / 10000
+
+        // 3. Apply constraints to the extracted parts. This is the correct place to do it.
+        val validSeconds = min(s, 59)
+        val validMinutes = min(m, 59)
+
+        // 4. Calculate total seconds. This logic is now clean and easy to verify.
+        return (h * 3600) + (validMinutes * 60) + validSeconds
     }
 }
 

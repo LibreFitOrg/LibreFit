@@ -89,6 +89,7 @@ import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
 import org.librefit.ui.theme.LibreFitTheme
+import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatTime
 import kotlin.math.roundToInt
 
@@ -556,20 +557,10 @@ private fun Sets(
                                 modifier = Modifier.width(80.dp),
                                 value = formatTime(timeValue).substring(3),
                                 onValueChange = { string ->
-                                    val stringValue = string
-                                        .filter { it.isDigit() }
-                                        .takeLast(4)
+                                    val newTimeValue =
+                                        Formatter.parseTimeInputToSeconds(string).toFloat()
 
-                                    val seconds = stringValue.toInt() % 100
-                                    val minutes = (stringValue.toInt() - seconds) / 100
-
-                                    val newTimeValue = (minutes * 60 + seconds).toFloat()
-
-                                    updateSet(
-                                        set,
-                                        newTimeValue,
-                                        2
-                                    )
+                                    updateSet(set, newTimeValue, 2)
                                 },
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -586,15 +577,9 @@ private fun Sets(
                             modifier = Modifier.width(80.dp),
                             value = repValue,
                             onValueChange = { string ->
-                                val stringValue = string.filter { it.isDigit() }.takeLast(4)
+                                val newRepValue = Formatter.parseIntegerValueInput(string)
 
-                                val newRepValue = stringValue.removePrefix("0")
-
-                                updateSet(
-                                    set,
-                                    newRepValue.ifEmpty { "0" }.toFloat(),
-                                    1
-                                )
+                                newRepValue?.let { updateSet(set, it.toFloat(), 1) }
                             },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -611,37 +596,10 @@ private fun Sets(
                             OutlinedTextField(
                                 modifier = Modifier.width(80.dp),
                                 value = weightValue,
-                                onValueChange = { string ->
-                                    val stringValue = string
-                                        .replace(",", ".")
-                                        .filter { it.isDigit() || it == '.' }
-                                        .takeLast(5)
+                                onValueChange = { newString ->
+                                    val newWeightValue = Formatter.parseFloatValueInput(newString)
 
-                                    val firstDotIndex = stringValue.indexOf(".")
-
-                                    var newWeightValue: String
-
-                                    if (firstDotIndex == -1) {
-                                        newWeightValue = stringValue
-                                    } else {
-                                        val beforeFirstDot = stringValue.substring(
-                                            0, firstDotIndex + 1
-                                        )
-
-                                        val afterFirstDot = stringValue
-                                            .substring(firstDotIndex + 1)
-                                            .replace(".", "")
-
-                                        newWeightValue = beforeFirstDot + afterFirstDot
-                                    }
-
-                                    if (weightValue == ".") newWeightValue = "0.0"
-
-                                    updateSet(
-                                        set,
-                                        newWeightValue.ifEmpty { "0" }.toFloat(),
-                                        0
-                                    )
+                                    newWeightValue?.let { updateSet(set, it, 0) }
                                 },
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
