@@ -264,7 +264,7 @@ class WorkoutScreenViewModel @Inject constructor(
     }
 
     fun deleteExercise(index: Int) {
-        _exercises.value = exercises.value.filterIndexed { i, e -> i == index }
+        _exercises.value = exercises.value.filterIndexed { i, e -> i != index }
     }
 
 
