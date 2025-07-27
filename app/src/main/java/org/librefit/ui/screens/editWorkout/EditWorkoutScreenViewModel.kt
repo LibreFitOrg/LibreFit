@@ -44,7 +44,7 @@ import kotlin.random.Random
 class EditWorkoutScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val workoutRepository: WorkoutRepository,
-    private val exercisesList: List<ExerciseDC>
+    exercisesList: List<ExerciseDC>
 ) : ViewModel() {
 
     companion object {
@@ -81,9 +81,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
 
                 _exercises.value = workoutWithExercisesAndSets.exercisesWithSets.map {
                     it.apply {
-                        val exDC = exercisesList.find { e -> e.id == it.exercise.exerciseId }!!
-                        it.exercise = it.exercise.copy(exerciseId = exDC.id)
-                        it.exerciseDC = exDC
+                        it.exerciseDC = exercisesList.find { e -> e.id == it.exercise.exerciseId }!!
                     }
                 }
             } else {

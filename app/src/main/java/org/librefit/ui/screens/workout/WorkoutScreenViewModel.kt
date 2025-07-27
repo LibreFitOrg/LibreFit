@@ -54,8 +54,8 @@ class WorkoutScreenViewModel @Inject constructor(
     @param:ApplicationContext private val context: Context,
     userPreferences: DataStoreManager,
     private val workoutServiceManager: WorkoutServiceManager,
-    private val workoutRepository: WorkoutRepository,
-    private val exercisesList: List<ExerciseDC>
+    workoutRepository: WorkoutRepository,
+    exercisesList: List<ExerciseDC>
 ) : ViewModel() {
 
     private val _idSetWithRunningChronometer = MutableStateFlow(0L)
@@ -95,9 +95,7 @@ class WorkoutScreenViewModel @Inject constructor(
 
                 _exercises.value = workoutWithExercisesAndSets.exercisesWithSets.map {
                     it.apply {
-                        val exDC = exercisesList.find { e -> e.id == it.exercise.exerciseId }!!
-                        it.exercise = it.exercise.copy(exerciseId = exDC.id)
-                        it.exerciseDC = exDC
+                        it.exerciseDC = exercisesList.find { e -> e.id == it.exercise.exerciseId }!!
                     }
                 }
             }
