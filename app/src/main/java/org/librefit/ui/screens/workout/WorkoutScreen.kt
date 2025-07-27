@@ -64,8 +64,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import org.librefit.R
@@ -228,23 +228,16 @@ fun WorkoutScreen(
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val lifecycleObserver = remember {
-        object : DefaultLifecycleObserver {
-            override fun onResume(owner: LifecycleOwner) {
-                viewModel.updateFocus(isFocused = true)
-            }
-
-            override fun onPause(owner: LifecycleOwner) {
-                viewModel.updateFocus(isFocused = false)
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> viewModel.updateFocus(isFocused = true)
+                else -> viewModel.updateFocus(isFocused = false)
             }
         }
-    }
-
-    // Attach the observer to the lifecycle
-    DisposableEffect(lifecycleOwner) {
-        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+        lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
-            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 }
