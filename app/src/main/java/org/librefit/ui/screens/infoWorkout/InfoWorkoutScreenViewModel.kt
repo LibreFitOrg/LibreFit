@@ -64,6 +64,9 @@ class InfoWorkoutScreenViewModel @Inject constructor(
     private val _volume = MutableStateFlow("")
     val volume = _volume.asStateFlow()
 
+    private val _workout = MutableStateFlow(Workout())
+    val workout = _workout.asStateFlow()
+
     init {
         require(workoutId != 0L) { "workoutId must be not equal to 0" }
 
@@ -100,10 +103,6 @@ class InfoWorkoutScreenViewModel @Inject constructor(
             _volume.value = String.format(Locale.getDefault(), "%.2f", volumeValue)
         }
     }
-
-
-    private val _workout = MutableStateFlow(Workout())
-    val workout = _workout.asStateFlow()
 
     fun getDate(): String {
         val date = if (isRoutine()) workout.value.created else workout.value.completed

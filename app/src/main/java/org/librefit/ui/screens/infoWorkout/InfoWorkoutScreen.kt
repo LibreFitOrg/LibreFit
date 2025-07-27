@@ -169,7 +169,7 @@ private fun InfoWorkoutScreenContent(
     var isModalSheetOpen by remember { mutableStateOf(false) }
 
     LibreFitScaffold(
-        title = AnnotatedString(workout.title),
+        title = AnnotatedString(stringResource(if (workout.routine) R.string.routine else R.string.workout)),
         navigateBack = { navController.popBackStack() },
         actions = listOf(
             {
@@ -194,6 +194,13 @@ private fun InfoWorkoutScreenContent(
                             .padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
+                        Text(
+                            formatDetails(
+                                stringResource(R.string.title),
+                                workout.title
+                            )
+                        )
+
                         if (workout.notes.isNotBlank()) {
                             Text(
                                 formatDetails(
@@ -201,9 +208,9 @@ private fun InfoWorkoutScreenContent(
                                     workout.notes
                                 )
                             )
-
-                            HorizontalDivider()
                         }
+
+                        HorizontalDivider()
 
                         if (!workout.routine) {
                             Text(
@@ -347,7 +354,7 @@ private fun InfoRoutineScreenPreview() {
         InfoWorkoutScreenContent(
             navController = rememberNavController(),
             deleteWorkout = {},
-            workout = Workout(title = "Title workout"),
+            workout = Workout(title = "My workout", notes = "This is a note!"),
             routine = routine,
             workoutDate = "DD/MM/YY",
             volumeExercises = "100",
