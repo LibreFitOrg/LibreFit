@@ -42,13 +42,11 @@ import org.librefit.nav.Route
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.screens.home.HomeScreen
 import org.librefit.ui.screens.profile.ProfileScreen
-import org.librefit.ui.screens.shared.SharedViewModel
 
 
 @Composable
 fun MainScreen(
-    navController: NavHostController,
-    sharedViewModel: SharedViewModel
+    navController: NavHostController
 ) {
     var homeSelected by rememberSaveable { mutableStateOf(true) }
 
@@ -104,7 +102,7 @@ fun MainScreen(
         }
     ) { innerPadding ->
         if (homeSelected)
-            HomeScreen(innerPadding, navController, sharedViewModel)
+            HomeScreen(innerPadding, navController)
         else ProfileScreen(innerPadding, navController)
     }
 }

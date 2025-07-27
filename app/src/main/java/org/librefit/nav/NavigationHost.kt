@@ -74,14 +74,10 @@ fun NavigationHost() {
                 typeOf<WorkoutWithExercisesAndSets>() to WorkoutWithExercisesAndSetsNavType()
             )
         ) {
-            BeforeSavingScreen(
-                navController = navController
-            )
+            BeforeSavingScreen(navController = navController)
         }
         composable<Route.CalendarScreen> {
-            CalendarScreen(
-                navController = navController
-            )
+            CalendarScreen(navController = navController)
         }
         composable<Route.EditWorkoutScreen> {
             EditWorkoutScreen(
@@ -97,21 +93,16 @@ fun NavigationHost() {
             )
         }
         composable<Route.InfoWorkoutScreen> {
-            InfoWorkoutScreen(
-                navController = navController
-            )
+            InfoWorkoutScreen(navController = navController)
         }
         composable<Route.MainScreen> {
-            MainScreen(
-                navController = navController,
-                sharedViewModel = sharedViewModel
-            )
+            MainScreen(navController = navController)
         }
         composable<Route.MeasurementScreen> {
             MeasurementScreen(navigateBack = navController::popBackStack)
         }
         composable<Route.PrivacyScreen> {
-            PrivacyScreen { navController.popBackStack() }
+            PrivacyScreen(navigateBack = navController::popBackStack)
         }
         composable<Route.LibrariesScreen> {
             LibrariesScreen(navigateBack = navController::popBackStack)
@@ -126,9 +117,7 @@ fun NavigationHost() {
             )
         }
         composable<Route.SettingsScreen> {
-            SettingsScreen(
-                navController = navController
-            )
+            SettingsScreen(navController = navController)
         }
         composable<Route.SuccessScreen> {
             SuccessScreen(

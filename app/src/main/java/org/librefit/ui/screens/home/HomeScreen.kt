@@ -68,7 +68,6 @@ import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.bottomMargin
-import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -76,7 +75,6 @@ import org.librefit.ui.theme.LibreFitTheme
 fun HomeScreen(
     innerPadding: PaddingValues,
     navController: NavHostController,
-    sharedViewModel: SharedViewModel,
 ) {
     val viewModel: HomeScreenViewModel = hiltViewModel()
 
@@ -98,7 +96,6 @@ fun HomeScreen(
         innerPadding = innerPadding,
         navController = navController,
         routines = routines,
-        updateWorkoutId = sharedViewModel::updateWorkoutId,
         navigateToRoutine = { workoutId ->
             val hasNotificationPermission = notificationPermissionState?.status?.isGranted != false
 
@@ -122,7 +119,6 @@ private fun HomeScreenContent(
     innerPadding: PaddingValues,
     navController: NavHostController,
     routines: List<Workout>,
-    updateWorkoutId: (Long) -> Unit,
     navigateToRoutine: (Long) -> Unit
 ) {
 
@@ -134,7 +130,6 @@ private fun HomeScreenContent(
                 icon = ImageVector.vectorResource(R.drawable.ic_play_arrow),
                 onClick = {
                     navigateToRoutine(0)
-                    updateWorkoutId(0)
                 },
             )
         }
@@ -206,7 +201,6 @@ private fun HomeScreenContent(
                         elevated = false
                     ) {
                         navigateToRoutine(routine.id)
-                        updateWorkoutId(routine.id)
                     }
                 }
             }
@@ -262,7 +256,6 @@ fun HomeScreenPreview() {
             HomeScreenContent(
                 innerPadding = it,
                 navController = rememberNavController(),
-                updateWorkoutId = {},
                 routines = (0..5).map { i -> Workout(id = i.toLong(), title = "Workout $i") },
                 navigateToRoutine = {}
             )
