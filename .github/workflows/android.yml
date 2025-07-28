@@ -12,48 +12,60 @@ on:
       - ".github/**/*.md"
 
 jobs:
-  build:
+  test:
+    name: Run Lint & Unit Tests
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle # Caching is enabled for faster builds
-
+          cache: gradle
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-        
-      # 5. Run lint to catch code quality issues
-      - name: Run lint
-        run: ./gradlew lintDebug
 
+      - name: Run lint to catch code quality issues
+        run: ./gradlew lintDebug
 
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
 
+      - name: Upload Test & Lint Reports
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-and-lint-reports
+          path: app/build/reports/
+
+  build:
+    name: Build APK
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       - name: Build debug APK
         run: ./gradlew assembleDebug
 
-
       - name: Upload Debug APK
+        if: success()
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-
-      - name: Upload Build Reports
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: build-reports
-          path: app/build/reports/
