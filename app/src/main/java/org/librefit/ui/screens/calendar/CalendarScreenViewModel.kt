@@ -22,76 +22,96 @@ package org.librefit.ui.screens.calendar
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SelectableDates
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import org.librefit.db.entity.Workout
 import org.librefit.db.repository.WorkoutRepository
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
 class CalendarScreenViewModel @Inject constructor(
-    private val workoutRepository: WorkoutRepository
+    workoutRepository: WorkoutRepository
 ) : ViewModel() {
-    private val workoutList = mutableStateListOf<Workout>()
+    private val workoutsList = workoutRepository.completedWorkouts
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
-    init {
-        getWorkoutListFromDB()
+    private val _selectedDateInMillis = MutableStateFlow<Long?>(null)
+    val selectedDateInMillis = _selectedDateInMillis.asStateFlow()
+
+    fun updateSelectedDateInMillis(newSelectedDateInMillis: Long?) {
+        _selectedDateInMillis.value = newSelectedDateInMillis
     }
 
 
+    val workoutsFromDate: StateFlow<List<Workout>> = combine(
+        workoutsList,
+        selectedDateInMillis
+    ) { workouts, dateInMillis ->
+        if (dateInMillis == null) {
+            emptyList()
+        } else {
+            val date = Instant.ofEpochMilli(dateInMillis).atZone(ZoneOffset.UTC).toLocalDate()
+
+            workouts.filter { it.completed.toLocalDate() == date }
+        }
+    }
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+
     @OptIn(ExperimentalMaterial3Api::class)
-    fun getSelectableDatesFromWorkouts(): SelectableDates {
-        return object : SelectableDates {
-            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                val date = Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate()
-                return workoutList.map { it.completed.toLocalDate() }.contains(date)
+    val selectableDates: StateFlow<SelectableDates> = workoutsList
+        .map { list ->
+            object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                    val date =
+                        Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate()
+                    return list.map { it.completed.toLocalDate() }.contains(date)
+                }
             }
         }
-    }
-
-    fun getWorkoutsFromDate(utcTimeMillis: Long?): List<Workout> {
-        if (utcTimeMillis == null) return emptyList()
-
-        val date = Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate()
-
-        return workoutList.filter { it.completed.toLocalDate() == date }
-    }
-
-    fun getTimeFromLocalDateTime(date: LocalDateTime): String {
-        return date.format(DateTimeFormatter.ofPattern("HH:mm"))
-    }
-
-    private fun getWorkoutListFromDB() {
-        viewModelScope.launch(Dispatchers.IO) {
-            workoutRepository.completedWorkouts
-                .distinctUntilChanged()
-                .collect { workouts ->
-                    workoutList.clear()
-                    workoutList.addAll(workouts)
-                }
-        }
-    }
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = DatePickerDefaults.AllDates
+        )
 
     @OptIn(ExperimentalMaterial3Api::class)
-    suspend fun getWorkoutsYearRange(): IntRange {
-        // Waits workout list update
-        delay(100)
-        return if (workoutList.isEmpty()) {
-            DatePickerDefaults.YearRange
-        } else {
-            val maxYear = workoutList.maxOf { it.completed.toLocalDate().year }
-            val minYear = workoutList.minOf { it.completed.toLocalDate().year }
-            (minYear..maxYear)
+    val yearRange: StateFlow<IntRange> = workoutsList
+        .map { list ->
+            if (list.isEmpty()) {
+                DatePickerDefaults.YearRange
+            } else {
+                val maxYear = list.maxOf { it.completed.toLocalDate().year }
+                val minYear = list.minOf { it.completed.toLocalDate().year }
+                (minYear..maxYear)
+            }
         }
-    }
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = DatePickerDefaults.YearRange
+        )
 }

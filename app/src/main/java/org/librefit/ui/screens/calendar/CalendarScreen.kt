@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,9 +36,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,6 +64,8 @@ import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter.formatTime
 import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,24 +74,29 @@ fun CalendarScreen(
 ) {
     val viewModel: CalendarScreenViewModel = hiltViewModel()
 
-    val yearRange = remember { mutableStateOf(DatePickerDefaults.YearRange) }
+    val yearRange by viewModel.yearRange.collectAsState()
 
-    LaunchedEffect(Unit) {
-        yearRange.value = viewModel.getWorkoutsYearRange()
-    }
+    val workoutsFromDate by viewModel.workoutsFromDate.collectAsState()
 
-    key(yearRange.value) {
+    val selectableDates by viewModel.selectableDates.collectAsState()
+
+    key(yearRange) {
 
         val datePickerState = rememberDatePickerState(
-            selectableDates = viewModel.getSelectableDatesFromWorkouts(),
-            yearRange = yearRange.value
+            selectableDates = selectableDates,
+            yearRange = yearRange,
+            initialSelectedDateMillis = LocalDateTime.now().atZone(ZoneOffset.UTC).toInstant()
+                .toEpochMilli()
         )
+
+        LaunchedEffect(datePickerState.selectedDateMillis) {
+            viewModel.updateSelectedDateInMillis(datePickerState.selectedDateMillis)
+        }
 
         CalendarScreenContent(
             navController = navController,
             datePickerState = datePickerState,
-            getWorkoutsFromDate = viewModel::getWorkoutsFromDate,
-            getTimeFromLocalDateTime = viewModel::getTimeFromLocalDateTime
+            workoutsFromDate = workoutsFromDate,
         )
     }
 }
@@ -100,8 +106,7 @@ fun CalendarScreen(
 private fun CalendarScreenContent(
     navController: NavHostController,
     datePickerState: DatePickerState,
-    getWorkoutsFromDate: (Long?) -> List<Workout>,
-    getTimeFromLocalDateTime: (LocalDateTime) -> String
+    workoutsFromDate: List<Workout>,
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.calendar)),
@@ -118,7 +123,7 @@ private fun CalendarScreenContent(
 
             item { HeadlineText(stringResource(R.string.your_workouts)) }
 
-            if (getWorkoutsFromDate(datePickerState.selectedDateMillis).isEmpty()) {
+            if (workoutsFromDate.isEmpty()) {
                 item {
                     Column(
                         modifier = Modifier
@@ -135,7 +140,7 @@ private fun CalendarScreenContent(
                 }
             }
 
-            items(getWorkoutsFromDate(datePickerState.selectedDateMillis)) { workout ->
+            items(workoutsFromDate) { workout ->
                 ElevatedCard {
                     Column(
                         modifier = Modifier
@@ -164,7 +169,9 @@ private fun CalendarScreenContent(
 
                                 Text(
                                     text = stringResource(R.string.label_when) + ": "
-                                            + getTimeFromLocalDateTime(workout.completed),
+                                            + workout.completed.format(
+                                        DateTimeFormatter.ofPattern("HH:mm")
+                                    ),
                                     style = MaterialTheme.typography.bodyMedium,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
@@ -194,12 +201,11 @@ private fun CalendarScreenContent(
 @Preview
 @Composable
 private fun CalendarScreenPreview() {
-    LibreFitTheme(false, true) {
+    LibreFitTheme(dynamicColor = false, darkTheme = true) {
         CalendarScreenContent(
             navController = rememberNavController(),
             datePickerState = rememberDatePickerState(),
-            getWorkoutsFromDate = { listOf(Workout(title = "Name workout")) },
-            getTimeFromLocalDateTime = { "10:10" }
+            workoutsFromDate = listOf(Workout(title = "Name workout"))
         )
     }
 }
