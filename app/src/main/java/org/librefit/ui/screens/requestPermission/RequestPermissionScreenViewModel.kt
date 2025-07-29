@@ -44,7 +44,7 @@ class RequestPermissionScreenViewModel @Inject constructor(
     fun saveRequestPermissionAgainPreference(value: Boolean) {
         viewModelScope.launch {
             userPreferences.savePreference(
-                key = userPreferences.requestPermissionsAgainKey,
+                key = DataStoreManager.requestPermissionsAgainKey,
                 value = value
             )
         }

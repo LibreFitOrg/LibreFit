@@ -24,6 +24,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -39,10 +40,13 @@ private val Context.dataStore by preferencesDataStore(name = USER_PREFERENCES_NA
  * This class instance is provided by [org.librefit.di.DataStoreModule].
  */
 class DataStoreManager(private val context: Context) {
-    val themeModeKey = intPreferencesKey("theme_mode")
-    val materialModeKey = booleanPreferencesKey("material_mode")
-    val keepOnWorkoutScreenKey = booleanPreferencesKey("workout_screen_on")
-    val requestPermissionsAgainKey = booleanPreferencesKey("ask_permission_again")
+    companion object {
+        val themeModeKey = intPreferencesKey("theme_mode")
+        val materialModeKey = booleanPreferencesKey("material_mode")
+        val keepOnWorkoutScreenKey = booleanPreferencesKey("workout_screen_on")
+        val requestPermissionsAgainKey = booleanPreferencesKey("ask_permission_again")
+        val languageKey = stringPreferencesKey("language")
+    }
 
     val themeMode: Flow<ThemeMode> = context.dataStore.data.map { preferences ->
         ThemeMode.entries.find { it.value == preferences[themeModeKey] } ?: ThemeMode.SYSTEM
