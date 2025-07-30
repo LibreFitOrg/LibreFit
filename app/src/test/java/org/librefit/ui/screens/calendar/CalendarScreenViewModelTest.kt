@@ -23,26 +23,17 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.librefit.MainDispatcherRule
 import org.librefit.db.entity.Workout
 import org.librefit.db.repository.WorkoutRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class CalendarScreenViewModelTest {
-
-    // This rule swaps the main dispatcher with a test dispatcher
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
-
     // The mock repository
     private lateinit var workoutRepository: WorkoutRepository
 

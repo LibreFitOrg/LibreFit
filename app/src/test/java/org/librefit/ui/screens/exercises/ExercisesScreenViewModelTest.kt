@@ -22,7 +22,6 @@ package org.librefit.ui.screens.exercises
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -37,7 +36,7 @@ class ExercisesScreenViewModelTest {
 
     // MainCoroutineRule to control coroutine execution
     @get:Rule
-    val mainDispatcherRule = MainDispatcherRule(StandardTestDispatcher())
+    val mainDispatcherRule = MainDispatcherRule()
 
     // Test data
     private val testExercises = listOf(
