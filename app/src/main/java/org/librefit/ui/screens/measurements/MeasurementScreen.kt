@@ -69,7 +69,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
 import org.librefit.R
-import org.librefit.data.ChartData
 import org.librefit.db.entity.Measurement
 import org.librefit.enums.MeasurementCardState
 import org.librefit.enums.chart.MeasurementChart
@@ -79,6 +78,7 @@ import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.EmptyLottie
 import org.librefit.ui.components.bottomMargin
+import org.librefit.ui.components.charts.ChartData
 import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.theme.LibreFitTheme

@@ -53,7 +53,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
-import org.librefit.data.ChartData
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.entity.Set
 import org.librefit.db.entity.Workout
@@ -66,6 +65,7 @@ import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.bottomMargin
+import org.librefit.ui.components.charts.ChartData
 import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.ExerciseDetailModalBottomSheet

@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.librefit.data.ChartData
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
@@ -41,6 +40,7 @@ import org.librefit.db.repository.DatasetRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
+import org.librefit.ui.components.charts.ChartData
 import org.librefit.util.Formatter
 import java.util.Locale
 import javax.inject.Inject

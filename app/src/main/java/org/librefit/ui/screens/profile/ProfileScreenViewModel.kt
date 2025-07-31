@@ -32,10 +32,10 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import org.librefit.data.ChartData
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
+import org.librefit.ui.components.charts.ChartData
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject

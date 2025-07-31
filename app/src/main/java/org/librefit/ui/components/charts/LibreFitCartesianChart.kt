@@ -81,7 +81,6 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import org.librefit.R
-import org.librefit.data.ChartData
 import org.librefit.enums.chart.ChartMode
 import org.librefit.enums.chart.MeasurementChart
 import org.librefit.enums.chart.WorkoutChart
@@ -95,7 +94,7 @@ import kotlin.random.Random
  * A custom [com.patrykandpatrick.vico.core.cartesian.CartesianChart]
  *
  * @param format It is used by [VerticalAxis] to display Y axis values following the provided format
- * @param listChartData A list of [org.librefit.data.ChartData] containing the actual points of the chart.
+ * @param listChartData A list of [ChartData] containing the actual points of the chart.
  * If empty,a placeholder is shown. Leave all [ChartData.xValue]s blank to display default ordinal numeration in  axis.
  * @param useColumns When `false`, the chart will use lines.
  * @param chartMode A [ChartMode] to display which [FilterChip] is selected. If `null`, none filter chips

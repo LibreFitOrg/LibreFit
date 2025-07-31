@@ -22,11 +22,11 @@ package org.librefit.helpers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.librefit.data.ChartData
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.MeasurementRepository
 import org.librefit.enums.SetMode
 import org.librefit.enums.chart.WorkoutChart
+import org.librefit.ui.components.charts.ChartData
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale

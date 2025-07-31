@@ -17,7 +17,7 @@
  * along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.librefit.data
+package org.librefit.ui.components.charts
 
 data class ChartData(
     val yValue: Float,

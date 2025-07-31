@@ -32,11 +32,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.librefit.data.ChartData
 import org.librefit.db.entity.Measurement
 import org.librefit.db.repository.MeasurementRepository
 import org.librefit.enums.MeasurementCardState
 import org.librefit.enums.chart.MeasurementChart
+import org.librefit.ui.components.charts.ChartData
 import org.librefit.util.Formatter
 import java.time.LocalDateTime
 import javax.inject.Inject

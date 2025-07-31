@@ -76,7 +76,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import org.librefit.R
-import org.librefit.data.ChartData
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.chart.WorkoutChart
@@ -88,6 +87,7 @@ import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.EmptyLottie
 import org.librefit.ui.components.animations.StreakLottie
 import org.librefit.ui.components.bottomMargin
+import org.librefit.ui.components.charts.ChartData
 import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter.formatTime
