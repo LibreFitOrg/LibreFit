@@ -386,7 +386,7 @@ fun StreakCard(weekStreak: Int) {
 @Preview
 @Composable
 private fun ProfileScreenPreview() {
-    LibreFitTheme(false, true) {
+    LibreFitTheme(dynamicColor = false, darkTheme = true) {
         LibreFitScaffold(
             title = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
@@ -429,7 +429,7 @@ private fun ProfileScreenPreview() {
                 innerPadding = it,
                 navController = rememberNavController(),
                 weekStreak = 0,
-                listChartData = (0..10).map { ChartData(Random.nextFloat()) },
+                listChartData = (0..10).map { ChartData(listOf(Random.nextFloat())) },
                 workoutChart = WorkoutChart.DURATION,
                 workoutsWithExercises = remember {
                     mutableStateListOf(

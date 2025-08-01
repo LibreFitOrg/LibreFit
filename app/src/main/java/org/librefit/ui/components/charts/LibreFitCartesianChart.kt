@@ -33,6 +33,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -63,7 +64,11 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.component.shapeComponent
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.compose.common.insets
+import com.patrykandpatrick.vico.compose.common.rememberHorizontalLegend
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
 import com.patrykandpatrick.vico.core.cartesian.Zoom
@@ -78,6 +83,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.common.LegendItem
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
@@ -89,20 +95,32 @@ import org.librefit.enums.chart.WorkoutChart
 import org.librefit.nav.Route
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.theme.LibreFitTheme
+import org.librefit.util.Formatter
 import java.text.DecimalFormat
+import java.time.LocalDateTime
 import kotlin.random.Random
+
+
+val labelListKey = ExtraStore.Key<List<String>>()
+val legendLabelKey = ExtraStore.Key<List<String>>()
 
 /**
  * A custom [com.patrykandpatrick.vico.core.cartesian.CartesianChart]
  *
- * @param format It is used by [VerticalAxis] to display Y axis values following the provided format
+ * @param format It is used by [VerticalAxis] to display Y axis values following the provided format.
+ * Leave empty in order to use the default format.
  * @param listChartData A list of [ChartData] containing the actual points of the chart.
- * If empty,a placeholder is shown. Leave all [ChartData.xValue]s blank to display default ordinal numeration in x axis.
- * @param useColumns When `false`, the chart will use lines.
+ * If empty, a placeholder is shown. Leave all [ChartData.xValue]s blank in order to display default ordinal numeration in x axis.
+ * @param useColumns When `false`, the chart will use lines instead of columns.
  * @param chartMode A [ChartMode] to display which [FilterChip] is selected. If `null`, none filter chips
  * will be displayed.
  * @param updateChartMode It's triggered when any [FilterChip] is clicked. It passes the corresponding
  * [ChartMode] value.
+ * @param navController When not null, a button is shown in order to navigate to [org.librefit.ui.screens.infoWorkout.InfoWorkoutScreen]
+ * and to show info about a selected [org.librefit.db.entity.Workout]. It is intended to work only with workouts
+ * rather than [org.librefit.db.entity.Measurement] or anything else.
+ * @param legendList A list of [String] shown under the chart as a legend. The list must match the
+ * size of [ChartData.yValues] and it must not contain blank strings.
  */
 @Composable
 fun LibreFitCartesianChart(
@@ -110,10 +128,10 @@ fun LibreFitCartesianChart(
     listChartData: List<ChartData>,
     useColumns: Boolean = false,
     chartMode: ChartMode? = null,
-    updateChartMode: ((ChartMode) -> Unit)? = null,
-    navController: NavHostController? = null
+    navController: NavHostController? = null,
+    legendList: List<String> = emptyList(),
+    updateChartMode: ((ChartMode) -> Unit)? = null
 ) {
-    val labelListKey = ExtraStore.Key<List<String>>()
     val modelProducer = remember { CartesianChartModelProducer() }
 
     val selectedWorkoutId = rememberSaveable { mutableStateOf<Long?>(null) }
@@ -128,9 +146,14 @@ fun LibreFitCartesianChart(
         "All yValues lists must have the same size which must be not over 4. Found sizes: ${rawYValues.map { it.size }}"
     }
 
+    require(legendList.size == expectedSize && legendList.all { it.isNotBlank() }) {
+        "The legend list must match the size of yValues and it must not contain blank strings. " +
+                "Legend list size: ${legendList.size}. Expected size: $expectedSize."
+    }
+
     /**
      * A transposed list in order to be in a suitable format for modelProducer.
-     * Each item represents the points in the same x value.
+     * Each item represents a point in the same x value.
      * ```
      * val rawYValues = listOf(listOf(1,2),listOf(3,4),listOf(5,6))
      * //...
@@ -153,6 +176,7 @@ fun LibreFitCartesianChart(
                 if (xValues.all { it.isNotBlank() }) {
                     extras { it[labelListKey] = xValues }
                 }
+                extras { it[legendLabelKey] = legendList }
             }
         }
     }
@@ -165,6 +189,8 @@ fun LibreFitCartesianChart(
     )
 
     val colors = colorPalette.take(yValues.size)
+
+    val legendItemLabelComponent = rememberTextComponent(MaterialTheme.colorScheme.onSurface)
 
     ElevatedCard {
         Column(
@@ -310,6 +336,23 @@ fun LibreFitCartesianChart(
                                             else CartesianValueFormatter.decimal()
                                         }
                                     ),
+                                    legend = rememberHorizontalLegend(
+                                        items = { extraStore ->
+                                            extraStore[legendLabelKey].forEachIndexed { index, label ->
+                                                add(
+                                                    LegendItem(
+                                                        shapeComponent(
+                                                            fill(colors[index]),
+                                                            CorneredShape.Pill
+                                                        ),
+                                                        legendItemLabelComponent,
+                                                        label,
+                                                    )
+                                                )
+                                            }
+                                        },
+                                        padding = insets(top = 16.dp),
+                                    ),
                                 ),
                                 zoomState = rememberVicoZoomState(
                                     zoomEnabled = false,
@@ -329,7 +372,8 @@ fun LibreFitCartesianChart(
                                 }
                             }
                         }
-                        if (navController != null) {
+                        if (navController != null && WorkoutChart.entries.contains(chartMode)) {
+                            HorizontalDivider()
                             LibreFitButton(
                                 elevated = false,
                                 enabled = selectedWorkoutId.value != null,
@@ -381,22 +425,27 @@ private fun LibreFitCartesianChartPreview() {
 
     val numRandomEntries = Random.nextInt(0, 4)
 
+    val legendList =
+        listOf("First item", "Second item", "Third item", "Fourth item").take(numRandomEntries + 1)
+
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
         LibreFitCartesianChart(
+            format = DecimalFormat("#.# %"),
             listChartData = (0..10).map {
                 ChartData(
                     yValues = (0..numRandomEntries).map { Random.nextFloat() },
-                    xValue = "${it + 1}°",
+                    xValue = Formatter.getShortDateFromLocalDate(
+                        LocalDateTime.now().minusDays(it.toLong())
+                    ),
                     workoutId = Random.nextLong()
                 )
             },
             useColumns = Random.nextBoolean(),
-            chartMode = chartMode.value,
-            updateChartMode = {
-                chartMode.value = it
-            },
+            chartMode = if (Random.nextBoolean()) chartMode.value else null,
             navController = if (WorkoutChart.entries.contains(chartMode.value))
-                rememberNavController() else null
+                rememberNavController() else null,
+            legendList = legendList,
+            updateChartMode = { chartMode.value = it }
         )
     }
 }
