@@ -26,6 +26,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.entity.Exercise
 import org.librefit.db.entity.ExerciseDC
@@ -110,7 +111,9 @@ class EditWorkoutScreenViewModel @Inject constructor(
             exerciseDC = exerciseDC
         )
 
-        _exercises.value = exercises.value + newExercise
+        _exercises.update { exercises ->
+            exercises + newExercise
+        }
     }
 
     fun addSetToExercise(exerciseWithSets: ExerciseWithSets) {
@@ -118,64 +121,68 @@ class EditWorkoutScreenViewModel @Inject constructor(
             .lastOrNull()?.copy(id = Random.Default.nextLong())
             ?: Set()
 
-        _exercises.value = exercises.value.map { exercise ->
-            if (exercise == exerciseWithSets) {
-                exercise.copy(sets = exercise.sets + newSet)
-            } else {
-                exercise
+        _exercises.update { exercises ->
+            exercises.map { exercise ->
+                if (exercise == exerciseWithSets) {
+                    exercise.copy(sets = exercise.sets + newSet)
+                } else {
+                    exercise
+                }
             }
         }
     }
 
-    /**
-     * Updates a specific [Set] within a [ExerciseWithSets.sets].
-     *
-     * @param set The updated [Set] to assign.
-     */
     fun updateSet(set: Set) {
-        _exercises.value = exercises.value.map { exercise ->
-            if (exercise.sets.map { it.id }.contains(set.id)) {
-                exercise.copy(
-                    sets = exercise.sets.map {
-                        if (it.id == set.id) set else it
-                    }
-                )
-            } else {
-                exercise
+        _exercises.update { currentExercises ->
+            currentExercises.map { exercise ->
+                if (set.id in exercise.sets.map { it.id }) {
+                    exercise.copy(
+                        sets = exercise.sets.map {
+                            if (it.id == set.id) set else it
+                        }
+                    )
+                } else {
+                    exercise
+                }
             }
         }
     }
-
 
     fun deleteSet(set: Set) {
-        _exercises.value = exercises.value.map { exercise ->
-            if (exercise.sets.contains(set)) {
-                exercise.copy(
-                    sets = exercise.sets.filter { it != set }
-                )
-            } else {
-                exercise
+        _exercises.update { currentExercises ->
+            currentExercises.map { exercise ->
+                if (set in exercise.sets) {
+                    exercise.copy(
+                        sets = exercise.sets.filter { it != set }
+                    )
+                } else {
+                    exercise
+                }
             }
         }
     }
 
     fun updateExercise(exercise: Exercise) {
-        _exercises.value = exercises.value.map {
-            if (exercise.id == it.exercise.id) it.copy(exercise = exercise) else it
+        _exercises.update { currentExercises ->
+            currentExercises.map {
+                if (it.exercise.id == exercise.id) it.copy(exercise = exercise) else it
+            }
         }
     }
 
     fun deleteExercise(exerciseWithSets: ExerciseWithSets) {
-        _exercises.value = exercises.value.filter { it != exerciseWithSets }
+        _exercises.update { currentExercises ->
+            currentExercises.filter { it != exerciseWithSets }
+        }
     }
 
 
     fun updateTitle(string: String) {
-        _workout.value = workout.value.copy(title = string)
+        _workout.update { it.copy(title = string) }
     }
 
     fun updateNotes(string: String) {
-        _workout.value = workout.value.copy(notes = string)
+        _workout.update { it.copy(notes = string) }
     }
 
     fun isTitleEmpty(): Boolean {
