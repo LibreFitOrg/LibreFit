@@ -34,7 +34,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -280,6 +279,10 @@ private fun ExercisesScreenContent(
                                 isModalSheetOpen = true
                             }
                         },
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = if (exercise.id in selectedExercisesIdList)
+                            MaterialTheme.colorScheme.primaryContainer else Color.Unspecified
+                    )
                 ) {
                     Row(
                         modifier = Modifier.padding(
@@ -290,14 +293,6 @@ private fun ExercisesScreenContent(
                         ),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        if (addExercises) {
-                            Checkbox(
-                                checked = exercise.id in selectedExercisesIdList,
-                                onCheckedChange = {
-                                    toggleSelectedExercise(exercise.id)
-                                }
-                            )
-                        }
                         val image = remember(exercise.images[0]) {
                             BitmapFactory.decodeStream(
                                 context.assets.open(exercise.images[0])
