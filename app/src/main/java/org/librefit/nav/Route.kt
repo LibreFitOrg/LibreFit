@@ -75,6 +75,9 @@ sealed class Route {
     object SettingsScreen
 
     @Serializable
+    object StatisticsScreen
+
+    @Serializable
     data class SuccessScreen(
         val message: SuccessMessage,
     )

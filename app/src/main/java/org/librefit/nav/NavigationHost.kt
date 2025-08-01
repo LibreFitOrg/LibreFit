@@ -46,6 +46,7 @@ import org.librefit.ui.screens.requestPermission.RequestPermissionScreen
 import org.librefit.ui.screens.settings.SettingsScreen
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.screens.shared.SuccessScreen
+import org.librefit.ui.screens.statistics.StatisticsScreen
 import org.librefit.ui.screens.workout.WorkoutScreen
 import kotlin.reflect.typeOf
 
@@ -124,6 +125,9 @@ fun NavigationHost() {
                 message = it.toRoute<Route.SuccessScreen>().message,
                 navigateBack = navController::popBackStack
             )
+        }
+        composable<Route.StatisticsScreen> {
+            StatisticsScreen()
         }
         composable<Route.WorkoutScreen> {
             WorkoutScreen(
