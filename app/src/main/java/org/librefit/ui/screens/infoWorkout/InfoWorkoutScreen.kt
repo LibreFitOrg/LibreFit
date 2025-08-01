@@ -385,7 +385,7 @@ private fun InfoRoutineScreenPreview() {
                     sets = listOf(Set(), Set())
                 )
             ),
-            listChartData = (0..10).map { ChartData(Random.nextFloat()) },
+            listChartData = (0..10).map { ChartData(listOf(Random.nextFloat())) },
             detachWorkoutFromRoutine = {
                 routine = Workout()
             },

@@ -20,7 +20,7 @@
 package org.librefit.ui.components.charts
 
 data class ChartData(
-    val yValue: Float,
+    val yValues: List<Float>,
     val xValue: String = "",
     val workoutId: Long? = null
 )

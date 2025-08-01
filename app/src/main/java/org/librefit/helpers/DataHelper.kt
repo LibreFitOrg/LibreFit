@@ -76,21 +76,23 @@ class DataHelper @Inject constructor(
             .mapIndexed { index, it ->
                 async {
                     ChartData(
-                        yValue = when (workoutChart) {
-                            WorkoutChart.DURATION -> it.workout.timeElapsed / 60f
-                            WorkoutChart.VOLUME -> it.exercisesWithSets.sumOf { exe ->
-                                exe.sets.filter { it.completed }.sumOf {
-                                    (it.load + if (exe.exercise.setMode == SetMode.BODYWEIGHT ||
-                                        exe.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
-                                    )
-                                        bodyWeights[index] else 0f) * it.reps.toDouble()
+                        yValues = listOf(
+                            when (workoutChart) {
+                                WorkoutChart.DURATION -> it.workout.timeElapsed / 60f
+                                WorkoutChart.VOLUME -> it.exercisesWithSets.sumOf { exe ->
+                                    exe.sets.filter { it.completed }.sumOf {
+                                        (it.load + if (exe.exercise.setMode == SetMode.BODYWEIGHT ||
+                                            exe.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
+                                        )
+                                            bodyWeights[index] else 0f) * it.reps.toDouble()
+                                    }
                                 }
-                            }
 
-                            WorkoutChart.REPS -> it.exercisesWithSets.sumOf { exe ->
-                                exe.sets.filter { it.completed }.sumOf { it.reps }
-                            }
-                        }.toFloat(),
+                                WorkoutChart.REPS -> it.exercisesWithSets.sumOf { exe ->
+                                    exe.sets.filter { it.completed }.sumOf { it.reps }
+                                }
+                            }.toFloat()
+                        ),
                         xValue = it.workout.completed.format(shortFormatter),
                         workoutId = it.workout.id
                     )

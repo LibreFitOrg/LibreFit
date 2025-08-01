@@ -601,11 +601,13 @@ private fun MeasurementScreenPreview() {
             measurements = measurements,
             listChartData = measurements.map {
                 ChartData(
-                    yValue = when (measurementChart) {
-                        MeasurementChart.BODY_WEIGHT -> it.bodyWeight
-                        MeasurementChart.FAT_MASS -> it.bodyFatPercentage
-                        MeasurementChart.LEAN_MASS -> it.muscleMassPercentage
-                    },
+                    yValues = listOf(
+                        when (measurementChart) {
+                            MeasurementChart.BODY_WEIGHT -> it.bodyWeight
+                            MeasurementChart.FAT_MASS -> it.bodyFatPercentage
+                            MeasurementChart.LEAN_MASS -> it.muscleMassPercentage
+                        }
+                    ),
                     xValue = it.date.format(shortDate)
                 )
             },

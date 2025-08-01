@@ -123,6 +123,7 @@ private fun HomeScreenContent(
 ) {
 
     LibreFitLazyColumn(innerPadding) {
+        // TODO: implement workout resume
         item {
             //"Start empty workout" button
             LibreFitButton(
@@ -155,6 +156,8 @@ private fun HomeScreenContent(
                 }
             }
         }
+
+        //TODO: implement archived routines
 
         //TODO: implement a default routine
 

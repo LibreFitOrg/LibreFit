@@ -155,7 +155,7 @@ class MeasurementScreenViewModelTest {
                 assertThat(awaitItem()).isEmpty()
 
                 // Assert: The flow should emit list of `ChartData` having yValue equal to the respective bodyweight
-                val actual = awaitItem().map { it.yValue }
+                val actual = awaitItem().map { it.yValues.first() }
                 val expected = allMeasurements.map { it.bodyWeight }
 
                 assertThat(actual).isEqualTo(expected)
@@ -173,7 +173,7 @@ class MeasurementScreenViewModelTest {
                 assertThat(awaitItem()).isEmpty()
 
                 // Assert: The flow should emit list of `ChartData` having yValue equal to the respective bodyweight
-                var actual = awaitItem().map { it.yValue }
+                var actual = awaitItem().map { it.yValues.first() }
                 var expected = allMeasurements.map { it.bodyWeight }
 
                 assertThat(actual).isEqualTo(expected)
@@ -184,7 +184,7 @@ class MeasurementScreenViewModelTest {
                 measurementsFlow.value = newMeasurements
 
                 // Assert: Check list of `ChartData` again
-                actual = awaitItem().map { it.yValue }
+                actual = awaitItem().map { it.yValues.first() }
                 expected = newMeasurements.map { it.bodyWeight }
 
                 assertThat(actual).isEqualTo(expected)
@@ -205,7 +205,7 @@ class MeasurementScreenViewModelTest {
                 assertThat(awaitItem()).isEmpty()
 
                 // Assert: The flow should emit list of `ChartData` having yValue equal to the respective fat mass
-                val actual = awaitItem().map { it.yValue }
+                val actual = awaitItem().map { it.yValues.first() }
                 val expected = allMeasurements.map { it.bodyFatPercentage }.filter { it != 0f }
 
                 assertThat(actual).isEqualTo(expected)

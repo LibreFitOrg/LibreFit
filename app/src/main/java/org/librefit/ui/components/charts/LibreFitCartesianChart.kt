@@ -58,6 +58,7 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.stacked
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
@@ -80,6 +81,7 @@ import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import org.librefit.R
 import org.librefit.enums.chart.ChartMode
 import org.librefit.enums.chart.MeasurementChart
@@ -95,7 +97,7 @@ import kotlin.random.Random
  *
  * @param format It is used by [VerticalAxis] to display Y axis values following the provided format
  * @param listChartData A list of [ChartData] containing the actual points of the chart.
- * If empty,a placeholder is shown. Leave all [ChartData.xValue]s blank to display default ordinal numeration in  axis.
+ * If empty,a placeholder is shown. Leave all [ChartData.xValue]s blank to display default ordinal numeration in x axis.
  * @param useColumns When `false`, the chart will use lines.
  * @param chartMode A [ChartMode] to display which [FilterChip] is selected. If `null`, none filter chips
  * will be displayed.
@@ -118,18 +120,35 @@ fun LibreFitCartesianChart(
 
     val selectedWorkoutDate = rememberSaveable { mutableStateOf<String?>(null) }
 
-    val yValues = listChartData.map { it.yValue }
+    val rawYValues = listChartData.map { it.yValues }
     val xValues = listChartData.map { it.xValue }
 
-    val primaryColor = MaterialTheme.colorScheme.primary
+    val expectedSize = rawYValues.first().size
+    require(rawYValues.all { it.size == expectedSize } && expectedSize <= 4) {
+        "All yValues lists must have the same size which must be not over 4. Found sizes: ${rawYValues.map { it.size }}"
+    }
+
+    /**
+     * A transposed list in order to be in a suitable format for modelProducer.
+     * Each item represents the points in the same x value.
+     * ```
+     * val rawYValues = listOf(listOf(1,2),listOf(3,4),listOf(5,6))
+     * //...
+     * val yValues = val rawYValues = listOf(listOf(1,3,5),listOf(2,4,6))
+     * ```
+     */
+    val yValues = (0 until expectedSize).map { index ->
+        rawYValues.map { yList -> yList[index] }
+    }
+
 
     LaunchedEffect(yValues) {
-        if (yValues.isNotEmpty()) {
+        if (yValues.all { it.isNotEmpty() }) {
             modelProducer.runTransaction {
                 if (useColumns) {
-                    columnSeries { series(yValues) }
+                    columnSeries { yValues.forEach { series(it) } }
                 } else {
-                    lineSeries { series(yValues) }
+                    lineSeries { yValues.forEach { series(it) } }
                 }
                 if (xValues.all { it.isNotBlank() }) {
                     extras { it[labelListKey] = xValues }
@@ -137,6 +156,15 @@ fun LibreFitCartesianChart(
             }
         }
     }
+
+    val colorPalette = listOf(
+        MaterialTheme.colorScheme.primary,
+        MaterialTheme.colorScheme.secondary,
+        MaterialTheme.colorScheme.tertiary,
+        MaterialTheme.colorScheme.onSurface
+    )
+
+    val colors = colorPalette.take(yValues.size)
 
     ElevatedCard {
         Column(
@@ -193,34 +221,41 @@ fun LibreFitCartesianChart(
                                 chart = rememberCartesianChart(
                                     if (useColumns) rememberColumnCartesianLayer(
                                         columnProvider = ColumnCartesianLayer.ColumnProvider.series(
-                                            rememberLineComponent(
-                                                fill = fill(MaterialTheme.colorScheme.primary),
-                                                thickness = 32.dp,
-                                                shape = CorneredShape.rounded(32, 32)
-                                            )
+                                            colors.mapIndexed { i, c ->
+                                                rememberLineComponent(
+                                                    fill = fill(c),
+                                                    thickness = 32.dp,
+                                                    shape = if (i == colors.lastIndex) CorneredShape.rounded(
+                                                        32,
+                                                        32
+                                                    )
+                                                    else Shape.Rectangle
+                                                )
+                                            }
                                         ),
-                                        columnCollectionSpacing = 64.dp
+                                        columnCollectionSpacing = 64.dp,
+                                        mergeMode = { ColumnCartesianLayer.MergeMode.stacked() }
                                     ) else rememberLineCartesianLayer(
                                         lineProvider = LineCartesianLayer.LineProvider.series(
-                                            LineCartesianLayer.rememberLine(
-                                                fill = LineCartesianLayer.LineFill.single(
-                                                    fill(
-                                                        primaryColor
-                                                    )
-                                                ),
-                                                areaFill = LineCartesianLayer.AreaFill.single(
-                                                    fill(
-                                                        ShaderProvider.verticalGradient(
-                                                            arrayOf(
-                                                                primaryColor.copy(alpha = 0.4f),
-                                                                Color.Transparent
+                                            colors.map {
+                                                LineCartesianLayer.rememberLine(
+                                                    fill = LineCartesianLayer.LineFill.single(
+                                                        fill(it)
+                                                    ),
+                                                    areaFill = LineCartesianLayer.AreaFill.single(
+                                                        fill(
+                                                            ShaderProvider.verticalGradient(
+                                                                arrayOf(
+                                                                    it.copy(alpha = 0.4f),
+                                                                    Color.Transparent
+                                                                )
                                                             )
                                                         )
-                                                    )
-                                                ),
-                                                // Curved line
-                                                pointConnector = LineCartesianLayer.PointConnector.cubic()
-                                            )
+                                                    ),
+                                                    // Curved line
+                                                    pointConnector = LineCartesianLayer.PointConnector.cubic()
+                                                )
+                                            }
                                         ),
                                         pointSpacing = 64.dp
                                     ),
@@ -270,7 +305,6 @@ fun LibreFitCartesianChart(
                                                 CartesianValueFormatter { context, x, _ ->
                                                     context.model.extraStore.getOrNull(labelListKey)
                                                         ?.get(x.toInt())
-                                                        ?: xValues.getOrNull(yValues.indexOf(x.toFloat()))
                                                         ?: xValues.first()
                                                 }
                                             else CartesianValueFormatter.decimal()
@@ -345,12 +379,18 @@ private fun LibreFitCartesianChartPreview() {
         )
     }
 
+    val numRandomEntries = Random.nextInt(0, 4)
+
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
         LibreFitCartesianChart(
             listChartData = (0..10).map {
-                ChartData(Random.nextFloat(), "$it", Random.nextLong())
+                ChartData(
+                    yValues = (0..numRandomEntries).map { Random.nextFloat() },
+                    xValue = "${it + 1}°",
+                    workoutId = Random.nextLong()
+                )
             },
-            useColumns = false,
+            useColumns = Random.nextBoolean(),
             chartMode = chartMode.value,
             updateChartMode = {
                 chartMode.value = it

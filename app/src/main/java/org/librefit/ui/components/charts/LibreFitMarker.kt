@@ -66,7 +66,7 @@ fun rememberLibreFitMarker(
         rememberShapeComponent(fill(MaterialTheme.colorScheme.surface), CorneredShape.Pill)
     val guideline = rememberAxisGuidelineComponent()
 
-    val materialColor = MaterialTheme.colorScheme.inversePrimary
+    val strokeColor = MaterialTheme.colorScheme.surface
 
     return rememberDefaultCartesianMarker(
         label = label,
@@ -76,25 +76,27 @@ fun rememberLibreFitMarker(
                 { color ->
                     LayeredComponent(
                         back = ShapeComponent(
-                            fill(materialColor.copy(alpha = 0.15f)),
-                            CorneredShape.Pill
+                            fill = fill(color.copy(alpha = 0.15f)),
+                            shape = CorneredShape.Pill
                         ),
                         front =
                             LayeredComponent(
                                 back = ShapeComponent(
-                                    fill = fill(materialColor),
-                                    shape = CorneredShape.Pill
+                                    fill = fill(color),
+                                    shape = CorneredShape.Pill,
+                                    strokeFill = fill(strokeColor),
+                                    strokeThicknessDp = 1f
                                 ),
                                 front = indicatorFrontComponent,
                                 padding = insets(5.dp),
                             ),
-                        padding = insets(10.dp),
+                        padding = insets(6.dp),
                     )
                 }
             } else {
                 null
             },
-        indicatorSize = 36.dp,
+        indicatorSize = 26.dp,
         guideline = guideline,
     )
 }
