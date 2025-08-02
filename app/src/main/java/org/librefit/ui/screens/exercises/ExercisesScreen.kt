@@ -65,9 +65,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import org.librefit.R
-import org.librefit.db.entity.ExerciseDC
 import org.librefit.enums.exercise.FilterValue
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
@@ -75,6 +75,8 @@ import org.librefit.ui.components.animations.NoResultLottie
 import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.ExerciseDetailModalBottomSheet
+import org.librefit.ui.models.UiExerciseDC
+import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter.exerciseEnumToStringId
@@ -130,7 +132,7 @@ fun ExercisesScreen(
         updateQuery = viewModel::updateQuery,
         updateFilter = viewModel::updateFilter,
         actions = if (addExercises) listOf {
-            sharedViewModel.setSelectedExercisesList(selectedExercisesList)
+            sharedViewModel.setSelectedExercisesList(selectedExercisesList.map { it.toEntity() })
             navigateBack()
         } else listOf(),
         navigateBack = navigateBack,
@@ -142,7 +144,7 @@ fun ExercisesScreen(
 private fun ExercisesScreenContent(
     addExercises: Boolean,
     selectedExercisesIdList: Set<String>,
-    filteredExerciseList: List<ExerciseDC>,
+    filteredExerciseList: List<UiExerciseDC>,
     query: String,
     filterValue: FilterValue,
     toggleSelectedExercise: (String) -> Unit,
@@ -175,7 +177,7 @@ private fun ExercisesScreenContent(
     /**
      * Holds the information to show in [ExerciseDetailModalBottomSheet]
      */
-    var selectedExercise by remember { mutableStateOf(ExerciseDC()) }
+    var selectedExercise by remember { mutableStateOf(UiExerciseDC()) }
 
     var isModalSheetOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -351,7 +353,9 @@ private fun ExercisesScreenContent(
 
     // Opened by info icon (in the filtered list), it shows the details of an exercise
     if (isModalSheetOpen) {
-        ExerciseDetailModalBottomSheet(exercise = selectedExercise) { isModalSheetOpen = false }
+        ExerciseDetailModalBottomSheet(exercise = selectedExercise.toEntity()) {
+            isModalSheetOpen = false
+        }
     }
 }
 
@@ -368,7 +372,11 @@ private fun ExercisesScreenPreview() {
             addExercises = false,
             selectedExercisesIdList = setOf(),
             filteredExerciseList = List(20) {
-                ExerciseDC(id = "$it", name = "Exercise $it", images = listOf("3_4_Sit-Up/0.jpg"))
+                UiExerciseDC(
+                    id = "$it",
+                    name = "Exercise $it",
+                    images = persistentListOf("3_4_Sit-Up/0.jpg")
+                )
             },
             query = query,
             filterValue = filterValue,

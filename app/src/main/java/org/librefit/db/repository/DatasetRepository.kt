@@ -20,11 +20,14 @@
 package org.librefit.db.repository
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import org.librefit.db.dao.DatasetDao
 import org.librefit.db.entity.ExerciseDC
+import org.librefit.ui.models.UiExerciseDC
+import org.librefit.ui.models.mappers.toUi
 
 /**
  * Repository class to provide `res/raw/exercises.json` as a [List] of [ExerciseDC].
@@ -42,19 +45,14 @@ class DatasetRepository(
     datasetDao: DatasetDao,
     applicationScope: CoroutineScope
 ) {
-    // Private MutableStateFlow to hold the dataset internally.
-    private val _dataset = MutableStateFlow<List<ExerciseDC>>(emptyList())
-
-    // Public, read-only StateFlow for consumers to collect.
-    val dataset: StateFlow<List<ExerciseDC>> = _dataset
-
-    init {
-        // Launch a long-lived coroutine on the application scope.
-        applicationScope.launch {
-            // Collect the data from the database Flow and update the state.
-            datasetDao.getDataset().collect { newList ->
-                _dataset.value = newList
-            }
+    // The public, read-only StateFlow for consumers to collect.
+    val dataset: StateFlow<List<UiExerciseDC>> = datasetDao.getDataset()
+        .map { dbList ->
+            dbList.map { it.toUi() }
         }
-    }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 }

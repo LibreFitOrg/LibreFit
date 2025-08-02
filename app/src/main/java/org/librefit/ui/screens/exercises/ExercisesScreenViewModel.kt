@@ -33,9 +33,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.repository.DatasetRepository
 import org.librefit.enums.exercise.FilterValue
+import org.librefit.ui.models.UiExerciseDC
 import org.librefit.util.fuzzySearch.FuzzySearch
 import javax.inject.Inject
 
@@ -69,14 +69,9 @@ class ExercisesScreenViewModel @Inject constructor(
         _filterValue.update { newFilterValue }
     }
 
-    val dataset = datasetRepository.dataset
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = datasetRepository.dataset.value
-        )
+    val dataset: StateFlow<List<UiExerciseDC>> = datasetRepository.dataset
 
-    val filteredExerciseList: StateFlow<List<ExerciseDC>> =
+    val filteredExerciseList: StateFlow<List<UiExerciseDC>> =
         combine(
             debouncedQuery,
             filterValue,
@@ -92,7 +87,7 @@ class ExercisesScreenViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
-                initialValue = datasetRepository.dataset.value
+                initialValue = dataset.value
             )
 
 
@@ -104,7 +99,7 @@ class ExercisesScreenViewModel @Inject constructor(
         return FuzzySearch.partialRatio(name.lowercase(), query.lowercase().trim())
     }
 
-    private fun filterExercise(exercise: ExerciseDC): Boolean = with(filterValue.value) {
+    private fun filterExercise(exercise: UiExerciseDC): Boolean = with(filterValue.value) {
         when {
             (level != null && level != exercise.level) -> false
             (force != null && force != exercise.force) -> false
@@ -122,7 +117,7 @@ class ExercisesScreenViewModel @Inject constructor(
     private val _selectedExerciseIds = MutableStateFlow<Set<String>>(emptySet())
     val selectedExerciseIds = _selectedExerciseIds.asStateFlow()
 
-    val selectedExercises: StateFlow<List<ExerciseDC>> = _selectedExerciseIds
+    val selectedExercises: StateFlow<List<UiExerciseDC>> = _selectedExerciseIds
         .map { ids -> dataset.value.filter { it.id in ids } }
         .stateIn(
             scope = viewModelScope,

@@ -30,10 +30,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.librefit.MainDispatcherRule
-import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.repository.DatasetRepository
 import org.librefit.enums.exercise.FilterValue
 import org.librefit.enums.exercise.Force
+import org.librefit.ui.models.UiExerciseDC
 
 @ExperimentalCoroutinesApi
 class ExercisesScreenViewModelTest {
@@ -46,13 +46,13 @@ class ExercisesScreenViewModelTest {
     private lateinit var datasetRepository: DatasetRepository
 
     // A controllable flow to simulate repository emissions
-    private lateinit var datasetFlow: MutableStateFlow<List<ExerciseDC>>
+    private lateinit var datasetFlow: MutableStateFlow<List<UiExerciseDC>>
 
     // Test dataset
     private val dataset = listOf(
-        ExerciseDC(name = "Pull exercise", force = Force.PULL),
-        ExerciseDC(name = "Push exercise", force = Force.PUSH),
-        ExerciseDC(name = "Exercise", force = Force.PULL)
+        UiExerciseDC(name = "Pull exercise", force = Force.PULL),
+        UiExerciseDC(name = "Push exercise", force = Force.PUSH),
+        UiExerciseDC(name = "Exercise", force = Force.PULL)
     )
 
     private lateinit var viewModel: ExercisesScreenViewModel
@@ -117,9 +117,9 @@ class ExercisesScreenViewModelTest {
             // Assert: The new, filtered list is ordered by fuzzySearch
             val filteredList = awaitItem()
             assertThat(filteredList).containsExactly(
-                ExerciseDC(name = "Exercise", force = Force.PULL),
-                ExerciseDC(name = "Pull exercise", force = Force.PULL),
-                ExerciseDC(name = "Push exercise", force = Force.PUSH)
+                UiExerciseDC(name = "Exercise", force = Force.PULL),
+                UiExerciseDC(name = "Pull exercise", force = Force.PULL),
+                UiExerciseDC(name = "Push exercise", force = Force.PUSH)
             ).inOrder()
         }
     }
@@ -136,8 +136,8 @@ class ExercisesScreenViewModelTest {
             // Assert: The list is filtered immediately
             val filteredList = awaitItem()
             assertThat(filteredList).containsExactly(
-                ExerciseDC(name = "Pull exercise", force = Force.PULL),
-                ExerciseDC(name = "Exercise", force = Force.PULL)
+                UiExerciseDC(name = "Pull exercise", force = Force.PULL),
+                UiExerciseDC(name = "Exercise", force = Force.PULL)
             ).inOrder()
         }
     }
@@ -161,8 +161,8 @@ class ExercisesScreenViewModelTest {
             // Assert: The final list ordered by fuzzySearch
             val finalList = awaitItem()
             assertThat(finalList).containsExactly(
-                ExerciseDC(name = "Exercise", force = Force.PULL),
-                ExerciseDC(name = "Pull exercise", force = Force.PULL),
+                UiExerciseDC(name = "Exercise", force = Force.PULL),
+                UiExerciseDC(name = "Pull exercise", force = Force.PULL),
             ).inOrder()
         }
     }
