@@ -60,7 +60,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -116,9 +115,9 @@ import kotlin.math.roundToInt
  * is clicked. The passed parameter is used by [org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet] to show the relevant information.
  * @param idSetWithRunningChronometer The ID of the set whose timer is currently active. This ensures
  * only one timer runs at a time. The composable will display a running chronometer for the
- * set matching this ID. Pass 0 if no timer is active. This parameter is only used when [workout] is `true`.
+ * set matching this ID. Pass null if no timer is active. This parameter is only used when [workout] is `true`.
  * @param updateIdSetWithRunningChronometer A callback invoked when the user interacts with a set with a
- * running chronometer. It provides the ID of the set that should become active, or 0 to stop the current timer.
+ * running chronometer. It provides the ID of the set that should become active, or null to stop the current timer.
  * This parameter is only used when [workout] is `true`.
  * @param workout A Boolean flag indicating whether a checkbox should be displayed next to each set.
  */
@@ -128,7 +127,7 @@ fun ExerciseCard(
     modifier: Modifier = Modifier,
     exerciseWithSets: ExerciseWithSets,
     workout: Boolean = false,
-    idSetWithRunningChronometer: Long = 0L,
+    idSetWithRunningChronometer: Long? = null,
     addSet: () -> Unit,
     onDetail: () -> Unit,
     onDelete: () -> Unit,
@@ -136,7 +135,7 @@ fun ExerciseCard(
     deleteSet: (Set) -> Unit,
     updateExercise: (Exercise) -> Unit,
     showInfo: (InfoMode) -> Unit,
-    updateIdSetWithRunningChronometer: (Long) -> Unit = {}
+    updateIdSetWithRunningChronometer: (Long?) -> Unit = {}
 ) {
     ElevatedCard(modifier) {
         Column(
@@ -380,8 +379,8 @@ private fun Sets(
     deleteSet: (Set) -> Unit,
     updateSet: (Set) -> Unit,
     workout: Boolean,
-    idSetWithRunningChronometer: Long,
-    updateIdSetWithRunningChronometer: (Long) -> Unit
+    idSetWithRunningChronometer: Long?,
+    updateIdSetWithRunningChronometer: (Long?) -> Unit
 ) {
 
     val setHeight = 60
@@ -508,12 +507,12 @@ private fun Sets(
                             if (workout) {
 
                                 IconButton(
-                                    enabled = (idSetWithRunningChronometer == 0L
+                                    enabled = (idSetWithRunningChronometer == null
                                             || idSetWithRunningChronometer == set.id)
                                             && !set.completed,
                                     onClick = {
                                         val newId =
-                                            if (idSetWithRunningChronometer == set.id) 0L else set.id
+                                            if (idSetWithRunningChronometer == set.id) null else set.id
                                         updateIdSetWithRunningChronometer(newId)
                                     }
                                 ) {
@@ -593,7 +592,7 @@ private fun Sets(
                             checked = set.completed,
                             onCheckedChange = { checked ->
                                 if (idSetWithRunningChronometer == set.id) {
-                                    updateIdSetWithRunningChronometer(0L)
+                                    updateIdSetWithRunningChronometer(null)
                                 }
                                 updateSet(set.copy(completed = checked))
                             }
@@ -617,7 +616,7 @@ private fun setModeToStringId(setMode: SetMode): Int {
 @Preview
 @Composable
 private fun ExerciseCardPreview() {
-    var currentIdSetWithRunningSet by remember { mutableLongStateOf(0L) }
+    var currentIdSetWithRunningSet by remember { mutableStateOf<Long?>(null) }
 
     var e by remember {
         mutableStateOf(

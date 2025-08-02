@@ -60,10 +60,10 @@ class WorkoutScreenViewModel @Inject constructor(
     workoutRepository: WorkoutRepository
 ) : ViewModel() {
 
-    private val _idSetWithRunningChronometer = MutableStateFlow(0L)
+    private val _idSetWithRunningChronometer = MutableStateFlow<Long?>(null)
     val idSetWithRunningChronometer = _idSetWithRunningChronometer.asStateFlow()
 
-    fun updateIdSetWithRunningChronometer(setId: Long) {
+    fun updateIdSetWithRunningChronometer(setId: Long?) {
         _idSetWithRunningChronometer.value = setId
     }
 
@@ -116,17 +116,16 @@ class WorkoutScreenViewModel @Inject constructor(
             }
         }
 
-        // We launch a coroutine that observes changes to the running ID.
         viewModelScope.launch {
             idSetWithRunningChronometer.collect { runningSetId ->
                 // Whenever the ID changes, cancel any existing timer.
                 chronometerJob?.cancel()
 
                 // If the new ID is a valid set ID (not 0), start a new timer.
-                if (runningSetId > 0L) {
+                if (runningSetId != null) {
                     val set = exercises.value.flatMap { it.sets }.find { it.id == runningSetId }
                     if (set != null) {
-                        // Launch a new coroutine for the timer and assign it to our Job.
+                        // Launch a new coroutine for the timer and assign it to the Job.
                         chronometerJob = launch { startSetChronometer(set) }
                     }
                 }
