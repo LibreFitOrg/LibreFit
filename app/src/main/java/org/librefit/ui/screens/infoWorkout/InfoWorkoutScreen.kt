@@ -52,11 +52,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
-import org.librefit.db.entity.ExerciseDC
-import org.librefit.db.entity.Set
 import org.librefit.db.entity.Workout
-import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCardSmall
@@ -69,6 +67,9 @@ import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.components.charts.Point
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.ExerciseDetailModalBottomSheet
+import org.librefit.ui.models.UiExerciseDC
+import org.librefit.ui.models.UiExerciseWithSets
+import org.librefit.ui.models.UiSet
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter.formatDetails
 import org.librefit.util.Formatter.formatTime
@@ -120,7 +121,7 @@ private fun InfoWorkoutScreenContent(
     workoutDate: String,
     volumeExercises: String,
     workoutChart: WorkoutChart,
-    exercises: List<ExerciseWithSets>,
+    exercises: List<UiExerciseWithSets>,
     points: List<Point>,
     deleteWorkout: () -> Unit,
     detachWorkoutFromRoutine: () -> Unit,
@@ -168,7 +169,7 @@ private fun InfoWorkoutScreenContent(
     /**
      * Holds the information to show in [ExerciseDetailModalBottomSheet]
      */
-    var selectedExercise by remember { mutableStateOf<ExerciseDC?>(null) }
+    var selectedExercise by remember { mutableStateOf<UiExerciseDC?>(null) }
 
     var isModalSheetOpen by remember { mutableStateOf(false) }
 
@@ -380,9 +381,9 @@ private fun InfoRoutineScreenPreview() {
             volumeExercises = "100",
             workoutChart = WorkoutChart.REPS,
             exercises = listOf(
-                ExerciseWithSets(
-                    exerciseDC = ExerciseDC(name = "Name exercise"),
-                    sets = listOf(Set(), Set())
+                UiExerciseWithSets(
+                    exerciseDC = UiExerciseDC(name = "Name exercise"),
+                    sets = persistentListOf(UiSet(), UiSet())
                 )
             ),
             points = (0..10).map { Point(listOf(Random.nextFloat())) },

@@ -24,6 +24,8 @@ import org.librefit.db.dao.WorkoutDao
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
+import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
+import org.librefit.ui.models.mappers.toUi
 
 /**
  * Repository class for managing workout data.
@@ -48,8 +50,8 @@ class WorkoutRepository(private val workoutDao: WorkoutDao) {
         return workoutDao.getWorkout(id)
     }
 
-    suspend fun getWorkoutWithExercisesAndSets(workoutID: Long): WorkoutWithExercisesAndSets {
-        return workoutDao.getWorkoutWithExercisesAndSets(id = workoutID)
+    suspend fun getWorkoutWithExercisesAndSets(workoutID: Long): UiWorkoutWithExercisesAndSets {
+        return workoutDao.getWorkoutWithExercisesAndSets(id = workoutID).toUi()
     }
 
     suspend fun getRoutineFromRoutineID(routineId: Long): Workout {

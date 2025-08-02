@@ -23,21 +23,24 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.librefit.db.entity.Exercise
 import org.librefit.db.entity.ExerciseDC
-import org.librefit.db.entity.Set
 import org.librefit.db.entity.Workout
-import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.SetMode
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
+import org.librefit.ui.models.UiExercise
+import org.librefit.ui.models.UiExerciseWithSets
+import org.librefit.ui.models.UiSet
+import org.librefit.ui.models.mappers.toEntity
+import org.librefit.ui.models.mappers.toUi
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -64,7 +67,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
     private val _routine = MutableStateFlow(Workout())
     val routine = _routine.asStateFlow()
 
-    private val _exercises = MutableStateFlow<List<ExerciseWithSets>>(emptyList())
+    private val _exercises = MutableStateFlow<List<UiExerciseWithSets>>(emptyList())
     val exercises = _exercises.asStateFlow()
 
     init {
@@ -94,8 +97,8 @@ class EditWorkoutScreenViewModel @Inject constructor(
     }
 
     fun addExerciseWithSets(exerciseDC: ExerciseDC) {
-        val newExercise = ExerciseWithSets(
-            exercise = Exercise(
+        val newExercise = UiExerciseWithSets(
+            exercise = UiExercise(
                 idExerciseDC = exerciseDC.id,
                 setMode = when (exerciseDC.category) {
                     Category.STRETCHING -> SetMode.DURATION
@@ -108,7 +111,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
                     }
                 }
             ),
-            exerciseDC = exerciseDC
+            exerciseDC = exerciseDC.toUi()
         )
 
         _exercises.update { exercises ->
@@ -116,57 +119,116 @@ class EditWorkoutScreenViewModel @Inject constructor(
         }
     }
 
-    fun addSetToExercise(exerciseWithSets: ExerciseWithSets) {
-        val newSet = exerciseWithSets.sets
-            .lastOrNull()?.copy(id = Random.Default.nextLong())
-            ?: Set()
-
+    fun addSetToExercise(exerciseId: Long) {
         _exercises.update { exercises ->
             exercises.map { exercise ->
-                if (exercise == exerciseWithSets) {
-                    exercise.copy(sets = exercise.sets + newSet)
+                if (exercise.exercise.id == exerciseId) {
+                    val newSet = exercise.sets
+                        .lastOrNull()?.copy(id = Random.Default.nextLong())
+                        ?: UiSet()
+
+                    val newSets = exercise.sets.toMutableList() + newSet
+                    exercise.copy(sets = newSets.toImmutableList())
                 } else exercise
             }
         }
     }
 
-    fun updateSet(set: Set) {
+    fun updateSetTime(time: Int, id: Long) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
-                if (exercise.sets.any { it.id == set.id }) {
+                if (exercise.sets.any { it.id == id }) {
                     exercise.copy(
                         sets = exercise.sets.map {
-                            if (it.id == set.id) set else it
-                        }
+                            if (it.id == id) it.copy(elapsedTime = time) else it
+                        }.toImmutableList()
                     )
                 } else exercise
             }
         }
     }
 
-    fun deleteSet(set: Set) {
+    fun updateSetReps(reps: Int, id: Long) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
-                if (exercise.sets.any { it.id == set.id }) {
+                if (exercise.sets.any { it.id == id }) {
                     exercise.copy(
-                        sets = exercise.sets.filter { it.id != set.id }
+                        sets = exercise.sets.map {
+                            if (it.id == id) it.copy(reps = reps) else it
+                        }.toImmutableList()
                     )
                 } else exercise
             }
         }
     }
 
-    fun updateExercise(exercise: Exercise) {
+    fun updateSetLoad(load: Float, id: Long) {
         _exercises.update { currentExercises ->
-            currentExercises.map {
-                if (it.exercise.id == exercise.id) it.copy(exercise = exercise) else it
+            currentExercises.map { exercise ->
+                if (exercise.sets.any { it.id == id }) {
+                    exercise.copy(
+                        sets = exercise.sets.map {
+                            if (it.id == id) it.copy(load = load) else it
+                        }.toImmutableList()
+                    )
+                } else exercise
             }
         }
     }
 
-    fun deleteExercise(exerciseWithSets: ExerciseWithSets) {
+    fun updateSetCompleted(completed: Boolean, id: Long) {
         _exercises.update { currentExercises ->
-            currentExercises.filter { it != exerciseWithSets }
+            currentExercises.map { exercise ->
+                if (exercise.sets.any { it.id == id }) {
+                    exercise.copy(
+                        sets = exercise.sets.map {
+                            if (it.id == id) it.copy(completed = completed) else it
+                        }.toImmutableList()
+                    )
+                } else exercise
+            }
+        }
+    }
+
+    fun deleteSet(id: Long) {
+        _exercises.update { currentExercises ->
+            currentExercises.map { exercise ->
+                if (exercise.sets.any { it.id == id }) {
+                    exercise.copy(
+                        sets = exercise.sets.filter { it.id != id }.toImmutableList()
+                    )
+                } else exercise
+            }
+        }
+    }
+
+    fun updateExerciseNotes(notes: String, id: Long) {
+        _exercises.update { currentExercises ->
+            currentExercises.map { eWs ->
+                if (eWs.exercise.id == id) eWs.copy(exercise = eWs.exercise.copy(notes = notes)) else eWs
+            }
+        }
+    }
+
+    fun updateExerciseRestTime(restTime: Int, id: Long) {
+        _exercises.update { currentExercises ->
+            currentExercises.map { eWs ->
+                if (eWs.exercise.id == id) eWs.copy(exercise = eWs.exercise.copy(restTime = restTime)) else eWs
+            }
+        }
+    }
+
+    fun updateExerciseSetMode(setMode: SetMode, id: Long) {
+        _exercises.update { currentExercises ->
+            currentExercises.map { eWs ->
+                if (eWs.exercise.id == id) eWs.copy(exercise = eWs.exercise.copy(setMode = setMode)) else eWs
+            }
+        }
+    }
+
+    fun deleteExercise(exerciseId: Long) {
+        _exercises.update { currentExercises ->
+            currentExercises.filter { it.exercise.id != exerciseId }
         }
     }
 
@@ -193,7 +255,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
             workoutRepository.addWorkoutWithExercisesAndSets(
                 WorkoutWithExercisesAndSets(
                     workout = workout.value.copy(routine = isRoutine.value),
-                    exercisesWithSets = exercises.value
+                    exercisesWithSets = exercises.value.map { it.toEntity() }
                 )
             )
         }

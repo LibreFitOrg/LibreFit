@@ -69,12 +69,10 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import org.librefit.R
-import org.librefit.db.entity.Exercise
 import org.librefit.db.entity.ExerciseDC
-import org.librefit.db.entity.Set
-import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.InfoMode
+import org.librefit.enums.SetMode
 import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.LibreFitLazyColumn
@@ -84,6 +82,8 @@ import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.ExerciseDetailModalBottomSheet
 import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
+import org.librefit.ui.models.UiExerciseWithSets
+import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.util.Formatter.formatTime
 import java.time.LocalDateTime
@@ -105,7 +105,7 @@ fun WorkoutScreen(
 
     val isChronometerPaused by viewModel.isChronometerPaused.collectAsState()
 
-    val exerciseWithSets by viewModel.exercises.collectAsState()
+    val exercisesWithSets by viewModel.exercises.collectAsState()
 
     val keepWorkoutScreenOn by viewModel.keepScreenOn.collectAsState()
 
@@ -156,7 +156,7 @@ fun WorkoutScreen(
 
 
     BackHandler {
-        if (!showConfirmDialog && exerciseWithSets.isNotEmpty()) {
+        if (!showConfirmDialog && exercisesWithSets.isNotEmpty()) {
             showConfirmDialog = true
         } else {
             viewModel.stopWorkoutService()
@@ -168,11 +168,20 @@ fun WorkoutScreen(
     /**
      * It holds [ExerciseDC] for [ExerciseDetailModalBottomSheet]
      */
-    var selectedExercise by remember { mutableStateOf<ExerciseDC?>(null) }
+    var selectedExerciseId by remember { mutableStateOf<String?>(null) }
+    val onSelectedExerciseIdChange = remember {
+        { newId: String ->
+            selectedExerciseId = newId
+        }
+    }
 
-    selectedExercise?.let {
-        ExerciseDetailModalBottomSheet(exercise = it) {
-            selectedExercise = null
+    selectedExerciseId?.let {
+        ExerciseDetailModalBottomSheet(
+            exercise = exercisesWithSets.map { it.exerciseDC }
+                .find { it.id == selectedExerciseId }!!
+        )
+        {
+            selectedExerciseId = null
         }
     }
 
@@ -181,15 +190,15 @@ fun WorkoutScreen(
     WorkoutScreenContent(
         timeElapsed = timeElapsed,
         isChronometerPaused = isChronometerPaused,
-        isListEmpty = exerciseWithSets.isEmpty(),
-        exercisesWithSets = exerciseWithSets,
+        isListEmpty = exercisesWithSets.isEmpty(),
+        exercisesWithSets = exercisesWithSets,
         progress = viewModel.getProgress(),
         timerProgress = viewModel.getRestTimeProgress(),
         idSetWithRunningChronometer = idSetWithRunningChronometer,
         restTime = restTime,
         updateIdSetWithRunningChronometer = viewModel::updateIdSetWithRunningChronometer,
         navigateBack = {
-            if (exerciseWithSets.isEmpty()) {
+            if (exercisesWithSets.isEmpty()) {
                 viewModel.stopWorkoutService()
                 navController.popBackStack()
             } else {
@@ -207,21 +216,24 @@ fun WorkoutScreen(
                             timeElapsed = timeElapsed,
                             completed = LocalDateTime.now()
                         ),
-                        exercisesWithSets = exerciseWithSets,
+                        exercisesWithSets = exercisesWithSets.map { it.toEntity() },
                     )
                 )
             )
         },
-        infoExercise = {
-            selectedExercise = it
-        },
+        onSelectedExerciseIdChange = onSelectedExerciseIdChange,
         startChronometer = viewModel::startChronometer,
         pauseChronometer = viewModel::pauseChronometer,
+        updateSetTime = viewModel::updateSetTime,
+        updateSetReps = viewModel::updateSetReps,
+        updateSetLoad = viewModel::updateSetLoad,
+        updateSetCompleted = viewModel::updateSetCompleted,
         addSetToExercise = viewModel::addSetToExercise,
-        deleteExercise = viewModel::deleteExercise,
-        updateSet = viewModel::updateSet,
         deleteSet = viewModel::deleteSet,
-        updateExercise = viewModel::updateExercise,
+        updateExerciseNotes = viewModel::updateExerciseNotes,
+        updateExerciseRestTime = viewModel::updateExerciseRestTime,
+        updateExerciseSetMode = viewModel::updateExerciseSetMode,
+        deleteExercise = viewModel::deleteExercise,
         showInfo = { infoMode = it },
         modifyRestTime = viewModel::modifyRestTime
     )
@@ -248,7 +260,7 @@ fun WorkoutScreen(
 private fun WorkoutScreenContent(
     timeElapsed: Int,
     isChronometerPaused: Boolean,
-    exercisesWithSets: List<ExerciseWithSets>,
+    exercisesWithSets: List<UiExerciseWithSets>,
     progress: Float,
     isListEmpty: Boolean,
     timerProgress: Float,
@@ -260,12 +272,17 @@ private fun WorkoutScreenContent(
     action: () -> Unit,
     startChronometer: () -> Unit,
     pauseChronometer: () -> Unit,
-    addSetToExercise: (ExerciseWithSets) -> Unit,
-    infoExercise: (ExerciseDC) -> Unit,
-    deleteExercise: (ExerciseWithSets) -> Unit,
-    updateSet: (Set) -> Unit,
-    deleteSet: (Set) -> Unit,
-    updateExercise: (Exercise) -> Unit,
+    addSetToExercise: (Long) -> Unit,
+    updateSetTime: (Int, Long) -> Unit,
+    updateSetReps: (Int, Long) -> Unit,
+    updateSetLoad: (Float, Long) -> Unit,
+    updateSetCompleted: (Boolean, Long) -> Unit,
+    deleteSet: (Long) -> Unit,
+    updateExerciseNotes: (String, Long) -> Unit,
+    updateExerciseRestTime: (Int, Long) -> Unit,
+    updateExerciseSetMode: (SetMode, Long) -> Unit,
+    deleteExercise: (Long) -> Unit,
+    onSelectedExerciseIdChange: (String) -> Unit,
     showInfo: (InfoMode) -> Unit,
     modifyRestTime: (Boolean) -> Unit
 ) {
@@ -316,20 +333,21 @@ private fun WorkoutScreenContent(
                     ExerciseCard(
                         modifier = Modifier.animateItem(),
                         exerciseWithSets = exerciseWithSets,
-                        addSet = {
-                            addSetToExercise(exerciseWithSets)
-                        },
-                        onDetail = {
-                            infoExercise(exerciseWithSets.exerciseDC)
-                        },
-                        onDelete = { deleteExercise(exerciseWithSets) },
-                        updateSet = updateSet,
-                        deleteSet = deleteSet,
-                        updateExercise = updateExercise,
-                        showInfo = showInfo,
                         idSetWithRunningChronometer = idSetWithRunningChronometer,
+                        workout = true,
+                        addSet = addSetToExercise,
+                        onDetail = onSelectedExerciseIdChange,
+                        onDelete = deleteExercise,
+                        deleteSet = deleteSet,
+                        showInfo = showInfo,
                         updateIdSetWithRunningChronometer = updateIdSetWithRunningChronometer,
-                        workout = true
+                        updateExerciseNotes = updateExerciseNotes,
+                        updateExerciseRestTime = updateExerciseRestTime,
+                        updateExerciseSetMode = updateExerciseSetMode,
+                        updateSetTime = updateSetTime,
+                        updateSetReps = updateSetReps,
+                        updateSetLoad = updateSetLoad,
+                        updateSetCompleted = updateSetCompleted,
                     )
                 }
             }

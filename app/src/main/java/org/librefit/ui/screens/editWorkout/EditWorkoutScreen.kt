@@ -46,12 +46,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
-import org.librefit.db.entity.Exercise
-import org.librefit.db.entity.ExerciseDC
-import org.librefit.db.entity.Set
 import org.librefit.db.entity.Workout
-import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
@@ -65,6 +62,11 @@ import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.ExerciseDetailModalBottomSheet
 import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
+import org.librefit.ui.models.UiExercise
+import org.librefit.ui.models.UiExerciseDC
+import org.librefit.ui.models.UiExerciseWithSets
+import org.librefit.ui.models.UiSet
+import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
 
@@ -92,12 +94,17 @@ fun EditWorkoutScreen(
         isTitleEmpty = viewModel.isTitleEmpty(),
         updateTitle = viewModel::updateTitle,
         updateNotes = viewModel::updateNotes,
+        updateSetTime = viewModel::updateSetTime,
+        updateSetReps = viewModel::updateSetReps,
+        updateSetLoad = viewModel::updateSetLoad,
+        updateSetCompleted = viewModel::updateSetCompleted,
+        deleteSet = viewModel::deleteSet,
         addSetToExercise = viewModel::addSetToExercise,
         deleteExercise = viewModel::deleteExercise,
-        updateSet = viewModel::updateSet,
-        deleteSet = viewModel::deleteSet,
-        updateExercise = viewModel::updateExercise,
-        saveWorkoutWithExercisesInDB = viewModel::saveWorkoutWithExercisesInDB
+        updateExerciseNotes = viewModel::updateExerciseNotes,
+        updateExerciseRestTime = viewModel::updateExerciseRestTime,
+        updateExerciseSetMode = viewModel::updateExerciseSetMode,
+        saveWorkoutWithExercisesInDB = viewModel::saveWorkoutWithExercisesInDB,
     )
 
 }
@@ -106,17 +113,22 @@ fun EditWorkoutScreen(
 private fun EditWorkoutScreenContent(
     navController: NavHostController,
     typeOfEdit: Boolean?,
-    exercisesWithSets: List<ExerciseWithSets>,
+    exercisesWithSets: List<UiExerciseWithSets>,
     workout: Workout,
     isTitleTooLong: Boolean,
     isTitleEmpty: Boolean,
     updateTitle: (String) -> Unit,
     updateNotes: (String) -> Unit,
-    addSetToExercise: (ExerciseWithSets) -> Unit,
-    deleteExercise: (ExerciseWithSets) -> Unit,
-    updateSet: (Set) -> Unit,
-    deleteSet: (Set) -> Unit,
-    updateExercise: (Exercise) -> Unit,
+    deleteSet: (Long) -> Unit,
+    updateSetTime: (Int, Long) -> Unit,
+    updateSetReps: (Int, Long) -> Unit,
+    updateSetLoad: (Float, Long) -> Unit,
+    updateSetCompleted: (Boolean, Long) -> Unit,
+    addSetToExercise: (Long) -> Unit,
+    deleteExercise: (Long) -> Unit,
+    updateExerciseNotes: (String, Long) -> Unit,
+    updateExerciseRestTime: (Int, Long) -> Unit,
+    updateExerciseSetMode: (SetMode, Long) -> Unit,
     saveWorkoutWithExercisesInDB: () -> Unit
 ) {
 
@@ -149,15 +161,27 @@ private fun EditWorkoutScreenContent(
     /**
      * Used to display information about the selected exercise in [ExerciseDetailModalBottomSheet]
      */
-    var selectedExercise by remember { mutableStateOf(ExerciseDC()) }
-    var isModalSheetOpen by remember { mutableStateOf(false) }
+    var selectedExerciseId by remember { mutableStateOf<String?>(null) }
+    val onSelectedExerciseIdChange = remember {
+        { newId: String ->
+            selectedExerciseId = newId
+        }
+    }
 
-    if (isModalSheetOpen) {
-        ExerciseDetailModalBottomSheet(exercise = selectedExercise) { isModalSheetOpen = false }
+    if (selectedExerciseId != null) {
+        ExerciseDetailModalBottomSheet(
+            exercise = exercisesWithSets.map { it.exerciseDC }
+                .find { it.id == selectedExerciseId }!!
+        ) { selectedExerciseId = null }
     }
 
 
     var infoMode by remember { mutableStateOf(InfoMode.DISMISS) }
+    val onInfoModeChange = remember {
+        { newValue: InfoMode ->
+            infoMode = newValue
+        }
+    }
 
     InfoModalBottomSheet(infoMode) { infoMode = InfoMode.DISMISS }
 
@@ -182,7 +206,7 @@ private fun EditWorkoutScreenContent(
                     Route.BeforeSavingScreen(
                         WorkoutWithExercisesAndSets(
                             workout = workout,
-                            exercisesWithSets = exercisesWithSets
+                            exercisesWithSets = exercisesWithSets.map { it.toEntity() }
                         )
                     )
                 )
@@ -271,17 +295,19 @@ private fun EditWorkoutScreenContent(
                     ExerciseCard(
                         modifier = Modifier.animateItem(),
                         exerciseWithSets = exerciseWithSets,
-                        addSet = { addSetToExercise(exerciseWithSets) },
-                        onDetail = {
-                            selectedExercise = exerciseWithSets.exerciseDC
-                            isModalSheetOpen = true
-                        },
-                        onDelete = { deleteExercise(exerciseWithSets) },
-                        updateSet = updateSet,
+                        workout = typeOfEdit == false,
+                        addSet = addSetToExercise,
+                        onDetail = onSelectedExerciseIdChange,
+                        onDelete = deleteExercise,
                         deleteSet = deleteSet,
-                        updateExercise = updateExercise,
-                        showInfo = { infoMode = it },
-                        workout = typeOfEdit == false
+                        updateExerciseNotes = updateExerciseNotes,
+                        updateExerciseRestTime = updateExerciseRestTime,
+                        updateExerciseSetMode = updateExerciseSetMode,
+                        showInfo = onInfoModeChange,
+                        updateSetTime = updateSetTime,
+                        updateSetReps = updateSetReps,
+                        updateSetLoad = updateSetLoad,
+                        updateSetCompleted = updateSetCompleted
                     )
                 }
             }
@@ -303,11 +329,11 @@ private fun EditWorkoutScreenPreview() {
         EditWorkoutScreenContent(
             navController = rememberNavController(),
             typeOfEdit = typeOfEdit,
-            exercisesWithSets = listOf(
-                ExerciseWithSets(
-                    exercise = Exercise(restTime = 90, setMode = SetMode.BODYWEIGHT),
-                    exerciseDC = ExerciseDC(name = "Name exercise"),
-                    sets = listOf(Set(), Set(completed = true))
+            exercisesWithSets = persistentListOf(
+                UiExerciseWithSets(
+                    exercise = UiExercise(restTime = 90, setMode = SetMode.BODYWEIGHT),
+                    exerciseDC = UiExerciseDC(name = "Name exercise"),
+                    sets = persistentListOf(UiSet(), UiSet(completed = true))
                 )
             ),
             workout = Workout(title = "Title workout", notes = "This is a note"),
@@ -317,10 +343,15 @@ private fun EditWorkoutScreenPreview() {
             updateNotes = { _ -> },
             addSetToExercise = { _ -> },
             deleteExercise = { _ -> },
-            updateSet = { _ -> },
             deleteSet = { _ -> },
-            updateExercise = { _ -> },
             saveWorkoutWithExercisesInDB = { },
+            updateExerciseNotes = { _, _ -> },
+            updateExerciseRestTime = { _, _ -> },
+            updateExerciseSetMode = { _, _ -> },
+            updateSetTime = { _, _ -> },
+            updateSetReps = { _, _ -> },
+            updateSetLoad = { _, _ -> },
+            updateSetCompleted = { _, _ -> }
         )
     }
 }

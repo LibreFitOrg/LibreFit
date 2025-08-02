@@ -79,38 +79,57 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.HapticFeedbackConstantsCompat
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import org.librefit.R
-import org.librefit.db.entity.Exercise
-import org.librefit.db.entity.ExerciseDC
-import org.librefit.db.entity.Set
-import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
+import org.librefit.ui.models.UiExercise
+import org.librefit.ui.models.UiExerciseDC
+import org.librefit.ui.models.UiExerciseWithSets
+import org.librefit.ui.models.UiSet
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatTime
 import kotlin.math.roundToInt
 
+private val NoOpUpdate: (Long?) -> Unit = {}
+
 /**
- * A custom [ElevatedCard] designed to display an [ExerciseWithSets] with a uniform appearance across
+ * A custom [ElevatedCard] designed to display an [UiExerciseWithSets] with a uniform appearance across
  * the app.
  *
  * @param modifier A [Modifier] that should be passed as `Modifier.animateItem` to enable
  * animation for the card within the list.
- * @param exerciseWithSets An instance of [ExerciseWithSets] containing all the relevant information
+ * @param exerciseWithSets An instance of [UiExerciseWithSets] containing all the relevant information
  * required for the card display.
  * @param addSet A lambda function invoked when the "Add set" button is clicked.
  * @param onDetail A lambda function triggered when the *Info* icon is clicked, which should open
  * the [org.librefit.ui.components.modalBottomSheets.ExerciseDetailModalBottomSheet].
  * @param onDelete A lambda function executed when the *Delete* icon is clicked, it should result in
  * the removal of the card.
- * @param updateSet A function to update a specific set. For more details, refer to
- * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateSet] and
- * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateSet].
+ * @param updateExerciseNotes A function to update notes based on [UiExercise.id]. For more details, refer to
+ * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExerciseNotes] and
+ * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateExerciseNotes].
+ * @param updateExerciseRestTime A function to update rest time based on [UiExercise.id]. For more details, refer to
+ * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExerciseRestTime] and
+ * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateExerciseRestTime].
+ * @param updateExerciseSetMode A function to update the set mode based on.
+ * For more details, refer to [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExerciseSetMode]
+ * and [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateExerciseSetMode].
+ * @param updateSetLoad A function to update load based on [UiSet.id]. For more details, refer to
+ * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateSetLoad] and
+ * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateSetLoad].
+ * @param updateSetReps A function to update reps based on [UiSet.id].. For more details, refer to
+ * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateSetReps] and
+ * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateSetReps].
+ * @param updateSetTime A function to update time based on [UiSet.id].. For more details, refer to
+ * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateSetTime] and
+ * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateSetTime].
+ * @param updateSetCompleted A function to update completed state based on [UiSet.id]. For more details, refer to
+ * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateSetCompleted] and
+ * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateSetCompleted].
  * @param deleteSet A function called when the user swipes the set to remove it.
- * @param updateExercise A function to update the exercise details. For further information,
- * see [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExercise] and
- * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateExercise].
  * @param showInfo A lambda function executed when info icon next to "type of set" or "rest time" text
  * is clicked. The passed parameter is used by [org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet] to show the relevant information.
  * @param idSetWithRunningChronometer The ID of the set whose timer is currently active. This ensures
@@ -125,17 +144,22 @@ import kotlin.math.roundToInt
 @Composable
 fun ExerciseCard(
     modifier: Modifier = Modifier,
-    exerciseWithSets: ExerciseWithSets,
+    exerciseWithSets: UiExerciseWithSets,
     workout: Boolean = false,
     idSetWithRunningChronometer: Long? = null,
-    addSet: () -> Unit,
-    onDetail: () -> Unit,
-    onDelete: () -> Unit,
-    updateSet: (Set) -> Unit,
-    deleteSet: (Set) -> Unit,
-    updateExercise: (Exercise) -> Unit,
+    addSet: (Long) -> Unit,
+    onDetail: (String) -> Unit,
+    onDelete: (Long) -> Unit,
+    deleteSet: (Long) -> Unit,
+    updateExerciseNotes: (String, Long) -> Unit,
+    updateExerciseRestTime: (Int, Long) -> Unit,
+    updateExerciseSetMode: (SetMode, Long) -> Unit,
+    updateSetTime: (Int, Long) -> Unit,
+    updateSetReps: (Int, Long) -> Unit,
+    updateSetLoad: (Float, Long) -> Unit,
+    updateSetCompleted: (Boolean, Long) -> Unit,
     showInfo: (InfoMode) -> Unit,
-    updateIdSetWithRunningChronometer: (Long?) -> Unit = {}
+    updateIdSetWithRunningChronometer: (Long?) -> Unit = NoOpUpdate
 ) {
     ElevatedCard(modifier) {
         Column(
@@ -156,13 +180,13 @@ fun ExerciseCard(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
                 )
-                IconButton(onClick = onDetail) {
+                IconButton(onClick = { onDetail(exerciseWithSets.exerciseDC.id) }) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_info),
                         contentDescription = stringResource(R.string.info)
                     )
                 }
-                IconButton(onClick = onDelete) {
+                IconButton(onClick = { onDelete(exerciseWithSets.exercise.id) }) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
                         contentDescription = stringResource(R.string.delete)
@@ -174,9 +198,7 @@ fun ExerciseCard(
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(text = stringResource(id = R.string.notes)) },
                 value = exerciseWithSets.exercise.notes,
-                onValueChange = {
-                    updateExercise(exerciseWithSets.exercise.copy(notes = it))
-                }
+                onValueChange = { updateExerciseNotes(it, exerciseWithSets.exercise.id) }
             )
 
             HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
@@ -213,7 +235,10 @@ fun ExerciseCard(
                     }
                 },
                 onValueChangeFinished = {
-                    updateExercise(exerciseWithSets.exercise.copy(restTime = restTime))
+                    updateExerciseRestTime(
+                        restTime,
+                        exerciseWithSets.exercise.id
+                    )
                 },
                 valueRange = 0f..300f,
                 steps = 19
@@ -282,7 +307,7 @@ fun ExerciseCard(
                         SetMode.entries.forEachIndexed { index, mode ->
                             DropdownMenuItem(
                                 onClick = {
-                                    updateExercise(exerciseWithSets.exercise.copy(setMode = mode))
+                                    updateExerciseSetMode(mode, exerciseWithSets.exercise.id)
                                     expanded = false
                                 },
                                 text = {
@@ -354,10 +379,13 @@ fun ExerciseCard(
             Sets(
                 exerciseWithSets = exerciseWithSets,
                 deleteSet = deleteSet,
-                updateSet = updateSet,
                 workout = workout,
                 idSetWithRunningChronometer = idSetWithRunningChronometer,
-                updateIdSetWithRunningChronometer = updateIdSetWithRunningChronometer
+                updateIdSetWithRunningChronometer = updateIdSetWithRunningChronometer,
+                updateSetTime = updateSetTime,
+                updateSetReps = updateSetReps,
+                updateSetLoad = updateSetLoad,
+                updateSetCompleted = updateSetCompleted
             )
 
             HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
@@ -366,7 +394,7 @@ fun ExerciseCard(
             LibreFitButton(
                 text = stringResource(id = R.string.add_set),
                 icon = ImageVector.vectorResource(R.drawable.ic_add_circle),
-                onClick = addSet,
+                onClick = { addSet(exerciseWithSets.exercise.id) },
                 elevated = false
             )
         }
@@ -375,9 +403,12 @@ fun ExerciseCard(
 
 @Composable
 private fun Sets(
-    exerciseWithSets: ExerciseWithSets,
-    deleteSet: (Set) -> Unit,
-    updateSet: (Set) -> Unit,
+    exerciseWithSets: UiExerciseWithSets,
+    deleteSet: (Long) -> Unit,
+    updateSetTime: (Int, Long) -> Unit,
+    updateSetReps: (Int, Long) -> Unit,
+    updateSetLoad: (Float, Long) -> Unit,
+    updateSetCompleted: (Boolean, Long) -> Unit,
     workout: Boolean,
     idSetWithRunningChronometer: Long?,
     updateIdSetWithRunningChronometer: (Long?) -> Unit
@@ -404,7 +435,7 @@ private fun Sets(
                 confirmValueChange = {
                     when (it) {
                         SwipeToDismissBoxValue.Settled -> return@rememberSwipeToDismissBoxState false
-                        else -> deleteSet(set)
+                        else -> deleteSet(set.id)
                     }
                     return@rememberSwipeToDismissBoxState true
                 },
@@ -535,7 +566,7 @@ private fun Sets(
                                     val newTimeValue =
                                         Formatter.parseTimeInputToSeconds(string)
 
-                                    updateSet(set.copy(elapsedTime = newTimeValue))
+                                    updateSetTime(newTimeValue, set.id)
                                 },
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -554,7 +585,7 @@ private fun Sets(
                             onValueChange = { string ->
                                 val newRepValue = Formatter.parseIntegerValueInput(string)
 
-                                newRepValue?.let { updateSet(set.copy(reps = it)) }
+                                newRepValue?.let { updateSetReps(it, set.id) }
                             },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -574,7 +605,7 @@ private fun Sets(
                                 onValueChange = { newString ->
                                     val newWeightValue = Formatter.parseFloatValueInput(newString)
 
-                                    newWeightValue?.let { updateSet(set.copy(load = it)) }
+                                    newWeightValue?.let { updateSetLoad(it, set.id) }
                                 },
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -594,7 +625,7 @@ private fun Sets(
                                 if (idSetWithRunningChronometer == set.id) {
                                     updateIdSetWithRunningChronometer(null)
                                 }
-                                updateSet(set.copy(completed = checked))
+                                updateSetCompleted(checked, set.id)
                             }
                         )
                     }
@@ -620,14 +651,14 @@ private fun ExerciseCardPreview() {
 
     var e by remember {
         mutableStateOf(
-            ExerciseWithSets(
-                exercise = Exercise(
+            UiExerciseWithSets(
+                exercise = UiExercise(
                     notes = "This is a note!",
                     restTime = 90,
                     setMode = SetMode.DURATION
                 ),
-                sets = listOf(Set(completed = true), Set(elapsedTime = 100)),
-                exerciseDC = ExerciseDC(name = "Exercise name")
+                sets = persistentListOf(UiSet(completed = true), UiSet(elapsedTime = 100)),
+                exerciseDC = UiExerciseDC(name = "Exercise name")
             )
         )
     }
@@ -635,24 +666,26 @@ private fun ExerciseCardPreview() {
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
         ExerciseCard(
             exerciseWithSets = e,
-            addSet = { e = e.copy(sets = e.sets + Set()) },
+            addSet = {
+                val newSets = e.sets.toMutableList() + UiSet()
+                e = e.copy(sets = newSets.toImmutableList())
+            },
             onDetail = {},
             onDelete = {},
-            updateSet = { set ->
-                e = e.copy(
-                    sets = e.sets.map {
-                        if (it.id == set.id) set else it
-                    }
-                )
+            deleteSet = { id ->
+                e = e.copy(sets = e.sets.filter { it.id != id }.toImmutableList())
             },
-            deleteSet = { set ->
-                e = e.copy(sets = e.sets.filter { it.id != set.id })
-            },
-            updateExercise = { e = e.copy(exercise = it) },
             showInfo = {},
             idSetWithRunningChronometer = currentIdSetWithRunningSet,
             updateIdSetWithRunningChronometer = { currentIdSetWithRunningSet = it },
-            workout = true
+            workout = true,
+            updateExerciseNotes = { _, _ -> },
+            updateExerciseRestTime = { _, _ -> },
+            updateExerciseSetMode = { _, _ -> },
+            updateSetTime = { _, _ -> },
+            updateSetReps = { _, _ -> },
+            updateSetLoad = { _, _ -> },
+            updateSetCompleted = { _, _ -> }
         )
     }
 }

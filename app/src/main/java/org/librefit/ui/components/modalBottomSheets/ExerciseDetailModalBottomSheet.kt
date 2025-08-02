@@ -56,9 +56,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import org.librefit.R
-import org.librefit.db.entity.ExerciseDC
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.exercise.Force
@@ -69,13 +69,14 @@ import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.bottomMargin
+import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseDetailModalBottomSheet(
-    exercise: ExerciseDC,
+    exercise: UiExerciseDC,
     onDismiss: () -> Unit
 ) {
 
@@ -214,7 +215,7 @@ private fun MusclesSection(musclesText: String, musclesList: List<Muscle>) {
 }
 
 @Composable
-private fun AlternatingImages(exercise: ExerciseDC) {
+private fun AlternatingImages(exercise: UiExerciseDC) {
     val firstBitmap =
         BitmapFactory.decodeStream(LocalContext.current.assets.open(exercise.images[0]))
     val secondBitmap =
@@ -267,19 +268,19 @@ private fun AlternatingImages(exercise: ExerciseDC) {
 @Preview
 @Composable
 private fun ExerciseDetailModalBottomSheetPreview() {
-    LibreFitTheme(false, true) {
+    LibreFitTheme(dynamicColor = false, darkTheme = true) {
         var openModalBottomSheet by remember { mutableStateOf(false) }
 
         if (openModalBottomSheet) {
             ExerciseDetailModalBottomSheet(
-                exercise = ExerciseDC(
+                exercise = UiExerciseDC(
                     name = "3_4_Sit-Up",
                     force = Force.PULL,
                     level = Level.BEGINNER,
                     mechanic = Mechanic.COMPOUND,
                     equipment = Equipment.BODY_ONLY,
-                    primaryMuscles = listOf(Muscle.ABDOMINALS),
-                    instructions = listOf(
+                    primaryMuscles = persistentListOf(Muscle.ABDOMINALS),
+                    instructions = persistentListOf(
                         "Lie down on the floor and secure your feet. Your legs should be bent at the knees.",
                         "Place your hands behind or to the side of your head. You will begin with your back on the ground. This will be your starting position.",
                         "Flex your hips and spine to raise your torso toward your knees.",
@@ -287,7 +288,7 @@ private fun ExerciseDetailModalBottomSheetPreview() {
                         "Repeat for the recommended amount of repetitions."
                     ),
                     category = Category.STRENGTH,
-                    images = listOf("3_4_Sit-Up/0.jpg", "3_4_Sit-Up/1.jpg")
+                    images = persistentListOf("3_4_Sit-Up/0.jpg", "3_4_Sit-Up/1.jpg")
                 )
             ) { openModalBottomSheet = false }
         }

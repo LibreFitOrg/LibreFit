@@ -24,6 +24,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,6 +36,9 @@ import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.SetMode
 import org.librefit.helpers.DataHelper
 import org.librefit.services.WorkoutServiceManager
+import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
+import org.librefit.ui.models.mappers.toEntity
+import org.librefit.ui.models.mappers.toUi
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -58,10 +62,10 @@ class BeforeSavingScreenViewModel @Inject constructor(
         ?: throw IllegalArgumentException("Invalid WORKOUT_WITH_EXERCISES_AND_SET_KEY")
 
 
-    private val workoutWithExercisesAndSets: WorkoutWithExercisesAndSets =
+    private val workoutWithExercisesAndSets: UiWorkoutWithExercisesAndSets =
         workoutWithExercisesAndSetsJson
             .let { it ->
-                Json.decodeFromString<WorkoutWithExercisesAndSets>(Uri.decode(it))
+                Json.decodeFromString<WorkoutWithExercisesAndSets>(Uri.decode(it)).toUi()
             }
 
     val exercises = workoutWithExercisesAndSets.exercisesWithSets
@@ -72,7 +76,7 @@ class BeforeSavingScreenViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val volume = dataHelper.fetchVolumeFromWorkout(
-                WorkoutWithExercisesAndSets(Workout(), exercises)
+                WorkoutWithExercisesAndSets(Workout(), exercises.map { it.toEntity() })
             )
 
             _volume.value = String.format(Locale.getDefault(), "%.2f", volume)
@@ -136,15 +140,17 @@ class BeforeSavingScreenViewModel @Inject constructor(
 
     fun saveExercisesWithWorkout() {
         val list = this.exercises.map { exercise ->
-            exercise.copy(sets = exercise.sets.map {
-                // This keeps only relevant data on the actual type of set
-                when (exercise.exercise.setMode) {
-                    SetMode.DURATION -> it.copy(reps = 0, load = 0f)
-                    SetMode.BODYWEIGHT -> it.copy(elapsedTime = 0, load = 0f)
-                    SetMode.BODYWEIGHT_WITH_LOAD -> it.copy(elapsedTime = 0)
-                    SetMode.LOAD -> it.copy(elapsedTime = 0)
-                }
-            })
+            exercise.copy(
+                sets = exercise.sets.map {
+                    // This keeps only relevant data on the actual type of set
+                    when (exercise.exercise.setMode) {
+                        SetMode.DURATION -> it.copy(reps = 0, load = 0f)
+                        SetMode.BODYWEIGHT -> it.copy(elapsedTime = 0, load = 0f)
+                        SetMode.BODYWEIGHT_WITH_LOAD -> it.copy(elapsedTime = 0)
+                        SetMode.LOAD -> it.copy(elapsedTime = 0)
+                    }
+                }.toImmutableList()
+            ).toEntity()
         }
 
         workoutServiceManager.stopService()

@@ -353,7 +353,7 @@ private fun ExercisesScreenContent(
 
     // Opened by info icon (in the filtered list), it shows the details of an exercise
     if (isModalSheetOpen) {
-        ExerciseDetailModalBottomSheet(exercise = selectedExercise.toEntity()) {
+        ExerciseDetailModalBottomSheet(exercise = selectedExercise) {
             isModalSheetOpen = false
         }
     }

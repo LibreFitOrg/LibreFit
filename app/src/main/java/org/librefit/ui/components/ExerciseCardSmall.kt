@@ -45,27 +45,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
-import org.librefit.db.entity.ExerciseDC
-import org.librefit.db.entity.Set
-import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.enums.SetMode
+import org.librefit.ui.models.UiExerciseDC
+import org.librefit.ui.models.UiExerciseWithSets
+import org.librefit.ui.models.UiSet
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter.formatDetails
 import org.librefit.util.Formatter.formatTime
 
 /**
- * This is a smaller version of [ExerciseCard]. It is suitable to only show data of [ExerciseWithSets]
+ * This is a smaller version of [ExerciseCard]. It is suitable to only show data of [UiExerciseWithSets]
  * but not to modify it.
  *
- * @param exerciseWithSets A [ExerciseWithSets] that holds the data
+ * @param exerciseWithSets A [UiExerciseWithSets] that holds the data
  * @param isRoutine When `false`, the card shows checkboxes of set completion
  * @param onDetail A lambda function triggered when the `Info` icon is clicked, which should open
  * the [org.librefit.ui.components.modalBottomSheets.ExerciseDetailModalBottomSheet].
  */
 @Composable
 fun ExerciseCardSmall(
-    exerciseWithSets: ExerciseWithSets,
+    exerciseWithSets: UiExerciseWithSets,
     isRoutine: Boolean = false,
     onDetail: () -> Unit
 ) {
@@ -202,9 +203,9 @@ fun ExerciseCardSmall(
 private fun ExerciseCardSmallPreview() {
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
         ExerciseCardSmall(
-            exerciseWithSets = ExerciseWithSets(
-                exerciseDC = ExerciseDC(name = "Name exercise"),
-                sets = listOf(Set(completed = true), Set(), Set())
+            exerciseWithSets = UiExerciseWithSets(
+                exerciseDC = UiExerciseDC(name = "Name exercise"),
+                sets = persistentListOf(UiSet(completed = true), UiSet(), UiSet())
             ),
         ) { }
     }

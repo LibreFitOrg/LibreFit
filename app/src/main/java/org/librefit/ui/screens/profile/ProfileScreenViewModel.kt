@@ -36,6 +36,7 @@ import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
 import org.librefit.ui.components.charts.Point
+import org.librefit.ui.models.mappers.toUi
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -47,6 +48,15 @@ class ProfileScreenViewModel @Inject constructor(
 ) : ViewModel() {
     val workoutsWithExercises = workoutRepository.getCompletedWorkoutsWithExercisesAndSets()
         .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    val workoutsWithExercisesUi = workoutsWithExercises.map { workoutWithExercises ->
+        workoutWithExercises.map { it.toUi() }
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

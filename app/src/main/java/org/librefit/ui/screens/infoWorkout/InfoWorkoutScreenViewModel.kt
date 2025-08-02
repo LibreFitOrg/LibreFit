@@ -33,12 +33,13 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.librefit.db.entity.Workout
-import org.librefit.db.relations.ExerciseWithSets
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
 import org.librefit.ui.components.charts.Point
+import org.librefit.ui.models.UiExerciseWithSets
+import org.librefit.ui.models.mappers.toEntity
 import org.librefit.util.Formatter
 import java.util.Locale
 import javax.inject.Inject
@@ -88,7 +89,7 @@ class InfoWorkoutScreenViewModel @Inject constructor(
 
             // Calculate volume
             val volumeValue = dataHelper.fetchVolumeFromWorkout(
-                WorkoutWithExercisesAndSets(workout.value, exercises.value)
+                WorkoutWithExercisesAndSets(workout.value, exercises.value.map { it.toEntity() })
             )
 
             _volume.value = String.format(Locale.getDefault(), "%.2f", volumeValue)
@@ -127,7 +128,7 @@ class InfoWorkoutScreenViewModel @Inject constructor(
     val routine = _routine.asStateFlow()
 
 
-    private val _exercises = MutableStateFlow<List<ExerciseWithSets>>(emptyList())
+    private val _exercises = MutableStateFlow<List<UiExerciseWithSets>>(emptyList())
     val exercises = _exercises.asStateFlow()
 
 

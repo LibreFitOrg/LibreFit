@@ -72,10 +72,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import org.librefit.R
 import org.librefit.db.entity.Workout
-import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
@@ -87,6 +87,7 @@ import org.librefit.ui.components.animations.StreakLottie
 import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.components.charts.Point
+import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatTime
@@ -108,7 +109,7 @@ fun ProfileScreen(
 
     val workoutChart by viewModel.workoutChart.collectAsState()
 
-    val workoutsWithExercises by viewModel.workoutsWithExercises.collectAsState()
+    val workoutsWithExercises by viewModel.workoutsWithExercisesUi.collectAsState()
 
     val weekStreak by viewModel.weekStreak.collectAsState()
 
@@ -131,7 +132,7 @@ private fun ProfileScreenContent(
     weekStreak: Int,
     points: List<Point>,
     workoutChart: WorkoutChart,
-    workoutsWithExercises: List<WorkoutWithExercisesAndSets>,
+    workoutsWithExercises: List<UiWorkoutWithExercisesAndSets>,
     updateChartMode: (WorkoutChart) -> Unit
 ) {
 
@@ -387,14 +388,14 @@ fun StreakCard(weekStreak: Int) {
 @Composable
 private fun ProfileScreenPreview() {
     val workoutsWithExercises = (0..5).map {
-        WorkoutWithExercisesAndSets(
+        UiWorkoutWithExercisesAndSets(
             workout = Workout(
                 id = Random.nextLong(),
                 title = "Workout $it",
                 completed = LocalDateTime.now().minusDays(it.toLong() * 2),
                 timeElapsed = Random.nextInt(0, 90)
             ),
-            exercisesWithSets = emptyList()
+            exercisesWithSets = persistentListOf()
         )
     }
 
