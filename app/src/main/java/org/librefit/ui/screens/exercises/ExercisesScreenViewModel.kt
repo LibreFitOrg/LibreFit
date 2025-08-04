@@ -118,7 +118,7 @@ class ExercisesScreenViewModel @Inject constructor(
 
     val selectedExercises: StateFlow<List<UiExerciseDC>> = combine(
         selectedExerciseIds,
-        filteredExerciseList
+        dataset
     ) { ids, list -> list.filter { it.id in ids } }
         .distinctUntilChanged()
         .stateIn(
