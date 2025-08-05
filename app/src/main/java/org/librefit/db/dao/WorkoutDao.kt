@@ -89,7 +89,7 @@ interface WorkoutDao {
 
     /**
      * Returns a flow list of completed [org.librefit.db.relations.WorkoutWithExercisesAndSets]s which are not routines so
-     * those who have [Workout.routine] = `false`.
+     * those which have [Workout.routine] = `false`.
      */
     @Transaction
     @Query("SELECT * FROM workouts WHERE routine = 0 ORDER BY completed DESC")
@@ -145,53 +145,56 @@ interface WorkoutDao {
         workoutWithExercisesAndSets: WorkoutWithExercisesAndSets
     ) {
         val workout = workoutWithExercisesAndSets.workout
-        val isNewWorkout = workout.id == 0L
 
-        val workoutId = if (isNewWorkout) {
+        val workoutId = if (workout.id == 0L) {
             if (workout.routine) {
                 addWorkout(workout.copy(completed = LocalDateTime.now()))
             } else {
                 addWorkout(workout.copy(created = LocalDateTime.now()))
             }
         } else {
-            workout.id
-        }
-
-        if (!isNewWorkout) {
             updateWorkout(workout)
+            workout.id
         }
 
         val exercisesWithSets = workoutWithExercisesAndSets.exercisesWithSets
         val oldExercises = getExercisesFromWorkout(workoutId)
 
+        // Create maps for fast O(1) lookups by exercise ID.
+        val oldExercisesMap = oldExercises.associateBy { it.exercise.id }
+        val newExercisesMap = exercisesWithSets.associateBy { it.exercise.id }
+
         // Deletes from db the exercises not found in the passed exercises
-        oldExercises
-            .filter { e -> !exercisesWithSets.any { it.exercise.id == e.exercise.id } }
-            .forEach { exercise -> deleteExercise(exercise.exercise) }
+        val idsToDelete = oldExercisesMap.keys - newExercisesMap.keys
+        idsToDelete.forEach { idToDelete ->
+            deleteExercise(oldExercisesMap.getValue(idToDelete).exercise)
+        }
 
         exercisesWithSets.forEach { exerciseWithSets ->
-            val isNewExercise = !oldExercises.any { it.exercise.id == exerciseWithSets.exercise.id }
-
-            val exerciseId = if (isNewExercise) {
-                addExercise(exerciseWithSets.exercise.copy(id = 0, workoutId = workoutId))
-            } else {
-                exerciseWithSets.exercise.id
-            }
-
-
-            if (!isNewExercise) {
+            // Check if this exercise existed before.
+            val exerciseId = if (exerciseWithSets.exercise.id in oldExercisesMap) {
                 updateExercise(exerciseWithSets.exercise)
+                exerciseWithSets.exercise.id
+            } else {
+                addExercise(exerciseWithSets.exercise.copy(id = 0, workoutId = workoutId))
             }
 
+            val newSets = exerciseWithSets.sets
             val oldSets = getSetsFromExercise(exerciseId)
 
-            // Deletes from db the sets not found in the passed sets
-            oldSets
-                .filter { s -> !exerciseWithSets.sets.any { it.id == s.id } }
-                .forEach { set -> deleteSet(set) }
+            // Create maps for fast O(1) lookups by ID.
+            val oldSetsMap = oldSets.associateBy { it.id }
+            val newSetsMap = newSets.associateBy { it.id }
 
-            exerciseWithSets.sets.forEach { set ->
-                if (oldSets.any { it.id == set.id }) {
+            // Deletes from db the sets not found in the passed sets
+            val idsToDelete = oldSetsMap.keys - newSetsMap.keys
+            idsToDelete.forEach { idToDelete ->
+                deleteSet(oldSetsMap.getValue(idToDelete))
+            }
+
+            newSets.forEach { set ->
+                // Check if this set existed before.
+                if (set.id in oldSetsMap) {
                     updateSet(set)
                 } else {
                     addSet(set.copy(id = 0, exerciseId = exerciseId))

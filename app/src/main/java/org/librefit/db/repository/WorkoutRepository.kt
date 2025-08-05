@@ -19,7 +19,6 @@
 
 package org.librefit.db.repository
 
-import kotlinx.coroutines.flow.Flow
 import org.librefit.db.dao.WorkoutDao
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.ExerciseWithSets
@@ -38,12 +37,16 @@ import org.librefit.ui.models.mappers.toUi
  * @param workoutDao The [WorkoutDao] instance used to access workout data from the database.
  * @property completedWorkouts Refer to [WorkoutDao.getCompletedWorkouts]
  * @property routines Refer to [WorkoutDao.getRoutines]
+ * @property completedWorkoutsWithExercisesAndSets Refer to [WorkoutDao.getCompletedWorkoutsWithExercisesAndSets]
  *
  */
 class WorkoutRepository(private val workoutDao: WorkoutDao) {
     val completedWorkouts = workoutDao.getCompletedWorkouts()
 
     val routines = workoutDao.getRoutines()
+
+    val completedWorkoutsWithExercisesAndSets =
+        workoutDao.getCompletedWorkoutsWithExercisesAndSets()
 
 
     fun getWorkout(id: Long): Workout {
@@ -66,12 +69,6 @@ class WorkoutRepository(private val workoutDao: WorkoutDao) {
         workoutDao.deleteWorkout(workout)
     }
 
-    /**
-     * Refer to [WorkoutDao.getCompletedWorkoutsWithExercisesAndSets]
-     */
-    fun getCompletedWorkoutsWithExercisesAndSets(): Flow<List<WorkoutWithExercisesAndSets>> {
-        return workoutDao.getCompletedWorkoutsWithExercisesAndSets()
-    }
 
 
     /**

@@ -46,7 +46,7 @@ class ProfileScreenViewModel @Inject constructor(
     workoutRepository: WorkoutRepository,
     dataHelper: DataHelper
 ) : ViewModel() {
-    val workoutsWithExercises = workoutRepository.getCompletedWorkoutsWithExercisesAndSets()
+    val workoutsWithExercises = workoutRepository.completedWorkoutsWithExercisesAndSets
         .distinctUntilChanged()
         .stateIn(
             scope = viewModelScope,
