@@ -28,6 +28,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.librefit.db.entity.Workout
@@ -44,6 +45,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class BeforeSavingScreenViewModel @Inject constructor(
@@ -79,7 +81,9 @@ class BeforeSavingScreenViewModel @Inject constructor(
                 WorkoutWithExercisesAndSets(Workout(), exercises.map { it.toEntity() })
             )
 
-            _volume.value = String.format(Locale.getDefault(), "%.2f", volume)
+            _volume.update {
+                String.format(Locale.getDefault(), "%.2f", volume)
+            }
         }
     }
 
@@ -89,11 +93,15 @@ class BeforeSavingScreenViewModel @Inject constructor(
 
 
     fun setTimeElapsed(timeElapsed: Int) {
-        _workout.value = workout.value.copy(timeElapsed = timeElapsed)
+        _workout.update { currentWorkout ->
+            currentWorkout.copy(timeElapsed = timeElapsed)
+        }
     }
 
     fun updateWorkoutTitle(string: String) {
-        _workout.value = workout.value.copy(title = string)
+        _workout.update { currentWorkout ->
+            currentWorkout.copy(title = string)
+        }
     }
 
     fun isTitleEmpty(): Boolean {
@@ -105,24 +113,30 @@ class BeforeSavingScreenViewModel @Inject constructor(
     }
 
     fun updateWorkoutNotes(newNotes: String) {
-        _workout.value = workout.value.copy(notes = newNotes)
+        _workout.update { currentWorkout ->
+            currentWorkout.copy(notes = newNotes)
+        }
     }
 
     fun detachWorkoutFromRoutine() {
-        _workout.value = workout.value.copy(
-            routineId = System.currentTimeMillis()
-        )
-        _routine.value = Workout()
+        _workout.update { currentWorkout ->
+            currentWorkout.copy(routineId = Random.nextLong())
+        }
+        _routine.update {
+            Workout()
+        }
     }
 
     fun updateCompletedDate(selectedDateMillis: Long?) {
         if (selectedDateMillis != null) {
-            _workout.value = workout.value.copy(
-                completed = LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(selectedDateMillis),
-                    ZoneId.systemDefault()
+            _workout.update { currentWorkout ->
+                currentWorkout.copy(
+                    completed = LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(selectedDateMillis),
+                        ZoneId.systemDefault()
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -132,7 +146,9 @@ class BeforeSavingScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _routine.value = workoutRepository.getRoutineFromRoutineID(workout.value.routineId)
+            _routine.update {
+                workoutRepository.getRoutineFromRoutineID(workout.value.routineId)
+            }
         }
     }
 
