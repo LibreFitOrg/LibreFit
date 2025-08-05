@@ -24,4 +24,5 @@ enum class InfoMode {
     REST_TIMER,
     TYPE_OF_SET,
     BEFORE_SAVING_STATS,
+    PERFOMANCE_OVERVIEW
 }

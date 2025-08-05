@@ -22,6 +22,10 @@ package org.librefit.ui.screens.statistics
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,14 +33,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
+import org.librefit.enums.InfoMode
 import org.librefit.enums.chart.StatisticsChart
+import org.librefit.enums.exercise.Muscle
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.components.charts.Point
 import org.librefit.ui.theme.LibreFitTheme
+import org.librefit.util.Formatter
 import java.text.DecimalFormat
+import kotlin.random.Random
 
 @Composable
 fun StatisticsScreen(
@@ -73,7 +81,10 @@ private fun StatisticsScreenContent(
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding = innerPadding) {
             item {
-                HeadlineText(stringResource(R.string.overview))
+                HeadlineText(
+                    stringResource(R.string.performance_overview),
+                    InfoMode.PERFOMANCE_OVERVIEW
+                )
             }
             item {
                 LibreFitCartesianChart(
@@ -101,13 +112,37 @@ private fun StatisticsScreenContent(
 @Preview
 @Composable
 fun StatisticsScreenPreview() {
-    LibreFitTheme(dynamicColor = false, darkTheme = true) {
-        StatisticsScreenContent(
-            navController = rememberNavController(),
-            statisticsChart = StatisticsChart.LOAD,
-            points = emptyList(),
-            legend = emptyList(),
-            updateStatisticsChart = {},
+    var statisticsChart by remember { mutableStateOf(StatisticsChart.LOAD) }
+
+    val musclesNames = listOf(
+        stringResource(Formatter.exerciseEnumToStringId(Muscle.BICEPS)),
+        stringResource(Formatter.exerciseEnumToStringId(Muscle.TRICEPS))
+    )
+
+    val cutoffsIds: List<Pair<Int, Long?>> = listOf(
+        R.string.past_week to null, R.string.past_month to null, R.string.historical to null
+    )
+
+    key(statisticsChart) {
+        val points = listOf(
+            Point(
+                yValues = (0..2).map { Random.nextFloat() },
+                xValue = musclesNames.first()
+            ),
+            Point(
+                yValues = (0..2).map { Random.nextFloat() },
+                xValue = musclesNames[1]
+            )
         )
+
+        LibreFitTheme(dynamicColor = false, darkTheme = true) {
+            StatisticsScreenContent(
+                navController = rememberNavController(),
+                statisticsChart = statisticsChart,
+                points = points,
+                legend = cutoffsIds,
+                updateStatisticsChart = { statisticsChart = it },
+            )
+        }
     }
 }

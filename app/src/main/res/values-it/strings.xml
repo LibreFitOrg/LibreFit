@@ -94,6 +94,7 @@
     <string name="new_workout">Nuovo allenamento</string>
     <string name="type_of_set_desc">- **Carico**: Un certo numero di ripetizioni eseguite con una resistenza esterna. *Esempi: panca piana, curls con manubri.*\n- **Corpo libero**: Un certo numero di ripetizioni eseguite usando il corpo come resistenza. *Esempi: trazioni, piegamenti, addominali.*\n- **Corpo libero con carico**: Un certo numero di ripetizioni eseguite usando il corpo e del carico come resistenza. *Esempi: trazioni zavorrate, dips zavorrati.*\n- **Durata**: Misura il tempo d\'esecuzione della serie. *Esempi: plank, riscaldamento, stretching.*</string>
     <string name="statistics_desc">- **Tempo trascorso**: indica la durata totale della sessione di allenamento.\n- **Data**: indica la data nella quale l\'allenamento è stato completato.\n- **Esercizi**: rappresentano il numero totale di esercizi inclusi in questo allenamento.\n- **Volume**: La quantità totale di peso sollevato durante un allenamento, calcolato moltiplicando per ogni serie completata il numero di ripetizioni eseguite per il peso sollevato. Un alto volume è associato a una maggiore ipertrofia muscolare e a un aumento della forza nel tempo.\n- **Serie totali**: Il numero cumulativo di serie previsti per ogni esercizio in un allenamento. Una serie è un gruppo di ripetizioni consecutive eseguite senza riposo.\n- **Serie completate**: il numero di serie portate a termine come programmato dall\'allenamento.</string>
+    <string name="performance_overview_desc">- Questo grafico mostra la **performance media di ogni muscolo in certi periodi di tempo**, basato sul parametro selezionato.\n- La legenda indica il periodo temporale rappresentato da ogni colonna.\n- La **colonna "Storico"** comprende tutti gli allenamenti completati prima di ogni periodo temporale mostrato.\n- Il parametro può essere cambiato selezionando uno nuovo il quale è posizionato sopra il grafico.</string>
     <string name="details">Dettagli</string>
     <string name="force">Forza</string>
     <string name="level">Livello</string>
@@ -221,6 +222,7 @@
     <string name="save">Salva</string>
     <string name="years">Anni</string>
     <string name="historical">Storico</string>
+    <string name="performance_overview">Panoramica sulla performance</string>
     <string name="workout_saved">Allenamento salvato</string>
     <string name="start_creating_routine">Inizia creando una nuova routine</string>
     <string name="privacy">Privacy</string>

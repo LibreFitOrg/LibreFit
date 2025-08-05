@@ -148,6 +148,7 @@
     <string name="new_workout">New workout</string>
     <string name="type_of_set_desc">- **Load**: A specified number of repetitions performed against an external resistance. *Examples: bench press, dumbbell curls.*\n- **Bodyweight**: A specified number of repetitions performed using the body as a resistance. *Examples: pullups, pushups, sit ups.*\n- **Bodyweight with load**: A specified number of repetitions performed using the body and a load as resistance. *Examples: weighted pullups, weighted dips.*\n- **Duration**: It measures time execution of the reps. *Examples: planks, warm up, stretching.*</string>
     <string name="statistics_desc">- **Time elapsed**: the total duration of the workout session.\n- **Date**: indicates the date on which the workout was completed.\n- **Volume**: the total amount of weight lifted during a workout, calculated by multiplying for each completed set the number of repetitions performed by the weight lifted. Higher volume is associated with greater muscle hypertrophy and strength gains over time.\n- **Exercises**: the total count of exercises included in this workout.\n- **Total sets**: the cumulative number of sets planned for each exercise in a workout. A set is a group of consecutive repetitions performed without resting.\n- **Completed sets**: the number of sets that were finished as planned by the workout.</string>
+    <string name="performance_overview_desc">- This chart shows the **average performance of each muscle over specific time periods**, based on the chosen parameter.\n- The legend identifies the time period represented by each column.\n- The **Historical** column includes all workouts completed before every time period shown.\n- The parameter can be changed by selecting a new one which is located above the chart.</string>
     <string name="details">Details</string>
     <string name="force">Force</string>
     <string name="level">Level</string>
@@ -254,6 +255,7 @@
     <string name="save">Save</string>
     <string name="years">Years</string>
     <string name="historical">Historical</string>
+    <string name="performance_overview">Performance overview</string>
     <string name="workout_saved">Workout saved</string>
     <string name="edit_routine">Edit routine</string>
     <string name="start_creating_routine">Start by creating a new routine</string>
