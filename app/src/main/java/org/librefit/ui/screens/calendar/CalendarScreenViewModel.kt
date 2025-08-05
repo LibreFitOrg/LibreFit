@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import org.librefit.db.entity.Workout
 import org.librefit.db.repository.WorkoutRepository
 import java.time.Instant
@@ -55,7 +56,7 @@ class CalendarScreenViewModel @Inject constructor(
     val selectedDateInMillis = _selectedDateInMillis.asStateFlow()
 
     fun updateSelectedDateInMillis(newSelectedDateInMillis: Long?) {
-        _selectedDateInMillis.value = newSelectedDateInMillis
+        _selectedDateInMillis.update { newSelectedDateInMillis }
     }
 
 
