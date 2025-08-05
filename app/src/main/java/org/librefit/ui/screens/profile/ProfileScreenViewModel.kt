@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
@@ -68,7 +69,7 @@ class ProfileScreenViewModel @Inject constructor(
 
 
     fun updateChartMode(value: WorkoutChart) {
-        _workoutChart.value = value
+        _workoutChart.update { value }
     }
 
 
