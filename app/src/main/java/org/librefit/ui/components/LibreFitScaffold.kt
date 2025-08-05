@@ -91,76 +91,78 @@ fun LibreFitScaffold(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    if (title != null) {
-                        Text(
-                            text = title,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                },
-                navigationIcon = {
-                    if (navigateBack != null) {
-                        IconButton(
-                            onClick = navigateBack
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_back),
-                                contentDescription = stringResource(id = R.string.navigate_back)
+            if (title != null || navigateBack != null || actions.isNotEmpty()) {
+                TopAppBar(
+                    title = {
+                        if (title != null) {
+                            Text(
+                                text = title,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
-                    }
-                },
-                actions = {
-                    val view = LocalView.current
-
-                    actions.forEachIndexed { index, action ->
-                        val description = actionsDescription.getOrNull(index)
-
-                        val icon = actionsIcons.getOrNull(index)
-
-                        val enabled = actionsEnabled.getOrNull(index) != false
-
-                        val elevated = actionsElevated.getOrNull(index) != false
-
-
-                        if (icon != null) {
+                    },
+                    navigationIcon = {
+                        if (navigateBack != null) {
                             IconButton(
-                                onClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstantsCompat.CONTEXT_CLICK)
-                                    action()
-                                },
-                                enabled = enabled,
-                                colors = if (elevated)
-                                    IconButtonDefaults.filledIconButtonColors() else
-                                    IconButtonDefaults.iconButtonColors()
+                                onClick = navigateBack
                             ) {
                                 Icon(
-                                    imageVector = icon,
-                                    contentDescription = description
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_back),
+                                    contentDescription = stringResource(id = R.string.navigate_back)
                                 )
                             }
                         }
-                        if (description != null) {
-                            Button(
-                                onClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstantsCompat.CONTEXT_CLICK)
-                                    action()
-                                },
-                                enabled = enabled,
-                                colors = if (elevated)
-                                    ButtonDefaults.buttonColors() else
-                                    ButtonDefaults.textButtonColors()
-                            ) {
-                                Text(text = description)
+                    },
+                    actions = {
+                        val view = LocalView.current
 
+                        actions.forEachIndexed { index, action ->
+                            val description = actionsDescription.getOrNull(index)
+
+                            val icon = actionsIcons.getOrNull(index)
+
+                            val enabled = actionsEnabled.getOrNull(index) != false
+
+                            val elevated = actionsElevated.getOrNull(index) != false
+
+
+                            if (icon != null) {
+                                IconButton(
+                                    onClick = {
+                                        view.performHapticFeedback(HapticFeedbackConstantsCompat.CONTEXT_CLICK)
+                                        action()
+                                    },
+                                    enabled = enabled,
+                                    colors = if (elevated)
+                                        IconButtonDefaults.filledIconButtonColors() else
+                                        IconButtonDefaults.iconButtonColors()
+                                ) {
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = description
+                                    )
+                                }
+                            }
+                            if (description != null) {
+                                Button(
+                                    onClick = {
+                                        view.performHapticFeedback(HapticFeedbackConstantsCompat.CONTEXT_CLICK)
+                                        action()
+                                    },
+                                    enabled = enabled,
+                                    colors = if (elevated)
+                                        ButtonDefaults.buttonColors() else
+                                        ButtonDefaults.textButtonColors()
+                                ) {
+                                    Text(text = description)
+
+                                }
                             }
                         }
-                    }
-                },
-            )
+                    },
+                )
+            }
         },
         floatingActionButton = {
             if (fabIcon != null) {

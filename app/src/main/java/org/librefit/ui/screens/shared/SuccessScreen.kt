@@ -69,6 +69,7 @@ fun SuccessScreen(
                 }
             } else {
                 LazyRow(
+                    contentPadding = innerPadding,
                     modifier = Modifier
                         .width(maxWidth)
                         .height(maxHeight),
@@ -114,10 +115,10 @@ private fun LazyListScope.successScreenContent(
     }
 }
 
-@Preview
+@Preview(device = "spec:parent=pixel_5,orientation=landscape")
 @Composable
 private fun SuccessScreenPreview() {
-    LibreFitTheme(false, true) {
+    LibreFitTheme(dynamicColor = false, darkTheme = true) {
         SuccessScreen(SuccessMessage.WORKOUT_SAVED) { }
     }
 }
