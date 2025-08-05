@@ -29,6 +29,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.enums.WorkoutServiceActions
 import org.librefit.helpers.NotificationHelper
@@ -116,7 +117,7 @@ class WorkoutService : Service() {
 
                 restTimerJob?.cancel()
                 this.initialRestTime = initialRestTime
-                _restTime.value = initialRestTime
+                _restTime.update { initialRestTime }
 
                 startRestTimer()
             }
@@ -144,8 +145,8 @@ class WorkoutService : Service() {
     fun stopService() {
         chronometerJob?.cancel()
         restTimerJob?.cancel()
-        _timeElapsed.value = 0
-        _restTime.value = 0
+        _timeElapsed.update { 0 }
+        _restTime.update { 0 }
         initialRestTime = 0
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -157,25 +158,27 @@ class WorkoutService : Service() {
 
     private fun startChronometer() {
 
-        _isChronometerPaused.value = false
+        _isChronometerPaused.update { false }
 
         val startTime = System.currentTimeMillis()
-        val pastTime = _timeElapsed.value
+        val pastTime = timeElapsed.value
 
         chronometerJob?.cancel()
 
         chronometerJob = CoroutineScope(Dispatchers.Main).launch {
             while (true) {
-                if (!_isChronometerPaused.value) {
+                if (!isChronometerPaused.value) {
                     val currentTime = System.currentTimeMillis()
 
-                    _timeElapsed.value = (currentTime - startTime).toInt() / 1000 + pastTime
+                    _timeElapsed.update {
+                        (currentTime - startTime).toInt() / 1000 + pastTime
+                    }
                 }
 
                 notificationHelper.notifyOngoingWorkout(
-                    _timeElapsed.value,
-                    _isChronometerPaused.value,
-                    _restTime.value,
+                    timeElapsed.value,
+                    isChronometerPaused.value,
+                    restTime.value,
                     initialRestTime
                 )
 
@@ -185,8 +188,8 @@ class WorkoutService : Service() {
     }
 
     private fun pauseChronometer() {
-        _isChronometerPaused.value = true
-        notificationHelper.notifyOngoingWorkout(_timeElapsed.value, _isChronometerPaused.value)
+        _isChronometerPaused.update { true }
+        notificationHelper.notifyOngoingWorkout(timeElapsed.value, isChronometerPaused.value)
     }
 
 
@@ -194,8 +197,8 @@ class WorkoutService : Service() {
 
     private fun startRestTimer() {
         restTimerJob = CoroutineScope(Dispatchers.Main).launch {
-            while (_restTime.value > 0) {
-                _restTime.value--
+            while (restTime.value > 0) {
+                _restTime.update { it - 1 }
                 delay(1000)
             }
             if (!isFocused) {
@@ -207,13 +210,15 @@ class WorkoutService : Service() {
     }
 
     private fun modifyRestTimer(addTenSeconds: Boolean) {
-        if (addTenSeconds) {
-            _restTime.value += 10
-        } else {
-            if (_restTime.value > 10) {
-                _restTime.value -= 10
+        _restTime.update { currentRestTime ->
+            if (addTenSeconds) {
+                currentRestTime + 10
             } else {
-                _restTime.value = 0
+                if (currentRestTime > 10) {
+                    currentRestTime - 10
+                } else {
+                    0
+                }
             }
         }
     }
