@@ -26,6 +26,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.librefit.di.qualifiers.ApplicationScope
 import javax.inject.Singleton
 
 @Module
@@ -34,9 +35,9 @@ object CoroutineScopeModule {
 
     @Singleton
     @Provides
+    @ApplicationScope
     fun provideApplicationScope(): CoroutineScope {
         // SupervisorJob means if one child coroutine fails, the others are not cancelled.
-        // Dispatchers.Default is a good choice for background processing.
         return CoroutineScope(SupervisorJob() + Dispatchers.Default)
     }
 }

@@ -25,13 +25,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import org.librefit.data.DataStoreManager
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    userPreferences: DataStoreManager,
+    userPreferences: UserPreferencesRepository,
     workoutRepository: WorkoutRepository
 ) : ViewModel() {
     val requestPermissionAgain: StateFlow<Boolean> = userPreferences.requestPermissionsAgain

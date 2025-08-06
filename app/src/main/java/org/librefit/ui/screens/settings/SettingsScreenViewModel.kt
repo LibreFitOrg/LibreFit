@@ -25,46 +25,22 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.librefit.data.DataStoreManager
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.Language
-import org.librefit.enums.ThemeMode
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
-    private val userPreferences: DataStoreManager
+    private val userPreferences: UserPreferencesRepository
 ) : ViewModel() {
     val themeMode = userPreferences.themeMode
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = ThemeMode.SYSTEM
-        )
     val materialMode = userPreferences.materialMode
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false
-        )
     val keepScreenOn = userPreferences.workoutScreenOn
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = true
-        )
-
     val language = userPreferences.language
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = Language.SYSTEM
-        )
 
     fun changeLanguage(language: Language) {
-        savePreference(DataStoreManager.languageKey, language.code)
+        savePreference(UserPreferencesRepository.languageKey, language.code)
         val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(language.code)
         AppCompatDelegate.setApplicationLocales(appLocale)
     }

@@ -30,6 +30,7 @@ import org.librefit.db.dao.WorkoutDao
 import org.librefit.db.repository.DatasetRepository
 import org.librefit.db.repository.MeasurementRepository
 import org.librefit.db.repository.WorkoutRepository
+import org.librefit.di.qualifiers.ApplicationScope
 import javax.inject.Singleton
 
 @Module
@@ -39,7 +40,7 @@ object RepositoryModule {
     @Singleton
     fun provideDatasetRepository(
         datasetDao: DatasetDao,
-        applicationScope: CoroutineScope
+        @ApplicationScope applicationScope: CoroutineScope
     ): DatasetRepository {
         return DatasetRepository(datasetDao, applicationScope)
     }

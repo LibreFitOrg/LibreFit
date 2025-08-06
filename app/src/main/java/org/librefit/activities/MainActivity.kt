@@ -27,7 +27,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import dagger.hilt.android.AndroidEntryPoint
-import org.librefit.data.DataStoreManager
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.ThemeMode
 import org.librefit.nav.NavigationHost
 import org.librefit.services.WorkoutServiceManager
@@ -37,7 +37,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     @Inject
-    lateinit var userPreferences: DataStoreManager
+    lateinit var userPreferences: UserPreferencesRepository
 
     @Inject
     lateinit var workoutServiceManager: WorkoutServiceManager
@@ -51,8 +51,8 @@ class MainActivity : AppCompatActivity() {
 
 
         setContent {
-            val theme = userPreferences.themeMode.collectAsState(ThemeMode.SYSTEM)
-            val dynamicColor = userPreferences.materialMode.collectAsState(false)
+            val theme = userPreferences.themeMode.collectAsState()
+            val dynamicColor = userPreferences.materialMode.collectAsState()
 
             LibreFitTheme(
                 dynamicColor = dynamicColor.value,

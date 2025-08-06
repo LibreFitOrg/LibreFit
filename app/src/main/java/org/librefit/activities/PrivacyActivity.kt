@@ -27,7 +27,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import dagger.hilt.android.AndroidEntryPoint
-import org.librefit.data.DataStoreManager
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.ThemeMode
 import org.librefit.ui.screens.about.PrivacyScreen
 import org.librefit.ui.theme.LibreFitTheme
@@ -40,7 +40,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class PrivacyActivity : ComponentActivity() {
     @Inject
-    lateinit var userPreferences: DataStoreManager
+    lateinit var userPreferences: UserPreferencesRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -50,8 +50,8 @@ class PrivacyActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            val theme = userPreferences.themeMode.collectAsState(ThemeMode.SYSTEM)
-            val dynamicColor = userPreferences.materialMode.collectAsState(false)
+            val theme = userPreferences.themeMode.collectAsState()
+            val dynamicColor = userPreferences.materialMode.collectAsState()
 
             LibreFitTheme(
                 dynamicColor = dynamicColor.value,

@@ -22,29 +22,22 @@ package org.librefit.ui.screens.requestPermission
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.librefit.data.DataStoreManager
+import org.librefit.db.repository.UserPreferencesRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class RequestPermissionScreenViewModel @Inject constructor(
-    private val userPreferences: DataStoreManager
+    private val userPreferences: UserPreferencesRepository
 ) : ViewModel() {
     val requestPermissionAgain: StateFlow<Boolean> = userPreferences.requestPermissionsAgain
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = true
-        )
 
 
     fun saveRequestPermissionAgainPreference(value: Boolean) {
         viewModelScope.launch {
             userPreferences.savePreference(
-                key = DataStoreManager.requestPermissionsAgainKey,
+                key = UserPreferencesRepository.requestPermissionsAgainKey,
                 value = value
             )
         }

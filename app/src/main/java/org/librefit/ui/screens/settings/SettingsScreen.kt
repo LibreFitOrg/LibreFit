@@ -60,7 +60,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
-import org.librefit.data.DataStoreManager
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.Language
 import org.librefit.enums.ThemeMode
 import org.librefit.ui.components.HeadlineText
@@ -175,7 +175,7 @@ private fun SettingsScreenContent(
                                     selected = selectedTheme == mode,
                                     onClick = {
                                         view.performHapticFeedback(HapticFeedbackConstantsCompat.TOGGLE_ON)
-                                        saveIntValue(DataStoreManager.themeModeKey, index)
+                                        saveIntValue(UserPreferencesRepository.themeModeKey, index)
                                     },
                                     shape = SegmentedButtonDefaults.itemShape(
                                         index = index,
@@ -234,7 +234,7 @@ private fun SettingsScreenContent(
                                     if (it) HapticFeedbackConstantsCompat.TOGGLE_ON
                                     else HapticFeedbackConstantsCompat.TOGGLE_OFF
                                 )
-                                saveBooleanValue(DataStoreManager.materialModeKey, it)
+                                saveBooleanValue(UserPreferencesRepository.materialModeKey, it)
                             }
                         )
                     }
@@ -307,7 +307,7 @@ private fun SettingsScreenContent(
                                 if (it) HapticFeedbackConstantsCompat.TOGGLE_ON
                                 else HapticFeedbackConstantsCompat.TOGGLE_OFF
                             )
-                            saveBooleanValue(DataStoreManager.keepOnWorkoutScreenKey, it)
+                            saveBooleanValue(UserPreferencesRepository.keepOnWorkoutScreenKey, it)
                         }
                     )
                 }

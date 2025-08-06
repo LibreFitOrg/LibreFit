@@ -61,7 +61,7 @@ import androidx.core.net.toUri
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import org.librefit.R
-import org.librefit.data.DataStoreManager
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.ThemeMode
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
@@ -73,7 +73,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ErrorActivity : ComponentActivity() {
     @Inject
-    lateinit var userPreferences: DataStoreManager
+    lateinit var userPreferences: UserPreferencesRepository
 
     private val restartIntent: PendingIntent? by lazy {
         IntentCompat.getParcelableExtra(intent,EXTRA_RESTART_PENDING_INTENT, PendingIntent::class.java)
@@ -89,8 +89,8 @@ class ErrorActivity : ComponentActivity() {
         val stackTrace = intent.getStringExtra(EXTRA_STACK_TRACE) ?: "No stack trace available."
 
         setContent {
-            val theme = userPreferences.themeMode.collectAsState(ThemeMode.SYSTEM)
-            val dynamicColor = userPreferences.materialMode.collectAsState(false)
+            val theme = userPreferences.themeMode.collectAsState()
+            val dynamicColor = userPreferences.materialMode.collectAsState()
 
             LibreFitTheme(
                 dynamicColor = dynamicColor.value,

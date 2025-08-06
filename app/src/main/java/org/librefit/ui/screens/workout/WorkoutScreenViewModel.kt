@@ -37,9 +37,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.R
-import org.librefit.data.DataStoreManager
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.entity.Workout
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.SetMode
 import org.librefit.enums.exercise.Category
@@ -57,7 +57,7 @@ import kotlin.random.Random
 class WorkoutScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     @param:ApplicationContext private val context: Context,
-    userPreferences: DataStoreManager,
+    userPreferences: UserPreferencesRepository,
     private val workoutServiceManager: WorkoutServiceManager,
     workoutRepository: WorkoutRepository
 ) : ViewModel() {
