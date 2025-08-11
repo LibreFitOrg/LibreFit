@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2024-2025. LibreFit
+  ~ Copyright (c) 2025. LibreFit
   ~
   ~ This file is part of LibreFit
   ~
@@ -18,5 +18,5 @@
   -->
 
 <resources>
-    <color name="librefit_background">#FFF5FAFC</color>
+    <color name="librefit_background">#FF0E1416</color>
 </resources>
