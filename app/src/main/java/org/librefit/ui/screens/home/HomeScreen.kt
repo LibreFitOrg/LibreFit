@@ -79,7 +79,7 @@ fun HomeScreen(
     val viewModel: HomeScreenViewModel = hiltViewModel()
 
 
-    val requestPermissionAgain by viewModel.requestPermissionAgain.collectAsState()
+    val requestPermissionNextTime by viewModel.requestPermissionNextTime.collectAsState()
 
     val notificationPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         rememberPermissionState(
@@ -99,7 +99,7 @@ fun HomeScreen(
         navigateToRoutine = { workoutId ->
             val hasNotificationPermission = notificationPermissionState?.status?.isGranted != false
 
-            val requestPermission = !hasNotificationPermission && requestPermissionAgain
+            val requestPermission = !hasNotificationPermission && requestPermissionNextTime
 
             if (requestPermission) {
                 navController.navigate(Route.RequestPermissionScreen(workoutId = workoutId))

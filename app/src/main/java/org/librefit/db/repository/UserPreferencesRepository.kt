@@ -49,7 +49,7 @@ class UserPreferencesRepository @Inject constructor(
         val themeModeKey = intPreferencesKey("theme_mode")
         val materialModeKey = booleanPreferencesKey("material_mode")
         val keepOnWorkoutScreenKey = booleanPreferencesKey("workout_screen_on")
-        val requestPermissionsAgainKey = booleanPreferencesKey("ask_permission_again")
+        val requestPermissionsNextTimeKey = booleanPreferencesKey("ask_permission_again")
         val languageKey = stringPreferencesKey("language")
     }
 
@@ -79,8 +79,8 @@ class UserPreferencesRepository @Inject constructor(
             initialValue = false
         )
 
-    val requestPermissionsAgain: StateFlow<Boolean> = dataStore.data
-        .map { preferences -> preferences[requestPermissionsAgainKey] != false }
+    val requestPermissionsNextTime: StateFlow<Boolean> = dataStore.data
+        .map { preferences -> preferences[requestPermissionsNextTimeKey] != false }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Companion.Eagerly,

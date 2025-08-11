@@ -31,13 +31,13 @@ import javax.inject.Inject
 class RequestPermissionScreenViewModel @Inject constructor(
     private val userPreferences: UserPreferencesRepository
 ) : ViewModel() {
-    val requestPermissionAgain: StateFlow<Boolean> = userPreferences.requestPermissionsAgain
+    val requestPermissionNextTime: StateFlow<Boolean> = userPreferences.requestPermissionsNextTime
 
 
     fun saveRequestPermissionAgainPreference(value: Boolean) {
         viewModelScope.launch {
             userPreferences.savePreference(
-                key = UserPreferencesRepository.requestPermissionsAgainKey,
+                key = UserPreferencesRepository.requestPermissionsNextTimeKey,
                 value = value
             )
         }

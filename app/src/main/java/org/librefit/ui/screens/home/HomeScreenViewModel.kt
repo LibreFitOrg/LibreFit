@@ -34,7 +34,7 @@ class HomeScreenViewModel @Inject constructor(
     userPreferences: UserPreferencesRepository,
     workoutRepository: WorkoutRepository
 ) : ViewModel() {
-    val requestPermissionAgain: StateFlow<Boolean> = userPreferences.requestPermissionsAgain
+    val requestPermissionNextTime: StateFlow<Boolean> = userPreferences.requestPermissionsNextTime
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
