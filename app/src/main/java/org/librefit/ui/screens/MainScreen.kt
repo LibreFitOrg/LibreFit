@@ -50,6 +50,10 @@ fun MainScreen(
 ) {
     var homeSelected by rememberSaveable { mutableStateOf(true) }
 
+    val fabAction: () -> Unit = {
+        navController.navigate(Route.EditWorkoutScreen(0L))
+    }
+
 
     LibreFitScaffold(
         title = buildAnnotatedString {
@@ -58,21 +62,17 @@ fun MainScreen(
             }
             append(stringResource(id = R.string.app_name).removeRange(0, 5))
         },
-        actions = listOf {
-            navController.navigate(
-                if (homeSelected) Route.AboutScreen else Route.SettingsScreen
-            )
-        },
-        actionsIcons = listOf(
-            ImageVector.vectorResource(
-                if (homeSelected) R.drawable.ic_info else R.drawable.ic_settings
-            )
+        actions = listOf(
+            { navController.navigate(Route.AboutScreen) },
+            { navController.navigate(Route.SettingsScreen) }
         ),
-        actionsElevated = listOf(false),
-        fabAction = {
-            navController.navigate(Route.EditWorkoutScreen(0L))
-        },
-        fabIcon = if (homeSelected) ImageVector.vectorResource(R.drawable.ic_add) else null,
+        actionsIcons = listOf(
+            ImageVector.vectorResource(R.drawable.ic_info),
+            ImageVector.vectorResource(R.drawable.ic_settings)
+        ),
+        actionsElevated = listOf(false, false),
+        fabAction = if (homeSelected) fabAction else null,
+        fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
         fabDescription = stringResource(R.string.create_routine),
         bottomBar = {
             NavigationBar {
