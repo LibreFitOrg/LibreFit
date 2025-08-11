@@ -155,7 +155,7 @@ private fun ProfileScreenContent(
                     navController.navigate(Route.StatisticsScreen)
                 }
                 LibreFitButton(
-                    text = stringResource(R.string.explore_exercises),
+                    text = stringResource(R.string.exercises),
                     icon = ImageVector.vectorResource(R.drawable.ic_search),
                     modifier = Modifier.weight(0.5f),
                     elevated = false
