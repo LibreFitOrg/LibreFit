@@ -24,11 +24,13 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import org.librefit.db.entity.Workout
 import org.librefit.db.repository.WorkoutRepository
+import org.librefit.ui.models.UiWorkout
+import org.librefit.ui.models.mappers.toEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -41,17 +43,17 @@ class CalendarScreenViewModelTest {
     private lateinit var viewModel: CalendarScreenViewModel
 
     // A controllable flow to simulate repository emissions
-    private lateinit var completedWorkoutsFlow: MutableStateFlow<List<Workout>>
+    private lateinit var completedWorkoutsFlow: MutableStateFlow<List<UiWorkout>>
 
     // Test data
     private val date1morning = LocalDateTime.of(2025, 7, 29, 9, 0)
     private val date1evening = LocalDateTime.of(2025, 7, 29, 19, 0)
 
-    private val workout1 = Workout(id = 1, title = "Morning Run", completed = date1morning)
-    private val workout2 = Workout(id = 2, title = "Evening Gym", completed = date1evening)
+    private val workout1 = UiWorkout(id = 1, title = "Morning Run", completed = date1morning)
+    private val workout2 = UiWorkout(id = 2, title = "Evening Gym", completed = date1evening)
 
     private val date2morning = LocalDateTime.of(2025, 7, 30, 9, 0)
-    private val workout3 = Workout(id = 3, title = "Cycling", completed = date2morning)
+    private val workout3 = UiWorkout(id = 3, title = "Cycling", completed = date2morning)
 
     private val allWorkouts = listOf(workout1, workout2, workout3)
 
@@ -63,7 +65,7 @@ class CalendarScreenViewModelTest {
         completedWorkoutsFlow = MutableStateFlow(emptyList())
 
         // Arrange: Tell the mock what to return when `completedWorkouts` is accessed
-        every { workoutRepository.completedWorkouts } returns completedWorkoutsFlow
+        every { workoutRepository.completedWorkouts } returns completedWorkoutsFlow.map { f -> f.map { it.toEntity() } }
 
         // Arrange: Create the ViewModel instance with the mock repository
         viewModel = CalendarScreenViewModel(workoutRepository)
@@ -169,7 +171,7 @@ class CalendarScreenViewModelTest {
                 assertThat(awaitItem()).isEqualTo(expectedWorkouts1)
 
                 // Act: Repository emits an updated list (e.g., a new workout was completed)
-                val newWorkout = Workout(id = 4, title = "Late walk", completed = date1morning)
+                val newWorkout = UiWorkout(id = 4, title = "Late walk", completed = date1morning)
                 completedWorkoutsFlow.value = allWorkouts + newWorkout
 
                 // Assert: The flow updates again with the new filtered list

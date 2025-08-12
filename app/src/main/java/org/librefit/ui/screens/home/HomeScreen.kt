@@ -21,6 +21,11 @@ package org.librefit.ui.screens.home
 
 import android.Manifest
 import android.os.Build
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -61,20 +66,21 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import org.librefit.R
-import org.librefit.db.entity.Workout
 import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.bottomMargin
+import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.theme.LibreFitTheme
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun HomeScreen(
+fun SharedTransitionScope.HomeScreen(
     innerPadding: PaddingValues,
     navController: NavHostController,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val viewModel: HomeScreenViewModel = hiltViewModel()
 
@@ -96,6 +102,7 @@ fun HomeScreen(
         innerPadding = innerPadding,
         navController = navController,
         routines = routines,
+        animatedVisibilityScope = animatedVisibilityScope,
         navigateToRoutine = { workoutId ->
             val hasNotificationPermission = notificationPermissionState?.status?.isGranted != false
 
@@ -114,11 +121,13 @@ fun HomeScreen(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun HomeScreenContent(
+private fun SharedTransitionScope.HomeScreenContent(
     innerPadding: PaddingValues,
     navController: NavHostController,
-    routines: List<Workout>,
+    routines: List<UiWorkout>,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     navigateToRoutine: (Long) -> Unit
 ) {
 
@@ -169,6 +178,10 @@ private fun HomeScreenContent(
                     .clickable {
                         navController.navigate(Route.InfoWorkoutScreen(workoutId = routine.id))
                     }
+                    .sharedBounds(
+                        sharedContentState = rememberSharedContentState(routine.id),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
             ) {
                 Column(
                     modifier = Modifier
@@ -214,54 +227,65 @@ private fun HomeScreenContent(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 fun HomeScreenPreview() {
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
-        LibreFitScaffold(
-            title = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                    append(stringResource(id = R.string.app_name).removeRange(5, 8))
+        SharedTransitionLayout {
+            LibreFitScaffold(
+                title = buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                        append(stringResource(id = R.string.app_name).removeRange(5, 8))
+                    }
+                    append(stringResource(id = R.string.app_name).removeRange(0, 5))
+                },
+                actions = listOf {},
+                actionsIcons = listOf(ImageVector.vectorResource(R.drawable.ic_settings)),
+                actionsElevated = listOf(false),
+                fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
+                bottomBar = {
+                    NavigationBar {
+                        NavigationBarItem(
+                            selected = true,
+                            onClick = { },
+                            icon = {
+                                Icon(
+                                    ImageVector.vectorResource(R.drawable.ic_home),
+                                    stringResource(R.string.home)
+                                )
+                            },
+                            label = { Text(stringResource(R.string.home)) }
+                        )
+                        NavigationBarItem(
+                            selected = false,
+                            onClick = { },
+                            icon = {
+                                Icon(
+                                    ImageVector.vectorResource(R.drawable.ic_person),
+                                    stringResource(R.string.profile)
+                                )
+                            },
+                            label = { Text(stringResource(R.string.profile)) }
+                        )
+                    }
                 }
-                append(stringResource(id = R.string.app_name).removeRange(0, 5))
-            },
-            actions = listOf {},
-            actionsIcons = listOf(ImageVector.vectorResource(R.drawable.ic_settings)),
-            actionsElevated = listOf(false),
-            fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
-            bottomBar = {
-                NavigationBar {
-                    NavigationBarItem(
-                        selected = true,
-                        onClick = { },
-                        icon = {
-                            Icon(
-                                ImageVector.vectorResource(R.drawable.ic_home),
-                                stringResource(R.string.home)
+            ) { innerPadding ->
+                AnimatedVisibility(visible = true) {
+                    HomeScreenContent(
+                        innerPadding = innerPadding,
+                        navController = rememberNavController(),
+                        routines = (0..5).map { i ->
+                            UiWorkout(
+                                id = i.toLong(),
+                                title = "Workout $i"
                             )
                         },
-                        label = { Text(stringResource(R.string.home)) }
-                    )
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = { },
-                        icon = {
-                            Icon(
-                                ImageVector.vectorResource(R.drawable.ic_person),
-                                stringResource(R.string.profile)
-                            )
-                        },
-                        label = { Text(stringResource(R.string.profile)) }
+                        navigateToRoutine = {},
+                        animatedVisibilityScope = this
                     )
                 }
             }
-        ) {
-            HomeScreenContent(
-                innerPadding = it,
-                navController = rememberNavController(),
-                routines = (0..5).map { i -> Workout(id = i.toLong(), title = "Workout $i") },
-                navigateToRoutine = {}
-            )
         }
     }
 }

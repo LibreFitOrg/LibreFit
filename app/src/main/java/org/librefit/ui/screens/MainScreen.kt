@@ -20,6 +20,9 @@
 package org.librefit.ui.screens
 
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -44,9 +47,11 @@ import org.librefit.ui.screens.home.HomeScreen
 import org.librefit.ui.screens.profile.ProfileScreen
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun MainScreen(
-    navController: NavHostController
+fun SharedTransitionScope.MainScreen(
+    navController: NavHostController,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     var homeSelected by rememberSaveable { mutableStateOf(true) }
 
@@ -102,7 +107,7 @@ fun MainScreen(
         }
     ) { innerPadding ->
         if (homeSelected)
-            HomeScreen(innerPadding, navController)
-        else ProfileScreen(innerPadding, navController)
+            HomeScreen(innerPadding, navController, animatedVisibilityScope)
+        else ProfileScreen(innerPadding, navController, animatedVisibilityScope)
     }
 }

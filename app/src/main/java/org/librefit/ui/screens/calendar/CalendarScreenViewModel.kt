@@ -34,8 +34,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import org.librefit.db.entity.Workout
 import org.librefit.db.repository.WorkoutRepository
+import org.librefit.ui.models.UiWorkout
+import org.librefit.ui.models.mappers.toUi
 import java.time.Instant
 import java.time.ZoneOffset
 import javax.inject.Inject
@@ -60,7 +61,7 @@ class CalendarScreenViewModel @Inject constructor(
     }
 
 
-    val workoutsFromDate: StateFlow<List<Workout>> = combine(
+    val workoutsFromDate: StateFlow<List<UiWorkout>> = combine(
         workoutsList,
         selectedDateInMillis
     ) { workouts, dateInMillis ->
@@ -69,7 +70,7 @@ class CalendarScreenViewModel @Inject constructor(
         } else {
             val date = Instant.ofEpochMilli(dateInMillis).atZone(ZoneOffset.UTC).toLocalDate()
 
-            workouts.filter { it.completed.toLocalDate() == date }
+            workouts.filter { it.completed.toLocalDate() == date }.map { it.toUi() }
         }
     }
         .distinctUntilChanged()

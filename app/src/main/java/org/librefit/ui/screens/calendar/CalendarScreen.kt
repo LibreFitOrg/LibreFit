@@ -19,6 +19,11 @@
 
 package org.librefit.ui.screens.calendar
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,23 +59,24 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
-import org.librefit.db.entity.Workout
 import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.EmptyLottie
 import org.librefit.ui.components.bottomMargin
+import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter.formatTime
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun CalendarScreen(
-    navController: NavHostController
+fun SharedTransitionScope.CalendarScreen(
+    navController: NavHostController,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val viewModel: CalendarScreenViewModel = hiltViewModel()
 
@@ -97,16 +103,18 @@ fun CalendarScreen(
             navController = navController,
             datePickerState = datePickerState,
             workoutsFromDate = workoutsFromDate,
+            animatedVisibilityScope = animatedVisibilityScope
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-private fun CalendarScreenContent(
+private fun SharedTransitionScope.CalendarScreenContent(
     navController: NavHostController,
     datePickerState: DatePickerState,
-    workoutsFromDate: List<Workout>,
+    workoutsFromDate: List<UiWorkout>,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.calendar)),
@@ -141,7 +149,13 @@ private fun CalendarScreenContent(
             }
 
             items(workoutsFromDate) { workout ->
-                ElevatedCard {
+                ElevatedCard(
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(workout.id),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        ),
+                ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -197,15 +211,20 @@ private fun CalendarScreenContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 private fun CalendarScreenPreview() {
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
-        CalendarScreenContent(
-            navController = rememberNavController(),
-            datePickerState = rememberDatePickerState(),
-            workoutsFromDate = listOf(Workout(title = "Name workout"))
-        )
+        SharedTransitionLayout {
+            AnimatedVisibility(visible = true) {
+                CalendarScreenContent(
+                    navController = rememberNavController(),
+                    datePickerState = rememberDatePickerState(),
+                    workoutsFromDate = listOf(UiWorkout(title = "Name workout")),
+                    animatedVisibilityScope = this,
+                )
+            }
+        }
     }
 }

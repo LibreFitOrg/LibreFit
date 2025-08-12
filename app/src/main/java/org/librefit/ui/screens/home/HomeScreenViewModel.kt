@@ -24,9 +24,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
+import org.librefit.ui.models.mappers.toUi
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,6 +44,7 @@ class HomeScreenViewModel @Inject constructor(
         )
 
     val routines = workoutRepository.routines
+        .map { list -> list.map { it.toUi() } }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

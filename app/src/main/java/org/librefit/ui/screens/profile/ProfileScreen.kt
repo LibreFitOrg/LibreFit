@@ -20,6 +20,11 @@
 package org.librefit.ui.screens.profile
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -32,7 +37,9 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
@@ -98,10 +105,12 @@ import java.time.format.FormatStyle
 import java.util.Locale
 import kotlin.random.Random
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun ProfileScreen(
+fun SharedTransitionScope.ProfileScreen(
     innerPadding: PaddingValues,
-    navController: NavHostController
+    navController: NavHostController,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val viewModel: ProfileScreenViewModel = hiltViewModel()
 
@@ -115,6 +124,7 @@ fun ProfileScreen(
 
 
     ProfileScreenContent(
+        animatedVisibilityScope = animatedVisibilityScope,
         innerPadding = innerPadding,
         navController = navController,
         weekStreak = weekStreak,
@@ -125,8 +135,10 @@ fun ProfileScreen(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun ProfileScreenContent(
+private fun SharedTransitionScope.ProfileScreenContent(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     innerPadding: PaddingValues,
     navController: NavHostController,
     weekStreak: Int,
@@ -235,6 +247,10 @@ private fun ProfileScreenContent(
                     .clickable {
                         navController.navigate(Route.InfoWorkoutScreen(workoutId = workout.id))
                     }
+                    .sharedBounds(
+                        sharedContentState = rememberSharedContentState(workout.id),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    ),
             ) {
                 Column(
                     modifier = Modifier
@@ -253,6 +269,7 @@ private fun ProfileScreenContent(
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
+                            Spacer(modifier = Modifier.height(10.dp))
                             Text(
                                 text = stringResource(R.string.finished_on) + ": "
                                         + workout.completed.format(
@@ -384,6 +401,7 @@ fun StreakCard(weekStreak: Int) {
 }
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 private fun ProfileScreenPreview() {
@@ -408,53 +426,59 @@ private fun ProfileScreenPreview() {
     }
 
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
-        LibreFitScaffold(
-            title = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                    append(stringResource(id = R.string.app_name).removeRange(5, 8))
+        SharedTransitionLayout {
+            LibreFitScaffold(
+                title = buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                        append(stringResource(id = R.string.app_name).removeRange(5, 8))
+                    }
+                    append(stringResource(id = R.string.app_name).removeRange(0, 5))
+                },
+                actions = listOf {},
+                actionsIcons = listOf(ImageVector.vectorResource(R.drawable.ic_settings)),
+                actionsElevated = listOf(false),
+                fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
+                bottomBar = {
+                    NavigationBar {
+                        NavigationBarItem(
+                            selected = false,
+                            onClick = { },
+                            icon = {
+                                Icon(
+                                    ImageVector.vectorResource(R.drawable.ic_home),
+                                    stringResource(R.string.home)
+                                )
+                            },
+                            label = { Text(stringResource(R.string.home)) }
+                        )
+                        NavigationBarItem(
+                            selected = true,
+                            onClick = { },
+                            icon = {
+                                Icon(
+                                    ImageVector.vectorResource(R.drawable.ic_person),
+                                    stringResource(R.string.profile)
+                                )
+                            },
+                            label = { Text(stringResource(R.string.profile)) }
+                        )
+                    }
                 }
-                append(stringResource(id = R.string.app_name).removeRange(0, 5))
-            },
-            actions = listOf {},
-            actionsIcons = listOf(ImageVector.vectorResource(R.drawable.ic_settings)),
-            actionsElevated = listOf(false),
-            fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
-            bottomBar = {
-                NavigationBar {
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = { },
-                        icon = {
-                            Icon(
-                                ImageVector.vectorResource(R.drawable.ic_home),
-                                stringResource(R.string.home)
-                            )
-                        },
-                        label = { Text(stringResource(R.string.home)) }
-                    )
-                    NavigationBarItem(
-                        selected = true,
-                        onClick = { },
-                        icon = {
-                            Icon(
-                                ImageVector.vectorResource(R.drawable.ic_person),
-                                stringResource(R.string.profile)
-                            )
-                        },
-                        label = { Text(stringResource(R.string.profile)) }
+            ) { innerPadding ->
+                AnimatedVisibility(visible = true) {
+                    ProfileScreenContent(
+                        innerPadding = innerPadding,
+                        navController = rememberNavController(),
+                        weekStreak = 2,
+                        points = listChartData,
+                        workoutChart = WorkoutChart.DURATION,
+                        workoutsWithExercises = workoutsWithExercises,
+                        updateChartMode = {},
+                        animatedVisibilityScope = this
                     )
                 }
+
             }
-        ) { innerPadding ->
-            ProfileScreenContent(
-                innerPadding = innerPadding,
-                navController = rememberNavController(),
-                weekStreak = 2,
-                points = listChartData,
-                workoutChart = WorkoutChart.DURATION,
-                workoutsWithExercises = workoutsWithExercises,
-                updateChartMode = {},
-            )
         }
     }
 }

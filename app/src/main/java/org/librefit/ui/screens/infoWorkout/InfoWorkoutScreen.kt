@@ -19,6 +19,10 @@
 
 package org.librefit.ui.screens.infoWorkout
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,7 +36,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -79,9 +82,12 @@ import java.time.format.FormatStyle
 import java.util.Locale
 import kotlin.random.Random
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun InfoWorkoutScreen(
-    navController: NavHostController
+fun SharedTransitionScope.InfoWorkoutScreen(
+    navController: NavHostController,
+    workoutId: Long,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val viewModel: InfoWorkoutScreenViewModel = hiltViewModel()
 
@@ -99,6 +105,8 @@ fun InfoWorkoutScreen(
 
 
     InfoWorkoutScreenContent(
+        workoutId = workoutId,
+        animatedVisibilityScope = animatedVisibilityScope,
         navController = navController,
         workout = workout,
         routine = routine,
@@ -113,8 +121,11 @@ fun InfoWorkoutScreen(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun InfoWorkoutScreenContent(
+private fun SharedTransitionScope.InfoWorkoutScreenContent(
+    workoutId: Long,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     navController: NavHostController,
     workout: UiWorkout,
     routine: UiWorkout,
@@ -192,7 +203,12 @@ private fun InfoWorkoutScreenContent(
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding) {
             item {
-                OutlinedCard {
+                ElevatedCard(
+                    modifier = Modifier.sharedBounds(
+                        sharedContentState = rememberSharedContentState(workoutId),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+                ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -366,31 +382,36 @@ private fun InfoWorkoutScreenContent(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 private fun InfoRoutineScreenPreview() {
     var routine by remember { mutableStateOf(UiWorkout(title = "Title routine")) }
 
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
-        InfoWorkoutScreenContent(
-            navController = rememberNavController(),
-            deleteWorkout = {},
-            workout = UiWorkout(title = "My workout", notes = "This is a note!"),
-            routine = routine,
-            workoutDate = "DD/MM/YY",
-            volumeExercises = "100",
-            workoutChart = WorkoutChart.REPS,
-            exercises = listOf(
-                UiExerciseWithSets(
-                    exerciseDC = UiExerciseDC(name = "Name exercise"),
-                    sets = persistentListOf(UiSet(), UiSet())
-                )
-            ),
-            points = (0..10).map { Point(listOf(Random.nextFloat())) },
-            detachWorkoutFromRoutine = {
-                routine = UiWorkout()
-            },
-            updateChartMode = {},
-        )
+        SharedTransitionLayout {
+            InfoWorkoutScreenContent(
+                navController = rememberNavController(),
+                deleteWorkout = {},
+                workout = UiWorkout(title = "My workout", notes = "This is a note!"),
+                routine = routine,
+                workoutDate = "DD/MM/YY",
+                volumeExercises = "100",
+                workoutChart = WorkoutChart.REPS,
+                exercises = listOf(
+                    UiExerciseWithSets(
+                        exerciseDC = UiExerciseDC(name = "Name exercise"),
+                        sets = persistentListOf(UiSet(), UiSet())
+                    )
+                ),
+                points = (0..10).map { Point(listOf(Random.nextFloat())) },
+                detachWorkoutFromRoutine = {
+                    routine = UiWorkout()
+                },
+                updateChartMode = {},
+                workoutId = 0,
+                animatedVisibilityScope = this as AnimatedVisibilityScope
+            )
+        }
     }
 }
