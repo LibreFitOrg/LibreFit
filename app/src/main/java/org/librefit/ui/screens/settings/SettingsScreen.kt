@@ -66,7 +66,6 @@ import org.librefit.enums.ThemeMode
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
-import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.theme.LibreFitTheme
 
 @Composable
@@ -313,7 +312,6 @@ private fun SettingsScreenContent(
                 }
             }
 
-            bottomMargin()
             //TODO: toggle to enable/disable rest timer sound
         }
     }

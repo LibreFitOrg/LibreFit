@@ -35,7 +35,6 @@ import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.MarkdownText
-import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.dialogs.UrlActionDialog
 import org.librefit.ui.theme.LibreFitTheme
 
@@ -75,8 +74,6 @@ fun LicenseScreen(navigateBack: () -> Unit) {
             item {
                 MarkdownText(licenseText.value)
             }
-
-            bottomMargin()
         }
     }
 }

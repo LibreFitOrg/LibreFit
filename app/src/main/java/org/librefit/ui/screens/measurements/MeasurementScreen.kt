@@ -77,7 +77,6 @@ import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.EmptyLottie
-import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.components.charts.Point
 import org.librefit.ui.components.dialogs.ConfirmDialog
@@ -522,7 +521,6 @@ private fun MeasurementScreenContent(
                     }
                 }
             }
-            bottomMargin()
         }
     }
 }

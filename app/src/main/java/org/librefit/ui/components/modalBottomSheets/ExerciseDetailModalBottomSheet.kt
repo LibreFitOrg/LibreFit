@@ -68,7 +68,6 @@ import org.librefit.enums.exercise.Muscle
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitScaffold
-import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
@@ -184,8 +183,6 @@ fun ExerciseDetailModalBottomSheet(
                     }.joinToString("\n\n")
                 )
             }
-
-            bottomMargin()
         }
     }
 }

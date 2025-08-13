@@ -69,7 +69,6 @@ import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
-import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
@@ -434,8 +433,6 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                     }
                 }
             }
-
-            bottomMargin()
         }
     }
 }

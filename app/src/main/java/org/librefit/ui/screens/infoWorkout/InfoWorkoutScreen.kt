@@ -64,7 +64,6 @@ import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
-import org.librefit.ui.components.bottomMargin
 import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.components.charts.Point
 import org.librefit.ui.components.dialogs.ConfirmDialog
@@ -391,7 +390,6 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                     selectedExercise = exercise.exerciseDC
                 }
             }
-            bottomMargin()
         }
     }
     // Opened by info icon next to exercise name, it shows the details of an exercise

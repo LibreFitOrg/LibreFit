@@ -107,7 +107,7 @@ class WorkoutScreenViewModel @Inject constructor(
     private var chronometerJob: Job? = null
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             if (workoutId != 0L) {
                 val workoutWithExercisesAndSets =
                     workoutRepository.getWorkoutWithExercisesAndSets(workoutId)

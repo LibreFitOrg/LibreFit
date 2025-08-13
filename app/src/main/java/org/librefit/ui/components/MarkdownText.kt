@@ -289,7 +289,6 @@ private fun MarkdownTextPreview() {
                 item {
                     MarkdownText(text = markdownText)
                 }
-                bottomMargin()
             }
         }
     }
