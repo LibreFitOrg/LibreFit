@@ -161,7 +161,7 @@ fun StatisticsScreenPreview() {
     )
 
     val cutoffsIds: List<Pair<Int, Long?>> = listOf(
-        R.string.past_week to null, R.string.past_month to null, R.string.historical to null
+        R.string.past_week to null, R.string.past_month to null, R.string.history to null
     )
 
     key(muscleDistributionStatisticsChart) {

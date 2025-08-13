@@ -221,7 +221,6 @@
     <string name="add">Add</string>
     <string name="save">Save</string>
     <string name="years">Years</string>
-    <string name="historical">Historical</string>
     <string name="muscles_distribution">Muscles distribution</string>
     <string name="exercises_distribution">Exercises distribution</string>
     <string name="workout_saved">Workout saved</string>
@@ -236,6 +235,7 @@
     <string name="privacy_notice_default_perm">Permission granted by default</string>
     <string name="privacy_notice_foreground_perm">**Foreground Service**: This permission is automatically granted when LibreFit is installed and this allows it to run in the foreground during a workout.</string>
     <string name="delete_routine_text">Are you sure you want to delete this routine? This action cannot be undone</string>
+    <string name="history">History</string>
     <string name="body_weight">Body weight</string>
     <string name="fat_mass">Fat mass</string>
     <string name="quit_routine_creation_question">Quit routine creation?</string>

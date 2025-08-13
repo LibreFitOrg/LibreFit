@@ -223,7 +223,6 @@
     <string name="add">Aggiungi</string>
     <string name="save">Salva</string>
     <string name="years">Anni</string>
-    <string name="historical">Storico</string>
     <string name="muscles_distribution">Distribuzione dei muscoli</string>
     <string name="exercises_distribution">Distribuzione degli esercizi</string>
     <string name="workout_saved">Allenamento salvato</string>
@@ -236,6 +235,7 @@
     <string name="privacy_notice_default_perm">Autorizzazione concessa di default</string>
     <string name="privacy_notice_foreground_perm">**Servizio in primo piano**: Questa autorizzazione viene concessa automaticamente quando si installa LibreFit e gli consente di funzionare in primo piano durante un allenamento.</string>
     <string name="delete_routine_text">Sei sicuro di voler eliminare questa routine? Questa azione non può essere annullata</string>
+    <string name="history">Storico</string>
     <string name="body_weight">Peso corporeo</string>
     <string name="fat_mass">Massa grassa</string>
     <string name="quit_routine_creation_question">Interrompere creazione routine?</string>

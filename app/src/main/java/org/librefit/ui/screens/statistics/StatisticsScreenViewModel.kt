@@ -110,7 +110,7 @@ class StatisticsScreenViewModel @Inject constructor(
         }
 
         if (cutoffs.size <= 3) {
-            ids = ids + (R.string.historical to null)
+            ids = ids + (R.string.history to null)
         }
 
         ids.take(points.firstOrNull()?.yValues?.size ?: 0)
@@ -178,7 +178,7 @@ class StatisticsScreenViewModel @Inject constructor(
         }
 
         if (cutoffs.size <= 3) {
-            ids = ids + (R.string.historical to null)
+            ids = ids + (R.string.history to null)
         }
 
         ids.take(points.firstOrNull()?.yValues?.size ?: 0)

@@ -124,7 +124,7 @@
     <string name="start_creating_routine">Start by creating a new routine</string>
 
 
-    <!--Info screen-->
+    <!--Info workout screen-->
     <string name="past_workouts">Past workouts</string>
     <string name="delete_workout_question">Delete workout?</string>
     <string name="delete_workout_text">Are you sure you want to delete this workout? This action cannot be undone</string>
@@ -132,6 +132,10 @@
     <string name="delete_routine_text">Are you sure you want to delete this routine? This action cannot be undone</string>
     <string name="open_this_routine">Open this routine</string>
     <string name="linked_routine">Linked routine</string>
+
+
+    <!-- Info exercise screen-->
+    <string name="history">History</string>
 
 
     <!--Measurement screen-->
@@ -219,7 +223,6 @@
     <string name="months">Months</string>
     <string name="year">Year</string>
     <string name="years">Years</string>
-    <string name="historical">Historical</string>
     <string name="muscles_distribution">Muscles distribution</string>
     <string name="exercises_distribution">Exercises distribution</string>
 
