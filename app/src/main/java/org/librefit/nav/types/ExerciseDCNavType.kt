@@ -17,7 +17,7 @@
  * along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.librefit.nav
+package org.librefit.nav.types
 
 import android.net.Uri
 import android.os.Bundle
@@ -34,16 +34,16 @@ class ExerciseDCNavType : NavType<ExerciseDC>(isNullableAllowed = false) {
 
     override fun parseValue(value: String): ExerciseDC {
         val decoded = Uri.decode(value)
-        return Json.decodeFromString(decoded)
+        return Json.Default.decodeFromString(decoded)
     }
 
     override fun put(bundle: Bundle, key: String, value: ExerciseDC) {
-        val json = Json.encodeToString(value)
+        val json = Json.Default.encodeToString(value)
         bundle.putString(key, json)
     }
 
     override fun serializeAsValue(value: ExerciseDC): String {
-        val json = Json.encodeToString(value)
+        val json = Json.Default.encodeToString(value)
         return Uri.encode(json)
     }
 }

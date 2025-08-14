@@ -34,6 +34,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
+import org.librefit.nav.types.ExerciseDCNavType
+import org.librefit.nav.types.WorkoutWithExercisesAndSetsNavType
 import org.librefit.ui.screens.MainScreen
 import org.librefit.ui.screens.about.AboutScreen
 import org.librefit.ui.screens.about.LibrariesScreen
