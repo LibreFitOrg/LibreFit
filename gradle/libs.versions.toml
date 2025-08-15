@@ -4,7 +4,7 @@ datastore = "1.1.7"
 kotlin = "2.2.0"
 junit = "4.13.2"
 espressoCore = "3.7.0"
-composeBom = "2025.07.00"
+composeBom = "2025.08.00"
 roomVersion = "2.7.2"
 appcompat = "1.7.1"
 ksp = "2.2.0-2.0.2"
@@ -26,7 +26,7 @@ kotlinxCollectionsImmutable = "0.4.0"
 material = "1.14.0-alpha03"
 
 [libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.16.0" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.17.0" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version = "2.7.2" }
