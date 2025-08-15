@@ -42,7 +42,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -200,7 +199,7 @@ fun SharedTransitionScope.ExerciseCard(
             ) {
                 Image(
                     bitmap = image,
-                    contentDescription = null,
+                    contentDescription = exerciseWithSets.exerciseDC.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .padding(end = 10.dp)
@@ -211,7 +210,7 @@ fun SharedTransitionScope.ExerciseCard(
                             animatedVisibilityScope = animatedVisibilityScope
                         )
                         .size(50.dp)
-                        .clip(CircleShape)
+                        .clip(MaterialTheme.shapes.medium)
                 )
                 Text(
                     text = exerciseWithSets.exerciseDC.name,

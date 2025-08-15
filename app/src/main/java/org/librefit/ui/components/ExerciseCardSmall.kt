@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
@@ -110,7 +109,7 @@ fun SharedTransitionScope.ExerciseCardSmall(
             ) {
                 Image(
                     bitmap = image,
-                    contentDescription = null,
+                    contentDescription = exerciseWithSets.exerciseDC.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .padding(end = 10.dp)
@@ -121,7 +120,7 @@ fun SharedTransitionScope.ExerciseCardSmall(
                             animatedVisibilityScope = animatedVisibilityScope
                         )
                         .size(50.dp)
-                        .clip(CircleShape)
+                        .clip(MaterialTheme.shapes.medium)
                 )
                 Text(
                     modifier = Modifier.weight(1f),
@@ -261,6 +260,7 @@ private fun ExerciseCardSmallPreview() {
                         ),
                         exerciseDC = UiExerciseDC(
                             name = "Name exercise long long long long",
+                            images = persistentListOf("3_4_Sit-Up/0.jpg")
                         ),
                         sets = persistentListOf(UiSet(completed = true), UiSet(reps = 10), UiSet())
                     ),
