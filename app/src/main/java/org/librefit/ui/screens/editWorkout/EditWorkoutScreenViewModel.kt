@@ -56,7 +56,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
     }
 
     private val workoutId = savedStateHandle.get<Long>(WORKOUT_ID_KEY)
-        ?: throw IllegalArgumentException("Invalid WORKOUT_ID_KEY")
+        ?: error("WORKOUT_ID_KEY does not match `Route.EditWorkoutScreen` parameter")
 
 
     private val _isRoutine = MutableStateFlow(false)

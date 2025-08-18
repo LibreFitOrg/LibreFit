@@ -59,7 +59,7 @@ class InfoWorkoutScreenViewModel @Inject constructor(
     }
 
     private val workoutId = savedStateHandle.get<Long>(WORKOUT_ID_KEY)
-        ?: throw IllegalArgumentException("Invalid WORKOUT_ID_KEY")
+        ?: error("WORKOUT_ID_KEY does not match `Route.InfoWorkoutScreen` parameter")
 
 
     private val _volume = MutableStateFlow("")

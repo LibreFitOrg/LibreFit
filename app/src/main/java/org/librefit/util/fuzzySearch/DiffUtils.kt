@@ -79,7 +79,7 @@ object DiffUtils {
            of large number multiplication. See: https://github.com/xdrop/fuzzywuzzy/pull/105*/
         val matrixSize = len2Copy * len1Copy
         if ((matrixSize > MAX_MATRIX_SIZE) || (matrixSize <= 0)) {
-            throw IllegalArgumentException("Provided strings are too long to handle.")
+            error("Provided strings are too long to handle.")
         }
 
         matrix = IntArray(matrixSize)
@@ -502,7 +502,7 @@ object DiffUtils {
                     val offset = i - (len1 - half)
                     c2p = str2 + offset
                     p = offset
-                    var c3: Int = row[p++] + if (ch1 != c2[c2p++]) 1 else 0
+                    val c3: Int = row[p++] + if (ch1 != c2[c2p++]) 1 else 0
                     x = row[p]
                     x++
                     d = x

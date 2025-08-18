@@ -62,7 +62,7 @@ class BeforeSavingScreenViewModel @Inject constructor(
 
     private val workoutWithExercisesAndSetsJson = savedStateHandle
         .get<String>(WORKOUT_WITH_EXERCISES_AND_SET_KEY)
-        ?: throw IllegalArgumentException("Invalid WORKOUT_WITH_EXERCISES_AND_SET_KEY")
+        ?: error("WORKOUT_WITH_EXERCISES_AND_SET_KEY does not match `Route.BeforeSavingScreen` parameter")
 
 
     private val workoutWithExercisesAndSets: UiWorkoutWithExercisesAndSets =
