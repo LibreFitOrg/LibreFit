@@ -443,39 +443,39 @@ class DataHelper @Inject constructor(
                     Point(
                         yValues = listOf(
                             when (exerciseChart) {
-                                TimeChart.BEST_TIME -> sets.maxOf { set -> set.elapsedTime }
+                                TimeChart.BEST_TIME -> sets.maxOfOrNull { set -> set.elapsedTime }
+                                    ?: 0
                                 TimeChart.TOTAL_TIME -> sets.sumOf { set -> set.elapsedTime }
                                 WeightedBodyweightChart.TOTAL_REPS -> sets.sumOf { set ->
                                     set.reps
                                 }
-
                                 WeightedBodyweightChart.TOTAL_VOLUME -> sets.sumOf { set ->
                                     (set.load + bodyWeight) * set.reps.toDouble()
                                 }
-
-                                WeightedBodyweightChart.BEST_SET_VOLUME -> sets.maxOf { set ->
+                                WeightedBodyweightChart.BEST_SET_VOLUME -> sets.maxOfOrNull { set ->
                                     (set.load + bodyWeight) * set.reps
-                                }
+                                } ?: 0
 
-                                WeightedBodyweightChart.HEAVIEST_WEIGHT -> sets.maxOf { set ->
+                                WeightedBodyweightChart.HEAVIEST_WEIGHT -> sets.maxOfOrNull { set ->
                                     set.load + bodyWeight
-                                }
+                                } ?: 0
 
-                                BodyweightChart.MOST_REPS -> sets.maxOf { set -> set.reps }
+                                BodyweightChart.MOST_REPS -> sets.maxOfOrNull { set -> set.reps }
+                                    ?: 0
                                 BodyweightChart.SESSION_REPS -> sets.sumOf { set -> set.reps }
-                                LoadChart.HEAVIEST_WEIGHT -> sets.maxOf { set -> set.load }
-                                LoadChart.BEST_SET_VOLUME -> sets.maxOf { set ->
+                                LoadChart.HEAVIEST_WEIGHT -> sets.maxOfOrNull { set -> set.load }
+                                    ?: 0
+
+                                LoadChart.BEST_SET_VOLUME -> sets.maxOfOrNull { set ->
                                     set.load * set.reps
-                                }
+                                } ?: 0
 
-                                LoadChart.ONE_REP_MAX -> sets.maxOf { set ->
+                                LoadChart.ONE_REP_MAX -> sets.maxOfOrNull { set ->
                                     OneRepMaxCalculator.calculate(set.load, set.reps)
-                                }
-
+                                } ?: 0
                                 LoadChart.TOTAL_REPS -> sets.sumOf { set ->
                                     set.reps
                                 }
-
                                 LoadChart.SESSION_VOLUME -> sets.sumOf { set ->
                                     set.load * set.reps.toDouble()
                                 }
