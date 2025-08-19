@@ -164,7 +164,7 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
     val stringId = if (id == 0L) "" else id.toString()
 
     LibreFitScaffold(
-        navigateBack = navController::popBackStack
+        navigateBack = navController::navigateUp
     ) { innerPadding ->
         LibreFitLazyColumn(
             innerPadding = innerPadding,

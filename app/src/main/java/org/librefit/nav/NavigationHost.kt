@@ -135,16 +135,16 @@ fun NavigationHost() {
                 )
             }
             composable<Route.MeasurementScreen> {
-                MeasurementScreen(navigateBack = navController::popBackStack)
+                MeasurementScreen(navigateBack = navController::navigateUp)
             }
             composable<Route.PrivacyScreen> {
-                PrivacyScreen(navigateBack = navController::popBackStack)
+                PrivacyScreen(navigateBack = navController::navigateUp)
             }
             composable<Route.LibrariesScreen> {
-                LibrariesScreen(navigateBack = navController::popBackStack)
+                LibrariesScreen(navigateBack = navController::navigateUp)
             }
             composable<Route.LicenseScreen> {
-                LicenseScreen(navigateBack = navController::popBackStack)
+                LicenseScreen(navigateBack = navController::navigateUp)
             }
             composable<Route.RequestPermissionScreen> {
                 RequestPermissionScreen(
@@ -158,7 +158,7 @@ fun NavigationHost() {
             composable<Route.SuccessScreen> {
                 SuccessScreen(
                     message = it.toRoute<Route.SuccessScreen>().message,
-                    navigateBack = navController::popBackStack
+                    navigateBack = navController::navigateUp
                 )
             }
             composable<Route.StatisticsScreen> {

@@ -147,7 +147,7 @@ fun SharedTransitionScope.WorkoutScreen(
             confirmText = stringResource(R.string.quit_dialog),
             onConfirm = {
                 viewModel.stopWorkoutService()
-                navController.popBackStack()
+                navController.navigateUp()
                 showConfirmDialog = false
             },
             onDismiss = { showConfirmDialog = false }
@@ -165,7 +165,7 @@ fun SharedTransitionScope.WorkoutScreen(
             showConfirmDialog = true
         } else {
             viewModel.stopWorkoutService()
-            navController.popBackStack()
+            navController.navigateUp()
         }
     }
 
@@ -186,7 +186,7 @@ fun SharedTransitionScope.WorkoutScreen(
         navigateBack = {
             if (exercisesWithSets.isEmpty()) {
                 viewModel.stopWorkoutService()
-                navController.popBackStack()
+                navController.navigateUp()
             } else {
                 showConfirmDialog = true
             }

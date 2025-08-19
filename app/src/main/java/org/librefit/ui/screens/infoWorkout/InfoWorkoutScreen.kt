@@ -155,7 +155,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
             onConfirm = {
                 deleteWorkout()
                 showConfirmDialog = false
-                navController.popBackStack()
+                navController.navigateUp()
             },
             onDismiss = { showConfirmDialog = false }
         )
@@ -180,7 +180,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(if (isRoutine) R.string.routine else R.string.workout)),
-        navigateBack = { navController.popBackStack() },
+        navigateBack = navController::navigateUp,
         actions = listOf(
             {
                 navController.navigate(Route.EditWorkoutScreen(workoutId = workout.id)) {

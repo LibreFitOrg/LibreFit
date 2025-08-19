@@ -175,7 +175,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.overview)),
-        navigateBack = { navController.popBackStack() },
+        navigateBack = navController::navigateUp,
         actions = listOf {
             saveExercisesWithWorkout()
             navController.navigate(Route.SuccessScreen(SuccessMessage.WORKOUT_SAVED)) {

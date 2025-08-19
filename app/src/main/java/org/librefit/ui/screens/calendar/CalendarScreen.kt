@@ -120,7 +120,7 @@ private fun SharedTransitionScope.CalendarScreenContent(
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.calendar)),
-        navigateBack = { navController.popBackStack() }
+        navigateBack = navController::navigateUp
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding) {
             item {

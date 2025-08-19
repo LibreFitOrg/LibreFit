@@ -121,7 +121,7 @@ fun SharedTransitionScope.ExercisesScreen(
             text = stringResource(R.string.quit_adding_exercises_text),
             confirmText = stringResource(R.string.quit_dialog),
             onConfirm = {
-                navController.popBackStack()
+                navController.navigateUp()
                 showConfirmDialog = false
             },
             onDismiss = { showConfirmDialog = false }
@@ -130,7 +130,7 @@ fun SharedTransitionScope.ExercisesScreen(
 
     val actions = remember {
         if (addExercises) listOf {
-            navController.popBackStack()
+            navController.navigateUp()
             sharedViewModel.setSelectedExercisesList(selectedExercisesList.map { it.toEntity() })
         } else listOf()
     }
@@ -147,7 +147,7 @@ fun SharedTransitionScope.ExercisesScreen(
         updateQuery = viewModel::updateQuery,
         updateFilter = viewModel::updateFilter,
         actions = actions,
-        navigateBack = navController::popBackStack,
+        navigateBack = navController::navigateUp,
         navigateToInfoExercise = {
             navController.navigate(Route.InfoExerciseScreen(0L, it)) { launchSingleTop = true }
         }

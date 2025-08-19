@@ -159,7 +159,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                 if (typeOfEdit == null) R.string.quit_dialog else R.string.discard_dialog
             ),
             onConfirm = {
-                navController.popBackStack()
+                navController.navigateUp()
                 showConfirmDialog = false
             },
             onDismiss = { showConfirmDialog = false }
@@ -186,7 +186,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
         ),
         navigateBack = {
             if (exercisesWithSets.isEmpty()) {
-                navController.popBackStack()
+                navController.navigateUp()
             } else {
                 showConfirmDialog = true
             }

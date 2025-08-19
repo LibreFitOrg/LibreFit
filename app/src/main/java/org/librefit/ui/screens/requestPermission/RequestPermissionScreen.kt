@@ -105,7 +105,7 @@ private fun RequestPermissionsScreenContent(
 ) {
 
     LibreFitScaffold(
-        navigateBack = { navController.popBackStack() }
+        navigateBack = navController::navigateUp
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding, 40.dp) {
             item {

@@ -91,7 +91,7 @@ private fun StatisticsScreenContent(
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.statistics)),
-        navigateBack = navController::popBackStack
+        navigateBack = navController::navigateUp
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding = innerPadding) {
             item {

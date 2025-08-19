@@ -69,7 +69,7 @@ fun AboutScreen(navController: NavHostController) {
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.about)),
-        navigateBack = { navController.popBackStack() },
+        navigateBack = navController::navigateUp,
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding) {
             item {
