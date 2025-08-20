@@ -316,9 +316,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                 item {
                     ElevatedCard(
                         onClick = {
-                            navController.navigate(Route.InfoWorkoutScreen(routine.id)) {
-                                launchSingleTop = true
-                            }
+                            navController.navigate(Route.InfoWorkoutScreen(routine.id))
                         },
                         modifier = Modifier
                             .sharedBounds(
@@ -375,9 +373,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                                 text = stringResource(R.string.open_this_routine),
                                 icon = ImageVector.vectorResource(R.drawable.ic_open_new)
                             ) {
-                                navController.navigate(Route.InfoWorkoutScreen(routine.id)) {
-                                    launchSingleTop = true
-                                }
+                                navController.navigate(Route.InfoWorkoutScreen(routine.id))
                             }
                         }
                     }
