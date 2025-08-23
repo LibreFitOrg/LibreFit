@@ -34,10 +34,10 @@ import org.librefit.ui.theme.LibreFitTheme
 
 @Composable
 fun LibrariesScreen(navigateBack: () -> Unit) {
-    val url = remember { mutableStateOf("") }
+    val url = remember { mutableStateOf<String?>(null) }
 
-    if (url.value != "") {
-        UrlActionDialog(url)
+    url.value?.let {
+        UrlActionDialog(it) { url.value = null }
     }
 
     val libs = rememberLibraries()

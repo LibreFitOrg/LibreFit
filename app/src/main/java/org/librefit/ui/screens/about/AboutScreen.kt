@@ -63,9 +63,11 @@ fun AboutScreen(navController: NavHostController) {
 
     val context = LocalContext.current
 
-    val url = remember { mutableStateOf("") }
+    val url = remember { mutableStateOf<String?>(null) }
 
-    UrlActionDialog(url)
+    url.value?.let {
+        UrlActionDialog(it) { url.value = null }
+    }
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.about)),

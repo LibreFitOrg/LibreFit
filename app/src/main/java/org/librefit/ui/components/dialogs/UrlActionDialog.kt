@@ -28,9 +28,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,60 +36,59 @@ import org.librefit.R
 import org.librefit.ui.theme.LibreFitTheme
 
 /**
- * If the [url] state is not empty, this dialog is shown, allowing the user
- * to either open the URL in a browser or copy it to the clipboard.
+ * This dialog allow the user to either open the [url] in a browser or copy it to the clipboard.
  *
- * @param url A [MutableState] holding the URL string. The state is reset to an empty string after an action.
+ * @param url It holds the URL string. It must match [Patterns.WEB_URL].
+ * @param onDismiss A lambda called when the user dismiss this dialog.
  *
  * @throws IllegalArgumentException when [url] value is not a valid URL according to [Patterns.WEB_URL]
  */
 @Composable
 fun UrlActionDialog(
-    url: MutableState<String>
+    url: String,
+    onDismiss: () -> Unit
 ) {
+    require(Patterns.WEB_URL.matcher(url).matches()) {
+        "Invalid URL: $url"
+    }
+
     val context = LocalContext.current
 
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-    if (url.value != "") {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.url_dialog)) },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = url.toUri()
+                    }
+                    context.startActivity(intent)
+                    onDismiss
+                }) {
+                Text(stringResource(R.string.open))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    val clip = ClipData.newPlainText("Copied Url", url)
+                    clipboardManager.setPrimaryClip(clip)
+                    onDismiss
+                }) {
+                Text(stringResource(R.string.copy))
+            }
+        },
+        text = { Text(text = url) })
 
-        require(Patterns.WEB_URL.matcher(url.value).matches()) {
-            "Invalid URL"
-        }
-
-        AlertDialog(
-            onDismissRequest = { url.value = "" },
-            title = { Text(stringResource(R.string.url_dialog)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = url.value.toUri()
-                        }
-                        context.startActivity(intent)
-                        url.value = ""
-                    }) {
-                    Text(stringResource(R.string.open))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        val clip = ClipData.newPlainText("Copied Url", url.value)
-                        clipboardManager.setPrimaryClip(clip)
-                        url.value = ""
-                    }) {
-                    Text(stringResource(R.string.copy))
-                }
-            },
-            text = { Text(text = url.value) })
-    }
 }
 
 @Preview
 @Composable
 private fun UrlActionDialogPreview() {
-    LibreFitTheme(false, true) {
-        UrlActionDialog(remember { mutableStateOf("https://example.com") })
+    LibreFitTheme(dynamicColor = false, darkTheme = true) {
+        UrlActionDialog("https://example.com") {}
     }
 }

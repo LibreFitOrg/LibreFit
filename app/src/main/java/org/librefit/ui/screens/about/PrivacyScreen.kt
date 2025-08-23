@@ -28,7 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,18 +48,20 @@ fun PrivacyScreen(
 
     var privacyPolicyText by rememberSaveable { mutableStateOf("") }
 
-    val context = LocalContext.current
+    val resources = LocalResources.current
 
     LaunchedEffect(Unit) {
-        privacyPolicyText = context.resources.openRawResource(R.raw.privacy_policy)
+        privacyPolicyText = resources.openRawResource(R.raw.privacy_policy)
             .bufferedReader()
             .use { it.readText() }
     }
 
 
-    val url = remember { mutableStateOf("") }
+    val url = remember { mutableStateOf<String?>(null) }
 
-    UrlActionDialog(url)
+    url.value?.let {
+        UrlActionDialog(it) { url.value = null }
+    }
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.privacy)),
@@ -85,7 +87,7 @@ fun PrivacyScreen(
                     text = stringResource(R.string.view_online_version),
                     icon = Icons.AutoMirrored.Filled.ExitToApp,
                     onClick = {
-                        url.value = context.getString(R.string.url_privacy)
+                        url.value = resources.getString(R.string.url_privacy)
                     }
                 )
             }

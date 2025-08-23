@@ -60,9 +60,11 @@ fun MarkdownText(
 
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
 
-    val url = remember { mutableStateOf("") }
+    val url = remember { mutableStateOf<String?>(null) }
 
-    UrlActionDialog(url)
+    url.value?.let {
+        UrlActionDialog(it) { url.value = null }
+    }
 
     Text(
         text = annotatedString,
@@ -280,7 +282,7 @@ private fun MarkdownTextPreview() {
         """.trimIndent()
 
 
-    LibreFitTheme(false, true) {
+    LibreFitTheme(dynamicColor = false, darkTheme = true) {
         LibreFitScaffold {
             LazyColumn(
                 contentPadding = it,
