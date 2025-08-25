@@ -126,12 +126,12 @@ class MeasurementScreenViewModelTest {
 
     @Test
     fun `initial state - fat mass is null `() = runTest {
-        assertThat(viewModel.fatMass.value).isEqualTo(null)
+        assertThat(viewModel.fatMass.value).isNull()
     }
 
     @Test
     fun `initial state - lean mass is null `() = runTest {
-        assertThat(viewModel.leanMass.value).isEqualTo(null)
+        assertThat(viewModel.leanMass.value).isNull()
     }
 
     @Test
