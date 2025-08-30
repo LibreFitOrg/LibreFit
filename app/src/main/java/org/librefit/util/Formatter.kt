@@ -149,7 +149,7 @@ object Formatter {
      */
     fun formatDetails(boldText: String, text: String): AnnotatedString {
         return buildAnnotatedString {
-            withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)) { append("$boldText: ") }
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("$boldText: ") }
             append(text)
         }
     }
