@@ -19,6 +19,7 @@
 
 package org.librefit.ui.components
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,6 +36,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,6 +47,7 @@ import org.librefit.R
 import org.librefit.ui.theme.LibreFitTheme
 import kotlin.random.Random
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LibreFitButton(
     modifier: Modifier = Modifier,
@@ -51,13 +56,21 @@ fun LibreFitButton(
     iconDescription: String? = null,
     elevated: Boolean = true,
     enabled: Boolean = true,
+    interactionSource: MutableInteractionSource? = null,
     onClick: () -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
+
     Button(
         modifier = modifier,
-        onClick = onClick,
+        onClick = {
+            haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+            onClick()
+        },
         colors = if (elevated) ButtonDefaults.buttonColors() else ButtonDefaults.filledTonalButtonColors(),
-        enabled = enabled
+        enabled = enabled,
+        shapes = ButtonDefaults.shapes(),
+        interactionSource = interactionSource
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -75,7 +88,7 @@ fun LibreFitButton(
             }
             Text(
                 text = text,
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelLargeEmphasized,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )
@@ -83,6 +96,7 @@ fun LibreFitButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
 private fun LibreFitButtonPreview() {
@@ -90,7 +104,8 @@ private fun LibreFitButtonPreview() {
         LibreFitButton(
             text = stringResource(R.string.start_routine),
             icon = ImageVector.vectorResource(R.drawable.ic_play_arrow),
-            elevated = Random.nextBoolean()
-        ) { }
+            elevated = Random.nextBoolean(),
+            onClick = {}
+        )
     }
 }
