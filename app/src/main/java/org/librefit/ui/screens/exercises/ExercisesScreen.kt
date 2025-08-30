@@ -37,14 +37,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -292,7 +295,7 @@ private fun SharedTransitionScope.ExercisesScreenContent(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SharedTransitionScope.ItemExerciseDC(
     modifier: Modifier,
@@ -311,27 +314,24 @@ private fun SharedTransitionScope.ItemExerciseDC(
         ).asImageBitmap()
     }
 
-    ElevatedCard(
-        onClick = {
+    ToggleButton(
+        checked = isSelected,
+        onCheckedChange = {
             if (addExercises) {
                 onAddToggle()
             } else {
                 onInfo()
             }
         },
-        modifier = modifier.height(120.dp),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = if (isSelected)
-                MaterialTheme.colorScheme.primaryContainer else Color.Unspecified
-        )
+        shapes = ToggleButtonDefaults.shapes(
+            shape = MaterialTheme.shapes.extraLargeIncreased,
+            pressedShape = MaterialTheme.shapes.extraSmall,
+            checkedShape = MaterialTheme.shapes.medium
+        ),
+        contentPadding = ButtonDefaults.MediumContentPadding,
+        modifier = modifier.height(130.dp),
     ) {
         Row(
-            modifier = Modifier.padding(
-                top = 20.dp,
-                bottom = 20.dp,
-                start = 10.dp,
-                end = 10.dp
-            ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
@@ -339,12 +339,11 @@ private fun SharedTransitionScope.ItemExerciseDC(
                 contentDescription = exercise.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .padding(start = 10.dp)
                     .sharedElement(
                         sharedContentState = rememberSharedContentState(exercise.id),
                         animatedVisibilityScope = animatedVisibilityScope
                     )
-                    .width(100.dp)
+                    .width(110.dp)
                     .clip(MaterialTheme.shapes.small)
             )
             Column(
@@ -371,8 +370,8 @@ private fun SharedTransitionScope.ItemExerciseDC(
                 }
             }
             IconButton(
-                modifier = Modifier.padding(start = 10.dp),
-                onClick = onInfo
+                onClick = onInfo,
+                shapes = IconButtonDefaults.shapes()
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_info),
