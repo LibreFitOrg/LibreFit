@@ -29,15 +29,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedToggleButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -235,62 +236,60 @@ fun LibreFitCartesianChart(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             if (chartMode != null) {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    items(
-                        when (chartMode) {
-                            is WorkoutChart -> WorkoutChart.entries
-                            is MeasurementChart -> MeasurementChart.entries
-                            is StatisticsChart -> StatisticsChart.entries
-                            is TimeChart -> TimeChart.entries
-                            is WeightedBodyweightChart -> WeightedBodyweightChart.entries
-                            is BodyweightChart -> BodyweightChart.entries
-                            is LoadChart -> LoadChart.entries
-                        }
-                    ) { mode: ChartMode ->
-                        FilterChip(
-                            selected = chartMode == mode,
-                            onClick = { updateChartMode?.invoke(mode) },
-                            label = {
-                                Text(
-                                    stringResource(
-                                        when (mode) {
-                                            WorkoutChart.DURATION -> R.string.duration
-                                            WorkoutChart.VOLUME -> R.string.volume
-                                            WorkoutChart.REPS -> R.string.reps
-                                            MeasurementChart.BODY_WEIGHT -> R.string.body_weight
-                                            MeasurementChart.FAT_MASS -> R.string.fat_mass
-                                            MeasurementChart.LEAN_MASS -> R.string.lean_mass
-                                            StatisticsChart.LOAD -> R.string.load
-                                            StatisticsChart.REPS -> R.string.reps
-                                            StatisticsChart.VOLUME -> R.string.volume
-                                            StatisticsChart.DURATION -> R.string.duration
-                                            TimeChart.BEST_TIME -> R.string.best_time
-                                            TimeChart.TOTAL_TIME -> R.string.total_time
-                                            WeightedBodyweightChart.HEAVIEST_WEIGHT -> R.string.heaviest_weight
-                                            WeightedBodyweightChart.BEST_SET_VOLUME -> R.string.best_set_volume
-                                            WeightedBodyweightChart.TOTAL_VOLUME -> R.string.total_volume
-                                            WeightedBodyweightChart.TOTAL_REPS -> R.string.total_reps
-                                            BodyweightChart.SESSION_REPS -> R.string.session_reps
-                                            BodyweightChart.MOST_REPS -> R.string.most_reps
-                                            LoadChart.HEAVIEST_WEIGHT -> R.string.heaviest_weight
-                                            LoadChart.BEST_SET_VOLUME -> R.string.best_set_volume
-                                            LoadChart.TOTAL_REPS -> R.string.total_reps
-                                            LoadChart.SESSION_VOLUME -> R.string.session_volume
-                                            LoadChart.ONE_REP_MAX -> R.string.one_rep_max
-                                        }
-                                    )
+                val options = when (chartMode) {
+                    is WorkoutChart -> WorkoutChart.entries
+                    is MeasurementChart -> MeasurementChart.entries
+                    is StatisticsChart -> StatisticsChart.entries
+                    is TimeChart -> TimeChart.entries
+                    is WeightedBodyweightChart -> WeightedBodyweightChart.entries
+                    is BodyweightChart -> BodyweightChart.entries
+                    is LoadChart -> LoadChart.entries
+                }.map { it as ChartMode }.toList()
+
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                ) {
+                    itemsIndexed(items = options) { index, mode ->
+                        OutlinedToggleButton(
+                            checked = chartMode == mode,
+                            onCheckedChange = { updateChartMode?.invoke(mode) },
+                            modifier = Modifier.semantics { role = Role.RadioButton },
+                            shapes = when (index) {
+                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                            },
+                        ) {
+                            Text(
+                                text = stringResource(
+                                    when (mode) {
+                                        WorkoutChart.DURATION -> R.string.duration
+                                        WorkoutChart.VOLUME -> R.string.volume
+                                        WorkoutChart.REPS -> R.string.reps
+                                        MeasurementChart.BODY_WEIGHT -> R.string.body_weight
+                                        MeasurementChart.FAT_MASS -> R.string.fat_mass
+                                        MeasurementChart.LEAN_MASS -> R.string.lean_mass
+                                        StatisticsChart.LOAD -> R.string.load
+                                        StatisticsChart.REPS -> R.string.reps
+                                        StatisticsChart.VOLUME -> R.string.volume
+                                        StatisticsChart.DURATION -> R.string.duration
+                                        TimeChart.BEST_TIME -> R.string.best_time
+                                        TimeChart.TOTAL_TIME -> R.string.total_time
+                                        WeightedBodyweightChart.HEAVIEST_WEIGHT -> R.string.heaviest_weight
+                                        WeightedBodyweightChart.BEST_SET_VOLUME -> R.string.best_set_volume
+                                        WeightedBodyweightChart.TOTAL_VOLUME -> R.string.total_volume
+                                        WeightedBodyweightChart.TOTAL_REPS -> R.string.total_reps
+                                        BodyweightChart.SESSION_REPS -> R.string.session_reps
+                                        BodyweightChart.MOST_REPS -> R.string.most_reps
+                                        LoadChart.HEAVIEST_WEIGHT -> R.string.heaviest_weight
+                                        LoadChart.BEST_SET_VOLUME -> R.string.best_set_volume
+                                        LoadChart.TOTAL_REPS -> R.string.total_reps
+                                        LoadChart.SESSION_VOLUME -> R.string.session_volume
+                                        LoadChart.ONE_REP_MAX -> R.string.one_rep_max
+                                    }
                                 )
-                            },
-                            leadingIcon = {
-                                if (chartMode == mode) {
-                                    Icon(
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_check),
-                                        contentDescription = null
-                                    )
-                                }
-                            },
-                        )
+                            )
+                        }
                     }
                 }
             }
