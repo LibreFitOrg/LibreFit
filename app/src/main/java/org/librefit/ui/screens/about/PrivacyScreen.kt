@@ -29,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
@@ -87,7 +88,7 @@ fun PrivacyScreen(
             item {
                 LibreFitButton(
                     text = stringResource(R.string.view_online_version),
-                    icon = ImageVector.vectorResource(R.drawable.ic_exit_to_app),
+                    icon = painterResource(R.drawable.ic_exit_to_app),
                     onClick = {
                         url.value = resources.getString(R.string.url_privacy)
                     }

@@ -81,13 +81,12 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -237,7 +236,7 @@ fun SharedTransitionScope.ExerciseCard(
                 }
                 IconButton(onClick = { onDelete(exerciseWithSets.exercise.id) }) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
+                        painter = painterResource(R.drawable.ic_delete),
                         contentDescription = stringResource(R.string.delete)
                     )
                 }
@@ -262,7 +261,7 @@ fun SharedTransitionScope.ExerciseCard(
                     onClick = { showInfo(InfoMode.REST_TIMER) }
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_info),
+                        painter = painterResource(R.drawable.ic_info),
                         contentDescription = stringResource(R.string.info)
                     )
                 }
@@ -308,7 +307,7 @@ fun SharedTransitionScope.ExerciseCard(
                         onClick = { showInfo(InfoMode.TYPE_OF_SET) }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_info),
+                            painter = painterResource(R.drawable.ic_info),
                             contentDescription = stringResource(R.string.info) + ":"
                         )
                     }
@@ -363,7 +362,7 @@ fun SharedTransitionScope.ExerciseCard(
                                 trailingIcon = if (exerciseWithSets.exercise.setMode == mode) {
                                     {
                                         Icon(
-                                            imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                                            painter = painterResource(R.drawable.ic_check),
                                             contentDescription = stringResource(R.string.checkbox)
                                         )
                                     }
@@ -418,7 +417,7 @@ fun SharedTransitionScope.ExerciseCard(
                     }
                     if (workout) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                            painter = painterResource(R.drawable.ic_check),
                             contentDescription = stringResource(R.string.done)
                         )
                     }
@@ -461,7 +460,7 @@ fun SharedTransitionScope.ExerciseCard(
             //Add set button
             LibreFitButton(
                 text = stringResource(id = R.string.add_set),
-                icon = ImageVector.vectorResource(R.drawable.ic_add_circle),
+                icon = painterResource(R.drawable.ic_add_circle),
                 onClick = { addSet(exerciseWithSets.exercise.id) },
                 elevated = false
             )
@@ -535,7 +534,7 @@ private fun LazyItemScope.Set(
                 }
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
+                    painter = painterResource(R.drawable.ic_delete),
                     contentDescription = stringResource(R.string.delete),
                 )
             }
@@ -583,7 +582,7 @@ private fun LazyItemScope.Set(
                             }
                         ) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(
+                                painter = painterResource(
                                     if (isThisSetStopwatchRunning)
                                         R.drawable.ic_pause else R.drawable.ic_play_arrow
                                 ),

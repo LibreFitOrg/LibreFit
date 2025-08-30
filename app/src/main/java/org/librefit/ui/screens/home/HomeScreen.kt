@@ -47,9 +47,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -138,7 +137,7 @@ private fun SharedTransitionScope.HomeScreenContent(
             //"Start empty workout" button
             LibreFitButton(
                 text = stringResource(id = R.string.start_empty_workout),
-                icon = ImageVector.vectorResource(R.drawable.ic_play_arrow),
+                icon = painterResource(R.drawable.ic_play_arrow),
                 onClick = {
                     navigateToRoutine(0)
                 },
@@ -217,14 +216,14 @@ private fun SharedTransitionScope.HomeScreenContent(
                             }
                         ) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_info),
+                                painter = painterResource(R.drawable.ic_info),
                                 contentDescription = stringResource(R.string.info)
                             )
                         }
                     }
                     LibreFitButton(
                         text = stringResource(R.string.start_routine),
-                        icon = ImageVector.vectorResource(R.drawable.ic_play_arrow),
+                        icon = painterResource(R.drawable.ic_play_arrow),
                         elevated = false
                     ) {
                         navigateToRoutine(routine.id)
@@ -249,9 +248,9 @@ fun HomeScreenPreview() {
                     append(stringResource(id = R.string.app_name).removeRange(0, 5))
                 },
                 actions = listOf {},
-                actionsIcons = listOf(ImageVector.vectorResource(R.drawable.ic_settings)),
+                actionsIcons = listOf(painterResource(R.drawable.ic_settings)),
                 actionsElevated = listOf(false),
-                fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
+                fabIcon = painterResource(R.drawable.ic_add),
                 bottomBar = {
                     NavigationBar {
                         NavigationBarItem(
@@ -259,7 +258,7 @@ fun HomeScreenPreview() {
                             onClick = { },
                             icon = {
                                 Icon(
-                                    ImageVector.vectorResource(R.drawable.ic_home),
+                                    painterResource(R.drawable.ic_home),
                                     stringResource(R.string.home)
                                 )
                             },
@@ -270,7 +269,7 @@ fun HomeScreenPreview() {
                             onClick = { },
                             icon = {
                                 Icon(
-                                    ImageVector.vectorResource(R.drawable.ic_person),
+                                    painterResource(R.drawable.ic_person),
                                     stringResource(R.string.profile)
                                 )
                             },

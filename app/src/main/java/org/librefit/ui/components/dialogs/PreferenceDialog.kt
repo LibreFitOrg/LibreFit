@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -69,7 +70,7 @@ fun PreferenceDialog(
         },
         icon = {
             Icon(
-                imageVector = ImageVector.vectorResource(
+                painter = painterResource(
                     when (preferences.first()) {
                         is Language -> R.drawable.ic_translate
                         is ThemeMode -> R.drawable.ic_dark_mode

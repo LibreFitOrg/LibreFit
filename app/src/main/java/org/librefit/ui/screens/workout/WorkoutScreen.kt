@@ -61,10 +61,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -291,7 +290,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
         actions = listOf { action() },
         actionsEnabled = listOf(!isListEmpty),
         actionsDescription = listOf(stringResource(R.string.done)),
-        fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
+        fabIcon = painterResource(R.drawable.ic_add),
         fabAction = fabAction,
         fabDescription = stringResource(R.string.add_exercise),
         bottomBar = {
@@ -407,8 +406,7 @@ private fun BottomAppBarContent(
                     shapes = ToggleButtonDefaults.shapesFor(maxHeight.dp)
                 ) {
                     Icon(
-                        imageVector = if (isStopwatchPaused) ImageVector.vectorResource(R.drawable.ic_play_arrow) else
-                            ImageVector.vectorResource(id = R.drawable.ic_pause),
+                        painter = painterResource(if (isStopwatchPaused) R.drawable.ic_play_arrow else R.drawable.ic_pause),
                         contentDescription = stringResource(if (isStopwatchPaused) R.string.pause else R.string.resume),
                     )
                 }
@@ -449,7 +447,7 @@ private fun BottomAppBarContent(
                     shapes = IconButtonDefaults.shapes()
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_replay_10),
+                        painter = painterResource(R.drawable.ic_replay_10),
                         contentDescription = stringResource(R.string.add_ten_seconds),
                         modifier = Modifier.size(40.dp)
                     )
@@ -469,7 +467,7 @@ private fun BottomAppBarContent(
                     shapes = IconButtonDefaults.shapes()
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_forward_10),
+                        painter = painterResource(R.drawable.ic_forward_10),
                         contentDescription = stringResource(R.string.reduce_ten_seconds),
                         modifier = Modifier.size(40.dp)
                     )

@@ -35,11 +35,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,7 +52,7 @@ import kotlin.random.Random
 fun LibreFitButton(
     modifier: Modifier = Modifier,
     text: String,
-    icon: ImageVector? = null,
+    icon: Painter? = null,
     iconDescription: String? = null,
     elevated: Boolean = true,
     enabled: Boolean = true,
@@ -81,7 +81,7 @@ fun LibreFitButton(
         ) {
             if (icon != null) {
                 Icon(
-                    imageVector = icon,
+                    painter = icon,
                     contentDescription = iconDescription
                 )
                 Spacer(Modifier.width(ButtonDefaults.IconSpacing))
@@ -103,7 +103,7 @@ private fun LibreFitButtonPreview() {
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
         LibreFitButton(
             text = stringResource(R.string.start_routine),
-            icon = ImageVector.vectorResource(R.drawable.ic_play_arrow),
+            icon = painterResource(R.drawable.ic_play_arrow),
             elevated = Random.nextBoolean(),
             onClick = {}
         )

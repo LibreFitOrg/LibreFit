@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,7 +87,7 @@ fun HeadlineText(
                 onClick = { localInfoMode = infoMode }
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_info),
+                    painter = painterResource(R.drawable.ic_info),
                     contentDescription = null
                 )
             }

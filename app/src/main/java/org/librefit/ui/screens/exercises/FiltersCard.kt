@@ -53,9 +53,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.librefit.R
@@ -97,7 +96,7 @@ fun FiltersCard(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_filter),
+                    painter = painterResource(id = R.drawable.ic_filter),
                     contentDescription = stringResource(R.string.filters)
                 )
                 Text(
@@ -111,7 +110,7 @@ fun FiltersCard(
                 }
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_drop_down),
+                    painter = painterResource(R.drawable.ic_drop_down),
                     contentDescription = stringResource(R.string.menu),
                     modifier = Modifier.rotate(iconRotation)
                 )
@@ -236,7 +235,7 @@ private fun ItemFilter(
                         trailingIcon = if (propertyFilterValue == enum) {
                             {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                                    painter = painterResource(R.drawable.ic_check),
                                     contentDescription = stringResource(R.string.checkbox)
                                 )
                             }

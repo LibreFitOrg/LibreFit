@@ -60,6 +60,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
@@ -309,7 +310,7 @@ private fun MeasurementScreenContent(
                                 trailingIcon = {
                                     IconButton(onClick = showDatePickerDialog) {
                                         Icon(
-                                            imageVector = ImageVector.vectorResource(R.drawable.ic_date_range),
+                                            painter = painterResource(R.drawable.ic_date_range),
                                             contentDescription = stringResource(R.string.select_date)
                                         )
                                     }
@@ -327,8 +328,8 @@ private fun MeasurementScreenContent(
                                                 onClick = { updateFatMass("") }
                                             ) {
                                                 Icon(
-                                                    ImageVector.vectorResource(R.drawable.ic_cancel),
-                                                    null
+                                                    painter = painterResource(R.drawable.ic_cancel),
+                                                    contentDescription = null
                                                 )
                                             }
                                         },
@@ -354,8 +355,8 @@ private fun MeasurementScreenContent(
                                                 onClick = { updateLeanMass("") }
                                             ) {
                                                 Icon(
-                                                    ImageVector.vectorResource(R.drawable.ic_cancel),
-                                                    null
+                                                    painter = painterResource(R.drawable.ic_cancel),
+                                                    contentDescription = null
                                                 )
                                             }
                                         },
@@ -385,7 +386,7 @@ private fun MeasurementScreenContent(
                                     if (measurementCardState == MeasurementCardState.NEW)
                                         R.string.add else R.string.save
                                 ),
-                                icon = ImageVector.vectorResource(
+                                icon = painterResource(
                                     if (measurementCardState == MeasurementCardState.NEW)
                                         R.drawable.ic_add else R.drawable.ic_edit
                                 ),
@@ -404,7 +405,7 @@ private fun MeasurementScreenContent(
                                         focusManager.clearFocus()
                                     }
                                 ) {
-                                    Icon(ImageVector.vectorResource(R.drawable.ic_cancel), null)
+                                    Icon(painterResource(R.drawable.ic_cancel), null)
                                 }
                             }
                         }
@@ -474,7 +475,7 @@ private fun MeasurementScreenContent(
                                     }
                                 ) {
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_edit),
+                                        painter = painterResource(R.drawable.ic_edit),
                                         contentDescription = null
                                     )
                                 }
@@ -484,7 +485,7 @@ private fun MeasurementScreenContent(
                                     }
                                 ) {
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
+                                        painter = painterResource(R.drawable.ic_delete),
                                         contentDescription = null
                                     )
                                 }

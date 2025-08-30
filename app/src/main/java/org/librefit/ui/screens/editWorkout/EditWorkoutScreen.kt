@@ -42,9 +42,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -214,7 +213,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
             else stringResource(R.string.save)
         ),
         actionsEnabled = listOf(!isTitleEmpty && !isTitleTooLong && exercisesWithSets.isNotEmpty()),
-        fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
+        fabIcon = painterResource(R.drawable.ic_add),
         fabAction = {
             navController.navigate(Route.ExercisesScreen(addExercises = true)) {
                 launchSingleTop = true
@@ -234,7 +233,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                     trailingIcon = {
                         if (isTitleTooLong || isTitleEmpty) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_warning),
+                                painter = painterResource(R.drawable.ic_warning),
                                 contentDescription = stringResource(R.string.warning)
                             )
                         }

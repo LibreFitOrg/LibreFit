@@ -37,11 +37,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -146,7 +145,7 @@ private fun SettingsScreenContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_dark_mode),
+                            painter = painterResource(id = R.drawable.ic_dark_mode),
                             contentDescription = stringResource(R.string.theme),
                             modifier = iconPaddingModifier
                         )
@@ -197,7 +196,7 @@ private fun SettingsScreenContent(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_material),
+                                painter = painterResource(id = R.drawable.ic_material),
                                 contentDescription = stringResource(R.string.material_you),
                                 modifier = iconPaddingModifier
                             )
@@ -241,7 +240,7 @@ private fun SettingsScreenContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_translate),
+                            painter = painterResource(id = R.drawable.ic_translate),
                             contentDescription = stringResource(R.string.translate),
                             modifier = iconPaddingModifier
                         )
@@ -290,7 +289,7 @@ private fun SettingsScreenContent(
                             .weight(1f)
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_keep),
+                            painter = painterResource(id = R.drawable.ic_keep),
                             contentDescription = stringResource(R.string.keep_screen_on),
                             modifier = iconPaddingModifier
                         )
@@ -340,7 +339,7 @@ private fun SettingsScreenContent(
                             .weight(1f)
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_notification_sound),
+                            painter = painterResource(id = R.drawable.ic_notification_sound),
                             contentDescription = stringResource(R.string.rest_timer_sound),
                             modifier = iconPaddingModifier
                         )

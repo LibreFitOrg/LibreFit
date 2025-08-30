@@ -65,10 +65,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -162,7 +161,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                     buttonGroupContent = {
                         LibreFitButton(
                             text = stringResource(R.string.statistics),
-                            icon = ImageVector.vectorResource(R.drawable.ic_chart),
+                            icon = painterResource(R.drawable.ic_chart),
                             modifier = Modifier
                                 .weight(0.5f)
                                 .animateWidth(interactionSources[0]),
@@ -180,7 +179,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                     buttonGroupContent = {
                         LibreFitButton(
                             text = stringResource(R.string.exercises),
-                            icon = ImageVector.vectorResource(R.drawable.ic_search),
+                            icon = painterResource(R.drawable.ic_search),
                             modifier = Modifier
                                 .weight(0.5f)
                                 .animateWidth(interactionSources[1]),
@@ -206,7 +205,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                     buttonGroupContent = {
                         LibreFitButton(
                             text = stringResource(R.string.measurements),
-                            icon = ImageVector.vectorResource(R.drawable.ic_monitor),
+                            icon = painterResource(R.drawable.ic_monitor),
                             modifier = Modifier
                                 .weight(0.5f)
                                 .animateWidth(interactionSources[0]),
@@ -224,7 +223,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                     buttonGroupContent = {
                         LibreFitButton(
                             text = stringResource(R.string.calendar),
-                            icon = ImageVector.vectorResource(R.drawable.ic_date_range),
+                            icon = painterResource(R.drawable.ic_date_range),
                             modifier = Modifier
                                 .weight(0.5f)
                                 .animateWidth(interactionSources[1]),
@@ -339,7 +338,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                             },
                         ) {
                             Icon(
-                                ImageVector.vectorResource(R.drawable.ic_info),
+                                painterResource(R.drawable.ic_info),
                                 stringResource(R.string.about)
                             )
                         }
@@ -482,9 +481,9 @@ private fun ProfileScreenPreview() {
                     append(stringResource(id = R.string.app_name).removeRange(0, 5))
                 },
                 actions = listOf {},
-                actionsIcons = listOf(ImageVector.vectorResource(R.drawable.ic_settings)),
+                actionsIcons = listOf(painterResource(R.drawable.ic_settings)),
                 actionsElevated = listOf(false),
-                fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
+                fabIcon = painterResource(R.drawable.ic_add),
                 bottomBar = {
                     NavigationBar {
                         NavigationBarItem(
@@ -492,7 +491,7 @@ private fun ProfileScreenPreview() {
                             onClick = { },
                             icon = {
                                 Icon(
-                                    ImageVector.vectorResource(R.drawable.ic_home),
+                                    painterResource(R.drawable.ic_home),
                                     stringResource(R.string.home)
                                 )
                             },
@@ -503,7 +502,7 @@ private fun ProfileScreenPreview() {
                             onClick = { },
                             icon = {
                                 Icon(
-                                    ImageVector.vectorResource(R.drawable.ic_person),
+                                    painterResource(R.drawable.ic_person),
                                     stringResource(R.string.profile)
                                 )
                             },

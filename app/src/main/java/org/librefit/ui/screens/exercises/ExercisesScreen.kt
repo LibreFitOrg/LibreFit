@@ -62,11 +62,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -205,7 +204,7 @@ private fun SharedTransitionScope.ExercisesScreenContent(
         actionsDescription = listOf(stringResource(R.string.add)),
         actionsEnabled = listOf(selectedExercisesIdList.isNotEmpty()),
         fabAction = if (isAtTop) null else scrollToTop,
-        fabIcon = ImageVector.vectorResource(R.drawable.ic_keyboard_double_arrow_up),
+        fabIcon = painterResource(R.drawable.ic_keyboard_double_arrow_up),
     ) { innerPadding ->
         LibreFitLazyColumn(
             innerPadding = innerPadding,
@@ -224,7 +223,7 @@ private fun SharedTransitionScope.ExercisesScreenContent(
                         shape = RoundedCornerShape(40.dp),
                         leadingIcon = {
                             Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_search),
+                                painter = painterResource(R.drawable.ic_search),
                                 contentDescription = stringResource(R.string.search_exercise_field)
                             )
                         },
@@ -232,7 +231,7 @@ private fun SharedTransitionScope.ExercisesScreenContent(
                             if (query.isNotEmpty()) {
                                 IconButton(onClick = { updateQuery("") }) {
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_cancel),
+                                        painter = painterResource(R.drawable.ic_cancel),
                                         contentDescription = stringResource(R.string.delete)
                                     )
                                 }
@@ -374,7 +373,7 @@ private fun SharedTransitionScope.ItemExerciseDC(
                 shapes = IconButtonDefaults.shapes()
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_info),
+                    painter = painterResource(R.drawable.ic_info),
                     contentDescription = stringResource(R.string.details)
                 )
             }

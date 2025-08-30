@@ -45,9 +45,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -195,8 +194,8 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
             }
         ),
         actionsIcons = listOf(
-            ImageVector.vectorResource(R.drawable.ic_edit),
-            ImageVector.vectorResource(R.drawable.ic_delete)
+            painterResource(R.drawable.ic_edit),
+            painterResource(R.drawable.ic_delete)
         ),
         actionsElevated = listOf(false, false)
     ) { innerPadding ->
@@ -364,7 +363,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                                     onClick = { showUnlikeRoutineDialog = true }
                                 ) {
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_unlink),
+                                        painter = painterResource(R.drawable.ic_unlink),
                                         contentDescription = stringResource(R.string.delete)
                                     )
                                 }
@@ -373,7 +372,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                             LibreFitButton(
                                 elevated = false,
                                 text = stringResource(R.string.open_this_routine),
-                                icon = ImageVector.vectorResource(R.drawable.ic_open_new)
+                                icon = painterResource(R.drawable.ic_open_new)
                             ) {
                                 navController.navigate(Route.InfoWorkoutScreen(routine.id))
                             }

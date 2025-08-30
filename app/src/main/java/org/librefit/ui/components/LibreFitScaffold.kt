@@ -43,11 +43,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import org.librefit.R
@@ -72,7 +72,7 @@ import org.librefit.R
  * The default value is `true`.
  * @param fabAction A callback function executed when the [FloatingActionButton] is clicked. It
  * must be passed in order to show the FAB.
- * @param fabIcon An [ImageVector] representing the icon displayed in the [FloatingActionButton]. It
+ * @param fabIcon A [Painter] representing the icon displayed in the [FloatingActionButton]. It
  * must be passed in order to show the FAB.
  * @param fabDescription An optional string that provides a description of the [fabIcon] and [fabAction]
  * for accessibility purposes. Read mode at [Icon] and [FloatingActionButton]
@@ -87,10 +87,10 @@ fun LibreFitScaffold(
     actions: List<() -> Unit> = listOf(),
     actionsEnabled: List<Boolean> = listOf(),
     actionsDescription: List<String?> = listOf(),
-    actionsIcons: List<ImageVector> = listOf(),
+    actionsIcons: List<Painter> = listOf(),
     actionsElevated: List<Boolean> = listOf(),
     fabAction: (() -> Unit)? = null,
-    fabIcon: ImageVector? = null,
+    fabIcon: Painter? = null,
     fabDescription: String? = null,
     bottomBar: @Composable (() -> Unit)? = null,
     content: @Composable ((PaddingValues) -> Unit),
@@ -112,10 +112,11 @@ fun LibreFitScaffold(
                     navigationIcon = {
                         if (navigateBack != null) {
                             IconButton(
-                                onClick = navigateBack
+                                onClick = navigateBack,
+                                shapes = IconButtonDefaults.shapes()
                             ) {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_back),
+                                    painter = painterResource(R.drawable.ic_arrow_back),
                                     contentDescription = stringResource(id = R.string.navigate_back)
                                 )
                             }
@@ -155,7 +156,7 @@ fun LibreFitScaffold(
                                                     IconButtonDefaults.iconButtonColors()
                                             ) {
                                                 Icon(
-                                                    imageVector = icon,
+                                                    painter = icon,
                                                     contentDescription = description
                                                 )
                                             }
@@ -200,7 +201,7 @@ fun LibreFitScaffold(
                         onClick = { fabAction?.invoke() }
                     ) {
                         Icon(
-                            imageVector = fabIcon,
+                            painter = fabIcon,
                             contentDescription = fabDescription
                         )
                     }

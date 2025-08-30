@@ -50,9 +50,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -197,7 +196,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                     trailingIcon = {
                         if (isTitleEmpty || isTitleTooLong) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_warning),
+                                painter = painterResource(R.drawable.ic_warning),
                                 contentDescription = stringResource(R.string.warning)
                             )
                         }
@@ -261,7 +260,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                         trailingIcon = {
                             IconButton(onClick = showDatePickerDialog) {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_date_range),
+                                    painter = painterResource(R.drawable.ic_date_range),
                                     contentDescription = stringResource(R.string.select_date)
                                 )
                             }
@@ -378,7 +377,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                                     onClick = showUnlikeRoutineDialog
                                 ) {
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_unlink),
+                                        painter = painterResource(R.drawable.ic_unlink),
                                         contentDescription = stringResource(R.string.delete)
                                     )
                                 }
@@ -387,7 +386,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                             LibreFitButton(
                                 elevated = false,
                                 text = stringResource(R.string.open_this_routine),
-                                icon = ImageVector.vectorResource(R.drawable.ic_open_new)
+                                icon = painterResource(R.drawable.ic_open_new)
                             ) {
                                 navController.navigate(Route.InfoWorkoutScreen(routine.id)) {
                                     launchSingleTop = true

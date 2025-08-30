@@ -34,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
@@ -74,12 +75,12 @@ fun SharedTransitionScope.MainScreen(
             { navController.navigate(Route.SettingsScreen) { launchSingleTop = true } }
         ),
         actionsIcons = listOf(
-            ImageVector.vectorResource(R.drawable.ic_info),
-            ImageVector.vectorResource(R.drawable.ic_settings)
+            painterResource(R.drawable.ic_info),
+            painterResource(R.drawable.ic_settings)
         ),
         actionsElevated = listOf(false, false),
         fabAction = if (homeSelected) fabAction else null,
-        fabIcon = ImageVector.vectorResource(R.drawable.ic_add),
+        fabIcon = painterResource(R.drawable.ic_add),
         fabDescription = stringResource(R.string.create_routine),
         bottomBar = {
             NavigationBar {
@@ -88,7 +89,7 @@ fun SharedTransitionScope.MainScreen(
                     onClick = { homeSelected = true },
                     icon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_home),
+                            painter = painterResource(R.drawable.ic_home),
                             contentDescription = stringResource(R.string.home)
                         )
                     },
@@ -99,7 +100,7 @@ fun SharedTransitionScope.MainScreen(
                     onClick = { homeSelected = false },
                     icon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_person),
+                            painter = painterResource(R.drawable.ic_person),
                             contentDescription = stringResource(R.string.profile)
                         )
                     },

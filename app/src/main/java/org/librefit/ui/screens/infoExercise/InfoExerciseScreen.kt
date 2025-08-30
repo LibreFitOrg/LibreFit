@@ -71,11 +71,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -210,7 +209,7 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
                             },
                             icon = {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(
+                                    painter = painterResource(
                                         id = when (enum) {
                                             InfoExerciseMode.DETAILS -> R.drawable.ic_badge
                                             InfoExerciseMode.INSTRUCTIONS -> R.drawable.ic_reference
@@ -332,7 +331,7 @@ private fun DetailsPage(exercise: UiExerciseDC) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
-                            imageVector = ImageVector.vectorResource(
+                            painter = painterResource(
                                 id = Formatter.muscleToVectorId(
                                     muscle
                                 )
@@ -367,7 +366,7 @@ private fun DetailsPage(exercise: UiExerciseDC) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
-                            imageVector = ImageVector.vectorResource(
+                            painter = painterResource(
                                 id = Formatter.muscleToVectorId(
                                     muscle
                                 )
@@ -485,7 +484,7 @@ private fun SharedTransitionScope.HistoryPage(
                         }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_info),
+                            painter = painterResource(R.drawable.ic_info),
                             contentDescription = stringResource(R.string.info)
                         )
                     }
@@ -556,7 +555,7 @@ private fun SharedTransitionScope.HistoryPage(
                                         }
                                     }
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                                        painter = painterResource(R.drawable.ic_check),
                                         contentDescription = stringResource(R.string.done)
                                     )
 
@@ -668,7 +667,7 @@ private fun SharedTransitionScope.AlternatingImages(
             onClick = { isPaused = !isPaused }
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(
+                painter = painterResource(
                     if (isPaused) R.drawable.ic_play_arrow else R.drawable.ic_pause
                 ),
                 contentDescription = stringResource(if (isPaused) R.string.pause else R.string.resume),

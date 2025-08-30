@@ -39,10 +39,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -80,7 +80,7 @@ fun AboutScreen(navController: NavHostController) {
             item {
                 val logoSize = 170.dp
                 Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_logo),
+                    painter = painterResource(id = R.drawable.ic_logo),
                     contentDescription = stringResource(R.string.app_name),
                     modifier = Modifier
                         .size(logoSize)
@@ -115,7 +115,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
-                    ImageVector.vectorResource(R.drawable.ic_favorite),
+                    painterResource(R.drawable.ic_favorite),
                     text = stringResource(R.string.donate),
                     description = stringResource(R.string.donate_desc),
                     onClick = {},
@@ -125,7 +125,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
-                    ImageVector.vectorResource(R.drawable.ic_handshake),
+                    painterResource(R.drawable.ic_handshake),
                     text = stringResource(R.string.contribute),
                     description = stringResource(R.string.contribute_desc),
                     onClick = {},
@@ -135,7 +135,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
-                    ImageVector.vectorResource(R.drawable.ic_translate),
+                    painterResource(R.drawable.ic_translate),
                     stringResource(R.string.translate),
                     description = stringResource(R.string.translate_desc),
                     onClick = {},
@@ -149,7 +149,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
-                    ImageVector.vectorResource(R.drawable.ic_policy),
+                    painterResource(R.drawable.ic_policy),
                     stringResource(R.string.privacy),
                     description = stringResource(R.string.privacy_policy_desc),
                     onClick = {
@@ -161,7 +161,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
-                    ImageVector.vectorResource(R.drawable.ic_globe),
+                    painterResource(R.drawable.ic_globe),
                     stringResource(R.string.website),
                     onClick = {
                         url.value = context.getString(R.string.url_website)
@@ -172,7 +172,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
-                    ImageVector.vectorResource(R.drawable.ic_license),
+                    painterResource(R.drawable.ic_license),
                     stringResource(R.string.license),
                     description = stringResource(R.string.license_desc),
                     onClick = {
@@ -183,7 +183,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
-                    ImageVector.vectorResource(R.drawable.ic_github),
+                    painterResource(R.drawable.ic_github),
                     stringResource(R.string.github),
                     stringResource(R.string.source_code),
                     onClick = {
@@ -194,7 +194,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
-                    ImageVector.vectorResource(R.drawable.ic_library),
+                    painterResource(R.drawable.ic_library),
                     stringResource(R.string.libraries),
                     onClick = {
                         navController.navigate(Route.LibrariesScreen) { launchSingleTop = true }
@@ -209,7 +209,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
-                    ImageVector.vectorResource(R.drawable.ic_person),
+                    painterResource(R.drawable.ic_person),
                     stringResource(R.string.url_IamDg).split("/").last(),
                     stringResource(R.string.founder),
                     onClick = {
@@ -224,7 +224,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
-                    ImageVector.vectorResource(R.drawable.ic_person),
+                    painterResource(R.drawable.ic_person),
                     stringResource(R.string.url_IamDg).split("/").last(),
                     stringResource(R.string.contributed_to) + stringResource(R.string.language_italian),
                     onClick = {
@@ -239,7 +239,7 @@ fun AboutScreen(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AboutItem(
-    imageVector: ImageVector,
+    icon: Painter,
     text: String,
     description: String = "",
     onClick: () -> Unit,
@@ -263,7 +263,7 @@ private fun AboutItem(
             modifier = Modifier.fillMaxWidth()
         ) {
             Icon(
-                imageVector = imageVector,
+                painter = icon,
                 contentDescription = text,
                 modifier = Modifier.padding(end = 20.dp)
             )

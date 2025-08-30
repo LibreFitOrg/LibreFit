@@ -48,10 +48,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -449,7 +448,7 @@ fun LibreFitCartesianChart(
                                 enabled = selectedWorkoutId.value != null,
                                 text = if (selectedWorkoutDate.value == null) stringResource(R.string.tap_a_workout)
                                 else stringResource(R.string.open_the_workout) + " ${selectedWorkoutDate.value}",
-                                icon = ImageVector.vectorResource(R.drawable.ic_open_new)
+                                icon = painterResource(R.drawable.ic_open_new)
                             ) {
                                 navController.navigate(Route.InfoWorkoutScreen(selectedWorkoutId.value!!))
                             }
@@ -465,7 +464,7 @@ fun LibreFitCartesianChart(
                         verticalArrangement = Arrangement.spacedBy(30.dp)
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_database_off),
+                            painter = painterResource(R.drawable.ic_database_off),
                             modifier = Modifier.size(60.dp),
                             contentDescription = null
                         )
