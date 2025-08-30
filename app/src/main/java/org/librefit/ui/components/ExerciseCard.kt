@@ -46,6 +46,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
@@ -187,12 +188,14 @@ fun SharedTransitionScope.ExerciseCard(
 
     ElevatedCard(
         modifier = modifier,
+        shape = MaterialTheme.shapes.extraLarge
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(15.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -247,8 +250,6 @@ fun SharedTransitionScope.ExerciseCard(
                 onValueChange = { updateExerciseNotes(it, exerciseWithSets.exercise.id) }
             )
 
-            HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
-
             //Rest timer slider
             var restTime by remember { mutableIntStateOf(exerciseWithSets.exercise.restTime) }
             Row(
@@ -288,7 +289,7 @@ fun SharedTransitionScope.ExerciseCard(
                 steps = 19
             )
 
-            HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
+            HorizontalDivider()
 
             // Set mode selection
             Row(
@@ -378,81 +379,84 @@ fun SharedTransitionScope.ExerciseCard(
                 }
             }
 
-            HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
-
-            //Headline set
-            Row(
-                modifier = Modifier
-                    .height(40.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                Text(
-                    text = stringResource(id = R.string.set),
-                    color = MaterialTheme.colorScheme.secondary
+            ElevatedCard(
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                 )
-                if (exerciseWithSets.exercise.setMode == SetMode.DURATION) {
+            ) {
+                //Headline set
+                Row(
+                    modifier = Modifier
+                        .height(40.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
                     Text(
-                        text = stringResource(R.string.time),
+                        text = stringResource(id = R.string.set),
                         color = MaterialTheme.colorScheme.secondary
                     )
-                } else {
-                    Text(
-                        text = stringResource(id = R.string.reps),
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                    if (exerciseWithSets.exercise.setMode == SetMode.LOAD ||
-                        exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
-                    ) {
+                    if (exerciseWithSets.exercise.setMode == SetMode.DURATION) {
                         Text(
-                            text = stringResource(R.string.load) + " (" + stringResource(R.string.kg) + ")",
+                            text = stringResource(R.string.time),
                             color = MaterialTheme.colorScheme.secondary
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(id = R.string.reps),
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                        if (exerciseWithSets.exercise.setMode == SetMode.LOAD ||
+                            exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
+                        ) {
+                            Text(
+                                text = stringResource(R.string.load) + " (" + stringResource(R.string.kg) + ")",
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                    }
+                    if (workout) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                            contentDescription = stringResource(R.string.done)
                         )
                     }
                 }
-                if (workout) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_check),
-                        contentDescription = stringResource(R.string.done)
-                    )
+
+                //Sets
+                val setHeight = 60
+                val animatedSetsColumnHeight = animateDpAsState(
+                    targetValue = (exerciseWithSets.sets.size * setHeight).dp,
+                    animationSpec = tween(600),
+                    label = "animatedSetsColumnHeight",
+                )
+                LazyColumn(
+                    modifier = Modifier.height(animatedSetsColumnHeight.value)
+                ) {
+                    itemsIndexed(
+                        items = exerciseWithSets.sets,
+                        key = { i, set -> set.id }
+                    ) { i, set ->
+                        Set(
+                            i = i,
+                            set = set,
+                            setHeight = setHeight,
+                            lastIndex = exerciseWithSets.sets.lastIndex,
+                            setMode = exerciseWithSets.exercise.setMode,
+                            isStopwatchRunning = idSetWithRunningStopwatch == null,
+                            isThisSetStopwatchRunning = idSetWithRunningStopwatch == set.id,
+                            workout = workout,
+                            deleteSet = deleteSet,
+                            updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
+                            updateSetTime = updateSetTime,
+                            updateSetReps = updateSetReps,
+                            updateSetLoad = updateSetLoad,
+                            updateSetCompleted = updateSetCompleted
+                        )
+                    }
                 }
             }
-
-            //Sets
-            val setHeight = 60
-            val animatedSetsColumnHeight = animateDpAsState(
-                targetValue = (exerciseWithSets.sets.size * setHeight).dp,
-                animationSpec = tween(600),
-                label = "animatedSetsColumnHeight",
-            )
-            LazyColumn(
-                modifier = Modifier.height(animatedSetsColumnHeight.value)
-            ) {
-                itemsIndexed(
-                    items = exerciseWithSets.sets,
-                    key = { i, set -> set.id }
-                ) { i, set ->
-                    Set(
-                        i = i,
-                        set = set,
-                        setHeight = setHeight,
-                        lastIndex = exerciseWithSets.sets.lastIndex,
-                        setMode = exerciseWithSets.exercise.setMode,
-                        isStopwatchRunning = idSetWithRunningStopwatch == null,
-                        isThisSetStopwatchRunning = idSetWithRunningStopwatch == set.id,
-                        workout = workout,
-                        deleteSet = deleteSet,
-                        updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
-                        updateSetTime = updateSetTime,
-                        updateSetReps = updateSetReps,
-                        updateSetLoad = updateSetLoad,
-                        updateSetCompleted = updateSetCompleted
-                    )
-                }
-            }
-
-            HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
 
             //Add set button
             LibreFitButton(
@@ -505,13 +509,13 @@ private fun LazyItemScope.Set(
                     .fillMaxSize()
                     .clip(
                         RoundedCornerShape(
-                            topStart = CornerSize(if (i == 0) 15 else 0),
-                            topEnd = CornerSize(if (i == 0) 15 else 0),
+                            topStart = CornerSize(if (i == 0) 45 else 0),
+                            topEnd = CornerSize(if (i == 0) 45 else 0),
                             bottomEnd = CornerSize(
-                                if (i == lastIndex) 15 else 0
+                                if (i == lastIndex) 45 else 0
                             ),
                             bottomStart = CornerSize(
-                                if (i == lastIndex) 15 else 0
+                                if (i == lastIndex) 45 else 0
                             ),
                         )
                     )
@@ -541,19 +545,19 @@ private fun LazyItemScope.Set(
             modifier = Modifier
                 .clip(
                     RoundedCornerShape(
-                        topStart = CornerSize(if (i == 0) 15 else 0),
-                        topEnd = CornerSize(if (i == 0) 15 else 0),
+                        topStart = CornerSize(if (i == 0) 45 else 0),
+                        topEnd = CornerSize(if (i == 0) 45 else 0),
                         bottomEnd = CornerSize(
-                            if (i == lastIndex) 15 else 0
+                            if (i == lastIndex) 45 else 0
                         ),
                         bottomStart = CornerSize(
-                            if (i == lastIndex) 15 else 0
+                            if (i == lastIndex) 45 else 0
                         ),
                     )
                 )
                 .background(
-                    if (set.completed) MaterialTheme.colorScheme.secondaryContainer
-                    else MaterialTheme.colorScheme.surfaceContainerLow
+                    if (set.completed) MaterialTheme.colorScheme.primaryContainer
+                    else MaterialTheme.colorScheme.surfaceContainerHighest
                 )
                 .height(setHeight.dp)
                 .fillMaxWidth(),
