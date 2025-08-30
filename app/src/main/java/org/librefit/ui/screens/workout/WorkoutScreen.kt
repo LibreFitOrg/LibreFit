@@ -38,17 +38,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.ElevatedToggleButton
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.WavyProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -354,6 +356,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
 }
 
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun BottomAppBarContent(
@@ -370,10 +373,10 @@ private fun BottomAppBarContent(
     Column(modifier = Modifier.fillMaxSize()) {
         val animatedProgress = animateFloatAsState(
             targetValue = progress,
-            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-            label = ""
+            animationSpec = WavyProgressIndicatorDefaults.ProgressAnimationSpec,
+            label = "AnimatedProgressForWavyIndicator"
         )
-        LinearProgressIndicator(
+        LinearWavyProgressIndicator(
             progress = { animatedProgress.value },
             modifier = Modifier
                 .fillMaxWidth()
@@ -437,8 +440,8 @@ private fun BottomAppBarContent(
 
             val timerProgress = animateFloatAsState(
                 targetValue = timerProgress,
-                animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-                label = "timerAnimation"
+                animationSpec = WavyProgressIndicatorDefaults.ProgressAnimationSpec,
+                label = "progressTimerAnimation"
             )
             //Rest timer
             Row(
@@ -461,10 +464,9 @@ private fun BottomAppBarContent(
                 Box(
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(
+                    CircularWavyProgressIndicator(
                         modifier = Modifier.size(50.dp),
                         progress = { timerProgress.value },
-                        strokeWidth = 5.dp
                     )
                     Text("$restTime")
                 }
