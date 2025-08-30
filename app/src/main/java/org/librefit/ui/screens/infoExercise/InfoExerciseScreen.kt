@@ -271,6 +271,7 @@ private fun DetailsPage(exercise: UiExerciseDC) {
     ) {
         if (exercise.force != null) {
             OutlinedTextField(
+                shape = MaterialTheme.shapes.large,
                 modifier = Modifier.weight(1f),
                 value = stringResource(Formatter.exerciseEnumToStringId(exercise.force)),
                 label = { Text(stringResource(R.string.force)) },
@@ -280,6 +281,7 @@ private fun DetailsPage(exercise: UiExerciseDC) {
             )
         }
         OutlinedTextField(
+            shape = MaterialTheme.shapes.large,
             modifier = Modifier.weight(1f),
             value = stringResource(Formatter.exerciseEnumToStringId(exercise.level)),
             label = { Text(stringResource(R.string.level)) },
@@ -289,6 +291,7 @@ private fun DetailsPage(exercise: UiExerciseDC) {
         )
         if (exercise.mechanic != null) {
             OutlinedTextField(
+                shape = MaterialTheme.shapes.large,
                 modifier = Modifier.weight(1f),
                 value = stringResource(Formatter.exerciseEnumToStringId(exercise.mechanic)),
                 label = { Text(stringResource(R.string.mechanic)) },
@@ -303,6 +306,7 @@ private fun DetailsPage(exercise: UiExerciseDC) {
     ) {
         if (exercise.equipment != null) {
             OutlinedTextField(
+                shape = MaterialTheme.shapes.large,
                 modifier = Modifier.weight(1f),
                 value = stringResource(Formatter.exerciseEnumToStringId(exercise.equipment)),
                 label = { Text(stringResource(R.string.equipment)) },
@@ -312,6 +316,7 @@ private fun DetailsPage(exercise: UiExerciseDC) {
             )
         }
         OutlinedTextField(
+            shape = MaterialTheme.shapes.large,
             modifier = Modifier.weight(1f),
             value = stringResource(Formatter.exerciseEnumToStringId(exercise.category)),
             label = { Text(stringResource(R.string.category)) },

@@ -224,6 +224,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
         LibreFitLazyColumn(innerPadding) {
             item {
                 OutlinedTextField(
+                    shape = MaterialTheme.shapes.large,
                     value = workout.title,
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -255,6 +256,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
             }
             item {
                 OutlinedTextField(
+                    shape = MaterialTheme.shapes.large,
                     value = workout.notes,
                     modifier = Modifier.fillMaxWidth(),
                     onValueChange = { newNotes ->

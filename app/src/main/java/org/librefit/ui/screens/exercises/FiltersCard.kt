@@ -199,6 +199,7 @@ private fun ItemFilter(
                 .focusable()
         ) {
             OutlinedTextField(
+                shape = MaterialTheme.shapes.large,
                 readOnly = true,
                 value = stringResource(exerciseEnumToStringId(propertyFilterValue)),
                 onValueChange = {},

@@ -58,11 +58,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -286,6 +284,7 @@ private fun MeasurementScreenContent(
 
                         Row {
                             OutlinedTextField(
+                                shape = MaterialTheme.shapes.large,
                                 modifier = Modifier
                                     .weight(1f)
                                     .focusRequester(focusRequester),
@@ -302,6 +301,7 @@ private fun MeasurementScreenContent(
                             )
                             Spacer(Modifier.width(10.dp))
                             OutlinedTextField(
+                                shape = MaterialTheme.shapes.large,
                                 modifier = Modifier.weight(1f),
                                 value = Formatter.getShortDateFromLocalDate(date),
                                 onValueChange = {},
@@ -321,6 +321,7 @@ private fun MeasurementScreenContent(
                             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                 Row {
                                     OutlinedTextField(
+                                        shape = MaterialTheme.shapes.large,
                                         modifier = Modifier.weight(1f),
                                         value = fatMass,
                                         trailingIcon = {
@@ -348,6 +349,7 @@ private fun MeasurementScreenContent(
                                     )
                                     Spacer(modifier = Modifier.width(10.dp))
                                     OutlinedTextField(
+                                        shape = MaterialTheme.shapes.large,
                                         modifier = Modifier.weight(1f),
                                         value = leanMass,
                                         trailingIcon = {
@@ -371,6 +373,7 @@ private fun MeasurementScreenContent(
                                 }
 
                                 OutlinedTextField(
+                                    shape = MaterialTheme.shapes.large,
                                     modifier = Modifier.fillMaxWidth(),
                                     value = notes,
                                     label = { Text(stringResource(R.string.notes)) },

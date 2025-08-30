@@ -189,6 +189,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
         LibreFitLazyColumn(innerPadding) {
             item {
                 OutlinedTextField(
+                    shape = MaterialTheme.shapes.large,
                     value = workout.title,
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -218,6 +219,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
             }
             item {
                 OutlinedTextField(
+                    shape = MaterialTheme.shapes.large,
                     value = workout.notes,
                     modifier = Modifier.fillMaxWidth(),
                     onValueChange = updateWorkoutNotes,
@@ -235,6 +237,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                 ) {
 
                     OutlinedTextField(
+                        shape = MaterialTheme.shapes.large,
                         modifier = Modifier.weight(0.5f),
                         value = formatTime(workout.timeElapsed),
                         label = { Text(stringResource(R.string.elapsed_time)) },
@@ -252,6 +255,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                     OutlinedTextField(
+                        shape = MaterialTheme.shapes.large,
                         modifier = Modifier.weight(0.5f),
                         value = Formatter.getShortDateFromLocalDate(workout.completed),
                         onValueChange = {},
@@ -275,6 +279,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     OutlinedTextField(
+                        shape = MaterialTheme.shapes.large,
                         modifier = Modifier.weight(0.5f),
                         value = volumeExercises,
                         label = { Text(stringResource(R.string.volume)) },
@@ -284,6 +289,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                         singleLine = true,
                     )
                     OutlinedTextField(
+                        shape = MaterialTheme.shapes.large,
                         modifier = Modifier.weight(0.5f),
                         value = "${exercises.size}",
                         label = { Text(stringResource(R.string.exercises)) },
@@ -300,6 +306,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     OutlinedTextField(
+                        shape = MaterialTheme.shapes.large,
                         modifier = Modifier.weight(0.5f),
                         value = "${exercises.sumOf { it.sets.size }}",
                         label = { Text(stringResource(R.string.total_sets)) },
@@ -308,6 +315,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                         singleLine = true,
                     )
                     OutlinedTextField(
+                        shape = MaterialTheme.shapes.large,
                         modifier = Modifier.weight(0.5f),
                         value = "${
                             exercises.sumOf { exercise ->

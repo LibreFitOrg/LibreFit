@@ -243,6 +243,7 @@ fun SharedTransitionScope.ExerciseCard(
             }
 
             OutlinedTextField(
+                shape = MaterialTheme.shapes.large,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(text = stringResource(id = R.string.notes)) },
                 value = exerciseWithSets.exercise.notes,
@@ -334,6 +335,7 @@ fun SharedTransitionScope.ExerciseCard(
                         .focusable()
                 ) {
                     OutlinedTextField(
+                        shape = MaterialTheme.shapes.large,
                         readOnly = true,
                         value = stringResource(Formatter.setModeToStringId(exerciseWithSets.exercise.setMode)),
                         onValueChange = {},
@@ -594,6 +596,7 @@ private fun LazyItemScope.Set(
                     }
                     //Time
                     OutlinedTextField(
+                        shape = MaterialTheme.shapes.large,
                         modifier = Modifier.width(80.dp),
                         value = formatTime(timeValue).substring(3),
                         onValueChange = { string ->
@@ -614,6 +617,7 @@ private fun LazyItemScope.Set(
             } else {
                 //Reps
                 OutlinedTextField(
+                    shape = MaterialTheme.shapes.large,
                     modifier = Modifier.width(80.dp),
                     value = repValue,
                     onValueChange = { string ->
@@ -630,6 +634,7 @@ private fun LazyItemScope.Set(
                 if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                     //Weight
                     OutlinedTextField(
+                        shape = MaterialTheme.shapes.large,
                         modifier = Modifier.width(80.dp),
                         value = weightValue,
                         onValueChange = { string ->
