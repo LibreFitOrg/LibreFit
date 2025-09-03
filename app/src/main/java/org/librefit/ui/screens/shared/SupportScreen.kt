@@ -39,12 +39,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
+import org.librefit.ui.components.LibreFitAppName.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.PulsingHeartLottie
@@ -71,18 +71,7 @@ fun SupportScreen(
                         append(stringResource(R.string.lets_build))
                         append(" ")
 
-                        withStyle(
-                            style = MaterialTheme.typography.displaySmallEmphasized.copy(
-                                color = MaterialTheme.colorScheme.primary
-                            ).toSpanStyle(),
-                        ) {
-                            append(stringResource(id = R.string.app_name).removeRange(5, 8))
-                        }
-                        withStyle(
-                            style = MaterialTheme.typography.displaySmallEmphasized.toSpanStyle()
-                        ) {
-                            append(stringResource(id = R.string.app_name).removeRange(0, 5))
-                        }
+                        GetAppNameInAnnotatedBuilder()
                         append(" ")
                         append(stringResource(R.string.together))
                     },

@@ -52,10 +52,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -63,6 +60,7 @@ import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
+import org.librefit.ui.components.LibreFitAppName
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.dialogs.UrlActionDialog
@@ -100,15 +98,7 @@ fun AboutScreen(navController: NavHostController) {
                 )
             }
             item {
-                Text(
-                    buildAnnotatedString {
-                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                            append(stringResource(id = R.string.app_name).removeRange(5, 8))
-                        }
-                        append(stringResource(id = R.string.app_name).removeRange(0, 5))
-                    },
-                    style = MaterialTheme.typography.displayMediumEmphasized
-                )
+                LibreFitAppName.AppNameText(MaterialTheme.typography.displayLargeEmphasized)
             }
 
             item {

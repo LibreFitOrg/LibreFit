@@ -68,12 +68,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -85,6 +83,7 @@ import org.librefit.R
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
+import org.librefit.ui.components.LibreFitAppName.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
@@ -448,7 +447,7 @@ fun StreakCard(weekStreak: Int) {
 }
 
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
 private fun ProfileScreenPreview() {
@@ -476,10 +475,7 @@ private fun ProfileScreenPreview() {
         SharedTransitionLayout {
             LibreFitScaffold(
                 title = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                        append(stringResource(id = R.string.app_name).removeRange(5, 8))
-                    }
-                    append(stringResource(id = R.string.app_name).removeRange(0, 5))
+                    GetAppNameInAnnotatedBuilder(MaterialTheme.typography.titleLargeEmphasized)
                 },
                 actions = listOf {},
                 actionsIcons = listOf(painterResource(R.drawable.ic_settings)),
