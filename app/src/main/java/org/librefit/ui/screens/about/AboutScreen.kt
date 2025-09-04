@@ -213,7 +213,7 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
-                    painterResource(R.drawable.ic_library),
+                    painterResource(R.drawable.ic_contract),
                     stringResource(R.string.libraries),
                     onClick = {
                         navController.navigate(Route.LibrariesScreen) { launchSingleTop = true }
