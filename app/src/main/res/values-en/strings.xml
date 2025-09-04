@@ -189,6 +189,7 @@
     <string name="quit_dialog">Quit</string>
     <string name="start_routine">Start routine</string>
     <string name="confirm_delete">Are you certain you want to delete this? This action cannot be reversed.</string>
+    <string name="library">Library</string>
     <string name="open">Open</string>
     <string name="ok_dialog">OK</string>
     <string name="url_dialog">URL</string>

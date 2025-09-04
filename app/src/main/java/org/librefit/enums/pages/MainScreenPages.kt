@@ -20,6 +20,7 @@
 package org.librefit.enums.pages
 
 enum class MainScreenPages {
+    LIBRARY,
     HOME,
     PROFILE
 }

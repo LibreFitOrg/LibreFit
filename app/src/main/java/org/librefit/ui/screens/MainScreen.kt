@@ -45,6 +45,7 @@ import org.librefit.nav.Route
 import org.librefit.ui.components.LibreFitAppName.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.screens.home.HomeScreen
+import org.librefit.ui.screens.library.LibraryScreen
 import org.librefit.ui.screens.profile.ProfileScreen
 
 
@@ -91,7 +92,7 @@ fun SharedTransitionScope.MainScreen(
             painterResource(R.drawable.ic_settings)
         ),
         actionsElevated = listOf(false, false),
-        fabAction = if (pagerState.currentPage == 0) fabAction else null,
+        fabAction = if (pagerState.currentPage == MainScreenPages.HOME.ordinal) fabAction else null,
         fabIcon = painterResource(R.drawable.ic_add),
         fabDescription = stringResource(R.string.create_routine),
         bottomBar = {
@@ -102,22 +103,31 @@ fun SharedTransitionScope.MainScreen(
                         onClick = { goToPage(page.ordinal) },
                         icon = {
                             Icon(
-                                painter = when (page) {
-                                    MainScreenPages.HOME -> painterResource(R.drawable.ic_home)
-                                    MainScreenPages.PROFILE -> painterResource(R.drawable.ic_person)
-                                },
-                                contentDescription = when (page) {
-                                    MainScreenPages.HOME -> stringResource(R.string.home)
-                                    MainScreenPages.PROFILE -> stringResource(R.string.profile)
-                                }
+                                painter = painterResource(
+                                    id = when (page) {
+                                        MainScreenPages.LIBRARY -> R.drawable.ic_library
+                                        MainScreenPages.HOME -> R.drawable.ic_home
+                                        MainScreenPages.PROFILE -> R.drawable.ic_person
+                                    }
+                                ),
+                                contentDescription = stringResource(
+                                    id = when (page) {
+                                        MainScreenPages.LIBRARY -> R.string.library
+                                        MainScreenPages.HOME -> R.string.home
+                                        MainScreenPages.PROFILE -> R.string.profile
+                                    }
+                                )
                             )
                         },
                         label = {
                             Text(
-                                text = when (page) {
-                                    MainScreenPages.HOME -> stringResource(R.string.home)
-                                    MainScreenPages.PROFILE -> stringResource(R.string.profile)
-                                }
+                                text = stringResource(
+                                    id = when (page) {
+                                        MainScreenPages.LIBRARY -> R.string.library
+                                        MainScreenPages.HOME -> R.string.home
+                                        MainScreenPages.PROFILE -> R.string.profile
+                                    }
+                                )
                             )
                         }
                     )
@@ -126,11 +136,13 @@ fun SharedTransitionScope.MainScreen(
         }
     ) { innerPadding ->
         HorizontalPager(
-            state = pagerState
+            state = pagerState,
+            beyondViewportPageCount = 1
         ) { pageIndex ->
             when (pageIndex) {
-                0 -> HomeScreen(innerPadding, navController, animatedVisibilityScope)
-                1 -> ProfileScreen(innerPadding, navController, animatedVisibilityScope)
+                0 -> LibraryScreen(innerPadding)
+                1 -> HomeScreen(innerPadding, navController, animatedVisibilityScope)
+                2 -> ProfileScreen(innerPadding, navController, animatedVisibilityScope)
                 else -> error("Invalid page index in main screen: $pageIndex. Number of pages: ${pagerState.pageCount}")
             }
         }

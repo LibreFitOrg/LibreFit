@@ -191,6 +191,7 @@
     <string name="language_english">Inglese</string>
     <string name="start_routine">Inizia routine</string>
     <string name="confirm_delete">Sei sicuro di volerlo eliminare? Questa azione non può essere annullata.</string>
+    <string name="library">Libreria</string>
     <string name="open">Apri</string>
     <string name="ok_dialog">OK</string>
     <string name="url_dialog">URL</string>

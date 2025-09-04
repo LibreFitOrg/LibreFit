@@ -165,10 +165,6 @@ private fun SharedTransitionScope.HomeScreenContent(
             }
         }
 
-        //TODO: implement archived routines
-
-        //TODO: implement a default routine
-
         items(routines, key = { it.id }) { routine ->
             ElevatedCard(
                 onClick = {
