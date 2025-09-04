@@ -31,7 +31,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
@@ -437,7 +437,7 @@ fun LibreFitCartesianChart(
                                         .height(200.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    CircularWavyProgressIndicator()
+                                    ContainedLoadingIndicator()
                                 }
                             }
                         }
