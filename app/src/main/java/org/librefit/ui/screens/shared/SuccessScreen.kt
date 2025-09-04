@@ -42,6 +42,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -113,9 +114,9 @@ private fun LazyListScope.successScreenContent(
     }
 
     item {
-        val size = remember { min(maxHeight, maxWidth) / 2 }
+        val size = remember(maxHeight, maxWidth) { min(maxHeight, maxWidth) / 2 }
         val infiniteTransition = rememberInfiniteTransition()
-        val rotation = infiniteTransition.animateFloat(
+        val rotation by infiniteTransition.animateFloat(
             initialValue = 0f,
             targetValue = 360f,
             animationSpec = infiniteRepeatable(tween(4000))
@@ -123,7 +124,7 @@ private fun LazyListScope.successScreenContent(
         Box(contentAlignment = Alignment.Center) {
             ElevatedCard(
                 modifier = Modifier
-                    .rotate(rotation.value)
+                    .rotate(rotation)
                     .size(size.times(1.2f)),
                 shape = MaterialShapes.Cookie7Sided.toShape()
             ) { }
