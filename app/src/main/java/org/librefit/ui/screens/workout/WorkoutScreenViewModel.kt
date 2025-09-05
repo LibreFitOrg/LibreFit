@@ -384,18 +384,18 @@ class WorkoutScreenViewModel @Inject constructor(
         }
     }
 
-    val progress: StateFlow<Float> = exercises
+    val workoutProgress: StateFlow<Pair<Int, Int>> = exercises
         .map { list ->
             val totalSets = list.sumOf { it.sets.size }
-            if (totalSets == 0) return@map 0f
 
             val completedSets = list.sumOf { it.sets.count { s -> s.completed } }
-            completedSets.toFloat() / totalSets
+
+            completedSets to totalSets
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = 0f
+            initialValue = 0 to 0
         )
 
 

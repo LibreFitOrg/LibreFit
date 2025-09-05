@@ -19,7 +19,6 @@
 
 package org.librefit.ui.screens.workout
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
@@ -29,23 +28,26 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ElevatedToggleButton
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults
+import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -93,7 +95,7 @@ import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
-import org.librefit.util.Formatter.formatTime
+import org.librefit.util.Formatter
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -125,7 +127,7 @@ fun SharedTransitionScope.WorkoutScreen(
 
     val idSetWithRunningStopwatch by viewModel.idSetWithRunningStopwatch.collectAsState()
 
-    val progress by viewModel.progress.collectAsState()
+    val workoutProgress by viewModel.workoutProgress.collectAsState()
 
     val previousPerformances by viewModel.previousPerformances.collectAsState()
 
@@ -190,11 +192,6 @@ fun SharedTransitionScope.WorkoutScreen(
                 showConfirmDialog = true
             }
         },
-        fabAction = {
-            navController.navigate(Route.ExercisesScreen(addExercises = true)) {
-                launchSingleTop = true
-            }
-        },
         actions = listOf {
             navController.navigate(
                 Route.BeforeSavingScreen(
@@ -210,50 +207,50 @@ fun SharedTransitionScope.WorkoutScreen(
         },
         actionsEnabled = listOf(!exercisesWithSets.isEmpty()),
         actionsDescription = listOf(stringResource(R.string.done)),
-        fabIcon = painterResource(R.drawable.ic_add),
-        fabDescription = stringResource(R.string.add_exercise),
-        bottomBar = {
-            BottomAppBar {
-                BottomAppBarContent(
-                    timeElapsed = timeElapsed,
-                    isStopwatchPaused = isStopwatchPaused,
-                    progress = progress,
-                    timerProgress = restTimerProgress,
-                    restTime = restTime,
-                    toggleStopwatch = viewModel::toggleStopwatch,
-                    modifyRestTime = viewModel::modifyRestTime
-                )
-            }
-        }
     ) { innerPadding ->
-        WorkoutScreenContent(
-            animatedVisibilityScope = animatedVisibilityScope,
-            innerPadding = innerPadding,
-            exercisesWithSets = exercisesWithSets,
-            previousPerformances = previousPerformances,
-            idSetWithRunningStopwatch = idSetWithRunningStopwatch,
-            updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
-            onSelectedExerciseIdChange = { id, exercise ->
-                navController.navigate(
-                    Route.InfoExerciseScreen(
-                        id,
-                        exercise.toEntity()
-                    )
-                ) { launchSingleTop = true }
-            },
-            updateSetTime = viewModel::updateSetTime,
-            updateSetReps = viewModel::updateSetReps,
-            updateSetLoad = viewModel::updateSetLoad,
-            updateSetCompleted = viewModel::updateSetCompleted,
-            addSetToExercise = viewModel::addSetToExercise,
-            deleteSet = viewModel::deleteSet,
-            updateExerciseNotes = viewModel::updateExerciseNotes,
-            updateExerciseRestTime = viewModel::updateExerciseRestTime,
-            updateExerciseSetMode = viewModel::updateExerciseSetMode,
-            deleteExercise = viewModel::deleteExercise,
-            showInfo = { infoMode = it },
-            applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance
-        )
+        Box(modifier = Modifier.padding(innerPadding)) {
+            WorkoutScreenContent(
+                animatedVisibilityScope = animatedVisibilityScope,
+                exercisesWithSets = exercisesWithSets,
+                previousPerformances = previousPerformances,
+                idSetWithRunningStopwatch = idSetWithRunningStopwatch,
+                timeElapsed = timeElapsed,
+                isStopwatchPaused = isStopwatchPaused,
+                workoutProgress = workoutProgress,
+                toggleStopwatch = viewModel::toggleStopwatch,
+                updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
+                onSelectedExerciseIdChange = { id, exercise ->
+                    navController.navigate(
+                        Route.InfoExerciseScreen(
+                            id,
+                            exercise.toEntity()
+                        )
+                    ) { launchSingleTop = true }
+                },
+                updateSetTime = viewModel::updateSetTime,
+                updateSetReps = viewModel::updateSetReps,
+                updateSetLoad = viewModel::updateSetLoad,
+                updateSetCompleted = viewModel::updateSetCompleted,
+                addSetToExercise = viewModel::addSetToExercise,
+                deleteSet = viewModel::deleteSet,
+                updateExerciseNotes = viewModel::updateExerciseNotes,
+                updateExerciseRestTime = viewModel::updateExerciseRestTime,
+                updateExerciseSetMode = viewModel::updateExerciseSetMode,
+                deleteExercise = viewModel::deleteExercise,
+                showInfo = { infoMode = it },
+                applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance
+            )
+            FloatingWorkoutActionBar(
+                restTimerProgress = restTimerProgress,
+                restTime = restTime,
+                modifyRestTime = viewModel::modifyRestTime,
+                fabAction = {
+                    navController.navigate(Route.ExercisesScreen(addExercises = true)) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
     }
 
 
@@ -276,14 +273,17 @@ fun SharedTransitionScope.WorkoutScreen(
 }
 
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SharedTransitionScope.WorkoutScreenContent(
     animatedVisibilityScope: AnimatedVisibilityScope,
-    innerPadding: PaddingValues,
     exercisesWithSets: List<UiExerciseWithSets>,
     previousPerformances: List<List<String>?>,
+    timeElapsed: Int,
+    isStopwatchPaused: Boolean,
+    workoutProgress: Pair<Int, Int>,
     idSetWithRunningStopwatch: Long?,
+    toggleStopwatch: () -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
     addSetToExercise: (Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
@@ -299,7 +299,62 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     showInfo: (InfoMode) -> Unit,
     applyPreviousSetPerformance: (Long) -> Unit
 ) {
-    LibreFitLazyColumn(innerPadding) {
+    LibreFitLazyColumn {
+        stickyHeader {
+            ElevatedCard(shape = MaterialTheme.shapes.extraLargeIncreased) {
+                Column(
+                    modifier = Modifier.padding(15.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    val animatedProgress = animateFloatAsState(
+                        targetValue = workoutProgress.let { p ->
+                            p.first.toFloat() / (p.second.takeUnless { it == 0 }
+                                ?: 1) // Avoid 0 division
+                        },
+                        animationSpec = WavyProgressIndicatorDefaults.ProgressAnimationSpec,
+                        label = "AnimatedProgressForWavyIndicator"
+                    )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.completed_sets) + ": ${workoutProgress.first}/${workoutProgress.second}",
+                        )
+                        LinearWavyProgressIndicator(
+                            modifier = Modifier.fillMaxWidth(),
+                            progress = { animatedProgress.value },
+                        )
+                    }
+                    HorizontalDivider()
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        //Play/Pause button
+                        ElevatedToggleButton(
+                            checked = !isStopwatchPaused,
+                            onCheckedChange = { toggleStopwatch() },
+                            shapes = ToggleButtonDefaults.shapes()
+                        ) {
+                            Icon(
+                                painter = painterResource(if (isStopwatchPaused) R.drawable.ic_play_arrow else R.drawable.ic_pause),
+                                contentDescription = stringResource(if (isStopwatchPaused) R.string.pause else R.string.resume),
+                            )
+                        }
+
+                        Text(
+                            text = stringResource(R.string.elapsed_time) + ": " + Formatter.formatTime(
+                                timeElapsed
+                            ),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+            }
+        }
         if (exercisesWithSets.isEmpty()) {
             item {
                 Column(
@@ -349,129 +404,102 @@ private fun SharedTransitionScope.WorkoutScreenContent(
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-private fun BottomAppBarContent(
-    timeElapsed: Int,
-    isStopwatchPaused: Boolean,
-    progress: Float,
-    timerProgress: Float,
+private fun BoxScope.FloatingWorkoutActionBar(
+    restTimerProgress: Float,
     restTime: Int,
-    toggleStopwatch: () -> Unit,
-    modifyRestTime: (Boolean) -> Unit
+    modifyRestTime: (Boolean) -> Unit,
+    fabAction: () -> Unit
 ) {
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        val animatedProgress = animateFloatAsState(
-            targetValue = progress,
+    HorizontalFloatingToolbar(
+        expanded = restTime != 0,
+        floatingActionButton = {
+            FloatingToolbarDefaults.StandardFloatingActionButton(
+                onClick = fabAction
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_add),
+                    contentDescription = stringResource(R.string.add_exercise)
+                )
+            }
+        },
+        modifier = Modifier
+            .align(Alignment.BottomEnd)
+            .offset(y = -ScreenOffset, x = -ScreenOffset),
+    ) {
+        val animatedTimerProgress = animateFloatAsState(
+            targetValue = restTimerProgress,
             animationSpec = WavyProgressIndicatorDefaults.ProgressAnimationSpec,
-            label = "AnimatedProgressForWavyIndicator"
+            label = "progressTimerAnimation"
         )
-        LinearWavyProgressIndicator(
-            progress = { animatedProgress.value },
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.1f),
-        )
-
-
+        //Rest timer
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .weight(0.9f),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
-            BoxWithConstraints(
-                modifier = Modifier
-                    .weight(0.2f),
+            val iconSize = remember { 48.dp }
+            Text(
+                modifier = Modifier.padding(start = 10.dp),
+                text = stringResource(R.string.rest)
+            )
+            Box(
                 contentAlignment = Alignment.Center
             ) {
-                val maxHeight = maxHeight.value
-                //Play button
-                ElevatedToggleButton(
-                    checked = !isStopwatchPaused,
-                    onCheckedChange = { toggleStopwatch() },
-                    modifier = Modifier.height(maxHeight.dp),
-                    shapes = ToggleButtonDefaults.shapesFor(maxHeight.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(if (isStopwatchPaused) R.drawable.ic_play_arrow else R.drawable.ic_pause),
-                        contentDescription = stringResource(if (isStopwatchPaused) R.string.pause else R.string.resume),
-                    )
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .weight(0.33f)
-                    .padding(start = 15.dp),
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = stringResource(R.string.elapsed_time),
-                    style = MaterialTheme.typography.bodySmall
+                CircularWavyProgressIndicator(
+                    modifier = Modifier.size(iconSize),
+                    progress = { animatedTimerProgress.value },
                 )
-                Text(
-                    text = formatTime(timeElapsed)
+                Text("$restTime")
+            }
+
+            val interactionSources = remember { List(2) { MutableInteractionSource() } }
+            ButtonGroup(
+                overflowIndicator = {}
+            ) {
+                customItem(
+                    buttonGroupContent = {
+                        IconButton(
+                            modifier = Modifier.animateWidth(interactionSources[0]),
+                            onClick = { modifyRestTime(false) },
+                            enabled = restTime > 0,
+                            shapes = IconButtonDefaults.shapes(),
+                            interactionSource = interactionSources[0]
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_replay_10),
+                                contentDescription = stringResource(R.string.add_ten_seconds),
+                                modifier = Modifier.size(iconSize)
+                            )
+                        }
+                    },
+                    menuContent = {}
+                )
+                customItem(
+                    buttonGroupContent = {
+                        IconButton(
+                            modifier = Modifier.animateWidth(interactionSources[1]),
+                            onClick = { modifyRestTime(true) },
+                            enabled = restTime > 0,
+                            shapes = IconButtonDefaults.shapes(),
+                            interactionSource = interactionSources[1]
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_forward_10),
+                                contentDescription = stringResource(R.string.reduce_ten_seconds),
+                                modifier = Modifier.size(iconSize)
+                            )
+                        }
+                    },
+                    menuContent = {}
                 )
             }
 
-
-            val timerProgress = animateFloatAsState(
-                targetValue = timerProgress,
-                animationSpec = WavyProgressIndicatorDefaults.ProgressAnimationSpec,
-                label = "progressTimerAnimation"
-            )
-            //Rest timer
-            Row(
-                modifier = Modifier
-                    .weight(0.45f)
-                    .fillMaxHeight(),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = { modifyRestTime(false) },
-                    enabled = restTime != 0,
-                    shapes = IconButtonDefaults.shapes()
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_replay_10),
-                        contentDescription = stringResource(R.string.add_ten_seconds),
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularWavyProgressIndicator(
-                        modifier = Modifier.size(50.dp),
-                        progress = { timerProgress.value },
-                    )
-                    Text("$restTime")
-                }
-                IconButton(
-                    onClick = { modifyRestTime(true) },
-                    enabled = restTime != 0,
-                    shapes = IconButtonDefaults.shapes()
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_forward_10),
-                        contentDescription = stringResource(R.string.reduce_ten_seconds),
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
-
-            }
 
         }
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
 private fun WorkoutScreenPreview() {
@@ -483,6 +511,7 @@ private fun WorkoutScreenPreview() {
             )
         )
     )
+    val workoutProgress = e.sumOf { it.sets.count { s -> s.completed } } to e.sumOf { it.sets.size }
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
         SharedTransitionLayout {
             AnimatedVisibility(true) {
@@ -492,43 +521,39 @@ private fun WorkoutScreenPreview() {
                     actions = listOf {},
                     actionsEnabled = listOf(!e.isEmpty()),
                     actionsDescription = listOf(stringResource(R.string.done)),
-                    fabIcon = painterResource(R.drawable.ic_add),
-                    fabAction = {},
-                    bottomBar = {
-                        BottomAppBar {
-                            BottomAppBarContent(
-                                timeElapsed = 0,
-                                isStopwatchPaused = false,
-                                progress = 0f,
-                                timerProgress = 0f,
-                                restTime = 0,
-                                toggleStopwatch = {},
-                                modifyRestTime = {}
-                            )
-                        }
-                    }
                 ) { innerPadding ->
-                    WorkoutScreenContent(
-                        animatedVisibilityScope = this,
-                        innerPadding = innerPadding,
-                        exercisesWithSets = e,
-                        previousPerformances = emptyList(),
-                        idSetWithRunningStopwatch = null,
-                        updateIdSetWithRunningStopwatch = {},
-                        addSetToExercise = {},
-                        updateSetTime = { _, _ -> },
-                        updateSetReps = { _, _ -> },
-                        updateSetLoad = { _, _ -> },
-                        updateSetCompleted = { _, _ -> },
-                        deleteSet = {},
-                        updateExerciseNotes = { _, _ -> },
-                        updateExerciseRestTime = { _, _ -> },
-                        updateExerciseSetMode = { _, _ -> },
-                        deleteExercise = {},
-                        onSelectedExerciseIdChange = { _, _ -> },
-                        showInfo = {},
-                        applyPreviousSetPerformance = {}
-                    )
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        WorkoutScreenContent(
+                            animatedVisibilityScope = this@AnimatedVisibility,
+                            exercisesWithSets = e,
+                            previousPerformances = emptyList(),
+                            idSetWithRunningStopwatch = null,
+                            updateIdSetWithRunningStopwatch = {},
+                            timeElapsed = 0,
+                            isStopwatchPaused = false,
+                            workoutProgress = workoutProgress,
+                            toggleStopwatch = {},
+                            addSetToExercise = {},
+                            updateSetTime = { _, _ -> },
+                            updateSetReps = { _, _ -> },
+                            updateSetLoad = { _, _ -> },
+                            updateSetCompleted = { _, _ -> },
+                            deleteSet = {},
+                            updateExerciseNotes = { _, _ -> },
+                            updateExerciseRestTime = { _, _ -> },
+                            updateExerciseSetMode = { _, _ -> },
+                            deleteExercise = {},
+                            onSelectedExerciseIdChange = { _, _ -> },
+                            showInfo = {},
+                            applyPreviousSetPerformance = {}
+                        )
+                        FloatingWorkoutActionBar(
+                            restTimerProgress = 0f,
+                            restTime = 300,
+                            modifyRestTime = {},
+                            fabAction = {}
+                        )
+                    }
                 }
             }
         }
