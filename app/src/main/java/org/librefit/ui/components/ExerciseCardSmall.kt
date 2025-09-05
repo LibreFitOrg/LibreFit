@@ -192,7 +192,6 @@ fun SharedTransitionScope.ExerciseCardSmall(
                         if (setMode == SetMode.DURATION) {
                             Text(stringResource(R.string.time))
                         } else {
-                            Text(stringResource(R.string.reps))
                             if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                                 Text(
                                     stringResource(R.string.load) + " (" + stringResource(
@@ -200,6 +199,7 @@ fun SharedTransitionScope.ExerciseCardSmall(
                                     ) + ")"
                                 )
                             }
+                            Text(stringResource(R.string.reps))
                         }
                         if (!isRoutine) {
                             Icon(
@@ -237,10 +237,10 @@ fun SharedTransitionScope.ExerciseCardSmall(
                                 if (setMode == SetMode.DURATION) {
                                     Text(formatTime(set.elapsedTime).substring(3))
                                 } else {
-                                    Text("${set.reps}")
                                     if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                                         Text("${set.load}")
                                     }
+                                    Text("${set.reps}")
                                 }
                                 if (!isRoutine) {
                                     Checkbox(

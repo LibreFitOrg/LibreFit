@@ -413,10 +413,6 @@ fun SharedTransitionScope.ExerciseCard(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     } else {
-                        Text(
-                            text = stringResource(id = R.string.reps),
-                            color = MaterialTheme.colorScheme.secondary
-                        )
                         if (exerciseWithSets.exercise.setMode == SetMode.LOAD ||
                             exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
                         ) {
@@ -425,6 +421,10 @@ fun SharedTransitionScope.ExerciseCard(
                                 color = MaterialTheme.colorScheme.secondary
                             )
                         }
+                        Text(
+                            text = stringResource(id = R.string.reps),
+                            color = MaterialTheme.colorScheme.secondary
+                        )
                     }
                     if (workout) {
                         Icon(
@@ -636,22 +636,6 @@ private fun Set(
                     )
                 }
             } else {
-                //Reps
-                OutlinedTextField(
-                    shape = MaterialTheme.shapes.large,
-                    modifier = Modifier.width(80.dp),
-                    value = repValue,
-                    onValueChange = { string ->
-                        updateSetReps(Formatter.parseIntegerFromString(string), set.id)
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedBorderColor = Color.Transparent,
-                        disabledBorderColor = Color.Transparent
-                    )
-                )
                 if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                     //Weight
                     OutlinedTextField(
@@ -671,6 +655,22 @@ private fun Set(
                         )
                     )
                 }
+                //Reps
+                OutlinedTextField(
+                    shape = MaterialTheme.shapes.large,
+                    modifier = Modifier.width(80.dp),
+                    value = repValue,
+                    onValueChange = { string ->
+                        updateSetReps(Formatter.parseIntegerFromString(string), set.id)
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent,
+                        disabledBorderColor = Color.Transparent
+                    )
+                )
             }
 
             if (workout) {
