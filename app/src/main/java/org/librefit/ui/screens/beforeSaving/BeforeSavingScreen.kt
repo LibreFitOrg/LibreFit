@@ -450,6 +450,20 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
 @Preview
 @Composable
 private fun BeforeSavingScreenPreview() {
+    val e = listOf(
+        UiExerciseWithSets(
+            exerciseDC = UiExerciseDC(name = "Barbell Bench Press - Medium Grip"),
+            exercise = UiExercise(restTime = 120),
+            sets = persistentListOf(
+                UiSet(load = 80.0, reps = 9, completed = true),
+                UiSet(load = 80.0, reps = 9, completed = true),
+                UiSet(load = 80.0, reps = 9, completed = true)
+            )
+        )
+    )
+
+    val volume = e.sumOf { eWs -> eWs.sets.sumOf { it.load * it.reps } }
+
     LibreFitTheme(dynamicColor = false, darkTheme = true) {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
@@ -457,14 +471,14 @@ private fun BeforeSavingScreenPreview() {
                     navController = rememberNavController(),
                     showUnlikeRoutineDialog = {},
                     showDatePickerDialog = {},
-                    exercises = listOf(
-                        UiExerciseWithSets(
-                            exerciseDC = UiExerciseDC(name = "Pullup")
-                        )
+                    exercises = e,
+                    workout = UiWorkout(
+                        title = "Chest on \uD83D\uDD25",
+                        notes = "Feeling well today",
+                        timeElapsed = 593
                     ),
-                    workout = UiWorkout(),
-                    routine = UiWorkout(),
-                    volumeExercises = "100 kg",
+                    routine = UiWorkout(title = "Chest day"),
+                    volumeExercises = "$volume kg",
                     isTitleTooLong = false,
                     isTitleEmpty = false,
                     updateWorkoutTitle = {},

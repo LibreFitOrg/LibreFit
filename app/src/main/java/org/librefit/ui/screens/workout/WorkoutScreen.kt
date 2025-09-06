@@ -83,6 +83,8 @@ import org.librefit.R
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
+import org.librefit.enums.exercise.Category
+import org.librefit.enums.exercise.Equipment
 import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.LibreFitLazyColumn
@@ -90,8 +92,10 @@ import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.DumbbellLottie
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
+import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
+import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
@@ -505,9 +509,21 @@ private fun BoxScope.FloatingWorkoutActionBar(
 private fun WorkoutScreenPreview() {
     val e = listOf(
         UiExerciseWithSets(
+            exercise = UiExercise(
+                setMode = SetMode.LOAD,
+                restTime = 120,
+                notes = "Feeling well today"
+            ),
             exerciseDC = UiExerciseDC(
-                name = "3/4 Sit-Up",
-                images = persistentListOf("3_4_Sit-Up/0.jpg")
+                name = "Barbell Bench Press - Medium Grip",
+                images = persistentListOf("Barbell_Bench_Press_-_Medium_Grip/0.jpg"),
+                equipment = Equipment.MACHINE,
+                category = Category.STRENGTH
+            ),
+            sets = persistentListOf(
+                UiSet(load = 80.0, reps = 9, completed = true),
+                UiSet(load = 80.0, reps = 8),
+                UiSet(load = 80.0, reps = 9)
             )
         )
     )
@@ -529,7 +545,7 @@ private fun WorkoutScreenPreview() {
                             previousPerformances = emptyList(),
                             idSetWithRunningStopwatch = null,
                             updateIdSetWithRunningStopwatch = {},
-                            timeElapsed = 0,
+                            timeElapsed = 186,
                             isStopwatchPaused = false,
                             workoutProgress = workoutProgress,
                             toggleStopwatch = {},
@@ -548,8 +564,8 @@ private fun WorkoutScreenPreview() {
                             applyPreviousSetPerformance = {}
                         )
                         FloatingWorkoutActionBar(
-                            restTimerProgress = 0f,
-                            restTime = 300,
+                            restTimerProgress = 97f / 120,
+                            restTime = 97,
                             modifyRestTime = {},
                             fabAction = {}
                         )

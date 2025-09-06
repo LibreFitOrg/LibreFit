@@ -339,17 +339,21 @@ private fun EditWorkoutScreenPreview() {
                     typeOfEdit = typeOfEdit,
                     exercisesWithSets = persistentListOf(
                         UiExerciseWithSets(
-                            exercise = UiExercise(setMode = SetMode.LOAD),
+                            exercise = UiExercise(setMode = SetMode.LOAD, restTime = 120),
                             exerciseDC = UiExerciseDC(
-                                name = "Ab Crunch Machine",
-                                images = persistentListOf("Ab_Crunch_Machine/0.jpg"),
+                                name = "Barbell Bench Press - Medium Grip",
+                                images = persistentListOf("Barbell_Bench_Press_-_Medium_Grip/0.jpg"),
                                 equipment = Equipment.MACHINE,
                                 category = Category.STRENGTH
                             ),
-                            sets = persistentListOf(UiSet())
+                            sets = persistentListOf(
+                                UiSet(load = 80.0, reps = 8),
+                                UiSet(load = 80.0, reps = 8),
+                                UiSet(load = 80.0, reps = 9)
+                            )
                         )
                     ),
-                    workout = UiWorkout(title = "My routine", notes = ""),
+                    workout = UiWorkout(title = "Chest day", notes = "Usually on monday"),
                     isTitleTooLong = false,
                     isTitleEmpty = false,
                     updateTitle = { _ -> },
