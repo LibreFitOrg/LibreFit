@@ -31,9 +31,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -330,7 +329,7 @@ private fun SharedTransitionScope.ItemExerciseDC(
             checkedShape = MaterialTheme.shapes.medium
         ),
         contentPadding = ButtonDefaults.MediumContentPadding,
-        modifier = modifier.height(130.dp),
+        modifier = modifier
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -344,40 +343,47 @@ private fun SharedTransitionScope.ItemExerciseDC(
                         sharedContentState = rememberSharedContentState(exercise.id),
                         animatedVisibilityScope = animatedVisibilityScope
                     )
-                    .width(110.dp)
-                    .clip(MaterialTheme.shapes.small)
+                    .size(100.dp)
+                    .clip(MaterialTheme.shapes.large)
             )
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 20.dp),
+                modifier = Modifier.padding(start = 20.dp),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = exercise.name,
                     style = MaterialTheme.typography.titleMedium,
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
+                    maxLines = 2
                 )
-                Text(
-                    text = stringResource(exerciseEnumToStringId(exercise.category)),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                if (exercise.equipment != null) {
-                    Text(
-                        text = stringResource(exerciseEnumToStringId(exercise.equipment)),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            text = stringResource(exerciseEnumToStringId(exercise.category)),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        if (exercise.equipment != null) {
+                            Text(
+                                text = stringResource(exerciseEnumToStringId(exercise.equipment)),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+                    IconButton(
+                        onClick = onInfo,
+                        shapes = IconButtonDefaults.shapes()
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_info),
+                            contentDescription = stringResource(R.string.details)
+                        )
+                    }
                 }
-            }
-            IconButton(
-                onClick = onInfo,
-                shapes = IconButtonDefaults.shapes()
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_info),
-                    contentDescription = stringResource(R.string.details)
-                )
             }
         }
     }
