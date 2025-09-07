@@ -159,7 +159,7 @@ private fun SharedTransitionScope.CalendarScreenContent(
                             )
                             IconButton(
                                 onClick = {
-                                    navController.navigate(Route.TutorialScreen(TutorialContent.START_WORKOUT)) {
+                                    navController.navigate(Route.TutorialScreen(TutorialContent.COMPLETE_WORKOUT)) {
                                         launchSingleTop = true
                                     }
                                 }

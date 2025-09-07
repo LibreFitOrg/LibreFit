@@ -228,7 +228,7 @@ fun TutorialScreen(
                 val pages = remember { 6 }
                 val pagerState = rememberPagerState(
                     pageCount = { pages },
-                    initialPage = tutorialContent.takeIf { it == TutorialContent.START_WORKOUT }?.pageIndex
+                    initialPage = tutorialContent.takeIf { it == TutorialContent.COMPLETE_WORKOUT }?.pageIndex
                         ?: 0
                 )
 

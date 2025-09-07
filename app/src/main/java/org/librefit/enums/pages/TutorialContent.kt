@@ -27,5 +27,5 @@ enum class TutorialContent(
     val pageIndex: Int = 0
 ) {
     CREATE_ROUTINE(0),
-    START_WORKOUT(3)
+    COMPLETE_WORKOUT(3)
 }
