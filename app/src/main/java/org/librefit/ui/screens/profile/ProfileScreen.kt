@@ -161,24 +161,6 @@ private fun SharedTransitionScope.ProfileScreenContent(
                 customItem(
                     buttonGroupContent = {
                         LibreFitButton(
-                            text = stringResource(R.string.statistics),
-                            icon = painterResource(R.drawable.ic_chart),
-                            modifier = Modifier
-                                .weight(0.5f)
-                                .animateWidth(interactionSources[0]),
-                            elevated = false,
-                            interactionSource = interactionSources[0]
-                        ) {
-                            navController.navigate(Route.StatisticsScreen) {
-                                launchSingleTop = true
-                            }
-                        }
-                    },
-                    menuContent = {}
-                )
-                customItem(
-                    buttonGroupContent = {
-                        LibreFitButton(
                             text = stringResource(R.string.exercises),
                             icon = painterResource(R.drawable.ic_search),
                             modifier = Modifier
@@ -188,6 +170,24 @@ private fun SharedTransitionScope.ProfileScreenContent(
                             interactionSource = interactionSources[1]
                         ) {
                             navController.navigate(Route.ExercisesScreen(addExercises = false)) {
+                                launchSingleTop = true
+                            }
+                        }
+                    },
+                    menuContent = {}
+                )
+                customItem(
+                    buttonGroupContent = {
+                        LibreFitButton(
+                            text = stringResource(R.string.statistics),
+                            icon = painterResource(R.drawable.ic_chart),
+                            modifier = Modifier
+                                .weight(0.5f)
+                                .animateWidth(interactionSources[0]),
+                            elevated = false,
+                            interactionSource = interactionSources[0]
+                        ) {
+                            navController.navigate(Route.StatisticsScreen) {
                                 launchSingleTop = true
                             }
                         }
@@ -206,7 +206,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                     buttonGroupContent = {
                         LibreFitButton(
                             text = stringResource(R.string.measurements),
-                            icon = painterResource(R.drawable.ic_monitor),
+                            icon = painterResource(R.drawable.ic_monitor_weight),
                             modifier = Modifier
                                 .weight(0.5f)
                                 .animateWidth(interactionSources[0]),
