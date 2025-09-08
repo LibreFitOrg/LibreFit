@@ -100,6 +100,9 @@ sealed class Route {
     )
 
     @Serializable
+    object WelcomeScreen
+
+    @Serializable
     data class WorkoutScreen(
         val workoutId: Long
     )

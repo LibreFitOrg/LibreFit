@@ -20,10 +20,17 @@
 package org.librefit.ui.screens.shared
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import org.librefit.db.entity.ExerciseDC
+import org.librefit.db.repository.UserPreferencesRepository
+import javax.inject.Inject
 
-
-class SharedViewModel : ViewModel() {
+@HiltViewModel
+class SharedViewModel @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) : ViewModel() {
     private var selectedExercisesList = listOf<ExerciseDC>()
 
     fun getSelectedExercisesList(): List<ExerciseDC> {
@@ -34,5 +41,17 @@ class SharedViewModel : ViewModel() {
 
     fun setSelectedExercisesList(exerciseList: List<ExerciseDC>) {
         selectedExercisesList = exerciseList
+    }
+
+
+    val showWelcomeScreen = userPreferencesRepository.showWelcomeScreen
+
+    fun doNotShowWelcomeScreenAgain() {
+        viewModelScope.launch {
+            userPreferencesRepository.savePreference(
+                key = UserPreferencesRepository.showWelcomeScreenKey,
+                value = false
+            )
+        }
     }
 }

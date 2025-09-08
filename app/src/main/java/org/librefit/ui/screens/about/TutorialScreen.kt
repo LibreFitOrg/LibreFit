@@ -92,13 +92,16 @@ fun TutorialScreen(
             ?: error("Invalid initial index: ${tutorialContent.lazyColumnIndex}. Possible indexes: $headlinesIndexes")
     )
 
+    val navigateBack: (() -> Unit)? = if (fromWelcomeScreen) null else navController::navigateUp
+
+
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.tutorial)),
-        navigateBack = navController::navigateUp,
+        navigateBack = navigateBack,
         actions = if (fromWelcomeScreen) listOf {
             navController.navigate(Route.MainScreen) {
                 launchSingleTop = true
-                // popUpTo(Route.WelcomeScreen) { inclusive = true }
+                popUpTo(Route.WelcomeScreen) { inclusive = true }
             }
         } else emptyList(),
         actionsDescription = listOf(stringResource(R.string.done))

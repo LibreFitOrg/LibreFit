@@ -26,24 +26,16 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.librefit.MainDispatcherRule
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SettingsScreenViewModelTest {
-    // MainDispatcherRule to control coroutine execution
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
-
     // The mock repository
     private lateinit var userPreferencesRepository: UserPreferencesRepository
 

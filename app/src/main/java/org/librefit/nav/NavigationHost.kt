@@ -27,7 +27,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -42,6 +45,7 @@ import org.librefit.ui.screens.about.DependenciesScreen
 import org.librefit.ui.screens.about.LicenseScreen
 import org.librefit.ui.screens.about.PrivacyScreen
 import org.librefit.ui.screens.about.TutorialScreen
+import org.librefit.ui.screens.about.WelcomeScreen
 import org.librefit.ui.screens.beforeSaving.BeforeSavingScreen
 import org.librefit.ui.screens.calendar.CalendarScreen
 import org.librefit.ui.screens.editWorkout.EditWorkoutScreen
@@ -64,13 +68,18 @@ fun NavigationHost() {
 
     val navController = rememberNavController()
 
-    val sharedViewModel: SharedViewModel = viewModel()
+    val sharedViewModel: SharedViewModel = hiltViewModel()
 
+    val showWelcomeScreen by sharedViewModel.showWelcomeScreen.collectAsStateWithLifecycle()
+
+    val startDestination = remember {
+        if (showWelcomeScreen) Route.WelcomeScreen else Route.MainScreen
+    }
 
     SharedTransitionLayout {
         NavHost(
             navController = navController,
-            startDestination = Route.MainScreen,
+            startDestination = startDestination,
             enterTransition = { scaleIn(tween(300), 0.9f) + fadeIn(tween(200)) },
             exitTransition = { scaleOut(tween(300), 1.1f) },
             popEnterTransition = { scaleIn(tween(300), 1.1f) },
@@ -173,6 +182,12 @@ fun NavigationHost() {
                     tutorialContent = it.toRoute<Route.TutorialScreen>().tutorialContent,
                     fromWelcomeScreen = it.toRoute<Route.TutorialScreen>().fromWelcomeScreen,
                     navController = navController
+                )
+            }
+            composable<Route.WelcomeScreen> {
+                WelcomeScreen(
+                    navController = navController,
+                    doNotShowWelcomeScreenAgain = sharedViewModel::doNotShowWelcomeScreenAgain
                 )
             }
             composable<Route.WorkoutScreen> {
