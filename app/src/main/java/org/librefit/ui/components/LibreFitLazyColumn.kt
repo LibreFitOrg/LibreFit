@@ -19,7 +19,6 @@
 
 package org.librefit.ui.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
@@ -54,7 +53,6 @@ import androidx.compose.ui.unit.dp
  * @param lazyListState A [LazyListState] to manage the list scroll
  * @param content A lambda with receiver of type [LazyListScope] used to populate the lazy list.
  */
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun LibreFitLazyColumn(
     innerPadding: PaddingValues = PaddingValues(),

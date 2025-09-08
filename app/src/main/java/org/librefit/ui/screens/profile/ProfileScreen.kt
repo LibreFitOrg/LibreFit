@@ -19,7 +19,6 @@
 
 package org.librefit.ui.screens.profile
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -372,7 +371,6 @@ private fun SharedTransitionScope.ProfileScreenContent(
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun StreakCard(weekStreak: Int) {
     /**

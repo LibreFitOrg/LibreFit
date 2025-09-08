@@ -19,7 +19,6 @@
 
 package org.librefit.ui.screens.shared
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -58,7 +57,6 @@ import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.SuccessLottie
 import org.librefit.ui.theme.LibreFitTheme
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun SuccessScreen(
     message: SuccessMessage,
