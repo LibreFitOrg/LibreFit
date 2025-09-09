@@ -101,7 +101,7 @@ fun TutorialScreen(
         actions = if (fromWelcomeScreen) listOf {
             navController.navigate(Route.MainScreen) {
                 launchSingleTop = true
-                popUpTo(Route.WelcomeScreen) { inclusive = true }
+                popUpTo(Route.TutorialScreen()) { inclusive = true }
             }
         } else emptyList(),
         actionsDescription = listOf(stringResource(R.string.done))

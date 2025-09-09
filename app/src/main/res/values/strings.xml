@@ -283,6 +283,9 @@
     <string name="tut_complete_workout_5">On the summary screen, you can edit the title, add notes, or change the date. Tap \'Save\' in the top right to save the workout.</string>
     <string name="tut_complete_workout_6">Congratulations, you\'ve completed your first workout! You can review all your past sessions in the Profile screen.</string>
 
+    <!-- Welcome screen-->
+    <string name="welcome_to">Welcome to</string>
+
 
     <!--Info modal bottom sheet-->
     <string name="rest_time_desc">The rest period is activated upon completion of a set, immediately starting the countdown. An alert is issued when the rest ends.</string>

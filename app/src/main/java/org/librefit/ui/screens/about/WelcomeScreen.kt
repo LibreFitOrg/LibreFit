@@ -171,7 +171,7 @@ private fun LazyListScope.welcomeScreenContent(
             ) {
                 Text(
                     text = buildAnnotatedString {
-                        append("Welcome to")
+                        append(stringResource(R.string.welcome_to))
                         appendLine()
                         GetAppNameInAnnotatedBuilder(MaterialTheme.typography.displayLargeEmphasized)
                     },

@@ -221,6 +221,7 @@
     <string name="routine_saved">Routine salvata</string>
     <string name="motivation_4">Tutti i donatori e contributori ottengono la versione supporter e un credito nell\'app e su GitHub.</string>
     <string name="tut_complete_workout_6">Congratulazioni, hai completato il tuo primo allenamento! Puoi revisionare tutte le tue sessioni precedenti nella schermata Profilo.</string>
+    <string name="welcome_to">Benvenuto a</string>
     <string name="rest_time_desc">Il periodo di riposo si attiva al completamento di una serie, avviando immediatamente il conto alla rovescia. Al termine del riposo, viene emesso un avviso.</string>
     <string name="add">Aggiungi</string>
     <string name="save">Salva</string>

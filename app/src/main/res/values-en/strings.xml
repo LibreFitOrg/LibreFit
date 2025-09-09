@@ -219,6 +219,7 @@
     <string name="routine_saved">Routine saved</string>
     <string name="motivation_4">All donators and contributors get the supporter version and a credit in the app and on GitHub.</string>
     <string name="tut_complete_workout_6">Congratulations, you\'ve completed your first workout! You can review all your past sessions in the Profile screen.</string>
+    <string name="welcome_to">Welcome to</string>
     <string name="rest_time_desc">The rest period is activated upon completion of a set, immediately starting the countdown. An alert is issued when the rest ends.</string>
     <string name="add">Add</string>
     <string name="save">Save</string>
