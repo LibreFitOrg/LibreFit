@@ -157,4 +157,7 @@ dependencies {
 
     // Used to apply material colors to splash screen
     implementation(libs.material)
+
+    // Load images asynchronously
+    implementation(libs.coil)
 }

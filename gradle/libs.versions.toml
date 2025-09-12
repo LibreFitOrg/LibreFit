@@ -24,6 +24,7 @@ turbine = "1.2.1"
 mockk = "1.14.5"
 kotlinxCollectionsImmutable = "0.4.0"
 material = "1.14.0-alpha04"
+coil = "3.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.17.0" }
@@ -65,6 +66,7 @@ mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "moc
 mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockk" }
 kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
