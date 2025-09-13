@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,17 +76,17 @@ fun LibraryScreen(
         ).shuffled()
     }
 
-    val colors = mapOf(
-        MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer,
-        MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer,
-        MaterialTheme.colorScheme.primary to MaterialTheme.colorScheme.onPrimary,
-        MaterialTheme.colorScheme.secondary to MaterialTheme.colorScheme.onSecondary,
-        MaterialTheme.colorScheme.primaryFixed to MaterialTheme.colorScheme.onPrimaryFixed,
-        MaterialTheme.colorScheme.surfaceContainerHighest to MaterialTheme.colorScheme.onSurface,
+    val colors = listOf(
+        MaterialTheme.colorScheme.primaryContainer,
+        MaterialTheme.colorScheme.secondaryContainer,
+        MaterialTheme.colorScheme.primary,
+        MaterialTheme.colorScheme.secondary,
+        MaterialTheme.colorScheme.primaryFixed,
+        MaterialTheme.colorScheme.surfaceContainerHighest,
     )
 
     var currentColor by remember {
-        mutableStateOf(colors.keys.random())
+        mutableStateOf(colors.random())
     }
 
     /**
@@ -105,7 +106,7 @@ fun LibraryScreen(
         AnimatedMorphShapes(
             morphIntervalMillis = morphIntervalMillis,
             globalRotationDurationMillis = 8000,
-            colors = colors.keys.toList(),
+            colors = colors,
             shapeSize = 400.dp,
             roundedPolygons = polygons,
             onColorUpdate = { currentColor = it }
@@ -113,7 +114,7 @@ fun LibraryScreen(
         Text(
             text = stringResource(R.string.coming_soon),
             style = MaterialTheme.typography.headlineSmallEmphasized,
-            color = colors.getValue(currentColor)
+            color = contentColorFor(currentColor)
         )
     }
 
