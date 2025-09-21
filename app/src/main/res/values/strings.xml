@@ -254,7 +254,7 @@
     <!-- Success screen-->
     <string name="workout_saved">Workout saved</string>
     <string name="routine_saved">Routine saved</string>
-    <string name="librefit_made_by_you">is made with ❤ for you by people like you</string>
+    <string name="librefit_made_by_you">is made with ❤\n for you by people like you</string>
 
 
     <!-- Support screen-->

@@ -279,7 +279,7 @@
     <string name="session_volume">Session volume</string>
     <string name="rest_timer_sound">Rest timer sound</string>
     <string name="rest_timer_sound_on_desc">Play a sound when rest timer ends</string>
-    <string name="librefit_made_by_you">is made with ❤ for you by people like you</string>
+    <string name="librefit_made_by_you">is made with ❤\n for you by people like you</string>
     <string name="lets_build">Let\'s build</string>
     <string name="together">together</string>
     <string name="motivation_1">LibreFit is a passion project, built by one person who believes software should be open, simple, beautiful, and above all, respectful of your privacy.</string>

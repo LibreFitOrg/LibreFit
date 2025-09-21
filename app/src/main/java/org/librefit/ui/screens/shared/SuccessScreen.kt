@@ -64,6 +64,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isFinite
 import androidx.compose.ui.unit.min
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -192,8 +193,9 @@ private fun LazyListScope.successScreenContent(
                     style = MaterialTheme.typography.titleLarge
                 )
                 BoxWithConstraints {
-                    val spaceMaxWidth =
-                        with(LocalDensity.current) { this@BoxWithConstraints.maxWidth.toPx() }
+                    val spaceMaxWidth = with(LocalDensity.current) {
+                        (this@BoxWithConstraints.maxWidth.takeIf { it.isFinite } ?: maxWidth).toPx()
+                    }
 
                     val infiniteTransition = rememberInfiniteTransition()
                     val animationProgress = infiniteTransition.animateFloat(

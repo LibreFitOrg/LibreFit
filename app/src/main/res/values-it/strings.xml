@@ -278,7 +278,7 @@
     <string name="most_reps">Massime ripetizioni</string>
     <string name="session_volume">Volume per sessione</string>
     <string name="rest_timer_sound">Suono timer riposo</string>
-    <string name="librefit_made_by_you">è creato con ❤ per te da persone come te</string>
+    <string name="librefit_made_by_you">è creato con ❤\n per te da persone come te</string>
     <string name="lets_build">Costruiamo</string>
     <string name="together">insieme</string>
     <string name="motivation_1">LibreFit è un progetto di passione, creato da una persona che crede fortemente che il software dovrebbe essere aperto, semplice, bello, e soprattutto, rispettoso della tua privacy.</string>
