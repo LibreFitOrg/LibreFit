@@ -20,9 +20,6 @@
 package org.librefit.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -194,8 +191,8 @@ fun LibreFitScaffold(
             if (fabIcon != null) {
                 AnimatedVisibility(
                     visible = fabAction != null,
-                    enter = fadeIn(tween(300)) + slideInHorizontally(initialOffsetX = { it }),
-                    exit = fadeOut(tween(300)) + slideOutHorizontally(targetOffsetX = { it })
+                    enter = slideInHorizontally(initialOffsetX = { it }),
+                    exit = slideOutHorizontally(targetOffsetX = { it })
                 ) {
                     FloatingActionButton(
                         onClick = { fabAction?.invoke() }
