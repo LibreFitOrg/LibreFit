@@ -74,6 +74,8 @@ fun NavigationHost() {
 
     val requestPermissionNextTime by sharedViewModel.requestPermissionNextTime.collectAsStateWithLifecycle()
 
+    val isSupporter by sharedViewModel.isSupporter.collectAsStateWithLifecycle()
+
     val startDestination = remember {
         if (showWelcomeScreen) Route.WelcomeScreen else Route.MainScreen
     }
@@ -176,7 +178,12 @@ fun NavigationHost() {
                 )
             }
             composable<Route.SupportScreen> {
-                SupportScreen(navHostController = navController)
+                SupportScreen(
+                    navHostController = navController,
+                    supporterInfo = it.toRoute<Route.SupportScreen>().supporterInfo,
+                    isSupporter = isSupporter,
+                    updateIsSupporter = sharedViewModel::updateIsSupporter
+                )
             }
             composable<Route.StatisticsScreen> {
                 StatisticsScreen(navController = navController)

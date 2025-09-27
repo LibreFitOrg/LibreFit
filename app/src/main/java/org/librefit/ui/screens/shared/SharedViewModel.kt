@@ -22,6 +22,7 @@ package org.librefit.ui.screens.shared
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.librefit.db.entity.ExerciseDC
@@ -67,6 +68,21 @@ class SharedViewModel @Inject constructor(
         viewModelScope.launch {
             userPreferencesRepository.savePreference(
                 key = UserPreferencesRepository.requestPermissionsNextTimeKey,
+                value = value
+            )
+        }
+    }
+
+
+    // Used by SupporterScreen
+    val isSupporter: StateFlow<Boolean> = userPreferencesRepository.isSupporter
+
+    fun updateIsSupporter(value: Boolean) {
+        viewModelScope.launch {
+            // A delay to le the user visualize the successful result
+            delay(1000)
+            userPreferencesRepository.savePreference(
+                key = UserPreferencesRepository.isSupporterKey,
                 value = value
             )
         }

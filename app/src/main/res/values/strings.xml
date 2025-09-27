@@ -255,6 +255,36 @@
     <string name="workout_saved">Workout saved</string>
     <string name="routine_saved">Routine saved</string>
     <string name="librefit_made_by_you">is made with ❤\n for you by people like you</string>
+    <string name="supporter_version">Supporter Version</string>
+    <string name="supporter_version_desc_1">Become a supporter by donating, contributing to source code, translating or adding an exercise to the dataset.</string>
+    <string name="supporter_version_desc_2">Every supporter can request the Supporter Version that includes:</string>
+    <string name="create_exercises">Create exercises</string>
+    <string name="companion_app_desc">Just install the companion app and click the button below.</string>
+    <string name="thank_supporter">Thank you - you contribution matters.</string>
+    <string name="verify_companion_app">Verify companion app</string>
+    <string name="status">Status</string>
+    <string name="to_verify">To verify</string>
+    <string name="verify_code">Verify code</string>
+    <string name="code_desc">Paste the code and click the button below.</string>
+    <string name="verify_companion_or_code">Verify or the companion app or the code.</string>
+
+    <string name="valid_companion_app_signature">Valid companion app</string>
+    <string name="invalid_companion_app_signature">Invalid companion app</string>
+    <string name="librefit_app_not_found">LibreFit not found</string>
+    <string name="librefit_signature_error">LibreFit signature error</string>
+    <string name="companion_app_not_found">Companion app not found</string>
+    <string name="companion_signature_error">Companion app signature error</string>
+    <string name="valid_code">Valid code</string>
+    <string name="invalid_code">Invalid code</string>
+    <string name="public_key_not_initialized_properly">Public key not initialized properly</string>
+    <string name="invalid_public_key">Invalid public key</string>
+    <string name="inappropriate_public_key_string">Inappropriate public key string</string>
+    <string name="algorithm_not_available">Algorithm not available</string>
+    <string name="invalid_signature_encoding">Invalid signature\'s encoding</string>
+    <string name="malformed_code">Malformed code</string>
+    <string name="missing_dot_separator">Missing dot separator</string>
+    <string name="invalid_public_key_encoding">Invalid public key\'s encoding</string>
+    <string name="unknown_error">Unknown error</string>
 
 
     <!-- Support screen-->
@@ -396,5 +426,6 @@
     <string name="save">Save</string>
     <string name="others">Others</string>
     <string name="help">Help</string>
+    <string name="paste">Paste</string>
 
 </resources>

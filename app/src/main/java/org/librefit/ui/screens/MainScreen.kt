@@ -84,7 +84,7 @@ fun SharedTransitionScope.MainScreen(
             GetAppNameInAnnotatedBuilder(MaterialTheme.typography.titleLargeEmphasized)
         },
         actions = listOf(
-            { navController.navigate(Route.SupportScreen) { launchSingleTop = true } },
+            { navController.navigate(Route.SupportScreen()) { launchSingleTop = true } },
             { navController.navigate(Route.AboutScreen) { launchSingleTop = true } },
             { navController.navigate(Route.SettingsScreen) { launchSingleTop = true } }
         ),

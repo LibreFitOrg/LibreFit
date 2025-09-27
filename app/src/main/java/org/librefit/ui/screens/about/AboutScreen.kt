@@ -135,7 +135,7 @@ fun AboutScreen(navController: NavHostController) {
 
                     Button(
                         onClick = {
-                            navController.navigate(Route.SupportScreen) {
+                            navController.navigate(Route.SupportScreen()) {
                                 launchSingleTop = true
                             }
                         },

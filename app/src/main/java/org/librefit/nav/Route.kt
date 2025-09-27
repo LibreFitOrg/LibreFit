@@ -91,7 +91,9 @@ sealed class Route {
     )
 
     @Serializable
-    object SupportScreen
+    data class SupportScreen(
+        val supporterInfo: Boolean = false
+    )
 
     @Serializable
     data class TutorialScreen(

@@ -99,7 +99,7 @@ fun SuccessScreen(
                         message = message,
                         navigateBack = navController::navigateUp,
                         navigateToSupportScreen = {
-                            navController.navigate(Route.SupportScreen) {
+                            navController.navigate(Route.SupportScreen()) {
                                 launchSingleTop = true
                                 popUpTo(Route.MainScreen)
                             }
@@ -121,7 +121,7 @@ fun SuccessScreen(
                         message = message,
                         navigateBack = navController::navigateUp,
                         navigateToSupportScreen = {
-                            navController.navigate(Route.SupportScreen) {
+                            navController.navigate(Route.SupportScreen()) {
                                 launchSingleTop = true
                                 popUpTo(Route.MainScreen)
                             }

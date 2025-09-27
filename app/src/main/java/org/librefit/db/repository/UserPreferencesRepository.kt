@@ -64,6 +64,7 @@ class UserPreferencesRepository @Inject constructor(
         val languageKey = stringPreferencesKey("language")
         val restTimerSoundKey = booleanPreferencesKey("alert_sound")
         val showWelcomeScreenKey = booleanPreferencesKey("show_welcome_screen")
+        val isSupporterKey = booleanPreferencesKey("is_supporter")
     }
 
     val themeMode: StateFlow<ThemeMode> = dataStore.data
@@ -110,6 +111,14 @@ class UserPreferencesRepository @Inject constructor(
 
     val showWelcomeScreen: StateFlow<Boolean> = dataStore.data
         .map { preferences -> preferences[showWelcomeScreenKey] != false }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
+
+    val isSupporter: StateFlow<Boolean> = dataStore.data
+        .map { preferences -> preferences[isSupporterKey] == true }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,

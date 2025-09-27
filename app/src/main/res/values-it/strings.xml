@@ -279,6 +279,7 @@
     <string name="session_volume">Volume per sessione</string>
     <string name="rest_timer_sound">Suono timer riposo</string>
     <string name="librefit_made_by_you">è creato con ❤\n per te da persone come te</string>
+    <string name="unknown_error">Errore sconosciuto</string>
     <string name="lets_build">Costruiamo</string>
     <string name="together">insieme</string>
     <string name="motivation_1">LibreFit è un progetto di passione, creato da una persona che crede fortemente che il software dovrebbe essere aperto, semplice, bello, e soprattutto, rispettoso della tua privacy.</string>
@@ -300,5 +301,34 @@
     <string name="tut_complete_workout_3">Registra il peso e le ripetizioni per ogni serie. Quando segni una serie come completata, il timer di riposo in fondo allo schermo partirà automaticamente.</string>
     <string name="tut_complete_workout_4">"Il tuo tempo totale d'allenamento è in cima—clicca il pulsante di pausa per prenderti una pausa. Quando hai terminato, tocca il pulsate 'Fatto' in alto a destra. "</string>
     <string name="tut_complete_workout_5">Nella schermata riassuntiva, puoi modificare il titolo, aggiungere note o cambiare la data. Tocca \'Salva\' in alto a destra per salvare l\'allenamento.</string>
+    <string name="supporter_version">Versione Sostenitore</string>
+    <string name="supporter_version_desc_1">Diventa un sostenitore donando, contribuendo al codice sorgente, traducendo o aggiungendo un esercizio al dataset.</string>
+    <string name="supporter_version_desc_2">Ogni sostenitore può richiedere la Versione Sostenitore che include:</string>
+    <string name="create_exercises">Crea esercizi</string>
+    <string name="companion_app_desc">Basta installare l\'app companion e cliccare il bottono qui sotto.</string>
+    <string name="thank_supporter">Grazie - il tuo contributo fa la differenza.</string>
+    <string name="verify_companion_app">Verifica app companion</string>
+    <string name="status">Stato</string>
+    <string name="to_verify">Da verificare</string>
+    <string name="verify_code">Verifica codice</string>
+    <string name="code_desc">Incolla il codice e clicca il bottone qui sotto.</string>
+    <string name="verify_companion_or_code">Verifica o l\'app companion o il codice.</string>
+    <string name="valid_companion_app_signature">App companion valida</string>
+    <string name="invalid_companion_app_signature">App companion non valida</string>
+    <string name="librefit_app_not_found">LibreFit non trovato</string>
+    <string name="librefit_signature_error">Errore nella firma di LibreFit</string>
+    <string name="companion_app_not_found">App companion non trovata</string>
+    <string name="companion_signature_error">Errore nella firma della companion app</string>
+    <string name="valid_code">Codice valido</string>
+    <string name="invalid_code">Codice non valido</string>
+    <string name="public_key_not_initialized_properly">Chiave pubblica non initializzata correttamente</string>
+    <string name="invalid_public_key">Chiave pubblica non valida</string>
+    <string name="inappropriate_public_key_string">Stringa della chiave pubblica impropria</string>
+    <string name="algorithm_not_available">Algoritmo non disponibile</string>
+    <string name="invalid_signature_encoding">Codifica della firma non valida</string>
+    <string name="malformed_code">Codice malformato</string>
+    <string name="missing_dot_separator">Punto separatore mancante</string>
+    <string name="invalid_public_key_encoding">Codifica della chiave pubblica non valida</string>
+    <string name="paste">Incolla</string>
 
 </resources>

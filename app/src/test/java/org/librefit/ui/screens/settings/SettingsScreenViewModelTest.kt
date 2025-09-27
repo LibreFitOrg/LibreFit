@@ -56,6 +56,7 @@ class SettingsScreenViewModelTest {
     private lateinit var keepScreenOn: MutableStateFlow<Boolean>
     private lateinit var materialModeOn: MutableStateFlow<Boolean>
     private lateinit var restTimerSoundOn: MutableStateFlow<Boolean>
+    private lateinit var isSupporter: MutableStateFlow<Boolean>
 
     // Captured objects
     private val key = slot<Preferences.Key<Any>>()
@@ -70,6 +71,7 @@ class SettingsScreenViewModelTest {
         keepScreenOn = MutableStateFlow(true)
         materialModeOn = MutableStateFlow(false)
         restTimerSoundOn = MutableStateFlow(true)
+        isSupporter = MutableStateFlow(false)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.language } returns language
@@ -77,6 +79,7 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.workoutScreenOn } returns keepScreenOn
         every { userPreferencesRepository.materialMode } returns materialModeOn
         every { userPreferencesRepository.restTimerSoundOn } returns restTimerSoundOn
+        every { userPreferencesRepository.isSupporter } returns isSupporter
         coEvery {
             userPreferencesRepository.savePreference(
                 capture(key),
@@ -105,6 +108,10 @@ class SettingsScreenViewModelTest {
 
                 UserPreferencesRepository.restTimerSoundKey -> {
                     restTimerSoundOn.value = value as Boolean
+                }
+
+                UserPreferencesRepository.isSupporterKey -> {
+                    isSupporter.value = value as Boolean
                 }
 
                 else -> error("Invalid key")
@@ -136,8 +143,13 @@ class SettingsScreenViewModelTest {
     }
 
     @Test
-    fun `initial state - rest timer is is off`() = runTest {
+    fun `initial state - rest timer is is on`() = runTest {
         assertThat(viewModel.restTimerSoundOn.value).isTrue()
+    }
+
+    @Test
+    fun `initial state - is supporter is is false`() = runTest {
+        assertThat(viewModel.isSupporter.value).isFalse()
     }
 
     @Test
@@ -322,4 +334,20 @@ class SettingsScreenViewModelTest {
         }
     }
 
+    @Test
+    fun `is supporter updates correctly`() = runTest {
+        // Arrange: set expected value
+        val expected = true
+
+        viewModel.isSupporter.test {
+            // Initial emission
+            assertThat(awaitItem()).isEqualTo(false)
+
+            // Act: update preference
+            viewModel.savePreference(UserPreferencesRepository.isSupporterKey, expected)
+
+            // Assert: update is correct
+            assertThat(awaitItem()).isEqualTo(expected)
+        }
+    }
 }

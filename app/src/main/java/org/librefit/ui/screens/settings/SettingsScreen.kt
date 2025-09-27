@@ -59,6 +59,7 @@ import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
@@ -90,6 +91,8 @@ fun SettingsScreen(
 
     val currentPreference by viewModel.currentPreference.collectAsStateWithLifecycle()
 
+    val isSupporter by viewModel.isSupporter.collectAsStateWithLifecycle()
+
     preferences?.let {
         PreferenceDialog(
             currentPreference = currentPreference,
@@ -108,6 +111,7 @@ fun SettingsScreen(
         selectedLanguage = selectedLanguage,
         keepWorkoutScreenOn = keepWorkoutScreenOn,
         restTimerSoundOn = restTimerSoundOn,
+        isSupporter = isSupporter,
         updatePreferences = viewModel::updatePreferences,
         saveBooleanValue = viewModel::savePreference
     )
@@ -122,6 +126,7 @@ private fun SettingsScreenContent(
     selectedLanguage: Language,
     keepWorkoutScreenOn: Boolean,
     restTimerSoundOn: Boolean,
+    isSupporter: Boolean,
     updatePreferences: (List<DialogPreference>) -> Unit,
     saveBooleanValue: (Preferences.Key<Boolean>, value: Boolean) -> Unit
 ) {
@@ -147,10 +152,16 @@ private fun SettingsScreenContent(
                 item {
                     SettingItem(
                         onClick = {
-                            saveBooleanValue(
-                                UserPreferencesRepository.materialModeKey,
-                                !materialModeOn
-                            )
+                            if (isSupporter) {
+                                saveBooleanValue(
+                                    UserPreferencesRepository.materialModeKey,
+                                    !materialModeOn
+                                )
+                            } else {
+                                navController.navigate(Route.SupportScreen(true)) {
+                                    launchSingleTop = true
+                                }
+                            }
                         },
                         icon = painterResource(R.drawable.ic_material),
                         settingName = stringResource(id = R.string.material_you),
@@ -287,12 +298,14 @@ fun SettingsScreenPreview() {
 
     LibreFitTheme(dynamicColor = materialModeOn, darkTheme = theme != ThemeMode.LIGHT) {
         SettingsScreenContent(
+            navController = rememberNavController(),
             selectedTheme = theme,
             materialModeOn = materialModeOn,
-            updatePreferences = {},
             selectedLanguage = Language.SYSTEM,
             keepWorkoutScreenOn = keepWorkoutScreenOn,
             restTimerSoundOn = restTimerSoundOn,
+            updatePreferences = {},
+            isSupporter = Random.nextBoolean(),
             saveBooleanValue = { key, value ->
                 when (key) {
                     UserPreferencesRepository.materialModeKey -> {
@@ -308,7 +321,6 @@ fun SettingsScreenPreview() {
                     }
                 }
             },
-            navController = rememberNavController()
         )
     }
 }
