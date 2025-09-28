@@ -4,15 +4,15 @@ datastore = "1.1.7"
 kotlin = "2.2.20"
 junit = "4.13.2"
 espressoCore = "3.7.0"
-composeBom = "2025.09.00"
-roomVersion = "2.8.0"
+composeBom = "2025.09.01"
+roomVersion = "2.8.1"
 appcompat = "1.7.1"
 ksp = "2.2.20-2.0.3"
 accompanistPermissions = "0.37.3"
 lottieCompose = "6.6.9"
 coreSplashscreen = "1.0.1"
 composeM3 = "2.2.0"
-hiltAndroid = "2.57.1"
+hiltAndroid = "2.57.2"
 hiltNavigationCompose = "1.3.0"
 moshi = "1.15.2"
 moshiKotlinCodegen = "1.15.2"
@@ -23,7 +23,7 @@ truth = "1.7.0"
 turbine = "1.2.1"
 mockk = "1.14.5"
 kotlinxCollectionsImmutable = "0.4.0"
-material = "1.14.0-alpha04"
+material = "1.14.0-alpha05"
 coil = "3.3.0"
 
 [libraries]
@@ -45,7 +45,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.9.4" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.9.5" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.9.0" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
