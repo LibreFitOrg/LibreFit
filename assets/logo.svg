@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+  - Copyright (c) 2025. LibreFit
+  -
+  - This file is part of LibreFit
+  -
+  - LibreFit is free software: you can redistribute it and/or modify
+  - it under the terms of the GNU General Public License as published by
+  - the Free Software Foundation, either version 3 of the License, or
+  - (at your option) any later version.
+  -
+  - LibreFit is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  - GNU General Public License for more details.
+  -
+  - You should have received a copy of the GNU General Public License
+  - along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
+  -
+  - LibreFit is subject to additional terms covering author attribution and
+  - trademark usage, as found in the accompanying ADDITIONAL_TERMS.md file.
+  -->
+
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg width="108" height="108" viewBox="0 0 24.109683 24.109683" version="1.1" id="svg1"
+    xmlns="http://www.w3.org/2000/svg">
+    <defs id="defs1" />
+    <circle
+        style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.0223238;stroke-dasharray:none;stroke-opacity:1"
+        id="inner_frame_circle" cx="12.054841" cy="12.054841" r="7.3668475" />
+    <g id="layer">
+        <rect
+            style="fill:#1e1e1e;fill-opacity:1;stroke:none;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
+            id="db_outer_l" width="1.7859025" height="5.804183" x="5.804183" y="9.15275"
+            rx="0.78133231" ry="0.78133231" />
+        <rect
+            style="fill:#1e1e1e;fill-opacity:1;stroke:none;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
+            id="db_outer_r" width="1.7859025" height="5.804183" x="16.519598" y="9.15275"
+            rx="0.78133231" ry="0.78133231" />
+        <rect
+            style="fill:#00bcd4;fill-opacity:1;stroke:none;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
+            id="db_central" width="4.464756" height="1.7859025" x="9.822464" y="11.16189"
+            rx="0.78133231" ry="0.78133231" />
+        <rect
+            style="fill:#1e1e1e;fill-opacity:1;stroke:none;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
+            id="db_inner_l" width="1.7859025" height="8.929512" x="7.8133235" y="7.5900855"
+            rx="0.78133231" ry="0.78133231" />
+        <rect
+            style="fill:#1e1e1e;fill-opacity:1;stroke:none;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
+            id="db_inner_r" width="1.7859025" height="8.929512" x="14.510458" y="7.5900855"
+            rx="0.78133231" ry="0.78133231" />
+    </g>
+</svg>
