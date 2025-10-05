@@ -302,7 +302,7 @@ private fun MeasurementScreenContent(
                                 isError = bodyweight.isBlank(),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Number,
+                                    keyboardType = KeyboardType.Decimal,
                                     showKeyboardOnFocus = true
                                 ),
                                 onValueChange = updateBodyweight
@@ -351,7 +351,7 @@ private fun MeasurementScreenContent(
                                         suffix = { Text("%") },
                                         singleLine = true,
                                         keyboardOptions = KeyboardOptions(
-                                            keyboardType = KeyboardType.NumberPassword
+                                            keyboardType = KeyboardType.Number
                                         ),
                                         onValueChange = updateFatMass
                                     )
@@ -374,7 +374,7 @@ private fun MeasurementScreenContent(
                                         suffix = { Text("%") },
                                         singleLine = true,
                                         keyboardOptions = KeyboardOptions(
-                                            keyboardType = KeyboardType.NumberPassword
+                                            keyboardType = KeyboardType.Number
                                         ),
                                         onValueChange = updateLeanMass
                                     )
