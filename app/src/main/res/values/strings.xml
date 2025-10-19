@@ -48,9 +48,9 @@
     <string name="source_code">Source code</string>
     <string name="license">License</string>
     <string name="license_desc">LibreFit is licensed under the GNU General Public License v3.0 (GPL-3).</string>
-    <string name="url_source_code" translatable="false">https://github.com/IamDg/LibreFit</string>
-    <string name="url_privacy" translatable="false">https://github.com/IamDg/LibreFit/blob/main/PRIVACY.md</string>
-    <string name="url_website" translatable="false">https://iamdg.github.io/LibreFit-website/</string>
+    <string name="url_source_code" translatable="false">https://github.com/LibreFitOrg/LibreFit</string>
+    <string name="url_privacy" translatable="false">https://librefit.org/privacy</string>
+    <string name="url_website" translatable="false">https://librefit.org</string>
     <string name="contributors">Contributors</string>
     <string name="url_IamDg" translatable="false">https://github.com/IamDg</string>
     <string name="founder">Founder</string>
@@ -104,7 +104,7 @@
     <string name="restart_app">Restart</string>
     <string name="crash_log">Crash log</string>
     <string name="report_github">Report on GitHub</string>
-    <string name="url_github_search_issue" translatable="false">https://github.com/IamDg/LibreFit/issues?q=</string>
+    <string name="url_github_search_issue" translatable="false">https://github.com/LibreFitOrg/LibreFit/issues?q=</string>
     <string name="stack_trace_not_available">Stack trace not available</string>
 
 
@@ -297,6 +297,8 @@
     <string name="motivation_2">I pour countless hours into designing, coding, and refining every detail to create the best possible experience. It\'s a commitment to you, the user, and to a better digital world.</string>
     <string name="motivation_3">LibreFit is only possible with your support, whether by donating or by contributing to code or translations.</string>
     <string name="motivation_4">All donators and contributors get the supporter version and a credit in the app and on GitHub.</string>
+    <string name="url_donate" translatable="false">https://librefit.org/support</string>
+    <string name="url_contribute" translatable="false">https://github.com/LibreFitOrg/LibreFit/main/CONTRIBUTING.md</string>
 
 
     <!-- Tutorial screen-->

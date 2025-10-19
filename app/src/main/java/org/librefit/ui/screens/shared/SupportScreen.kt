@@ -59,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -75,6 +76,7 @@ import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.PulsingHeartLottie
+import org.librefit.ui.components.dialogs.UrlActionDialog
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.SupporterVerifier
 
@@ -90,6 +92,16 @@ fun SupportScreen(
     val lazyListState = rememberLazyListState(
         initialFirstVisibleItemIndex = if (supporterInfo) 6 else 0
     )
+
+    val resources = LocalResources.current
+
+    var url by rememberSaveable {
+        mutableStateOf<String?>(null)
+    }
+
+    url?.let {
+        UrlActionDialog(it) { url = null }
+    }
 
     LibreFitScaffold(
         navigateBack = navHostController::navigateUp
@@ -136,7 +148,9 @@ fun SupportScreen(
             item {
                 Button(
                     shapes = ButtonDefaults.shapes(),
-                    onClick = {},
+                    onClick = {
+                        url = resources.getString(R.string.url_donate)
+                    },
                     contentPadding = ButtonDefaults.MediumContentPadding
                 ) {
                     Row(
@@ -158,7 +172,9 @@ fun SupportScreen(
             item {
                 OutlinedButton(
                     shapes = ButtonDefaults.shapes(),
-                    onClick = {},
+                    onClick = {
+                        url = resources.getString(R.string.url_contribute)
+                    },
                     contentPadding = ButtonDefaults.MediumContentPadding
                 ) {
                     Row(
