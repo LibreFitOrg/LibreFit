@@ -75,6 +75,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -216,6 +217,16 @@ fun SharedTransitionScope.WorkoutScreen(
         actionsDescription = listOf(stringResource(R.string.done)),
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
+            FloatingWorkoutActionBar(
+                restTimerProgress = restTimerProgress,
+                restTime = restTime,
+                modifyRestTime = viewModel::modifyRestTime,
+                fabAction = {
+                    navController.navigate(Route.ExercisesScreen(addExercises = true)) {
+                        launchSingleTop = true
+                    }
+                }
+            )
             WorkoutScreenContent(
                 animatedVisibilityScope = animatedVisibilityScope,
                 exercisesWithSets = exercisesWithSets,
@@ -246,16 +257,6 @@ fun SharedTransitionScope.WorkoutScreen(
                 deleteExercise = viewModel::deleteExercise,
                 showInfo = { infoMode = it },
                 applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance
-            )
-            FloatingWorkoutActionBar(
-                restTimerProgress = restTimerProgress,
-                restTime = restTime,
-                modifyRestTime = viewModel::modifyRestTime,
-                fabAction = {
-                    navController.navigate(Route.ExercisesScreen(addExercises = true)) {
-                        launchSingleTop = true
-                    }
-                }
             )
         }
     }
@@ -379,7 +380,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
         } else {
             itemsIndexed(
                 items = exercisesWithSets,
-                key = { i, exercise -> exercise.exercise.id }
+                key = { _, exercise -> exercise.exercise.id }
             ) { i, exerciseWithSets ->
                 ExerciseCard(
                     modifier = Modifier.animateItem(),
@@ -432,7 +433,8 @@ private fun BoxScope.FloatingWorkoutActionBar(
         },
         modifier = Modifier
             .align(Alignment.BottomEnd)
-            .offset(y = -ScreenOffset, x = -ScreenOffset),
+            .offset(y = -ScreenOffset, x = -ScreenOffset)
+            .zIndex(1f),
     ) {
         val animatedTimerProgress = animateFloatAsState(
             targetValue = restTimerProgress,
