@@ -74,7 +74,7 @@ import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.enums.SuccessMessage
 import org.librefit.nav.Route
-import org.librefit.ui.components.LibreFitAppName.GetAppNameInAnnotatedBuilder
+import org.librefit.ui.components.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.SuccessLottie

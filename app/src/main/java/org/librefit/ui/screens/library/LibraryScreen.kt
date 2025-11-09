@@ -50,7 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.librefit.R
 import org.librefit.enums.pages.MainScreenPages
-import org.librefit.ui.components.LibreFitAppName.GetAppNameInAnnotatedBuilder
+import org.librefit.ui.components.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.morphShape.AnimatedMorphShapes
 import org.librefit.ui.theme.LibreFitTheme

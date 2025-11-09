@@ -69,10 +69,10 @@ class BeforeSavingScreenViewModel @Inject constructor(
 
 
     private val workoutWithExercisesAndSets: UiWorkoutWithExercisesAndSets =
-        workoutWithExercisesAndSetsJson
-            .let { it ->
-                Json.decodeFromString<WorkoutWithExercisesAndSets>(Uri.decode(it)).toUi()
-            }
+        Json.decodeFromString<WorkoutWithExercisesAndSets>(
+            Uri.decode(workoutWithExercisesAndSetsJson)
+        ).toUi()
+
 
     val exercises = workoutWithExercisesAndSets.exercisesWithSets
 

@@ -87,8 +87,8 @@ import org.librefit.enums.chart.WorkoutChart
 import org.librefit.enums.pages.MainScreenPages
 import org.librefit.enums.pages.TutorialContent
 import org.librefit.nav.Route
+import org.librefit.ui.components.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.HeadlineText
-import org.librefit.ui.components.LibreFitAppName.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold

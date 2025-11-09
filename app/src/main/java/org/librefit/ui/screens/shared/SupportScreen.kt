@@ -70,8 +70,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.enums.supporter.SupporterVerificationResult
+import org.librefit.ui.components.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.HeadlineText
-import org.librefit.ui.components.LibreFitAppName.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold

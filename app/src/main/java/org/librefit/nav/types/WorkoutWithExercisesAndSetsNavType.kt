@@ -42,12 +42,12 @@ class WorkoutWithExercisesAndSetsNavType :
     }
 
     override fun put(bundle: Bundle, key: String, value: WorkoutWithExercisesAndSets) {
-        val json = Json.Default.encodeToString(value)
+        val json = Json.encodeToString(value)
         bundle.putString(key, json)
     }
 
     override fun serializeAsValue(value: WorkoutWithExercisesAndSets): String {
-        val json = Json.Default.encodeToString(value)
+        val json = Json.encodeToString(value)
         return Uri.encode(json)
     }
 }

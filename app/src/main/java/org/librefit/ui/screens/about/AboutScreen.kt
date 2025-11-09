@@ -57,6 +57,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -68,8 +69,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.nav.Route
+import org.librefit.ui.components.AppNameText
 import org.librefit.ui.components.HeadlineText
-import org.librefit.ui.components.LibreFitAppName
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.dialogs.UrlActionDialog
@@ -81,6 +82,8 @@ import org.librefit.ui.theme.LibreFitTheme
 fun AboutScreen(navController: NavHostController) {
 
     val context = LocalContext.current
+
+    val resources = LocalResources.current
 
     val url = remember { mutableStateOf<String?>(null) }
 
@@ -108,7 +111,7 @@ fun AboutScreen(navController: NavHostController) {
                 )
             }
             item {
-                LibreFitAppName.AppNameText(MaterialTheme.typography.displayLargeEmphasized)
+                AppNameText(MaterialTheme.typography.displayLargeEmphasized)
             }
 
             val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -205,7 +208,7 @@ fun AboutScreen(navController: NavHostController) {
                     icon = painterResource(R.drawable.ic_globe),
                     text = stringResource(R.string.website),
                     onClick = {
-                        url.value = context.getString(R.string.url_website)
+                        url.value = resources.getString(R.string.url_website)
                     }
                 )
             }
@@ -228,7 +231,7 @@ fun AboutScreen(navController: NavHostController) {
                     text = stringResource(R.string.github),
                     description = stringResource(R.string.source_code),
                     onClick = {
-                        url.value = context.getString(R.string.url_source_code)
+                        url.value = resources.getString(R.string.url_source_code)
                     }
                 )
             }
@@ -254,7 +257,7 @@ fun AboutScreen(navController: NavHostController) {
                     text = stringResource(R.string.url_IamDg).split("/").last(),
                     description = stringResource(R.string.founder),
                     onClick = {
-                        url.value = context.getString(R.string.url_IamDg)
+                        url.value = resources.getString(R.string.url_IamDg)
                     }
                 )
             }
@@ -269,7 +272,7 @@ fun AboutScreen(navController: NavHostController) {
                     text = stringResource(R.string.url_IamDg).split("/").last(),
                     description = stringResource(R.string.contributed_to) + stringResource(R.string.language_italian),
                     onClick = {
-                        url.value = context.getString(R.string.url_IamDg)
+                        url.value = resources.getString(R.string.url_IamDg)
                     }
                 )
             }

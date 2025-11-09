@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 import org.librefit.R
 import org.librefit.enums.pages.MainScreenPages
 import org.librefit.nav.Route
-import org.librefit.ui.components.LibreFitAppName.GetAppNameInAnnotatedBuilder
+import org.librefit.ui.components.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.screens.home.HomeScreen
 import org.librefit.ui.screens.library.LibraryScreen

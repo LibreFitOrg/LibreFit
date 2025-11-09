@@ -124,7 +124,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 val previousEWS =
                     previousWorkout?.exercisesWithSets?.find { it.exerciseDC.id == eWs.exerciseDC.id }
 
-                eWs.sets.mapIndexed { index, set ->
+                eWs.sets.mapIndexed { index, _ ->
                     val previousSet = previousEWS?.sets?.getOrNull(index)
                     val reps = previousSet?.reps ?: 0
                     val load = previousSet?.load ?: 0.0
@@ -223,12 +223,11 @@ class WorkoutScreenViewModel @Inject constructor(
                 // Whenever the ID changes, cancel any existing timer.
                 stopwatchJob?.cancel()
 
-                // If the new ID is a valid set ID (not 0), start a new timer.
+                // If the new ID is a valid set ID, start a new timer.
                 if (runningSetId != null) {
-                    val set = exercises.value.flatMap { it.sets }.find { it.id == runningSetId }
-                    if (set != null) {
+                    exercises.value.flatMap { it.sets }.find { it.id == runningSetId }?.let {
                         // Launch a new coroutine for the timer and assign it to the Job.
-                        stopwatchJob = launch { startSetStopwatch(set) }
+                        stopwatchJob = launch { startSetStopwatch(it) }
                     }
                 }
             }
@@ -263,7 +262,7 @@ class WorkoutScreenViewModel @Inject constructor(
             exercises.map { exercise ->
                 if (exercise.exercise.id == exerciseId) {
                     val newSet = exercise.sets
-                        .lastOrNull()?.copy(id = Random.Default.nextLong())
+                        .lastOrNull()?.copy(id = Random.nextLong())
                         ?: UiSet()
 
                     val newSets = exercise.sets.toMutableList() + newSet
@@ -421,7 +420,7 @@ class WorkoutScreenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Main) {
             WorkoutService.restTime.collect { newRestTime ->
                 // When timer is over and screen is visible, it plays alert sound only by respecting user preference
-                if (initialRestTime != 1 && restTime.value == 0 && isFocused) {
+                if (initialRestTime != 1 && newRestTime == 0 && isFocused) {
                     if (userPreferences.restTimerSoundOn.value) {
                         val mediaPlayer = MediaPlayer.create(context, R.raw.alert_notification)
                         mediaPlayer.setOnCompletionListener {

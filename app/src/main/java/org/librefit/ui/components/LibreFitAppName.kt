@@ -34,38 +34,35 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import org.librefit.R
 
-object LibreFitAppName {
-    /**
-     * It returns the app name with material theme style and with the word "Libre" colored with the
-     * primary color
-     */
-    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-    @Composable
-    fun AnnotatedString.Builder.GetAppNameInAnnotatedBuilder(style: TextStyle = MaterialTheme.typography.displaySmallEmphasized) {
-        withStyle(
-            style = style.copy(
-                color = MaterialTheme.colorScheme.primary
-            ).toSpanStyle()
-        ) {
-            append(stringResource(id = R.string.app_name).removeRange(5, 8))
-        }
-        withStyle(style = style.toSpanStyle()) {
-            append(stringResource(id = R.string.app_name).removeRange(0, 5))
-        }
-
+/**
+ * It returns the app name with material theme style and with the word "Libre" colored with the
+ * primary color
+ */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun AnnotatedString.Builder.GetAppNameInAnnotatedBuilder(style: TextStyle = MaterialTheme.typography.displaySmallEmphasized) {
+    withStyle(
+        style = style.copy(
+            color = MaterialTheme.colorScheme.primary
+        ).toSpanStyle()
+    ) {
+        append(stringResource(id = R.string.app_name).removeRange(5, 8))
     }
-
-    /**
-     * It returns the app name as [Text] with the word "Libre" colored with the
-     * primary color and with the [style] provided
-     */
-    @Composable
-    fun AppNameText(style: TextStyle = LocalTextStyle.current) {
-        Text(
-            text = buildAnnotatedString {
-                GetAppNameInAnnotatedBuilder(style)
-            },
-            style = style
-        )
+    withStyle(style = style.toSpanStyle()) {
+        append(stringResource(id = R.string.app_name).removeRange(0, 5))
     }
+}
+
+/**
+ * It returns the app name as [Text] with the word "Libre" colored with the
+ * primary color and with the [style] provided
+ */
+@Composable
+fun AppNameText(style: TextStyle = LocalTextStyle.current) {
+    Text(
+        text = buildAnnotatedString {
+            GetAppNameInAnnotatedBuilder(style)
+        },
+        style = style
+    )
 }
