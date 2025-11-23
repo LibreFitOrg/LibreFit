@@ -27,7 +27,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import org.librefit.enums.supporter.SignatureVerificationResult
 import org.librefit.enums.supporter.SupporterVerificationResult
-import org.librefit.util.SupporterVerifier.TEMP_PUBLIC_KEY_STRING
+import org.librefit.util.SupporterVerifier.PUBLIC_KEY_STRING
 import java.security.InvalidKeyException
 import java.security.KeyFactory
 import java.security.NoSuchAlgorithmException
@@ -125,12 +125,11 @@ object SupporterVerifier {
         return keyFactory.generatePublic(keySpec)
     }
 
-    // TODO: change this temporary public key
-    const val TEMP_PUBLIC_KEY_STRING =
-        "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEhUpEordwrpsQ7JGkL0BHSMg9sySXP7Q7S2FWBJqLua8ZzsNSTRkgvef0Va987bwwN2fXfCBStRjGsBy3Sg4kJg=="
+    const val PUBLIC_KEY_STRING =
+        "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEFbJj74lzoo7mBN/VLQ8nViuH0H9vRpyZhiPEkkyr8EbGGFxwvHasJ6k+ImKbDyOH0P6yJVRYkU5IqRw09qbRtg=="
 
     /**
-     * Verifies a [code] string using the [TEMP_PUBLIC_KEY_STRING].
+     * Verifies a [code] string using the [PUBLIC_KEY_STRING].
      * @param code The code string with the format `id.signature_of_id`.
      * @return A [SupporterVerificationResult] for each possible outcome.
      */
@@ -162,7 +161,7 @@ object SupporterVerifier {
 
             // Initialize it for verification
             runCatching {
-                signature.initVerify(loadPublicKey(TEMP_PUBLIC_KEY_STRING))
+                signature.initVerify(loadPublicKey(PUBLIC_KEY_STRING))
             }.onFailure {
                 return if (it is IllegalArgumentException) {
                     SupporterVerificationResult.INVALID_PUBLIC_KEY_ENCODING
