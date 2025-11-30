@@ -24,6 +24,7 @@ package org.librefit
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
+import org.librefit.db.repository.DatasetRepository
 import org.librefit.util.GlobalExceptionHandler
 import javax.inject.Inject
 
@@ -32,12 +33,15 @@ class MainApplication : Application() {
     @Inject
     lateinit var globalExceptionHandler: GlobalExceptionHandler
 
+    @Inject
+    lateinit var datasetRepository: DatasetRepository
+
     override fun onCreate() {
         super.onCreate()
-        setupGlobalExceptionHandler()
-    }
-
-    private fun setupGlobalExceptionHandler() {
+        // Setup global exception handler
         Thread.setDefaultUncaughtExceptionHandler(globalExceptionHandler)
+
+        // Update dataset on each app update
+        datasetRepository.updateDatasetOnAppUpdate()
     }
 }

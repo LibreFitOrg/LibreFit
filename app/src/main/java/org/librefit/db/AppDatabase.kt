@@ -22,19 +22,9 @@
 
 package org.librefit.db
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.librefit.R
 import org.librefit.db.converters.ExerciseDCConverter
 import org.librefit.db.converters.LocalDateTimeConverter
 import org.librefit.db.dao.DatasetDao
@@ -45,9 +35,6 @@ import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.entity.Measurement
 import org.librefit.db.entity.Set
 import org.librefit.db.entity.Workout
-import org.librefit.di.qualifiers.ApplicationScope
-import javax.inject.Inject
-import javax.inject.Provider
 
 @Database(
     entities = [Workout::class, Exercise::class, Set::class, Measurement::class, ExerciseDC::class],
@@ -58,46 +45,6 @@ import javax.inject.Provider
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         const val NAME = "librefit_database"
-
-        class PrepopulateCallback @Inject constructor(
-            @param:ApplicationContext private val context: Context,
-            private val daoProvider: Provider<DatasetDao>,
-            @param:ApplicationScope private val scope: CoroutineScope
-        ) : Callback() {
-
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
-                // The dataset is parsed only once, when the database is first created.
-                scope.launch(Dispatchers.IO) {
-                    prepopulateDatabase()
-                }
-            }
-
-            private suspend fun prepopulateDatabase() {
-                try {
-                    val jsonFile =
-                        context.resources.openRawResource(R.raw.exercises).bufferedReader().use {
-                            it.readText()
-                        }
-
-                    val moshi = Moshi.Builder().build()
-                    val listType =
-                        Types.newParameterizedType(List::class.java, ExerciseDC::class.java)
-                    val adapter = moshi.adapter<List<ExerciseDC>>(listType)
-
-                    // ExerciseDC adapter is auto generated. All entries of all
-                    // enums must be annotated with @Json with its corresponding value in json file
-                    val exercises = adapter.fromJson(jsonFile)
-                        ?: throw JsonDataException("Failed to parse `exercises.json` file. Resource ID: ${R.raw.exercises}")
-
-                    // Set the dataset into the database using the DAO
-                    daoProvider.get().setDataset(exercises)
-
-                } catch (e: Exception) {
-                    error(e.message.toString())
-                }
-            }
-        }
     }
 
     abstract fun getWorkoutDao(): WorkoutDao

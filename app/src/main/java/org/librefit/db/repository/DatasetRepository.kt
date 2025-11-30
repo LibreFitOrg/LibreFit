@@ -22,11 +22,20 @@
 
 package org.librefit.db.repository
 
+import android.content.Context
+import android.os.Build
+import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import org.librefit.R
 import org.librefit.db.dao.DatasetDao
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.di.qualifiers.ApplicationScope
@@ -48,8 +57,10 @@ import javax.inject.Singleton
  */
 @Singleton
 class DatasetRepository @Inject constructor(
-    datasetDao: DatasetDao,
-    @ApplicationScope applicationScope: CoroutineScope
+    private val datasetDao: DatasetDao,
+    @param:ApplicationScope private val applicationScope: CoroutineScope,
+    private val userPreferencesRepository: UserPreferencesRepository,
+    @param:ApplicationContext private val context: Context
 ) {
     val dataset: StateFlow<List<UiExerciseDC>> = datasetDao.getDataset()
         .map { dataset -> dataset.map { it.toUi() } }
@@ -58,4 +69,45 @@ class DatasetRepository @Inject constructor(
             started = SharingStarted.Eagerly,
             initialValue = emptyList()
         )
+
+    fun updateDatasetOnAppUpdate() {
+        applicationScope.launch(Dispatchers.IO) {
+            val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            val currentVersion =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) pInfo.longVersionCode else pInfo.versionCode.toLong()
+            val pastVersion = userPreferencesRepository.pastVersionCode.value
+
+            // Update dataset only on app update
+            if (pastVersion != currentVersion) {
+                try {
+                    val jsonFile =
+                        context.resources.openRawResource(R.raw.exercises).bufferedReader().use {
+                            it.readText()
+                        }
+
+                    val moshi = Moshi.Builder().build()
+                    val listType =
+                        Types.newParameterizedType(List::class.java, ExerciseDC::class.java)
+                    val adapter = moshi.adapter<List<ExerciseDC>>(listType)
+
+                    // ExerciseDC adapter is auto generated. All entries of all
+                    // enums must be annotated with @Json with its corresponding value in json file
+                    val exercises = adapter.fromJson(jsonFile)
+                        ?: throw JsonDataException("Failed to parse `exercises.json` file. Resource ID: ${R.raw.exercises}")
+
+                    // Set the dataset into the database using the DAO
+                    datasetDao.setDataset(exercises)
+
+                    // Save version
+                    userPreferencesRepository.savePreference(
+                        key = UserPreferencesRepository.pastVersionCodeKey,
+                        value = currentVersion
+                    )
+
+                } catch (e: Exception) {
+                    error(e.message.toString())
+                }
+            }
+        }
+    }
 }

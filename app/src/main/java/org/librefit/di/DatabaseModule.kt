@@ -42,15 +42,13 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(
-        @ApplicationContext appContext: Context,
-        callback: AppDatabase.Companion.PrepopulateCallback
+        @ApplicationContext appContext: Context
     ): AppDatabase {
         return Room.databaseBuilder(
             appContext,
             AppDatabase::class.java,
             AppDatabase.NAME
         )
-            .addCallback(callback)
             .build()
     }
 

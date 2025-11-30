@@ -32,6 +32,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -68,6 +69,7 @@ class UserPreferencesRepository @Inject constructor(
         val restTimerSoundKey = booleanPreferencesKey("alert_sound")
         val showWelcomeScreenKey = booleanPreferencesKey("show_welcome_screen")
         val isSupporterKey = booleanPreferencesKey("is_supporter")
+        val pastVersionCodeKey = longPreferencesKey("pastVersionCode")
     }
 
     val themeMode: StateFlow<ThemeMode> = dataStore.data
@@ -126,6 +128,14 @@ class UserPreferencesRepository @Inject constructor(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
             initialValue = false
+        )
+
+    val pastVersionCode: StateFlow<Long> = dataStore.data
+        .map { preferences -> preferences[pastVersionCodeKey] ?: -1L }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = -1L
         )
 
     /**
