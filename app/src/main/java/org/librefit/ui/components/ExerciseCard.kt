@@ -79,6 +79,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -207,10 +208,14 @@ fun SharedTransitionScope.ExerciseCard(
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    val model =
+                        remember(exerciseWithSets.exerciseDC.images) { exerciseWithSets.exerciseDC.images.firstOrNull() }
                     AsyncImage(
-                        model = "file:///android_asset/${exerciseWithSets.exerciseDC.images[0]}",
+                        model = model?.let { "file:///android_asset/${it}" },
+                        fallback = painterResource(R.drawable.no_image),
                         contentDescription = exerciseWithSets.exerciseDC.name,
                         contentScale = ContentScale.Crop,
+                        colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
                         modifier = Modifier
                             .padding(end = 10.dp)
                             .sharedElement(
