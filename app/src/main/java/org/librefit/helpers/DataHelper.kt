@@ -82,7 +82,7 @@ class DataHelper @Inject constructor(
         workoutsWithExercises: List<WorkoutWithExercisesAndSets>
     ): List<Point> = coroutineScope {
         workoutsWithExercises
-            .mapIndexed { index, it ->
+            .map { it ->
                 async {
                     val bodyWeight = measurementRepository.getLastMeasurementByCutoff(
                         it.workout.completed
@@ -396,7 +396,6 @@ class DataHelper @Inject constructor(
 
 
         return processedData
-            .asSequence()
             // Group all value lists by exercise.
             .groupBy(
                 keySelector = { it.first },      // Group by ExerciseDC
@@ -430,7 +429,7 @@ class DataHelper @Inject constructor(
     ): List<Point> = coroutineScope {
         workoutsWithExercises
             .flatMap { it.exercisesWithSets }
-            .mapIndexed { index, eWs ->
+            .map { eWs ->
                 async {
                     val workout =
                         workoutsWithExercises.find { eWs in it.exercisesWithSets }?.workout
