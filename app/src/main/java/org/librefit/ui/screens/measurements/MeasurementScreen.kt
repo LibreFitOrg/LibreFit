@@ -128,11 +128,11 @@ fun MeasurementScreen(
     val date by viewModel.date.collectAsStateWithLifecycle()
 
     val datePickerState = rememberDatePickerState()
-    var showDatePickerDialog by remember { mutableStateOf(false) }
+    val showDatePickerDialog = remember { mutableStateOf(false) }
 
-    if (showDatePickerDialog) {
+    if (showDatePickerDialog.value) {
         DatePickerDialog(
-            onDismissRequest = { showDatePickerDialog = false },
+            onDismissRequest = { showDatePickerDialog.value = false },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -144,14 +144,14 @@ fun MeasurementScreen(
                                 ZoneId.systemDefault()
                             )
                         )
-                        showDatePickerDialog = false
+                        showDatePickerDialog.value = false
                     }
                 ) {
                     Text(stringResource(R.string.ok_dialog))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePickerDialog = false }) {
+                TextButton(onClick = { showDatePickerDialog.value = false }) {
                     Text(stringResource(R.string.cancel_dialog))
                 }
             }
@@ -160,21 +160,18 @@ fun MeasurementScreen(
         }
     }
 
-    var showConfirmDialog by remember { mutableStateOf(false) }
+    val idMeasurementToDelete = remember { mutableStateOf<Long?>(null) }
 
-    var idMeasurementToDelete by remember { mutableLongStateOf(0L) }
-
-    if (showConfirmDialog) {
+    idMeasurementToDelete.value?.let {
         ConfirmDialog(
             title = stringResource(R.string.delete_measurement_question),
             text = stringResource(R.string.delete_measurement_text),
             confirmText = stringResource(R.string.delete),
             onConfirm = {
-                viewModel.deleteMeasurementById(idMeasurementToDelete)
-                showConfirmDialog = false
+                viewModel.deleteMeasurementById(it)
             },
             onDismiss = {
-                showConfirmDialog = false
+                idMeasurementToDelete.value = null
             }
         )
     }
@@ -193,10 +190,9 @@ fun MeasurementScreen(
         updateFatMass = viewModel::updateFatMass,
         updateLeanMass = viewModel::updateLeanMass,
         updateNotes = viewModel::updateNotes,
-        showDatePickerDialog = { showDatePickerDialog = true },
+        showDatePickerDialog = { showDatePickerDialog.value = true },
         showConfirmDialog = {
-            showConfirmDialog = true
-            idMeasurementToDelete = it
+            idMeasurementToDelete.value = it
         },
         updateIdMeasurement = viewModel::updateIdMeasurement,
         upsertMeasurement = viewModel::upsertMeasurementToDB,
@@ -452,7 +448,7 @@ private fun MeasurementScreenContent(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(15.dp),
+                            .padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Row(
