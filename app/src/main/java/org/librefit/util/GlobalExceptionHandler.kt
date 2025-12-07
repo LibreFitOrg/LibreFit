@@ -27,8 +27,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Process
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.librefit.activities.ErrorActivity
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.di.qualifiers.MainActivityClass
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,10 +40,12 @@ import kotlin.system.exitProcess
 @Singleton
 class GlobalExceptionHandler @Inject constructor(
     @param:ApplicationContext private val context: Context,
-    @param:MainActivityClass private val mainActivityClass: Class<out Activity>
+    @param:MainActivityClass private val mainActivityClass: Class<out Activity>,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : Thread.UncaughtExceptionHandler {
 
     override fun uncaughtException(thread: Thread, exception: Throwable) {
+        Log.d("Handler", "Exception: $exception ")
         // Create a PendingIntent to restart the app
         val restartIntent = Intent(context, mainActivityClass).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -53,10 +57,16 @@ class GlobalExceptionHandler @Inject constructor(
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        // Get user preferences to match current theme
+        val materialMode = userPreferencesRepository.materialMode.value
+        val themeMode = userPreferencesRepository.themeMode.value
+
         // Launch the ErrorActivity, passing the stack trace and the restart action
         val errorIntent = Intent(context, ErrorActivity::class.java).apply {
             putExtra(ErrorActivity.EXTRA_STACK_TRACE, getStackTrace(exception))
             putExtra(ErrorActivity.EXTRA_RESTART_PENDING_INTENT, pendingIntent)
+            putExtra(ErrorActivity.EXTRA_THEME_MODE, themeMode)
+            putExtra(ErrorActivity.EXTRA_MATERIAL_MODE, materialMode)
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context.startActivity(errorIntent)

@@ -25,6 +25,7 @@ package org.librefit.activities
 import android.app.PendingIntent
 import android.content.ClipData
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -65,25 +66,18 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.librefit.R
-import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.WarningLottie
 import org.librefit.ui.theme.LibreFitTheme
-import javax.inject.Inject
 import kotlin.random.Random
 
-@AndroidEntryPoint
 class ErrorActivity : ComponentActivity() {
-    @Inject
-    lateinit var userPreferences: UserPreferencesRepository
 
     private val restartIntent: PendingIntent? by lazy {
         IntentCompat.getParcelableExtra(intent,EXTRA_RESTART_PENDING_INTENT, PendingIntent::class.java)
@@ -92,6 +86,8 @@ class ErrorActivity : ComponentActivity() {
     companion object {
         const val EXTRA_STACK_TRACE = "EXTRA_STACK_TRACE"
         const val EXTRA_RESTART_PENDING_INTENT = "EXTRA_RESTART_PENDING_INTENT"
+        const val EXTRA_THEME_MODE = "EXTRA_THEME_MODE"
+        const val EXTRA_MATERIAL_MODE = "EXTRA_MATERIAL_MODE"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,11 +98,14 @@ class ErrorActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val stackTrace = intent.getStringExtra(EXTRA_STACK_TRACE) ?: ""
+        val theme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getSerializableExtra(EXTRA_THEME_MODE, ThemeMode::class.java)
+        } else {
+            intent.getSerializableExtra(EXTRA_THEME_MODE) as? ThemeMode
+        } ?: ThemeMode.SYSTEM
+        val dynamicColor = intent.getBooleanExtra(EXTRA_MATERIAL_MODE, false)
 
         setContent {
-            val theme by userPreferences.themeMode.collectAsStateWithLifecycle()
-            val dynamicColor by userPreferences.materialMode.collectAsStateWithLifecycle()
-
             LibreFitTheme(
                 dynamicColor = dynamicColor,
                 darkTheme = when (theme) {
