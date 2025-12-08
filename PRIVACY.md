@@ -51,8 +51,7 @@ By using the Application, you are consenting to the processing of your informati
 **Contact Us**
 
 If you have any questions regarding privacy while using the Application, or have questions about the
-practices, please contact the Service Provider via email via
-the [contact page](https://librefit.org/contact).
+practices, please contact the Service Provider via the [contact page](https://librefit.org/contact).
 
 * * *
 
