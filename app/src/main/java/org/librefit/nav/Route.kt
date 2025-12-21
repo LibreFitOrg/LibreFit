@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025. LibreFit
+ * Copyright (c) 2024-2025. LibreFit Team
  *
  * This file is part of LibreFit
  *
@@ -17,7 +17,7 @@
  * along with LibreFit.  If not, see <https://www.gnu.org/licenses/>.
  *
  * LibreFit is subject to additional terms covering author attribution and
- * trademark usage, as found in the accompanying ADDITIONAL_TERMS.md file.
+ * trademark usage, as found in the accompanying ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md.
  */
 
 package org.librefit.nav
@@ -29,9 +29,9 @@ import org.librefit.enums.SuccessMessage
 import org.librefit.enums.pages.TutorialContent
 
 
-sealed class Route {
+sealed interface Route {
     @Serializable
-    object AboutScreen
+    data object AboutScreen
 
     @Serializable
     data class BeforeSavingScreen(
@@ -40,7 +40,7 @@ sealed class Route {
     )
 
     @Serializable
-    object CalendarScreen
+    data object CalendarScreen
 
     @Serializable
     data class EditExerciseScreen(
@@ -70,13 +70,13 @@ sealed class Route {
     )
 
     @Serializable
-    object MainScreen
+    data object MainScreen
 
     @Serializable
-    object MeasurementScreen
+    data object MeasurementScreen
 
     @Serializable
-    object PrivacyScreen
+    data object PrivacyScreen
 
     @Serializable
     data class RequestPermissionScreen(
@@ -84,16 +84,16 @@ sealed class Route {
     )
 
     @Serializable
-    object LibrariesScreen
+    data object LibrariesScreen
 
     @Serializable
-    object LicenseScreen
+    data object LicenseScreen
 
     @Serializable
-    object SettingsScreen
+    data object SettingsScreen
 
     @Serializable
-    object StatisticsScreen
+    data object StatisticsScreen
 
     @Serializable
     data class SuccessScreen(
@@ -112,7 +112,7 @@ sealed class Route {
     )
 
     @Serializable
-    object WelcomeScreen
+    data object WelcomeScreen
 
     @Serializable
     data class WorkoutScreen(
