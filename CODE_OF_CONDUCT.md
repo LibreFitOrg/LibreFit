@@ -64,7 +64,7 @@ Not every conflict represents a code of conduct violation, and this Code of Cond
 encouraged behaviors and norms that can help avoid conflicts and minimize harm.
 
 When an incident does occur, it is important to report it promptly. To report a possible violation,
-**fill the form at https://librefit.org/contact.**
+**fill this [form](https://librefit.org/contact).**
 
 Community Moderators take reports of violations seriously and will make every effort to respond in a
 timely manner. They will investigate all reports of code of conduct violations, reviewing messages,
