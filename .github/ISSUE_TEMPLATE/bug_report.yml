@@ -1,0 +1,122 @@
+name: 🐞 Bug Report
+description: Create a report to help LibreFit
+labels: [ "bug", "needs-triage" ]
+body:
+    -   type: markdown
+        attributes:
+            value: |
+                Thanks for taking the time to report a bug! 
+                
+                Please fill out this form completely. The more information you provide, the faster the issue will be fixed.
+
+    -   type: checkboxes
+        id: checklist
+        attributes:
+            label: Prerequisites
+            description: Please ensure you have done the following before submitting.
+            options:
+                -   label: I am running the latest version of the app.
+                    required: true
+                -   label: I have checked the [Existing Discussions](https://github.com/LibreFitOrg/LibreFit/discussions) and this is not a duplicate.
+                    required: true
+                -   label: I have checked the [Existing Issues](https://github.com/LibreFitOrg/LibreFit/issues) and this is not a duplicate.
+                    required: true
+                -   label: I have read the [Contributing Guidelines](https://github.com/LibreFitOrg/LibreFit/blob/main/CONTRIBUTING.md).
+                    required: true
+
+    -   type: input
+        id: app-version
+        attributes:
+            label: App Version
+            description: You can find this in the app About.
+            placeholder: "e.g., v1.2.0"
+        validations:
+            required: true
+
+    -   type: input
+        id: android-version
+        attributes:
+            label: Android Version & ROM
+            description: Which Android version and ROM (Stock, LineageOS, GrapheneOS, etc.) are you using?
+            placeholder: "e.g., Android 13 / Pixel Experience"
+        validations:
+            required: true
+
+    -   type: input
+        id: device-model
+        attributes:
+            label: Device Model
+            placeholder: "e.g., Pixel 6a, Samsung Galaxy S21"
+        validations:
+            required: true
+
+    -   type: textarea
+        id: steps
+        attributes:
+            label: Steps to reproduce
+            description: |
+                Please list the exact steps to reproduce the issue.
+            placeholder: |
+                1. Open the app
+                2. Go to Settings
+                3. Tap on 'Theme'
+                4. The app crashes
+        validations:
+            required: true
+
+    -   type: textarea
+        id: expected-behavior
+        attributes:
+            label: Expected behavior
+            description: What did you expect to happen?
+            placeholder: "The theme selection dialog should open."
+        validations:
+            required: true
+
+    -   type: textarea
+        id: actual-behavior
+        attributes:
+            label: Actual behavior
+            description: What actually happened?
+            placeholder: "The app froze and then closed immediately."
+        validations:
+            required: true
+
+    -   type: textarea
+        id: media
+        attributes:
+            label: Screen Recording / Screenshots
+            description: |
+                **Crucial:** Please provide a video or screenshot showing the bug. You can drag and drop images or video files (MP4/MOV) directly into this box.
+                *   **Video:** Preferred for UI bugs or navigation issues.
+                *   **Screenshot:** Good for layout glitches or static errors. 
+                
+                *Tip: Use the [builtin Android recorder](https://support.google.com/android/answer/9075928) or [ScreenCam](https://f-droid.org/packages/com.orpheusdroid.screenrecorder/).*
+            placeholder: |
+                [Upload media here]
+        validations:
+            required: false
+
+    -   type: textarea
+        id: logs
+        attributes:
+            label: Crash Logs / Stack Trace
+            description: |
+                If the app crashed, please include the crash log (logcat). 
+                **Do not post a screenshot of the log.** Please copy and paste the text from the crash screen.
+            render: shell
+            placeholder: |
+                java.lang.RuntimeException: Unable to start activity ComponentInfo{...}: java.lang.NullPointerException
+                    at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2913)
+                    ...
+        validations:
+            required: false
+
+    -   type: textarea
+        id: additional
+        attributes:
+            label: Additional info
+            description: |
+                Additional information that could be helpful.
+        validations:
+            required: false

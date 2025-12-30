@@ -1,0 +1,9 @@
+blank_issues_enabled: false  # Forces users to choose Bug Report or Feature Request
+contact_links:
+    -   name: 💬 Ask a Question
+        url: https://github.com/LibreFitOrg/LibreFit/discussions
+        about: Please ask questions here instead of opening an issue.
+
+    -   name: 🔐 Report a Security Vulnerability
+        url: https://github.com/LibreFitOrg/LibreFit/security/advisories/new
+        about: Please do not report security flaws in public issues.
