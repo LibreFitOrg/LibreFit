@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CircularWavyProgressIndicator
@@ -124,6 +125,8 @@ fun SharedTransitionScope.WorkoutScreen(
     val restTimerProgress by viewModel.restTimerProgress.collectAsStateWithLifecycle()
 
     val runningWorkoutId by viewModel.runningWorkoutId.collectAsStateWithLifecycle()
+
+    val isHeaderSticky by viewModel.isHeaderSticky.collectAsStateWithLifecycle()
     
 
     //It keeps the screen turned on
@@ -187,6 +190,7 @@ fun SharedTransitionScope.WorkoutScreen(
                 timeElapsed = timeElapsed,
                 isStopwatchPaused = isStopwatchPaused,
                 workoutProgress = workoutProgress,
+                isHeaderSticky = isHeaderSticky,
                 toggleStopwatch = viewModel::toggleStopwatch,
                 updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
                 onSelectedExerciseIdChange = { id, exercise ->
@@ -254,6 +258,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     isStopwatchPaused: Boolean,
     workoutProgress: Pair<Int, Int>,
     idSetWithRunningStopwatch: Long?,
+    isHeaderSticky: Boolean,
     toggleStopwatch: () -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
     addSetToExercise: (Long) -> Unit,
@@ -271,7 +276,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     applyPreviousSetPerformance: (Long) -> Unit
 ) {
     LibreFitLazyColumn {
-        stickyHeader {
+        val headerContent: @Composable LazyItemScope.() -> Unit = {
             ElevatedCard(shape = MaterialTheme.shapes.extraLargeIncreased) {
                 Column(
                     modifier = Modifier.padding(15.dp),
@@ -325,6 +330,12 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                 }
 
             }
+        }
+
+        if (isHeaderSticky) {
+            stickyHeader { headerContent() }
+        } else {
+            item { headerContent() }
         }
         if (exercisesWithSets.isEmpty()) {
             item {
@@ -516,6 +527,7 @@ private fun WorkoutScreenPreview() {
                             timeElapsed = 186,
                             isStopwatchPaused = false,
                             workoutProgress = workoutProgress,
+                            isHeaderSticky = true,
                             toggleStopwatch = {},
                             addSetToExercise = {},
                             updateSetTime = { _, _ -> },

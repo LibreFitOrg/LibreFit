@@ -82,6 +82,8 @@ fun SettingsScreen(
 
     val isSupporter by viewModel.isSupporter.collectAsStateWithLifecycle()
 
+    val isWorkoutHeaderSticky by viewModel.isWorkoutHeaderSticky.collectAsStateWithLifecycle()
+
     preferences?.let {
         PreferenceDialog(
             currentPreference = currentPreference,
@@ -101,6 +103,7 @@ fun SettingsScreen(
         keepWorkoutScreenOn = keepWorkoutScreenOn,
         restTimerSoundOn = restTimerSoundOn,
         isSupporter = isSupporter,
+        isWorkoutHeaderSticky = isWorkoutHeaderSticky,
         updatePreferences = viewModel::updatePreferences,
         saveBooleanValue = viewModel::savePreference
     )
@@ -116,6 +119,7 @@ private fun SettingsScreenContent(
     keepWorkoutScreenOn: Boolean,
     restTimerSoundOn: Boolean,
     isSupporter: Boolean,
+    isWorkoutHeaderSticky: Boolean,
     updatePreferences: (List<DialogPreference>) -> Unit,
     saveBooleanValue: (Preferences.Key<Boolean>, value: Boolean) -> Unit
 ) {
@@ -209,6 +213,21 @@ private fun SettingsScreenContent(
                     isChecked = restTimerSoundOn
                 )
             }
+
+            item {
+                SettingItem(
+                    isChecked = isWorkoutHeaderSticky,
+                    onClick = {
+                        saveBooleanValue(
+                            UserPreferencesRepository.isWorkoutHeaderStickyKey,
+                            !isWorkoutHeaderSticky
+                        )
+                    },
+                    icon = painterResource(R.drawable.ic_sticker),
+                    settingDesc = stringResource(if (isWorkoutHeaderSticky) R.string.stick_status_bar_desc else R.string.not_stick_status_bar_desc),
+                    settingName = stringResource(R.string.stick_status_bar)
+                )
+            }
         }
     }
 }
@@ -282,6 +301,7 @@ fun SettingsScreenPreview() {
     var materialModeOn by remember { mutableStateOf(Random.nextBoolean()) }
     var keepWorkoutScreenOn by remember { mutableStateOf(Random.nextBoolean()) }
     var restTimerSoundOn by remember { mutableStateOf(Random.nextBoolean()) }
+    var isWorkoutHeaderSticky by remember { mutableStateOf(Random.nextBoolean()) }
 
     val theme = ThemeMode.entries.random()
 
@@ -295,6 +315,7 @@ fun SettingsScreenPreview() {
             restTimerSoundOn = restTimerSoundOn,
             updatePreferences = {},
             isSupporter = Random.nextBoolean(),
+            isWorkoutHeaderSticky = isWorkoutHeaderSticky,
             saveBooleanValue = { key, value ->
                 when (key) {
                     UserPreferencesRepository.materialModeKey -> {

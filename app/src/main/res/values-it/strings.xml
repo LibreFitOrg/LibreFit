@@ -251,6 +251,7 @@
     <string name="others">Altri</string>
     <string name="rest_timer_sound_on_desc">Riproduci un suono quando il timer di riposo termina</string>
     <string name="rest_timer_sound_off_desc">Gli avvisi del timer di riposo saranno silenziosi</string>
+    <string name="not_stick_status_bar_desc">La barra di stato dell\'allenamento in corso sarà fissa in cima allo schermo</string>
     <string name="past">Scorso</string>
     <string name="past_week">Scorsa settimana</string>
     <string name="past_month">Scorso mese</string>
@@ -332,5 +333,7 @@
     <string name="create_exercise">Crea esercizio</string>
     <string name="delete_exercise_from_dataset">Eliminare esercizio dal dataset?</string>
     <string name="name">Nome</string>
+    <string name="stick_status_bar">Fissa barra di stato</string>
+    <string name="stick_status_bar_desc">La barra di stato dell\'allenamento in corso sarà fissa in cima allo schermo</string>
 
 </resources>

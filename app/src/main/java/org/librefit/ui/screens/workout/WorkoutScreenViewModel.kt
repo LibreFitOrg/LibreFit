@@ -504,4 +504,7 @@ class WorkoutScreenViewModel @Inject constructor(
             )
         }
     }
+
+
+    val isHeaderSticky = userPreferences.isWorkoutHeaderSticky
 }

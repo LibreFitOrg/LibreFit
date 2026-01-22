@@ -56,6 +56,7 @@ class UserPreferencesRepository @Inject constructor(
         val showWelcomeScreenKey = booleanPreferencesKey("show_welcome_screen")
         val isSupporterKey = booleanPreferencesKey("is_supporter")
         val pastVersionCodeKey = longPreferencesKey("pastVersionCode")
+        val isWorkoutHeaderStickyKey = booleanPreferencesKey("is_workout_header_sticky")
     }
 
     val themeMode: StateFlow<ThemeMode> = dataStore.data
@@ -122,6 +123,14 @@ class UserPreferencesRepository @Inject constructor(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
             initialValue = -1L
+        )
+
+    val isWorkoutHeaderSticky: StateFlow<Boolean> = dataStore.data
+        .map { preferences -> preferences[isWorkoutHeaderStickyKey] != false }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = true
         )
 
     /**

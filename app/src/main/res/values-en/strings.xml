@@ -251,6 +251,7 @@
     <string name="linked_routine">Linked routine</string>
     <string name="others">Others</string>
     <string name="rest_timer_sound_off_desc">Rest timer alerts will be silent</string>
+    <string name="not_stick_status_bar_desc">The status bar of ongoing workout won\'t be stuck at the top of the screen</string>
     <string name="past">Past</string>
     <string name="past_week">Past week</string>
     <string name="past_month">Past month</string>
@@ -333,6 +334,8 @@
     <string name="create_exercise">Create exercise</string>
     <string name="delete_exercise_from_dataset">Delete exercise from dataset?</string>
     <string name="name">Name</string>
+    <string name="stick_status_bar">Stick status bar</string>
+    <string name="stick_status_bar_desc">The status bar of ongoing workout will be stuck at the top of the screen</string>
 
 
 </resources>

@@ -46,6 +46,7 @@ class SettingsScreenViewModelTest {
     private lateinit var materialModeOn: MutableStateFlow<Boolean>
     private lateinit var restTimerSoundOn: MutableStateFlow<Boolean>
     private lateinit var isSupporter: MutableStateFlow<Boolean>
+    private lateinit var isWorkoutHeaderSticky: MutableStateFlow<Boolean>
 
     // Captured objects
     private val key = slot<Preferences.Key<Any>>()
@@ -61,6 +62,7 @@ class SettingsScreenViewModelTest {
         materialModeOn = MutableStateFlow(false)
         restTimerSoundOn = MutableStateFlow(true)
         isSupporter = MutableStateFlow(false)
+        isWorkoutHeaderSticky = MutableStateFlow(true)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.language } returns language
@@ -69,6 +71,7 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.materialMode } returns materialModeOn
         every { userPreferencesRepository.restTimerSoundOn } returns restTimerSoundOn
         every { userPreferencesRepository.isSupporter } returns isSupporter
+        every { userPreferencesRepository.isWorkoutHeaderSticky } returns isWorkoutHeaderSticky
         coEvery {
             userPreferencesRepository.savePreference(
                 capture(key),

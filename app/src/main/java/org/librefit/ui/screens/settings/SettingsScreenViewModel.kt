@@ -37,6 +37,7 @@ class SettingsScreenViewModel @Inject constructor(
     val language = userPreferences.language
     val restTimerSoundOn = userPreferences.restTimerSoundOn
     val isSupporter = userPreferences.isSupporter
+    val isWorkoutHeaderSticky = userPreferences.isWorkoutHeaderSticky
 
 
     fun <T> savePreference(key: Preferences.Key<T>, value: T) {
