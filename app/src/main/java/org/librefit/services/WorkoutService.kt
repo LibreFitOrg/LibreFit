@@ -180,6 +180,10 @@ class WorkoutService : Service() {
                     }
                 }
 
+                if (isFocused) {
+                    notificationHelper.cancelTimerIsOverNotification()
+                }
+
                 notificationHelper.notifyOngoingWorkout(
                     timeElapsed.value,
                     isStopwatchPaused.value,

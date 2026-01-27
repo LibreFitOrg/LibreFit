@@ -227,6 +227,10 @@ class NotificationHelper @Inject constructor(
         notificationManager.notify(TIMER_NOTIFICATION_ID, timerNotification)
     }
 
+    fun cancelTimerIsOverNotification() {
+        notificationManager.cancel(TIMER_NOTIFICATION_ID)
+    }
+
 
     private fun createWorkoutServiceIntent(
         action: String,

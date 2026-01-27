@@ -177,7 +177,6 @@ private fun SharedTransitionScope.HomeScreenContent(
     }
 
     LibreFitLazyColumn(innerPadding) {
-        // TODO: implement workout resume
         item {
             val infiniteTransition = rememberInfiniteTransition()
             val animatedColor = infiniteTransition.animateColor(
