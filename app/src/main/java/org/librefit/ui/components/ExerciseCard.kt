@@ -160,7 +160,7 @@ fun SharedTransitionScope.ExerciseCard(
     workout: Boolean = false,
     idSetWithRunningStopwatch: Long? = null,
     addSet: (Long) -> Unit,
-    onDetail: (Long, UiExerciseDC) -> Unit,
+    onDetail: (Long, String) -> Unit,
     onDelete: (Long) -> Unit,
     deleteSet: (Long) -> Unit,
     updateExerciseNotes: (String, Long) -> Unit,
@@ -195,7 +195,7 @@ fun SharedTransitionScope.ExerciseCard(
                         .weight(1f)
                         .clip(MaterialTheme.shapes.medium)
                         .clickable {
-                            onDetail(exerciseWithSets.exercise.id, exerciseWithSets.exerciseDC)
+                            onDetail(exerciseWithSets.exercise.id, exerciseWithSets.exerciseDC.id)
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {

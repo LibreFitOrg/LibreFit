@@ -280,11 +280,11 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                         exerciseWithSets = exerciseWithSets,
                         workout = typeOfEdit == false,
                         addSet = addSetToExercise,
-                        onDetail = { id, exerciseDC ->
+                        onDetail = { id, idExerciseDC ->
                             navController.navigate(
                                 Route.InfoExerciseScreen(
                                     id,
-                                    exerciseDC.id
+                                    idExerciseDC
                                 )
                             ) { launchSingleTop = true }
                         },

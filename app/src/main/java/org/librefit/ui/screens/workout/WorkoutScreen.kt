@@ -127,7 +127,7 @@ fun SharedTransitionScope.WorkoutScreen(
     val runningWorkoutId by viewModel.runningWorkoutId.collectAsStateWithLifecycle()
 
     val isHeaderSticky by viewModel.isHeaderSticky.collectAsStateWithLifecycle()
-    
+
 
     //It keeps the screen turned on
     if (keepWorkoutScreenOn) {
@@ -193,11 +193,11 @@ fun SharedTransitionScope.WorkoutScreen(
                 isHeaderSticky = isHeaderSticky,
                 toggleStopwatch = viewModel::toggleStopwatch,
                 updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
-                onSelectedExerciseIdChange = { id, exercise ->
+                onSelectedExerciseIdChange = { id, idExerciseDC ->
                     navController.navigate(
                         Route.InfoExerciseScreen(
                             id,
-                            exercise.id
+                            idExerciseDC
                         )
                     ) { launchSingleTop = true }
                 },
@@ -271,7 +271,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     updateExerciseRestTime: (Int, Long) -> Unit,
     updateExerciseSetMode: (SetMode, Long) -> Unit,
     deleteExercise: (Long) -> Unit,
-    onSelectedExerciseIdChange: (Long, UiExerciseDC) -> Unit,
+    onSelectedExerciseIdChange: (Long, String) -> Unit,
     showInfo: (InfoMode) -> Unit,
     applyPreviousSetPerformance: (Long) -> Unit
 ) {
