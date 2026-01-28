@@ -169,7 +169,6 @@ the latest Android toolkit:
   Jetpack Compose.
 - [Vico](https://github.com/patrykandpatrick/vico) for charts.
 - [Lottie Compose](https://github.com/airbnb/lottie-android) for animations.
-- [Moshi](https://github.com/square/moshi) for serialization.
 
 #### Pull Request Process
 

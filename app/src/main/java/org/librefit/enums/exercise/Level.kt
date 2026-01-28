@@ -8,13 +8,17 @@
 
 package org.librefit.enums.exercise
 
-import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class Level : ExerciseProperty {
-    @Json(name = "beginner")
+    @SerialName(value = "beginner")
     BEGINNER,
-    @Json(name = "intermediate")
+
+    @SerialName(value = "intermediate")
     INTERMEDIATE,
-    @Json(name = "expert")
+
+    @SerialName(value = "expert")
     EXPERT
 }

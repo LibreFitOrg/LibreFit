@@ -8,13 +8,17 @@
 
 package org.librefit.enums.exercise
 
-import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class Force : ExerciseProperty {
-    @Json(name = "static")
+    @SerialName(value = "static")
     STATIC,
-    @Json(name = "pull")
+
+    @SerialName(value = "pull")
     PULL,
-    @Json(name = "push")
+
+    @SerialName(value = "push")
     PUSH
 }

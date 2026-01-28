@@ -8,21 +8,29 @@
 
 package org.librefit.enums.exercise
 
-import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class Category : ExerciseProperty {
-    @Json(name = "powerlifting")
+    @SerialName(value = "powerlifting")
     POWERLIFTING(),
-    @Json(name = "strength")
+
+    @SerialName(value = "strength")
     STRENGTH(),
-    @Json(name = "stretching")
+
+    @SerialName(value = "stretching")
     STRETCHING(),
-    @Json(name = "cardio")
+
+    @SerialName(value = "cardio")
     CARDIO(),
-    @Json(name = "olympic weightlifting")
+
+    @SerialName(value = "olympic weightlifting")
     OLYMPIC_WEIGHTLIFTING(),
-    @Json(name = "strongman")
+
+    @SerialName(value = "strongman")
     STRONGMAN(),
-    @Json(name = "plyometrics")
+
+    @SerialName(value = "plyometrics")
     PLYOMETRICS();
 }

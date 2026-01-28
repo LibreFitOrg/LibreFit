@@ -10,9 +10,6 @@ package org.librefit.db.repository
 
 import android.content.Context
 import android.os.Build
-import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import org.librefit.R
 import org.librefit.db.dao.DatasetDao
 import org.librefit.db.entity.ExerciseDC
@@ -72,15 +70,10 @@ class DatasetRepository @Inject constructor(
                             it.readText()
                         }
 
-                    val moshi = Moshi.Builder().build()
-                    val listType =
-                        Types.newParameterizedType(List::class.java, ExerciseDC::class.java)
-                    val adapter = moshi.adapter<List<ExerciseDC>>(listType)
+                    val json = Json
 
-                    // ExerciseDC adapter is auto generated. All entries of all
-                    // enums must be annotated with @Json with its corresponding value in json file
-                    val exercises = adapter.fromJson(jsonFile)
-                        ?: throw JsonDataException("Failed to parse `exercises.json` file. Resource ID: ${R.raw.exercises}")
+                    // All entries of all enums must be annotated with @SerialName with its corresponding value in json file
+                    val exercises = json.decodeFromString<List<ExerciseDC>>(jsonFile)
 
                     // Set the dataset into the database using the DAO
                     datasetDao.setDataset(exercises)

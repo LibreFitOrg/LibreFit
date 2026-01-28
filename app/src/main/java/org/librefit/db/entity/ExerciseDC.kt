@@ -10,7 +10,6 @@ package org.librefit.db.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.squareup.moshi.JsonClass
 import kotlinx.serialization.Serializable
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
@@ -21,8 +20,8 @@ import org.librefit.enums.exercise.Muscle
 
 /**
  * This data class stores exercises as parsed from `res/raw/exercises.json`. The dataset in provided by [org.librefit.db.repository.DatasetRepository]
- * Moshi's generated adapter is used for JSON serialization and deserialization as indicated by
- * [com.squareup.moshi.JsonClass] annotation. The actual exercise entries in database are handled by [Exercise]
+ * `kotlin.serialization` is used for JSON serialization and deserialization as indicated by
+ * [Serializable] annotation. The actual exercise entries in database are handled by [Exercise]
  *
  * The JSON schema associated with this class is defined as follows:
  *
@@ -184,10 +183,8 @@ import org.librefit.enums.exercise.Muscle
  * @property category The [org.librefit.enums.exercise.Category] of the exercise. Acceptable values are defined in the JSON schema.
  * @property images Identifiers of images associated with the exercise.
  * @property isCustomExercise It tells whether this exercise is created by the user or not. By default,
- * the exercise comes from `exercises.json` so it is set to `false`. However, this property is not present
- * in JSON schema so [com.squareup.moshi.JsonAdapter.fromJson] would [throw an exception if it didn't have a default value](https://github.com/square/moshi?tab=readme-ov-file#omitting-fields).
+ * the exercise comes from `exercises.json` so it is set to `false`.
  */
-@JsonClass(generateAdapter = true)
 @Serializable
 @Entity(tableName = "dataset")
 data class ExerciseDC(

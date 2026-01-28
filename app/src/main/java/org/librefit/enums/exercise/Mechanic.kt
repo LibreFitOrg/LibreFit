@@ -8,11 +8,14 @@
 
 package org.librefit.enums.exercise
 
-import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class Mechanic : ExerciseProperty {
-    @Json(name = "isolation")
+    @SerialName(value = "isolation")
     ISOLATION,
-    @Json(name = "compound")
+
+    @SerialName(value = "compound")
     COMPOUND
 }

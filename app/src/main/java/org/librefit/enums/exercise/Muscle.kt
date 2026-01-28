@@ -8,41 +8,59 @@
 
 package org.librefit.enums.exercise
 
-import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class Muscle : ExerciseProperty {
-    @Json(name = "abdominals")
+    @SerialName(value = "abdominals")
     ABDOMINALS(),
-    @Json(name = "abductors")
+
+    @SerialName(value = "abductors")
     ABDUCTORS(),
-    @Json(name = "adductors")
+
+    @SerialName(value = "adductors")
     ADDUCTORS(),
-    @Json(name = "biceps")
+
+    @SerialName(value = "biceps")
     BICEPS(),
-    @Json(name = "calves")
+
+    @SerialName(value = "calves")
     CALVES(),
-    @Json(name = "chest")
+
+    @SerialName(value = "chest")
     CHEST(),
-    @Json(name = "forearms")
+
+    @SerialName(value = "forearms")
     FOREARMS(),
-    @Json(name = "glutes")
+
+    @SerialName(value = "glutes")
     GLUTES(),
-    @Json(name = "hamstrings")
+
+    @SerialName(value = "hamstrings")
     HAMSTRINGS(),
-    @Json(name = "lats")
+
+    @SerialName(value = "lats")
     LATS(),
-    @Json(name = "lower back")
+
+    @SerialName(value = "lower back")
     LOWER_BACK(),
-    @Json(name = "middle back")
+
+    @SerialName(value = "middle back")
     MIDDLE_BACK(),
-    @Json(name = "neck")
+
+    @SerialName(value = "neck")
     NECK(),
-    @Json(name = "quadriceps")
+
+    @SerialName(value = "quadriceps")
     QUADRICEPS(),
-    @Json(name = "shoulders")
+
+    @SerialName(value = "shoulders")
     SHOULDERS(),
-    @Json(name = "traps")
+
+    @SerialName(value = "traps")
     TRAPS(),
-    @Json(name = "triceps")
+
+    @SerialName(value = "triceps")
     TRICEPS();
 }
