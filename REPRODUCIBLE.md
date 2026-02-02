@@ -40,7 +40,7 @@ To reproduce the **Unsigned APK** exactly as it was built by the CI server:
     ```
 
 4.  **Check the Output:**
-    The artifact will be at `repro-out/build-unsigned.apk`.
+    The artifact will be at `repro-out/app-release-unsigned.apk`.
     The script will output the **SHA-256 hash**.
 
 ---
@@ -56,12 +56,12 @@ Use `apksigcopier` instead to compare the APKs.
     ```
 
 2.  **Download the Release:**
-    Download `release-signed.apk` from the GitHub Releases page.
+    Download `app-release.apk` from the GitHub Releases page.
 
 3.  **Run Comparison:**
     Compare the official release against your local build:
     ```bash
-    apksigcopier compare release-signed.apk --unsigned repro-out/build-unsigned.apk
+    apksigcopier compare app-release-signed.apk --unsigned repro-out/app-release-unsigned.apk
     ```
 
 ### Interpreting Results

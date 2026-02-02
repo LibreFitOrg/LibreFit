@@ -33,19 +33,13 @@ else
     PERMISSION_FIX="&& chown -R $(id -u):$(id -g) /project"
 fi
 
-
+# Docker command with fix for SELinux (:z) and permissions (chmod)
 docker run --rm \
     "$CONTAINER_ARGS" \
     -v "$PWD":/project:z \
     android-repro-check \
     /bin/bash -c "chmod +x gradlew && ./gradlew clean assembleRelease --no-daemon $PERMISSION_FIX"
 
-# Docker command with fix for SELinux (:z) and permissions (chmod)
-docker run --rm \
-    "$CONTAINER_ARGS" \
-    -v "$PWD":/project:z \
-    android-repro-check \
-    /bin/bash -c "chmod +x gradlew && ./gradlew clean assembleRelease --no-daemon"
 
 if [ -f "$APK_PATH" ]; then
     cp "$APK_PATH" "$OUTPUT_DIR/app-release-unsigned.apk"
