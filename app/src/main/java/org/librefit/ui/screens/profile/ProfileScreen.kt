@@ -54,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -92,7 +93,6 @@ import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.Locale
 import kotlin.random.Random
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -330,7 +330,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                                         + workout.completed.format(
                                     DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
                                         .withLocale(
-                                            Locale.getDefault()
+                                            LocalLocale.current.platformLocale
                                         )
                                 ),
                                 style = MaterialTheme.typography.bodyMedium

@@ -50,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -85,7 +86,6 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.Locale
 import kotlin.random.Random
 
 
@@ -548,7 +548,7 @@ private fun MeasurementScreenContent(
 private fun MeasurementScreenPreview() {
     val shortDate: DateTimeFormatter? = DateTimeFormatter
         .ofLocalizedDate(FormatStyle.SHORT)
-        .withLocale(Locale.getDefault())
+        .withLocale(LocalLocale.current.platformLocale)
 
     // Used to generate random dates
     val from = LocalDateTime.of(2025, 1, 1, 0, 0)
