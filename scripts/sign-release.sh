@@ -32,7 +32,7 @@ if docker --version | grep -qi "podman"; then
 else
     # Docker: Runs as root. Chown the 'repro-out' folder at the end so files aren't locked as root on the host.
     CONTAINER_ARGS=""
-    PERMISSION_FIX="&& chown -R $(id -u):$(id -g) repro-out"
+    PERMISSION_FIX="chown -R $(id -u):$(id -g) repro-out"
 fi
 
 docker run --rm \
