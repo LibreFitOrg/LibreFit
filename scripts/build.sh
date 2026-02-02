@@ -16,21 +16,29 @@ rm -rf "$OUTPUT_DIR" && mkdir -p "$OUTPUT_DIR"
 
 echo "🏗️  Building Unsigned APK..."
 
-# Initialize variable for engine-specific arguments
-CONTAINER_ARGS=""
 
-# Check if the 'docker' command is actually Podman or Standard Docker
 if docker --version | grep -qi "podman"; then
     echo "  > Detected Engine: Podman"
-    # Podman specific: maps user ID into the container automatically
+    # Podman: Maps host user to container user automatically
     CONTAINER_ARGS="--userns=keep-id"
+    # No manual permission fix needed
+    PERMISSION_FIX=""
 else
     echo "  > Detected Engine: Docker"
-    # Docker specific: Manually run as current user and fix Gradle Home
-    # Set GRADLE_USER_HOME because the default /root/.gradle won't be writable
-    # shellcheck disable=SC2034
-    CONTAINER_ARGS="-u $(id -u):$(id -g) -e GRADLE_USER_HOME=/project/.gradle"
+    # Docker: It runs as root (default). Set GRADLE_USER_HOME to the mounted volume so cache persists.
+    CONTAINER_ARGS="-e GRADLE_USER_HOME=/project/.gradle"
+
+    # Docker workaround: Since it ran as root, the files are now owned by root.
+    # Run 'chown' inside the container before exiting to give ownership back to the host user.
+    PERMISSION_FIX="&& chown -R $(id -u):$(id -g) /project"
 fi
+
+
+docker run --rm \
+    "$CONTAINER_ARGS" \
+    -v "$PWD":/project:z \
+    android-repro-check \
+    /bin/bash -c "chmod +x gradlew && ./gradlew clean assembleRelease --no-daemon $PERMISSION_FIX"
 
 # Docker command with fix for SELinux (:z) and permissions (chmod)
 docker run --rm \
