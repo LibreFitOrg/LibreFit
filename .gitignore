@@ -19,3 +19,8 @@ local.properties
 # Keystore files
 *.jks
 *.keystore
+
+
+
+/.android/
+/.kotlin/

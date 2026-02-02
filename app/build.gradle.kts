@@ -23,6 +23,10 @@ configure<ApplicationExtension> {
     namespace = "org.librefit"
     compileSdk = 36
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "org.librefit.app"
         minSdk = 26
@@ -37,11 +41,26 @@ configure<ApplicationExtension> {
         androidResources {
             localeFilters.addAll(listOf("en", "it"))
         }
+
+        // Do not use System.currentTimeMillis()
+        val timestamp = System.getenv("SOURCE_DATE_EPOCH")?.toLongOrNull() ?: 1700000000L
+        buildConfigField("long", "BUILD_TIME", "${timestamp}L")
+
+        // Disable vector->PNG generation (legacy adapter), which is non-deterministic.
+        vectorDrawables.generatedDensities()
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // Disable VCS Info (AGP 8.3+).
+            // If the git repo isn't perfectly clean, this injects diffs.
+            vcsInfo.include = false
+
+            // Note: If verification fails, try setting isShrinkResources = false.
+            // It is a common source of instability.
+            isShrinkResources = true
+
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -85,6 +104,9 @@ kotlin {
     }
 }
 
+dependencyLocking {
+    lockAllConfigurations()
+}
 
 dependencies {
 

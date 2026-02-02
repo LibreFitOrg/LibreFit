@@ -14,3 +14,17 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.about.libraries) apply false
 }
+
+// Lock the "Classpath" (Plugins like AGP/Kotlin)
+buildscript {
+    configurations.all {
+        resolutionStrategy.activateDependencyLocking()
+    }
+}
+
+// Lock "App" (Project's libraries)
+allprojects {
+    dependencyLocking {
+        lockAllConfigurations()
+    }
+}

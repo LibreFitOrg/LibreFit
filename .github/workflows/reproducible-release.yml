@@ -1,0 +1,46 @@
+name: Reproducible Release
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*' # Triggers only when you push a tag like v1.0.0
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to upload files to Releases
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Setup Docker environment
+      - name: Build Docker Image
+        run: docker build -t android-repro-check -f Dockerfile.build .
+
+      - name: Build Unsigned APK
+        run: |
+          chmod +x scripts/build.sh
+          ./scripts/build.sh
+
+        # Prepare Keystore from Secrets
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.jks
+
+      - name: Sign Release
+        env:
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+        run: |
+          chmod +x scripts/sign-release.sh
+          ./scripts/sign-release.sh
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            repro-out/app-release-unsigned.apk
+            repro-out/release-signed.apk
+          body: |
+            ## TODO

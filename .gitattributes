@@ -1,0 +1,6 @@
+* text=auto eol=lf
+*.java text eol=lf
+*.kt text eol=lf
+*.xml text eol=lf
+*.bat text eol=crlf
+*.pro text eol=lf
