@@ -4,7 +4,7 @@ This project supports [Reproducible Builds](https://reproducible-builds.org/).
 This means you can verify that the APK distributed on GitHub or F-Droid matches the source code exactly, proving no hidden code was injected during the release process.
 
 ## Build Environment
-To ensure determinism, we use a containerized build environment.
+To ensure determinism, a containerized build environment is used.
 
 *   **OS:** Ubuntu 22.04 (Pinned Digest)
 *   **Android Gradle Plugin:** 9.0+
@@ -25,7 +25,8 @@ To reproduce the **Unsigned APK** exactly as it was built by the CI server:
     ```bash
     git clone https://github.com/LibreFitOrg/LibreFit.git
     cd LibreFit
-    git checkout v1.0.0
+    # Specify version tag (e.g. v0.0.1)
+    git checkout v0.0.1
     ```
 
 2.  **Build the Docker Image:**
