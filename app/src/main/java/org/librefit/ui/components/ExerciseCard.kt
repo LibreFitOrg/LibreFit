@@ -81,6 +81,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
@@ -550,6 +551,7 @@ private fun Set(
                 Icon(
                     painter = painterResource(R.drawable.ic_delete),
                     contentDescription = stringResource(R.string.delete),
+                    tint = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
         }
@@ -692,7 +694,9 @@ private fun Set(
                     value = repValue,
                     onValueChange = { string ->
                         repValue = Formatter.normalizeNumericString(string)
-                        updateSetReps(Formatter.parseIntegerFromString(repValue) ?: 0, set.id)
+                        Formatter.parseIntegerFromString(repValue)?.let {
+                            updateSetReps(it, set.id)
+                        }
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -724,7 +728,7 @@ private fun Set(
 
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-@Preview
+@Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)
 @Composable
 private fun ExerciseCardPreview() {
     val currentIdSetWithRunningSet = remember { mutableStateOf<Long?>(null) }
@@ -755,7 +759,7 @@ private fun ExerciseCardPreview() {
         }
     }
 
-    LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
+    LibreFitTheme(dynamicColor = true, themeMode = ThemeMode.DARK) {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
                 ExerciseCard(
