@@ -226,7 +226,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                 launchSingleTop = true
             }
         },
-        fabDescription = stringResource(R.string.add_exercise)
+        fabDescription = stringResource(R.string.add_exercise),
+        fabText = stringResource(R.string.add_exercise),
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding) {
             item {

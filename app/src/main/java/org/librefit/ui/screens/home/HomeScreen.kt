@@ -365,6 +365,7 @@ fun HomeScreenPreview() {
             actionsElevated = listOf(false, false, false),
             fabAction = {},
             fabIcon = painterResource(R.drawable.ic_add),
+            fabText = stringResource(R.string.create_routine),
             bottomBar = {
                 NavigationBar {
                     MainScreenPages.entries.forEach { page ->

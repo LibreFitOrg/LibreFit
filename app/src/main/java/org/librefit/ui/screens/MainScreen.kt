@@ -86,6 +86,7 @@ fun SharedTransitionScope.MainScreen(
         fabAction = if (pagerState.currentPage == MainScreenPages.HOME.ordinal) fabAction else null,
         fabIcon = painterResource(R.drawable.ic_add),
         fabDescription = stringResource(R.string.create_routine),
+        fabText = stringResource(R.string.create_routine),
         bottomBar = {
             NavigationBar {
                 MainScreenPages.entries.forEach { page ->

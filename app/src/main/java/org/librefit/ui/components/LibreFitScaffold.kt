@@ -62,8 +62,8 @@ import org.librefit.R
  * @param fabIcon A [Painter] representing the icon displayed in the [FloatingActionButton]. It
  * must be passed in order to show the FAB.
  * @param fabDescription An optional string that provides a description of the [fabIcon] and [fabAction]
- * for accessibility purposes. Read mode at [Icon] and [FloatingActionButton]
- * @param fabText If this string is passed, the fab becomes [ExtendedFloatingActionButton].
+ * for accessibility purposes. See [Icon] and [FloatingActionButton]
+ * @param fabText If this string is passed, the fab becomes [ExtendedFloatingActionButton] (a wider fab to accommodate a [fabText])
  * @param bottomBar The bottom bar of the scaffold. By default there's no bottom bar.
  * @param content A composable lambda that defines the main content of the screen.
  */
