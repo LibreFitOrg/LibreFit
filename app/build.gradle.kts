@@ -117,6 +117,10 @@ kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_17
     }
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+        vendor.set(JvmVendorSpec.ADOPTIUM)
+    }
 }
 
 dependencyLocking {

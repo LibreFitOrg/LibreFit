@@ -15,14 +15,14 @@ plugins {
     alias(libs.plugins.about.libraries) apply false
 }
 
-// Lock the "Classpath" (Plugins like AGP/Kotlin)
+// Lock plugins
 buildscript {
     configurations.all {
         resolutionStrategy.activateDependencyLocking()
     }
 }
 
-// Lock "App" (Project's libraries)
+// Lock libraries
 allprojects {
     dependencyLocking {
         lockAllConfigurations()
