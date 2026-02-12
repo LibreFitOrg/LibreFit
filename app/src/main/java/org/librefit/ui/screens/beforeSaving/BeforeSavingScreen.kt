@@ -52,7 +52,10 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
 import org.librefit.enums.InfoMode
+import org.librefit.enums.SetMode
 import org.librefit.enums.SuccessMessage
+import org.librefit.enums.exercise.Category
+import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
@@ -439,17 +442,84 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-@Preview
+@Preview(device = "id:medium_phone")
 @Composable
 private fun BeforeSavingScreenPreview() {
     val e = listOf(
+        UiExerciseWithSets(),
+        UiExerciseWithSets(),
+        UiExerciseWithSets(),
+        UiExerciseWithSets(),
         UiExerciseWithSets(
-            exerciseDC = UiExerciseDC(name = "Barbell Bench Press - Medium Grip"),
-            exercise = UiExercise(restTime = 120),
+            exercise = UiExercise(setMode = SetMode.DURATION, restTime = 0, notes="Easy pace just to warm up"),
+            exerciseDC = UiExerciseDC(
+                name = "Running, Treadmill",
+                images = persistentListOf("Running_Treadmill/0.webp"),
+                equipment = Equipment.OTHER,
+                category = Category.CARDIO
+            ),
             sets = persistentListOf(
+                UiSet(elapsedTime = 605, completed = true))
+        ),
+        UiExerciseWithSets(
+            exercise = UiExercise(
+                setMode = SetMode.LOAD,
+                restTime = 120,
+            ),
+            exerciseDC = UiExerciseDC(
+                name = "Barbell Bench Press - Medium Grip",
+                images = persistentListOf("Barbell_Bench_Press_-_Medium_Grip/0.webp"),
+                equipment = Equipment.MACHINE,
+                category = Category.STRENGTH
+            ),
+            sets = persistentListOf(
+                UiSet(load = 80.0, reps = 8, completed = true),
                 UiSet(load = 80.0, reps = 9, completed = true),
                 UiSet(load = 80.0, reps = 9, completed = true),
-                UiSet(load = 80.0, reps = 9, completed = true)
+                UiSet(load = 50.0, reps = 8, completed = true),
+                UiSet(load = 50.0, reps = 9, completed = true),
+                UiSet(load = 50.0, reps = 9, completed = true),
+                UiSet(load = 50.0, reps = 8, completed = true),
+                UiSet(load = 50.0, reps = 9, completed = true),
+                UiSet(load = 50.0, reps = 9, completed = true),
+                UiSet(load = 50.0, reps = 8, completed = true),
+                UiSet(load = 50.0, reps = 9, completed = true),
+                UiSet(load = 50.0, reps = 9, completed = true),
+                UiSet(load = 50.0, reps = 8, completed = true),
+                UiSet(load = 50.0, reps = 9, completed = true),
+                UiSet(load = 50.0, reps = 9, completed = true),
+            )
+        ),
+        UiExerciseWithSets(
+            exercise = UiExercise(
+                setMode = SetMode.BODYWEIGHT,
+                restTime = 120,
+            ),
+            exerciseDC = UiExerciseDC(
+                name = "Pushups",
+                images = persistentListOf("Pushups/0.webp"),
+                equipment = Equipment.BODY_ONLY,
+                category = Category.STRENGTH
+            ),
+            sets = persistentListOf(
+                UiSet(reps = 9, completed = true),
+                UiSet(reps = 8, completed = true),
+                UiSet(reps = 9, completed = true),
+            )
+        ),
+        UiExerciseWithSets(
+            exercise = UiExercise(
+                setMode = SetMode.DURATION,
+                restTime = 120,
+            ),
+            exerciseDC = UiExerciseDC(
+                name = "Chest And Front Of Shoulder Stretch",
+                images = persistentListOf("Chest_And_Front_Of_Shoulder_Stretch/0.webp"),
+                equipment = Equipment.BODY_ONLY,
+                category = Category.STRETCHING
+            ),
+            sets = persistentListOf(
+                UiSet(elapsedTime = 127, completed = true),
             )
         )
     )
@@ -465,12 +535,12 @@ private fun BeforeSavingScreenPreview() {
                     showDatePickerDialog = {},
                     exercises = e,
                     workout = UiWorkout(
-                        title = "Chest on \uD83D\uDD25",
+                        title = "\uD83C\uDFCB Upper body",
                         notes = "Feeling well today",
-                        timeElapsed = 593
+                        timeElapsed = 3689
                     ),
-                    routine = UiWorkout(title = "Chest day"),
-                    volumeExercises = "$volume kg",
+                    routine = UiWorkout(title = "\uD83C\uDFCB Upper body"),
+                    volumeExercises = "$volume",
                     isTitleTooLong = false,
                     isTitleEmpty = false,
                     updateWorkoutTitle = {},

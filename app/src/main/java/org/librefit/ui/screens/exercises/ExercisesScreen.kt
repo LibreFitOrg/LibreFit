@@ -301,7 +301,7 @@ private fun SharedTransitionScope.ItemExerciseDC(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val model = remember { exercise.images.getOrNull(0) }
+            val model = remember { exercise.images.firstOrNull() }
             AsyncImage(
                 model = model?.let { "file:///android_asset/${it}" },
                 fallback = painterResource(R.drawable.no_image),
@@ -362,10 +362,10 @@ private fun SharedTransitionScope.ItemExerciseDC(
 
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-@Preview
+@Preview(device = "id:medium_phone")
 @Composable
 private fun ExercisesScreenPreview() {
-    var query by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf("running") }
 
     var filterValue by remember { mutableStateOf(FilterValue()) }
 
@@ -375,40 +375,40 @@ private fun ExercisesScreenPreview() {
                 ExercisesScreenContent(
                     animatedVisibilityScope = this,
                     addExercises = false,
-                    selectedExercisesIdList = setOf(),
+                    selectedExercisesIdList = setOf("1"),
                     filteredExerciseList = listOf(
                         UiExerciseDC(
                             id = "1",
-                            name = "3/4 Sit-Up",
-                            images = persistentListOf("3_4_Sit-Up/0.jpg"),
+                            name = "Running, Treadmill",
+                            images = persistentListOf("Running_Treadmill/0.webp"),
                             equipment = Equipment.BODY_ONLY,
                             category = Category.STRENGTH
                         ),
                         UiExerciseDC(
                             id = "2",
-                            name = "90/90 Hamstring",
-                            images = persistentListOf("90_90_Hamstring/0.jpg"),
+                            name = "Trail Running/Walking",
+                            images = persistentListOf("Trail_Running_Walking/0.webp"),
                             equipment = Equipment.BODY_ONLY,
                             category = Category.STRETCHING
                         ),
                         UiExerciseDC(
                             id = "3",
-                            name = "Ab Crunch Machine",
-                            images = persistentListOf("Ab_Crunch_Machine/0.jpg"),
+                            name = "Alternating Cable Shoulder Press",
+                            images = persistentListOf("Alternating_Cable_Shoulder_Press/0.webp"),
                             equipment = Equipment.MACHINE,
                             category = Category.STRENGTH
                         ),
                         UiExerciseDC(
                             id = "4",
-                            name = "Ab Roller",
-                            images = persistentListOf("Ab_Roller/0.jpg"),
+                            name = "Alternating Deltoid Raise",
+                            images = persistentListOf("Alternating_Deltoid_Raise/0.webp"),
                             equipment = Equipment.OTHER,
                             category = Category.STRENGTH
                         ),
                         UiExerciseDC(
                             id = "5",
-                            name = "Adductor",
-                            images = persistentListOf("Adductor/0.jpg"),
+                            name = "Alternating Floor Press",
+                            images = persistentListOf("Alternating_Floor_Press/0.webp"),
                             equipment = Equipment.FOAM_ROLL,
                             category = Category.STRETCHING
                         ),

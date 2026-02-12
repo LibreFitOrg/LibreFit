@@ -72,6 +72,7 @@ import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
+import kotlin.random.Random
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -340,7 +341,7 @@ private fun SharedTransitionScope.HomeScreenContent(
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class)
-@Preview
+@Preview(device = "id:medium_phone")
 @Composable
 fun HomeScreenPreview() {
     val pagerState = rememberPagerState(
@@ -412,12 +413,20 @@ fun HomeScreenPreview() {
                         innerPadding = innerPadding,
                         navController = rememberNavController(),
                         runningWorkout = runningWorkout.value,
-                        routines = (0..0).map { i ->
+                        routines = listOf(
                             UiWorkout(
-                                id = i.toLong(),
-                                title = "Chest day"
+                                id = Random.nextLong(),
+                                title = "\uD83C\uDFCB Upper body"
+                            ),
+                            UiWorkout(
+                                id = Random.nextLong(),
+                                title = "\uD83D\uDD31 Lower body"
+                            ),
+                            UiWorkout(
+                                id = Random.nextLong(),
+                                title = "\uD83C\uDFC3 Tempo run"
                             )
-                        },
+                        ),
                         navigateToRoutine = {},
                         deleteRunningWorkout = { runningWorkout.value = null },
                         animatedVisibilityScope = this

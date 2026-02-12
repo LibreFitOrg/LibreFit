@@ -327,7 +327,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-@Preview
+@Preview(device = "id:medium_phone")
 @Composable
 private fun EditWorkoutScreenPreview() {
     /**
@@ -345,10 +345,20 @@ private fun EditWorkoutScreenPreview() {
                     typeOfEdit = typeOfEdit,
                     exercisesWithSets = persistentListOf(
                         UiExerciseWithSets(
+                            exercise = UiExercise(setMode = SetMode.DURATION, restTime = 0),
+                            exerciseDC = UiExerciseDC(
+                                name = "Running, Treadmill",
+                                images = persistentListOf("Running_Treadmill/0.webp"),
+                                equipment = Equipment.OTHER,
+                                category = Category.CARDIO
+                            ),
+                            sets = persistentListOf(UiSet(elapsedTime = 600))
+                        ),
+                        UiExerciseWithSets(
                             exercise = UiExercise(setMode = SetMode.LOAD, restTime = 120),
                             exerciseDC = UiExerciseDC(
                                 name = "Barbell Bench Press - Medium Grip",
-                                images = persistentListOf("Barbell_Bench_Press_-_Medium_Grip/0.jpg"),
+                                images = persistentListOf("Barbell_Bench_Press_-_Medium_Grip/0.webp"),
                                 equipment = Equipment.MACHINE,
                                 category = Category.STRENGTH
                             ),
@@ -359,7 +369,7 @@ private fun EditWorkoutScreenPreview() {
                             )
                         )
                     ),
-                    workout = UiWorkout(title = "Chest day", notes = "Usually on monday"),
+                    workout = UiWorkout(title = "\uD83C\uDFCB Upper body"),
                     isTitleTooLong = false,
                     isTitleEmpty = false,
                     updateTitle = { _ -> },

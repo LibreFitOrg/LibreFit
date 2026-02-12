@@ -505,26 +505,68 @@ private fun BoxScope.FloatingWorkoutActionBar(
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class)
-@Preview
+@Preview(device = "id:medium_phone")
 @Composable
 private fun WorkoutScreenPreview() {
     val e = listOf(
         UiExerciseWithSets(
+            exercise = UiExercise(setMode = SetMode.DURATION, restTime = 0, notes="Easy pace just to warm up"),
+            exerciseDC = UiExerciseDC(
+                name = "Running, Treadmill",
+                images = persistentListOf("Running_Treadmill/0.webp"),
+                equipment = Equipment.OTHER,
+                category = Category.CARDIO
+            ),
+            sets = persistentListOf(
+                UiSet(elapsedTime = 605, completed = true))
+        ),
+        UiExerciseWithSets(
             exercise = UiExercise(
                 setMode = SetMode.LOAD,
                 restTime = 120,
-                notes = "Feeling well today"
             ),
             exerciseDC = UiExerciseDC(
                 name = "Barbell Bench Press - Medium Grip",
-                images = persistentListOf("Barbell_Bench_Press_-_Medium_Grip/0.jpg"),
+                images = persistentListOf("Barbell_Bench_Press_-_Medium_Grip/0.webp"),
                 equipment = Equipment.MACHINE,
                 category = Category.STRENGTH
             ),
             sets = persistentListOf(
+                UiSet(load = 80.0, reps = 8, completed = true),
                 UiSet(load = 80.0, reps = 9, completed = true),
-                UiSet(load = 80.0, reps = 8),
-                UiSet(load = 80.0, reps = 9)
+                UiSet(load = 80.0, reps = 9, completed = true),
+            )
+        ),
+        UiExerciseWithSets(
+            exercise = UiExercise(
+                setMode = SetMode.BODYWEIGHT,
+                restTime = 120,
+            ),
+            exerciseDC = UiExerciseDC(
+                name = "Pushups",
+                images = persistentListOf("Pushups/0.webp"),
+                equipment = Equipment.BODY_ONLY,
+                category = Category.STRENGTH
+            ),
+            sets = persistentListOf(
+                UiSet(reps = 9, completed = true),
+                UiSet(reps = 8, completed = true),
+                UiSet(reps = 9, completed = true),
+            )
+        ),
+        UiExerciseWithSets(
+            exercise = UiExercise(
+                setMode = SetMode.DURATION,
+                restTime = 120,
+            ),
+            exerciseDC = UiExerciseDC(
+                name = "Chest And Front Of Shoulder Stretch",
+                images = persistentListOf("Chest_And_Front_Of_Shoulder_Stretch/0.webp"),
+                equipment = Equipment.BODY_ONLY,
+                category = Category.STRETCHING
+            ),
+            sets = persistentListOf(
+                UiSet(elapsedTime = 127, completed = true),
             )
         )
     )
@@ -536,17 +578,34 @@ private fun WorkoutScreenPreview() {
                     title = AnnotatedString(stringResource(R.string.workout)),
                     navigateBack = {},
                     actions = listOf {},
-                    actionsEnabled = listOf(!e.isEmpty()),
+                    actionsEnabled = listOf(e.isNotEmpty()),
                     actionsDescription = listOf(stringResource(R.string.done)),
                 ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
                         WorkoutScreenContent(
                             animatedVisibilityScope = this@AnimatedVisibility,
                             exercisesWithSets = e,
-                            previousPerformances = emptyList(),
+                            previousPerformances = listOf(
+                                listOf(
+                                    PreviousPerformanceSet(time = 612)
+                                ),
+                                listOf(
+                                    PreviousPerformanceSet(load = 80.0, reps = 7),
+                                    PreviousPerformanceSet(load = 80.0, reps = 8),
+                                    PreviousPerformanceSet(load = 80.0, reps = 8)
+                                ),
+                                listOf(
+                                    PreviousPerformanceSet(reps = 7),
+                                    PreviousPerformanceSet(reps = 8),
+                                    PreviousPerformanceSet(reps = 8)
+                                ),
+                                listOf(
+                                    PreviousPerformanceSet(time = 143),
+                                )
+                            ),
                             idSetWithRunningStopwatch = null,
                             updateIdSetWithRunningStopwatch = {},
-                            timeElapsed = 186,
+                            timeElapsed = 3686,
                             isStopwatchPaused = false,
                             workoutProgress = workoutProgress,
                             isHeaderSticky = true,
@@ -567,7 +626,7 @@ private fun WorkoutScreenPreview() {
                         )
                         FloatingWorkoutActionBar(
                             restTimerProgress = 97f / 120,
-                            restTime = 97,
+                            restTime = 0,
                             modifyRestTime = {},
                             fabAction = {}
                         )

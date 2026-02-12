@@ -458,20 +458,38 @@ fun StreakCard(weekStreak: Int) {
 
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class)
-@Preview
+@Preview(device = "id:medium_phone")
 @Composable
 private fun ProfileScreenPreview() {
-    val workoutsWithExercises = (0..0).map {
+    val workoutsWithExercises = listOf(
         UiWorkoutWithExercisesAndSets(
             workout = UiWorkout(
                 id = Random.nextLong(),
-                title = "Chest on \uD83D\uDD25",
-                completed = LocalDateTime.now().minusDays(it.toLong() * 2),
-                timeElapsed = 593
+                title = "\uD83C\uDFCB Upper body",
+                completed = LocalDateTime.now(),
+                timeElapsed = 3689
             ),
             exercisesWithSets = persistentListOf()
-        )
-    }
+        ),
+        UiWorkoutWithExercisesAndSets(
+            workout = UiWorkout(
+                id = Random.nextLong(),
+                title = "\uD83C\uDFC3 Tempo run",
+                completed = LocalDateTime.now().minusDays(2L),
+                timeElapsed = 1245
+            ),
+            exercisesWithSets = persistentListOf()
+        ),
+        UiWorkoutWithExercisesAndSets(
+            workout = UiWorkout(
+                id = Random.nextLong(),
+                title = "\uD83D\uDD31 Lower body",
+                completed = LocalDateTime.now().minusDays(4L),
+                timeElapsed = 3984
+            ),
+            exercisesWithSets = persistentListOf()
+        ),
+    )
 
     val listChartData = workoutsWithExercises.map {
         Point(
