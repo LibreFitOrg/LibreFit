@@ -12,7 +12,7 @@ exercise paired with images and step-by-step instructions covering setup and exe
 Schedule single sessions, filter exercises by equipment, muscle group or difficulty with one tap.
 During workouts, track every set, rep, rest interval, and load in real time.
 
-<img src="assets/screenshot_1.webp" width="160" alt="screenshot_1"><img src="assets/screenshot_2.webp" width="160" alt="screenshot_2"><img src="assets/screenshot_3.webp" width="160" alt="screenshot_3"><img src="assets/screenshot_4.webp" width="160" alt="screenshot_4"><img src="assets/screenshot_5.webp" width="160" alt="screenshot_5">
+<img src="assets/screenshot_1.png" width="160" alt="screenshot_1"><img src="assets/screenshot_2.png" width="160" alt="screenshot_2"><img src="assets/screenshot_3.png" width="160" alt="screenshot_3"><img src="assets/screenshot_4.png" width="160" alt="screenshot_4"><img src="assets/screenshot_5.png" width="160" alt="screenshot_5">
 
 ## Table of Contents
 
