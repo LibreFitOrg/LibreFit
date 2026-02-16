@@ -156,6 +156,7 @@ fun MeasurementScreen(
             confirmText = stringResource(R.string.delete),
             onConfirm = {
                 viewModel.deleteMeasurementById(it)
+                idMeasurementToDelete.value = null
             },
             onDismiss = {
                 idMeasurementToDelete.value = null
@@ -543,7 +544,7 @@ private fun MeasurementScreenContent(
     }
 }
 
-@Preview(locale = "it")
+@Preview
 @Composable
 private fun MeasurementScreenPreview() {
     val shortDate: DateTimeFormatter? = DateTimeFormatter
