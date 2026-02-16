@@ -1,0 +1,23 @@
+LibreFit is a free and open-source workout tracker designed with privacy in mind.<br>
+Create fully personalized workouts assembled from a rich dataset of hundreds of exercises — each exercise paired with images and step-by-step instructions covering setup and execution.<br>
+Schedule single sessions, filter exercises by equipment, muscle group or difficulty with one tap. During workouts, track every set, rep, rest interval, and load in real time.<br>
+
+<b>📊 Activity Tracking</b><br>
+Log your workouts with its exercises, sets, reps, and duration.<br><br>
+<b>🎯 Progress Monitoring</b><br>
+Visualize your progress over time with insightful charts and statistics.<br><br>
+<b>📅 Workout Planning</b><br>
+Create and customize workout plans tailored to your fitness goals.<br><br>
+<b>✨️ Rich dataset of exercises with images</b><br>
+Access a comprehensive library of 800+ exercises with detailed instructions and high-quality demonstration images for proper form and technique.<br><br>
+<b>📱 Offline-First</b><br>
+Track workouts and access all features without an internet connection.<br><br>
+<b>🔒 Privacy-Focused</b><br>
+Your data is stored locally on your device, ensuring that your personal information remains private and secure.<br><br>
+<b>🎨 Material Design 3 Expressive</b><br>
+Enjoy a sleek and modern user interface that enhances your experience.<br><br>
+
+Website: https://librefit.org<br>
+Open source code: https://github.com/LibreFitOrg/LibreFit<br>
+Donate: https://librefit.org/donate<br>
+Contribute: https://github.com/LibreFitOrg/LibreFit/blob/main/CONTRIBUTING.md<br>
