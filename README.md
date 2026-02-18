@@ -52,7 +52,7 @@ You can actively contribute to the project and become a **supporter** in one of 
 - 🏋️ [Improving the exercise dataset](README.md#-improve-the-exercise-dataset)
 
 Every **supporter** will be _credited_ in the about page of the app and in
-[credits section](README.md#-credits) and it will be able to request the **supporter version** of
+[credits section](README.md#-credits), and it will be able to request the **supporter version** of
 LibreFit
 which includes:
 
@@ -66,7 +66,7 @@ which includes:
 
 Donations are the main way to:
 
-- **Cover costs** (e.g. domain, paid plans for emails, etc).
+- **Cover costs** (e.g. domain, paid plans for emails, etc.).
 - **Thank and incentivize the creator** to invest more time in the project.
 
 To donate, visit the [donation page](https://librefit.org/donate).
@@ -97,7 +97,7 @@ It is also advisable to search the internet for answers first.
 If you then still feel the need to ask a question and need clarification, we recommend the
 following:
 
-- Open an [Discussion](https://github.com/LibreFitOrg/LibreFit/discussions/new).
+- Open a [Discussion](https://github.com/LibreFitOrg/LibreFit/discussions/new).
 - Provide as much context as you can about what you're running into.
 - Provide project and platform versions, depending on what seems relevant.
 
@@ -105,7 +105,7 @@ We will then take care of the question as soon as possible.
 
 ## ⚡ Building LibreFit from source
 
-1. **Clone** your the project locally (or download source code as `.zip` file):
+1. **Clone** the project locally (or download source code as `.zip` file):
     ```bash
     git clone https://github.com/LibreFitOrg/LibreFit.git
     ```
@@ -122,7 +122,7 @@ We will then take care of the question as soon as possible.
 
 ## 📜 License
 
-LibreFit is licensed under the [GNU General Public License v3.0 (GPL-3)](COPYING) and it is subject
+LibreFit is licensed under the [GNU General Public License v3.0 (GPL-3)](COPYING), and it is subject
 to these [additional terms](ADDITIONAL_TERMS.md).
 
 In short, this means you are free to use, modify, and distribute the code, but you must:
@@ -152,3 +152,7 @@ Thanks to everyone who helped the project!
 ### 🏗 Contributors
 
 [Contribute to source code](CONTRIBUTING.md) to be the **first** person listed.
+
+---
+
+Made with ❤️ by [IamDg](https://github.com/IamDg) and [contributors](README.md#-contributors)
