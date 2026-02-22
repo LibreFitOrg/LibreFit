@@ -23,7 +23,8 @@ During workouts, track every set, rep, rest interval, and load in real time.
 - ❓ [I Have A Question](README.md#-i-have-a-question)
 - ⚡ [Building LibreFit from source](README.md#-building-librefit-from-source)
 - 📜 [License](README.md#-license)
-    - ™️ [Branding and Assets](README.md#-branding-and-assets)
+    - ™️ [Branding](README.md#-branding)
+    - 📷 [Exercises' images](README.md#-images-of-exercises)
 - 👥 [Credits](README.md#-credits)
 
 ## 🚀 Features
@@ -33,7 +34,7 @@ During workouts, track every set, rep, rest interval, and load in real time.
   statistics.
 - 📅 **Workout Planning**: Create and customize workout plans tailored to your fitness goals.
 - ✨️ **Rich dataset of exercises with images**: Access a comprehensive library of 800+ exercises
-  with detailed instructions and high-quality demonstration images for proper form and technique.
+  with detailed instructions and demonstration images for proper form and technique.
 - 📱 **Offline-First**: Track workouts and access all features without an internet connection.
 - 🔒 **Privacy-Focused**: Your data is stored locally on your device, ensuring that your personal
   information remains private and secure.
@@ -71,6 +72,7 @@ Donations are the main way to:
 
 To donate, visit the [donation page](https://librefit.org/donate).
 
+> [!IMPORTANT]
 > If you wish the **supporter version**, ensure to donate
 > using the **integrated processor** instead of direct on-chain transaction
 
@@ -90,9 +92,7 @@ See [Contributing to LibreFit](CONTRIBUTING.md)
 
 Before you ask a question, it is best to search for
 existing [Discussions](https://github.com/LibreFitOrg/LibreFit/discussions)
-and [Issues](https://github.com/LibreFitOrg/LibreFit/issues) that might help you. In case you have
-found a suitable issue and still need clarification, you can write your question in this discussion.
-It is also advisable to search the internet for answers first.
+and [Issues](https://github.com/LibreFitOrg/LibreFit/issues) that might help you.
 
 If you then still feel the need to ask a question and need clarification, we recommend the
 following:
@@ -118,7 +118,8 @@ We will then take care of the question as soon as possible.
     ./gradlew assembleDebug
     ```
    
-> Note: this project supports [reproducible builds](https://reproducible-builds.org/). See [REPRODUCIBLE.md](REPRODUCIBLE.md)
+> [!NOTE]
+> This project supports [reproducible builds](https://reproducible-builds.org/). See [REPRODUCIBLE.md](REPRODUCIBLE.md)
 
 ## 📜 License
 
@@ -134,12 +135,22 @@ In short, this means you are free to use, modify, and distribute the code, but y
 - **Do not use the brand:** You cannot use the name "LibreFit" or its logo to promote your modified
   version.
 
-### ™️ Branding and Assets
+### ™️ Branding
 
 The "LibreFit" name and logos are trademarks. **All Rights Reserved**.
 
 Their use is governed by the [Trademark Policy](TRADEMARK_POLICY.md) which applies to relevant files located in
 `assets` and `app/src/main/res`.
+
+### 📷 Images of exercises
+
+> [!CAUTION]
+> Due to the nature of AI generation, these images may contain inaccuracies and/or artifacts.
+> **They are provided "as is" without any warranty**.
+
+Images in `app/src/main/assets` are AI generated therefore they are **not subject to copyright** and are **provided without restriction**.
+
+They are continuously reviewed and regenerated in order to improve their quality.
 
 ## 👥 Credits
 
@@ -155,4 +166,4 @@ Thanks to everyone who helped the project!
 
 ---
 
-Made with ❤️ by [IamDg](https://github.com/IamDg) and [contributors](README.md#-contributors)
+Made with ❤️ by [IamDg](https://github.com/IamDg)
