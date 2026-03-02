@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.librefit.R
@@ -72,7 +73,8 @@ fun InfoModalBottomSheet(
                 item {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.headlineLargeEmphasized
+                        style = MaterialTheme.typography.headlineLargeEmphasized,
+                        textAlign = TextAlign.Center
                     )
                 }
                 item {
@@ -93,7 +95,6 @@ fun InfoModalBottomSheet(
                         InfoMode.BEFORE_SAVING_STATS -> StatsLottie()
                         InfoMode.MUSCLE_DISTRIBUTION -> StatsLottie()
                         InfoMode.EXERCISES_DISTRIBUTION -> StatsLottie()
-                        InfoMode.DISMISS -> {}
                     }
                 }
             }
