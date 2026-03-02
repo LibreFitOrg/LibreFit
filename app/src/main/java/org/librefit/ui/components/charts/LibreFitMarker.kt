@@ -8,24 +8,21 @@
 
 package org.librefit.ui.components.charts
 
-import android.graphics.Typeface
-import android.text.Layout
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
+import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
+import com.patrykandpatrick.vico.compose.common.Fill
+import com.patrykandpatrick.vico.compose.common.Insets
+import com.patrykandpatrick.vico.compose.common.LayeredComponent
+import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.insets
-import com.patrykandpatrick.vico.compose.common.shape.markerCorneredShape
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.LayeredComponent
-import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 
 /**
  * A custom [CartesianMarker] to display information while tapping a chart
@@ -35,27 +32,23 @@ fun rememberLibreFitMarker(
     valueFormatter: DefaultCartesianMarker.ValueFormatter =
         DefaultCartesianMarker.ValueFormatter.default(),
     showIndicator: Boolean = true,
-    typeface: Typeface
+    style: TextStyle
 ): CartesianMarker {
-    val labelBackgroundShape = markerCorneredShape(CorneredShape.Corner.Rounded)
     val labelBackground =
         rememberShapeComponent(
-            fill = fill(MaterialTheme.colorScheme.background),
-            shape = labelBackgroundShape,
+            fill = Fill(MaterialTheme.colorScheme.background),
+            shape = RoundedCornerShape(percent = 50),
             strokeThickness = 1.dp,
-            strokeFill = fill(MaterialTheme.colorScheme.outline),
+            strokeFill = Fill(MaterialTheme.colorScheme.outline),
         )
     val label =
         rememberTextComponent(
-            color = MaterialTheme.colorScheme.onSurface,
-            typeface = typeface,
-            textAlignment = Layout.Alignment.ALIGN_CENTER,
-            padding = insets(8.dp, 4.dp),
+            style = style,
+            padding = Insets(8.dp, 4.dp),
             background = labelBackground,
-            minWidth = TextComponent.MinWidth.fixed(40f),
         )
     val indicatorFrontComponent =
-        rememberShapeComponent(fill(MaterialTheme.colorScheme.surface), CorneredShape.Pill)
+        rememberShapeComponent(Fill(MaterialTheme.colorScheme.surfaceContainerHigh), RoundedCornerShape(50))
     val guideline = rememberAxisGuidelineComponent()
 
     val strokeColor = MaterialTheme.colorScheme.surface
@@ -68,21 +61,21 @@ fun rememberLibreFitMarker(
                 { color ->
                     LayeredComponent(
                         back = ShapeComponent(
-                            fill = fill(color.copy(alpha = 0.15f)),
-                            shape = CorneredShape.Pill
+                            fill = Fill(color.copy(alpha = 0.15f)),
+                            shape = RoundedCornerShape(50)
                         ),
                         front =
                             LayeredComponent(
                                 back = ShapeComponent(
-                                    fill = fill(color),
-                                    shape = CorneredShape.Pill,
-                                    strokeFill = fill(strokeColor),
-                                    strokeThicknessDp = 1f
+                                    fill = Fill(color),
+                                    shape = RoundedCornerShape(50),
+                                    strokeFill = Fill(strokeColor),
+                                    strokeThickness = 3.dp
                                 ),
                                 front = indicatorFrontComponent,
-                                padding = insets(5.dp),
+                                padding = Insets(5.dp),
                             ),
-                        padding = insets(6.dp),
+                        padding = Insets(6.dp),
                     )
                 }
             } else {

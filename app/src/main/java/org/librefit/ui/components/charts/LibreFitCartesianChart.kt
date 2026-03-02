@@ -8,7 +8,6 @@
 
 package org.librefit.ui.components.charts
 
-import android.graphics.Typeface
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ElevatedCard
@@ -36,57 +36,49 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontSynthesis
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.Zoom
+import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerVisibilityListener
+import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.Fill
+import com.patrykandpatrick.vico.compose.common.Insets
+import com.patrykandpatrick.vico.compose.common.Legend
+import com.patrykandpatrick.vico.compose.common.LegendItem
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
+import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.component.shapeComponent
-import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.insets
+import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.rememberHorizontalLegend
-import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.Zoom
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.Legend
-import com.patrykandpatrick.vico.core.common.LegendItem
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
-import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import org.librefit.R
 import org.librefit.enums.chart.BodyweightChart
 import org.librefit.enums.chart.ChartMode
@@ -110,7 +102,7 @@ val labelListKey = ExtraStore.Key<List<String>>()
 val legendLabelKey = ExtraStore.Key<List<String>>()
 
 /**
- * A custom [com.patrykandpatrick.vico.core.cartesian.CartesianChart]
+ * A custom [com.patrykandpatrick.vico.compose.cartesian.CartesianChart]
  *
  * @param format It is used by [VerticalAxis] to display Y axis values following the provided format.
  * Leave empty in order to use the default format.
@@ -202,19 +194,11 @@ fun LibreFitCartesianChart(
     )
 
     val materialStyle = MaterialTheme.typography.labelLarge
-    val resolver = LocalFontFamilyResolver.current
-    val typeface: Typeface = remember {
-        resolver.resolve(
-            fontFamily = materialStyle.fontFamily,
-            fontWeight = materialStyle.fontWeight ?: FontWeight.Normal,
-            fontStyle = materialStyle.fontStyle ?: FontStyle.Normal,
-            fontSynthesis = materialStyle.fontSynthesis ?: FontSynthesis.All
-        ).value as Typeface
-    }
 
     val labelComponent = rememberTextComponent(
-        color = MaterialTheme.colorScheme.onSurface,
-        typeface = typeface
+        style =materialStyle.copy(
+            color = MaterialTheme.colorScheme.onSurface
+        )
     )
 
     ElevatedCard(
@@ -288,9 +272,9 @@ fun LibreFitCartesianChart(
             // Columns' style
             val columnComponents = colorPalette.map { c ->
                 rememberLineComponent(
-                    fill = fill(c),
+                    fill = Fill(c),
                     thickness = 32.dp,
-                    shape = CorneredShape.rounded(
+                    shape = RoundedCornerShape(
                         32,
                         32
                     )
@@ -301,12 +285,12 @@ fun LibreFitCartesianChart(
             val lineComponents = colorPalette.map {
                 LineCartesianLayer.rememberLine(
                     fill = LineCartesianLayer.LineFill.single(
-                        fill(it)
+                        Fill(it)
                     ),
                     areaFill = LineCartesianLayer.AreaFill.single(
-                        fill(
-                            ShaderProvider.verticalGradient(
-                                arrayOf(
+                        Fill(
+                            Brush.verticalGradient(
+                                listOf(
                                     it.copy(alpha = 0.4f),
                                     Color.Transparent
                                 )
@@ -325,9 +309,9 @@ fun LibreFitCartesianChart(
                         extraStore[legendLabelKey].forEachIndexed { index, label ->
                             add(
                                 LegendItem(
-                                    shapeComponent(
-                                        fill(colorPalette[index]),
-                                        CorneredShape.Pill
+                                    ShapeComponent(
+                                        Fill(colorPalette[index]),
+                                        RoundedCornerShape(percent = 50)
                                     ),
                                     labelComponent,
                                     label,
@@ -335,7 +319,7 @@ fun LibreFitCartesianChart(
                             )
                         }
                     },
-                    padding = insets(top = 16.dp),
+                    padding = Insets(top = 16.dp),
                 )
 
             AnimatedContent(targetState = yValuesArePresent) { it ->
@@ -359,9 +343,9 @@ fun LibreFitCartesianChart(
                                     ),
                                     marker = rememberLibreFitMarker(
                                         valueFormatter = DefaultCartesianMarker.ValueFormatter.default(
-                                            format
+                                            suffix = format.negativeSuffix
                                         ),
-                                        typeface = typeface
+                                        style = materialStyle
                                     ),
                                     markerVisibilityListener = object :
                                         CartesianMarkerVisibilityListener {
@@ -395,7 +379,7 @@ fun LibreFitCartesianChart(
                                         label = labelComponent,
                                         valueFormatter = remember(format) {
                                             CartesianValueFormatter.decimal(
-                                                format
+                                                suffix = format.negativeSuffix
                                             )
                                         }
                                     ),
@@ -408,7 +392,7 @@ fun LibreFitCartesianChart(
                                                         ?.get(x.toInt())
                                                         ?: xValues.first()
                                                 }
-                                            else CartesianValueFormatter.Default
+                                            else CartesianValueFormatter.decimal()
                                         }
                                     ),
                                     legend = legend,
