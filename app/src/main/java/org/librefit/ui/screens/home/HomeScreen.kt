@@ -41,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -63,6 +64,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import org.librefit.R
+import org.librefit.enums.InfoMode
 import org.librefit.enums.pages.MainScreenPages
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.nav.Route
@@ -72,6 +74,7 @@ import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.dialogs.ConfirmDialog
+import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
@@ -86,6 +89,7 @@ fun SharedTransitionScope.HomeScreen(
 ) {
     val viewModel: HomeScreenViewModel = hiltViewModel()
 
+    val showKeepAndroidOpen by viewModel.showKeepAndroidOpen.collectAsStateWithLifecycle()
 
     val requestPermissionNextTime by viewModel.requestPermissionNextTime.collectAsStateWithLifecycle()
 
@@ -109,6 +113,8 @@ fun SharedTransitionScope.HomeScreen(
         routines = routines,
         animatedVisibilityScope = animatedVisibilityScope,
         deleteRunningWorkout = viewModel::deleteRunningWorkout,
+        showKeepAndroidOpen = showKeepAndroidOpen,
+        onKeepAndroidOpenCheckboxChange = viewModel::saveKeepOpenAndroidCheckbox,
         navigateToRoutine = { workoutId ->
             val hasNotificationPermission = notificationPermissionState?.status?.isGranted != false
 
@@ -137,11 +143,13 @@ private fun SharedTransitionScope.HomeScreenContent(
     navController: NavHostController,
     routines: List<UiWorkout>,
     runningWorkout: UiWorkout?,
+    showKeepAndroidOpen: Boolean,
+    onKeepAndroidOpenCheckboxChange: (Boolean) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     deleteRunningWorkout: () -> Unit,
     navigateToRoutine: (Long) -> Unit
 ) {
-    val showConfirmDeleteRunningWorkoutDialog = remember { mutableStateOf(false) }
+    val showConfirmDeleteRunningWorkoutDialog = rememberSaveable { mutableStateOf(false) }
 
     if (showConfirmDeleteRunningWorkoutDialog.value) {
         ConfirmDialog(
@@ -156,6 +164,20 @@ private fun SharedTransitionScope.HomeScreenContent(
                 showConfirmDeleteRunningWorkoutDialog.value = false
             }
         )
+    }
+
+    val showModalBottomSheet = rememberSaveable {
+        mutableStateOf(showKeepAndroidOpen)
+    }
+
+    if(showModalBottomSheet.value) {
+        InfoModalBottomSheet(
+            infoMode = InfoMode.KEEP_ANDROID_OPEN,
+            keepAndroidCheckboxCheck = !showKeepAndroidOpen,
+            onKeepAndroidOpenCheckboxChange = onKeepAndroidOpenCheckboxChange
+        ) {
+            showModalBottomSheet.value = false
+        }
     }
 
     // It is triggered when there's an unsaved, running workout but user taps a routine
@@ -422,6 +444,8 @@ fun HomeScreenPreview() {
                         innerPadding = innerPadding,
                         navController = rememberNavController(),
                         runningWorkout = runningWorkout.value,
+                        showKeepAndroidOpen = Random.nextBoolean(),
+                        onKeepAndroidOpenCheckboxChange = {},
                         routines = listOf(
                             UiWorkout(
                                 id = Random.nextLong(),

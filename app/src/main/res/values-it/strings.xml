@@ -102,6 +102,7 @@
     <string name="language">Lingua</string>
     <string name="cancel_dialog">Annulla</string>
     <string name="quit_dialog">Abbandona</string>
+    <string name="librefit_is_under_threat_desc">- A partire da Settembre 2026, Google pianifica di impedirti di installare qualsiasi app a meno che lo sviluppatore non abbia pagato una tassa, non si sia registrato, e non abbia consegnato i suoi dati identificativi personali a Google.\n- Questa politica annienta l\'ecosistema aperto di Android e **ti toglie il diritto fondamentale di scegliere quale software usare nel dispositivo di tua proprietà**.\n- Ti preghiamo di visitare [keepandroidopen.org](https://keepandroidopen.org) per saperne di più su questa minaccia alla tua libertà digitale e cosa puoi fare per fermarla.</string>
     <string name="rest_time">Tempo di riposo</string>
     <string name="type_of_set">Tipologia di serie</string>
     <string name="previous">Precedente</string>
@@ -339,5 +340,7 @@
     <string name="stick_status_bar">Fissa barra di stato</string>
     <string name="stick_status_bar_desc">La barra di stato dell\'allenamento in corso sarà fissa in cima allo schermo</string>
     <string name="edit">Modifica</string>
+    <string name="librefit_is_under_threat">LibreFit è in pericolo</string>
+    <string name="do_not_show_again">Non mostrare di nuovo</string>
 
 </resources>

@@ -8,11 +8,15 @@
 
 package org.librefit.ui.components.modalBottomSheets
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +48,8 @@ import org.librefit.ui.theme.LibreFitTheme
 @Composable
 fun InfoModalBottomSheet(
     infoMode: InfoMode,
+    keepAndroidCheckboxCheck: Boolean? = null,
+    onKeepAndroidOpenCheckboxChange: ((Boolean) -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
     if (infoMode != InfoMode.DISMISS) {
@@ -52,6 +59,7 @@ fun InfoModalBottomSheet(
             InfoMode.BEFORE_SAVING_STATS -> stringResource(R.string.statistics)
             InfoMode.MUSCLE_DISTRIBUTION -> stringResource(R.string.muscles_distribution)
             InfoMode.EXERCISES_DISTRIBUTION -> stringResource(R.string.exercises_distribution)
+            InfoMode.KEEP_ANDROID_OPEN -> stringResource(R.string.librefit_is_under_threat)
         }
 
         val text = when (infoMode) {
@@ -60,6 +68,7 @@ fun InfoModalBottomSheet(
             InfoMode.BEFORE_SAVING_STATS -> stringResource(R.string.statistics_desc)
             InfoMode.MUSCLE_DISTRIBUTION -> stringResource(R.string.muscle_distribution_desc)
             InfoMode.EXERCISES_DISTRIBUTION -> stringResource(R.string.exercises_distribution_desc)
+            InfoMode.KEEP_ANDROID_OPEN -> stringResource(R.string.librefit_is_under_threat_desc)
         }
 
         ModalBottomSheet(
@@ -88,6 +97,21 @@ fun InfoModalBottomSheet(
                         }
                     }
                 }
+                if (infoMode == InfoMode.KEEP_ANDROID_OPEN && keepAndroidCheckboxCheck != null) {
+                    item {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(stringResource(R.string.do_not_show_again))
+                            Checkbox(
+                                checked = keepAndroidCheckboxCheck,
+                                onCheckedChange = onKeepAndroidOpenCheckboxChange
+                            )
+                        }
+                    }
+                }
                 item {
                     when (infoMode) {
                         InfoMode.REST_TIMER -> AlarmLottie()
@@ -95,6 +119,10 @@ fun InfoModalBottomSheet(
                         InfoMode.BEFORE_SAVING_STATS -> StatsLottie()
                         InfoMode.MUSCLE_DISTRIBUTION -> StatsLottie()
                         InfoMode.EXERCISES_DISTRIBUTION -> StatsLottie()
+                        InfoMode.KEEP_ANDROID_OPEN -> Image(
+                            painter = painterResource(R.drawable.altered_deal),
+                            contentDescription = null
+                        )
                     }
                 }
             }
@@ -102,10 +130,15 @@ fun InfoModalBottomSheet(
     }
 }
 
-@Preview
+@Preview(locale = "it")
 @Composable
 private fun InfoModalBottomSheetPreview() {
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
-        InfoModalBottomSheet(InfoMode.EXERCISES_DISTRIBUTION) { }
+        InfoModalBottomSheet(
+            infoMode = InfoMode.KEEP_ANDROID_OPEN,
+            keepAndroidCheckboxCheck = true
+        ) {
+
+        }
     }
 }

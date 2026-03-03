@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,13 +59,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
+import org.librefit.enums.InfoMode
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.nav.Route
 import org.librefit.ui.components.AppNameText
 import org.librefit.ui.components.HeadlineText
+import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.dialogs.UrlActionDialog
+import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
 import org.librefit.ui.theme.LibreFitTheme
 
 
@@ -76,10 +80,22 @@ fun AboutScreen(navController: NavHostController) {
 
     val resources = LocalResources.current
 
-    val url = remember { mutableStateOf<String?>(null) }
+    val url = rememberSaveable { mutableStateOf<String?>(null) }
 
     url.value?.let {
         UrlActionDialog(it) { url.value = null }
+    }
+
+    val infoMode = rememberSaveable {
+        mutableStateOf<InfoMode?>(null)
+    }
+
+    infoMode.value?.let {
+        InfoModalBottomSheet(
+            infoMode = it
+        ) {
+            infoMode.value = null
+        }
     }
 
     LibreFitScaffold(
@@ -187,6 +203,17 @@ fun AboutScreen(navController: NavHostController) {
                     }
                 }
 
+            }
+
+            item {
+                LibreFitButton(
+                    text = stringResource(R.string.librefit_is_under_threat),
+                    elevated = false,
+                    icon = painterResource(R.drawable.ic_warning),
+                    iconDescription = stringResource(R.string.librefit_is_under_threat)
+                ) {
+                    infoMode.value = InfoMode.KEEP_ANDROID_OPEN
+                }
             }
 
             item {

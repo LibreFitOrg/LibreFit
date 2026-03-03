@@ -57,6 +57,7 @@ class UserPreferencesRepository @Inject constructor(
         val isSupporterKey = booleanPreferencesKey("is_supporter")
         val pastVersionCodeKey = longPreferencesKey("pastVersionCode")
         val isWorkoutHeaderStickyKey = booleanPreferencesKey("is_workout_header_sticky")
+        val showKeepAndroidOpenKey = booleanPreferencesKey("showKeepAndroidOpenKey")
     }
 
     val themeMode: StateFlow<ThemeMode> = dataStore.data
@@ -127,6 +128,14 @@ class UserPreferencesRepository @Inject constructor(
 
     val isWorkoutHeaderSticky: StateFlow<Boolean> = dataStore.data
         .map { preferences -> preferences[isWorkoutHeaderStickyKey] != false }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = true
+        )
+
+    val showKeepAndroidOpen: StateFlow<Boolean> = dataStore.data
+        .map { preferences -> preferences[showKeepAndroidOpenKey] != false }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,

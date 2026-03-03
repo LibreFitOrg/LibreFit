@@ -24,15 +24,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    userPreferences: UserPreferencesRepository,
+    private val userPreferences: UserPreferencesRepository,
     private val workoutRepository: WorkoutRepository
 ) : ViewModel() {
     val requestPermissionNextTime: StateFlow<Boolean> = userPreferences.requestPermissionsNextTime
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = true
-        )
 
     val routines = workoutRepository.routines
         .map { list -> list.map { it.toUi() } }
@@ -49,6 +44,17 @@ class HomeScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = null
         )
+
+    val showKeepAndroidOpen = userPreferences.showKeepAndroidOpen
+
+    fun saveKeepOpenAndroidCheckbox(showAgain : Boolean) {
+        viewModelScope.launch {
+            userPreferences.savePreference(
+                UserPreferencesRepository.showKeepAndroidOpenKey,
+                !showAgain
+            )
+        }
+    }
 
 
     fun deleteRunningWorkout() {
