@@ -145,7 +145,7 @@ fun LibreFitScaffold(
                                                 ),
                                                 enabled = enabled,
                                                 colors = if (elevated)
-                                                    IconButtonDefaults.filledIconButtonColors() else
+                                                    IconButtonDefaults.filledTonalIconButtonColors() else
                                                     IconButtonDefaults.iconButtonColors()
                                             ) {
                                                 Icon(

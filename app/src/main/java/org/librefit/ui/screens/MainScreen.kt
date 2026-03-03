@@ -82,7 +82,7 @@ fun SharedTransitionScope.MainScreen(
             painterResource(R.drawable.ic_info),
             painterResource(R.drawable.ic_settings)
         ),
-        actionsElevated = listOf(false, false, false),
+        actionsElevated = listOf(true, false, false),
         fabAction = if (pagerState.currentPage == MainScreenPages.HOME.ordinal) fabAction else null,
         fabIcon = painterResource(R.drawable.ic_add),
         fabDescription = stringResource(R.string.create_routine),

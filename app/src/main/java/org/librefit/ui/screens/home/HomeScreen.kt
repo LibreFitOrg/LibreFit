@@ -394,7 +394,7 @@ fun HomeScreenPreview() {
                 painterResource(R.drawable.ic_info),
                 painterResource(R.drawable.ic_settings)
             ),
-            actionsElevated = listOf(false, false, false),
+            actionsElevated = listOf(true, false, false),
             fabAction = {},
             fabIcon = painterResource(R.drawable.ic_add),
             fabText = stringResource(R.string.create_routine),
@@ -444,7 +444,7 @@ fun HomeScreenPreview() {
                         innerPadding = innerPadding,
                         navController = rememberNavController(),
                         runningWorkout = runningWorkout.value,
-                        showKeepAndroidOpen = Random.nextBoolean(),
+                        showKeepAndroidOpen = false,
                         onKeepAndroidOpenCheckboxChange = {},
                         routines = listOf(
                             UiWorkout(
