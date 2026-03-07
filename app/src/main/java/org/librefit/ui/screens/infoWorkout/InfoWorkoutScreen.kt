@@ -316,7 +316,9 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                         chartModes = WorkoutChart.entries,
                         chartMode = workoutChart,
                         updateChartMode = updateChartMode,
-                        navController = navController
+                        onEntrySelection = {
+                            navController.navigate(Route.InfoWorkoutScreen(it))
+                        }
                     )
                 }
             }

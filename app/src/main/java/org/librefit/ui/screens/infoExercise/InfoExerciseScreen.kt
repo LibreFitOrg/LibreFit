@@ -533,7 +533,9 @@ private fun SharedTransitionScope.HistoryPage(
                     is TimeChart -> TimeChart.entries
                 },
                 updateChartMode = updateExerciseChart,
-                navController = navController
+                onEntrySelection = {
+                    navController.navigate(Route.InfoWorkoutScreen(it))
+                }
             )
         }
         item {

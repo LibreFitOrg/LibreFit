@@ -46,8 +46,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
@@ -88,7 +86,6 @@ import org.librefit.enums.chart.TimeChart
 import org.librefit.enums.chart.WeightedBodyweightChart
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.nav.Route
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
@@ -111,11 +108,11 @@ val legendLabelKey = ExtraStore.Key<List<String>>()
  * @param chartModes The list of [FilterChip]s displayed at the top of the chart. If empty, no chip will be displayed.
  * @param updateChartMode It's triggered when any [FilterChip] is clicked. It passes the corresponding
  * [ChartMode] value.
- * @param navController When not null, a button is shown in order to navigate to [org.librefit.ui.screens.infoWorkout.InfoWorkoutScreen]
  * and to show info about a selected [org.librefit.db.entity.Workout]. It is intended to work only with workouts
  * rather than [org.librefit.db.entity.Measurement] or anything else.
  * @param legendList A list of [String] shown under the chart as a legend. The list must have a less
  * or equal size of [Point.yValues] and it must not contain blank strings. Leave empty to not shown a legend.
+ * @param onEntrySelection When not null, a button is shown in order to (or at least intended to) navigate to open/navigate the associated entry with the given `Long` id.
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -126,9 +123,9 @@ fun <T : ChartMode> LibreFitCartesianChart(
     useColumns: Boolean = false,
     chartMode: T? = null,
     chartModes: List<T> = emptyList(),
-    navController: NavHostController? = null,
     legendList: List<String>? = null,
-    updateChartMode: (T) -> Unit = {}
+    updateChartMode: (T) -> Unit = {},
+    onEntrySelection: ((Long) -> Unit)? = null
 ) {
     val modelProducer = remember { CartesianChartModelProducer() }
 
@@ -405,16 +402,18 @@ fun <T : ChartMode> LibreFitCartesianChart(
                                 }
                             }
                         }
-                        if (navController != null) {
+                        if (onEntrySelection != null) {
                             HorizontalDivider()
                             LibreFitButton(
                                 elevated = false,
                                 enabled = selectedWorkoutId.value != null,
-                                text = if (selectedWorkoutDate.value == null) stringResource(R.string.tap_a_workout)
+                                text = if (selectedWorkoutId.value == null) stringResource(R.string.tap_a_workout)
                                 else stringResource(R.string.open_the_workout) + " ${selectedWorkoutDate.value}",
                                 icon = painterResource(R.drawable.ic_open_new)
                             ) {
-                                navController.navigate(Route.InfoWorkoutScreen(selectedWorkoutId.value!!))
+                                selectedWorkoutId.value?.let {
+                                    onEntrySelection(it)
+                                }
                             }
                         }
                     }
@@ -476,8 +475,7 @@ private fun LibreFitCartesianChartPreview() {
             },
             useColumns = Random.nextBoolean(),
             chartMode = if (Random.nextBoolean()) chartMode.value else null,
-            navController = if (WorkoutChart.entries.contains(chartMode.value))
-                rememberNavController() else null,
+            onEntrySelection = if (WorkoutChart.entries.contains(chartMode.value)) {{}} else null,
             legendList = legendList,
             updateChartMode = { chartMode.value = it }
         )
