@@ -6,15 +6,24 @@ ENV LANG=C.UTF-8
 
 # Install dependencies (Java, Android tools, Python for verification)
 RUN apt-get update && apt-get install -y \
-    openjdk-17-jdk wget unzip git zip \
+    wget apt-transport-https gnupg unzip git zip \
     python3 python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add official Adoptium (Temurin) repository
+RUN wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor | tee /etc/apt/trusted.gpg.d/adoptium.gpg > /dev/null \
+    && echo "deb https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
+
+# Install Eclipse Temurin 17
+RUN apt-get update && apt-get install -y \
+    temurin-17-jdk \
     && rm -rf /var/lib/apt/lists/*
 
 # Install apksigcopier (for verifying build tools 36 signatures)
 RUN pip3 install apksigcopier
 
 # Setup Android SDK environment
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
 ENV ANDROID_SDK_ROOT=/opt/android-sdk
 ENV PATH="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools:${PATH}"
 
