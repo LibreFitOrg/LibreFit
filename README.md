@@ -191,4 +191,4 @@ Thanks to everyone who helped the project!
 
 ---
 
-Made with ❤️ by [IamDg](https://github.com/IamDg) and [contributors](README.md#-contributors)
+Made with ❤️ by [IamDg](https://github.com/IamDg) and [contributors](https://github.com/LibreFitOrg/LibreFit/graphs/contributors)
