@@ -36,7 +36,9 @@ jobs:
           # Decode keystore from Base64
           echo "$KEYSTORE_BASE64" | base64 --decode > release.jks
           
-          UNSIGNED_APK="app/build/outputs/apk/release/LibreFit-release-unsigned.apk"
+          cp "app/build/outputs/apk/release/LibreFit-release-unsigned.apk" "app/build/outputs/apk/release/LibreFit-unsigned.apk"
+          
+          UNSIGNED_APK="app/build/outputs/apk/release/LibreFit-unsigned.apk"
           ALIGNED_APK="app/build/outputs/apk/release/LibreFit-aligned.apk"
           SIGNED_APK="app/build/outputs/apk/release/LibreFit.apk"
           BUILD_TOOLS_DIR="$ANDROID_HOME/build-tools/36.0.0"
