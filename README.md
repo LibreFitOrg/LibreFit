@@ -1,12 +1,12 @@
 <div align="center">
-    <img src="assets/logo.svg" alt="Logo" style="width: 60%">
-</div>
+
+<img src="assets/logo.svg" alt="Logo" style="width: 60%">
 
 # LibreFit - The free and private workout tracker
 
-[![GitHub Release](https://img.shields.io/github/v/release/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
 [![GitHub Downloads](https://img.shields.io/github/downloads/LibreFitOrg/LibreFit/total?style=for-the-badge&logo=github&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
 [![Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit)
+[![GitHub Release](https://img.shields.io/github/v/release/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
 [![License](https://img.shields.io/github/license/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/blob/main/LICENSE)
 [![CI Status](https://img.shields.io/github/actions/workflow/status/LibreFitOrg/LibreFit/android-ci.yml?style=for-the-badge&labelColor=20232A&logo=github&logoColor=white)](https://github.com/LibreFitOrg/LibreFit/actions)
 
@@ -17,6 +17,8 @@ exercise paired with **images** and step-by-step **instructions** covering setup
 
 Schedule single **sessions**, filter **exercises** by equipment, **muscle** group or difficulty with one tap.
 During workouts, **track** every set, rep, rest interval, and load in **real time**.
+
+</div>
 
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="160" alt="Screenshot 1"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="160" alt="Screenshot 2"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="160" alt="Screenshot 3"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="160" alt="Screenshot 4"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.png" width="160" alt="Screenshot 5">
 
