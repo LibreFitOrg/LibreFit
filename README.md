@@ -4,6 +4,12 @@
 
 # LibreFit - The free and private workout tracker
 
+[![GitHub Release](https://img.shields.io/github/v/release/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
+[![GitHub Downloads](https://img.shields.io/github/downloads/LibreFitOrg/LibreFit/total?style=for-the-badge&logo=github&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
+[![Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit)
+[![License](https://img.shields.io/github/license/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/blob/main/LICENSE)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/LibreFitOrg/LibreFit/android-ci.yml?style=for-the-badge&labelColor=20232A&logo=github&logoColor=white)](https://github.com/LibreFitOrg/LibreFit/actions)
+
 LibreFit is a **free** and **open-source** _workout tracker_ designed with **privacy** in mind.
 
 Create fully **personalized workouts** assembled from a **rich dataset** of hundreds of exercises — each
