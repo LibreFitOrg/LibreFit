@@ -84,6 +84,7 @@ configure<ApplicationExtension> {
         }
         debug {
             applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
         }
         sourceSets {
             named("release") {
