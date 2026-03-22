@@ -108,6 +108,11 @@ configure<ApplicationExtension> {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+
+        jniLibs {
+            // Prevents AGP from modifying pre-compiled .so files from dependencies
+            keepDebugSymbols.add("**/*.so")
+        }
     }
 }
 
