@@ -6,7 +6,6 @@
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
  */
 
-import com.android.build.api.dsl.ApplicationExtension
 import org.gradle.api.JavaVersion.VERSION_17
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -20,7 +19,7 @@ plugins {
 }
 
 
-configure<ApplicationExtension> {
+android {
     namespace = "org.librefit"
     compileSdk = 36
 
