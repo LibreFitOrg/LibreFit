@@ -100,11 +100,15 @@ Donations are the main way to:
 - **Cover costs** (e.g. domain, paid plans for emails, etc.).
 - **Thank and incentivize the creator** to invest more time in the project.
 
-To donate, visit the [donation page](https://librefit.org/donate).
+To donate, you can either send use the Monero address below or visit the [donation page](https://librefit.org/donate).
+
+```text
+842RPDZ851EitDZZxCEp1sjjyDpsaV74xAJBTPU6X7TrDAbpDrjq5rRfaF3Q8PnXyQeUYs2xLoxFpZb7ZpSJxBvdDgFVpww
+```
 
 > [!IMPORTANT]
 > If you wish the **supporter version**, ensure to donate
-> using the **integrated processor** instead of direct on-chain transaction
+> using the **integrated processor** at [donation page](https://librefit.org/donate)
 
 ### 🏗 Contribute to source code
 
