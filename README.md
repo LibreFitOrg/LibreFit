@@ -4,8 +4,8 @@
 
 # LibreFit - The free and private workout tracker
 
-[![GitHub Downloads](https://img.shields.io/github/downloads/LibreFitOrg/LibreFit/total?style=for-the-badge&logo=github&labelColor=20232A&color=82D3E3&label=Github%20Downloads)](https://github.com/LibreFitOrg/LibreFit/releases)
-[![F-droid Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Forg.librefit.app.json&query=%24.total_downloads&style=for-the-badge&label=F-droid%20Downloads&logo=fdroid&labelColor=20232A&color=82D3E3)](https://f-droid.org/packages/org.librefit.app)
+[![GitHub Downloads](https://img.shields.io/github/downloads/LibreFitOrg/LibreFit/total?style=for-the-badge&logo=github&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
+[![F-droid Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Forg.librefit.app.json&query=%24.total_downloads&style=for-the-badge&label=Downloads&logo=fdroid&labelColor=20232A&color=82D3E3)](https://f-droid.org/packages/org.librefit.app)
 [![Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit)
 [![GitHub Release](https://img.shields.io/github/v/release/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
 [![License](https://img.shields.io/github/license/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/blob/main/COPYING)
