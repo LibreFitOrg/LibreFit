@@ -24,45 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.5] - 2026-02-23
 
-New release just for f-droid submission (pt. 4). No need to update.
-
-### Changed
-- Use static versioning to support f-droid autoupdate 
-
-## [0.1.4] - 2026-02-22
-
-New release just for f-droid submission (pt. 3). No need to update.
-
-## [0.1.3] - 2026-02-22
-
-New release just for f-droid submission (pt. 2). No need to update.
-
-## [0.1.2] - 2026-02-22
-
-New release just for f-droid submission. No need to update.
-
-### Changed
-
-- Removed the toolchain config
-
-## [0.1.1] - 2026-02-22
-
-A new release mainly with to changes to build process in order to switch to native and comply with
-f-droid
-
-### Changed
-
-- use native builds instead of docker (#c1732c9)
-- remove plugin to autodownload JDK in order to comply with fdroid rules (#b6bff6d9)
-
-## [0.1.0] - 2026-02-18
-
 First public release. Bugs are expected! Report them so they can be fixed.
 
 [Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.1.5...HEAD
 [0.1.5]: https://github.com/LibreFitOrg/LibreFit/releases/tag/v0.1.5
-[0.1.4]: https://github.com/LibreFitOrg/LibreFit/releases/tag/v0.1.4
-[0.1.3]: https://github.com/LibreFitOrg/LibreFit/releases/tag/v0.1.3
-[0.1.2]: https://github.com/LibreFitOrg/LibreFit/releases/tag/v0.1.2
-[0.1.1]: https://github.com/LibreFitOrg/LibreFit/releases/tag/v0.1.1
-[0.1.0]: https://github.com/LibreFitOrg/LibreFit/releases/tag/v0.1.0
