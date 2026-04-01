@@ -32,7 +32,7 @@ import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.random.Random
@@ -125,7 +125,7 @@ class BeforeSavingScreenViewModel @Inject constructor(
                 currentWorkout.copy(
                     completed = LocalDateTime.ofInstant(
                         Instant.ofEpochMilli(selectedDateMillis),
-                        ZoneId.systemDefault()
+                        ZoneOffset.UTC
                     )
                 )
             }
