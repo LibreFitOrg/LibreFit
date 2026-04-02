@@ -43,6 +43,8 @@ During workouts, **track** every set, rep, rest interval, and load in **real tim
 
 ## 💡 Motivation
 
+Hey, it's [IamDg](https://github.com/IamDg) here, the **creator** of LibreFit. Here’s the **motivation** for why I started building it in the first place:
+
 LibreFit is a passion project, built by one person who believes **software** should be **open**, **simple**, **beautiful**, and above all, **respectful of your privacy**.
 
 I pour countless hours into designing, coding, and refining every detail to create the best possible experience. It's a commitment to you, the user, and to a **better digital world**.
@@ -193,7 +195,9 @@ Thanks to everyone who helped the project!
 
 ### 💖 Donators
 
-[Donate](README.md#-donate) to be the **first** person listed.
+- Anonymous (2)
+
+> [Donate](README.md#-donate) to be listed here.
 
 ### 🏗 Contributors
 
