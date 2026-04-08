@@ -147,8 +147,7 @@ Fill the provided template. In particular:
 ### Your First Code Contribution
 
 We strive to keep the codebase clean, readable, and maintainable while following the current
-architecture and the *
-*[Android Kotlin Style Guide](https://developer.android.com/kotlin/style-guide)**.
+architecture.
 
 #### Architecture
 
@@ -191,14 +190,11 @@ the latest Android toolkit:
 
 ### Translations
 
-*Coming soon...*
-
 We want LibreFit to be accessible to everyone!
 
-- We will eventually use **Weblate** for translations.
-- Please **do not** submit Pull Requests for `strings.xml` files directly, as they will likely be
+- We use **Weblate** for translations. Join our project here: https://hosted.weblate.org/projects/librefit/librefit/
+- Please **do not** submit Pull Requests for `strings.xml` files directly, as they will be
   overwritten by the translation platform sync.
-- Join our translation project here: _Not available yet_.
 
 ## Attribution
 

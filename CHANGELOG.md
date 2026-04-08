@@ -22,17 +22,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - 
 
+> [!TIP]
 > `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md). 
 > For normal use, download `LibreFit.apk`
 
-## [0.1.6] - 2026-MM-DD
+## [0.2.0] - 2026-MM-DD
+
+> [!IMPORTANT]
+> Now you can support LibreFit by making it available in your language. See more [here](https://github.com/LibreFitOrg/LibreFit/blob/main/CONTRIBUTING.md#translations)
+
+### Added
+- New languages: Dutch 🇳🇱, German 🇩🇪
 
 ### Changed
 - Show warning in images by default
 
 ### Fixed
-- Incorrect date when in different time zones [#14](https://github.com/LibreFitOrg/LibreFit/issues/14)
+- Incorrect date handling in different time zones [#14](https://github.com/LibreFitOrg/LibreFit/issues/14)
 
+> [!TIP]
 > `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
 > For normal use, download `LibreFit.apk`
 

@@ -34,6 +34,7 @@ During workouts, **track** every set, rep, rest interval, and load in **real tim
 - 🤝 [Let's Build LibreFit Together](README.md#-lets-build-librefit-together)
     - 💖 [Donate](README.md#-donate)
     - 🏗️ [Contribute to the source code](README.md#-contribute-to-source-code)
+    - 🌐 [Translate](CONTRIBUTING.md#translations)
 - ❓ [I Have A Question](README.md#-i-have-a-question)
 - ⚡ [Building LibreFit from source](README.md#-building-librefit-from-source)
 - 📜 [License](README.md#-license)
@@ -86,7 +87,7 @@ You can actively contribute to the project and become a **supporter** in one of 
 - 🏋️ [Improvements to the exercise dataset](README.md#-improve-the-exercise-dataset)
 
 Every **supporter** will be _credited_ in the about page of the app and in
-[credits section](README.md#-credits), and it will be able to request the **supporter version** of
+[credits section](README.md#-credits), and it will be able to request [here](https://librefit.org/donate) the **supporter version** of
 LibreFit
 which includes:
 
@@ -115,11 +116,11 @@ To donate, you can either send use the Monero address below or visit the [donati
 
 ### 🏗 Contribute to source code
 
-See [Contributing to LibreFit](CONTRIBUTING.md)
+See [Contributing to source code](CONTRIBUTING.md#your-first-code-contribution)
 
 ### 🌐 Translations
 
-*Coming soon...* 🚧
+See [Contributing to translations](CONTRIBUTING.md#translations)
 
 ### 🏋 Improve the exercise dataset
 
@@ -195,13 +196,24 @@ Thanks to everyone who helped the project!
 
 ### 💖 Donators
 
-- Anonymous (2)
+- Anonymous (4)
 
 > [Donate](README.md#-donate) to be listed here.
 
 ### 🏗 Contributors
 
-[Contribute to source code](CONTRIBUTING.md) to be the **first** person listed.
+[Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be the **first** person listed.
+
+
+### 🌐 Translators
+
+[Contribute to translations](CONTRIBUTING.md#translations) to be listed here.
+
+### 🇳🇱 Dutch
+- [mwesten](https://github.com/mwesten)
+
+### 🇩🇪 German
+- [doen1el](https://github.com/doen1el)
 
 ---
 
