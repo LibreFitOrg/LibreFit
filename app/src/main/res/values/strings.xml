@@ -50,6 +50,12 @@
     <string name="lets_build_it_together">Let\'s build it together</string>
     <string name="tutorial_desc">Learn how to create routines and track your workouts.</string>
 
+    <!-- username and url of contributors and translators -->
+    <string name="doen1el" translatable="false">doen1el</string>
+    <string name="url_doen1el" translatable="false">https://github.com/doen1el</string>
+    <string name="mwesten" translatable="false">mwesten</string>
+    <string name="url_mwesten" translatable="false">https://github.com/mwesten</string>
+
 
     <!--Before saving screen-->
     <string name="unlink_routine_question">Unlink routine?</string>
@@ -233,6 +239,10 @@
     <string name="language_english">English</string>
     <string name="language_italian_nt" translatable="false">Italiano</string>
     <string name="language_italian">Italian</string>
+    <string name="language_german_nt" translatable="false">Deutsch</string>
+    <string name="language_german">German</string>
+    <string name="language_dutch_nt" translatable="false">Nederlands</string>
+    <string name="language_dutch">Dutch</string>
     <string name="rest_timer_sound">Rest timer sound</string>
     <string name="rest_timer_sound_on_desc">Play a sound when rest timer ends</string>
     <string name="rest_timer_sound_off_desc">Rest timer alerts will be silent</string>

@@ -308,10 +308,21 @@ fun AboutScreen(navController: NavHostController) {
             item {
                 AboutItem(
                     icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.url_IamDg).split("/").last(),
-                    description = stringResource(R.string.contributed_to) + stringResource(R.string.language_italian),
+                    text = stringResource(R.string.doen1el),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_german),
                     onClick = {
-                        url.value = resources.getString(R.string.url_IamDg)
+                        url.value = resources.getString(R.string.url_doen1el)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.mwesten),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_dutch),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_mwesten)
                     }
                 )
             }

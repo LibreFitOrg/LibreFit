@@ -118,6 +118,8 @@ object Formatter {
         return when (dialogPreference) {
             Language.ENGLISH -> R.string.language_english_nt
             Language.ITALIAN -> R.string.language_italian_nt
+            Language.GERMAN -> R.string.language_german_nt
+            Language.DUTCH -> R.string.language_dutch_nt
             Language.SYSTEM -> R.string.follow_system
             ThemeMode.LIGHT -> R.string.theme_light
             ThemeMode.DARK -> R.string.theme_dark

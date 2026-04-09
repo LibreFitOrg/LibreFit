@@ -47,7 +47,7 @@ android {
             useSupportLibrary = true
         }
         androidResources {
-            localeFilters += listOf("en", "it")
+            localeFilters += listOf("en", "it", "de", "nl")
         }
 
         // Do not use System.currentTimeMillis()

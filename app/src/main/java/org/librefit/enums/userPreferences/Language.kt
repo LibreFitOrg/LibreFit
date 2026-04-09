@@ -11,5 +11,7 @@ package org.librefit.enums.userPreferences
 enum class Language(val code: String) : DialogPreference {
     SYSTEM(""),
     ENGLISH("en"),
-    ITALIAN("it")
+    ITALIAN("it"),
+    GERMAN("de"),
+    DUTCH("nl")
 }
