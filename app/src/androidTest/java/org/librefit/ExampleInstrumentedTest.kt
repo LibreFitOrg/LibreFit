@@ -25,6 +25,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals(BuildConfig.APPLICATION_ID, appContext.packageName)
+        assertEquals("org.librefit.app", appContext.packageName)
     }
 }
