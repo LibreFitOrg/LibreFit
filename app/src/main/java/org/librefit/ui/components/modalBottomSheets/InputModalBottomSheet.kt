@@ -59,9 +59,10 @@ fun InputModalBottomSheet(
             item {
                 Text(
                     text = when (state) {
-                        is InputModalBottomSheetState.Time -> stringResource(R.string.time)
+                        is InputModalBottomSheetState.HoursMinutesSeconds -> stringResource(R.string.time)
+                        is InputModalBottomSheetState.MinutesSeconds -> stringResource(R.string.time)
                         is InputModalBottomSheetState.Reps -> stringResource(R.string.reps)
-                        is InputModalBottomSheetState.Weight -> stringResource(R.string.load)
+                        is InputModalBottomSheetState.Weight -> stringResource(R.string.weight)
                     },
                     style = MaterialTheme.typography.headlineLargeEmphasized
                 )
@@ -78,7 +79,59 @@ fun InputModalBottomSheet(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         when (state) {
-                            is InputModalBottomSheetState.Time -> {
+                            is InputModalBottomSheetState.HoursMinutesSeconds -> {
+                                NumberPicker(
+                                    value = state.hours,
+                                    options = state.hoursRange,
+                                    label = { it.toString().padStart(2, '0') },
+                                    onValueChange = {
+                                        onValueChange(
+                                            state.copy(
+                                                hours = it
+                                            )
+                                        )
+                                    },
+                                    textStyle = textStyle
+                                )
+                                Text(
+                                    modifier = Modifier.padding(3.dp),
+                                    text = ":",
+                                    style = textStyle
+                                )
+                                NumberPicker(
+                                    value = state.minutes,
+                                    options = state.minutesRange,
+                                    label = { it.toString().padStart(2, '0') },
+                                    onValueChange = {
+                                        onValueChange(
+                                            state.copy(
+                                                minutes = it
+                                            )
+                                        )
+                                    },
+                                    textStyle = textStyle
+                                )
+                                Text(
+                                    modifier = Modifier.padding(3.dp),
+                                    text = ":",
+                                    style = textStyle
+                                )
+                                NumberPicker(
+                                    value = state.seconds,
+                                    options = state.secondsRange,
+                                    label = { it.toString().padStart(2, '0') },
+                                    onValueChange = {
+                                        onValueChange(
+                                            state.copy(
+                                                seconds = it
+                                            )
+                                        )
+                                    },
+                                    textStyle = textStyle
+                                )
+                            }
+
+                            is InputModalBottomSheetState.MinutesSeconds -> {
                                 NumberPicker(
                                     value = state.minutes,
                                     options = state.minutesRange,
@@ -147,6 +200,7 @@ fun InputModalBottomSheet(
                                 NumberPicker(
                                     value = state.decimalWeight,
                                     options = state.decimalWeightRange,
+                                    label = { it.toString().padStart(2, '0') },
                                     onValueChange = {
                                         onValueChange(
                                             state.copy(

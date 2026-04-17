@@ -130,6 +130,8 @@ fun SharedTransitionScope.WorkoutScreen(
 
     val isHeaderSticky by viewModel.isHeaderSticky.collectAsStateWithLifecycle()
 
+    val useNumberPicker by viewModel.useNumberPicker.collectAsStateWithLifecycle()
+
 
     //It keeps the screen turned on
     if (keepWorkoutScreenOn) {
@@ -211,7 +213,7 @@ fun SharedTransitionScope.WorkoutScreen(
                 isStopwatchPaused = isStopwatchPaused,
                 workoutProgress = workoutProgress,
                 isHeaderSticky = isHeaderSticky,
-                useNumberPicker = true,
+                useNumberPicker = useNumberPicker,
                 toggleStopwatch = viewModel::toggleStopwatch,
                 updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
                 onSelectedExerciseIdChange = { id, idExerciseDC ->

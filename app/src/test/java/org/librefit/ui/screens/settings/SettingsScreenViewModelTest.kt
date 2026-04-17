@@ -18,7 +18,6 @@ import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -47,6 +46,7 @@ class SettingsScreenViewModelTest {
     private lateinit var restTimerSoundOn: MutableStateFlow<Boolean>
     private lateinit var isSupporter: MutableStateFlow<Boolean>
     private lateinit var isWorkoutHeaderSticky: MutableStateFlow<Boolean>
+    private lateinit var useNumberPicker: MutableStateFlow<Boolean>
 
     // Captured objects
     private val key = slot<Preferences.Key<Any>>()
@@ -63,6 +63,7 @@ class SettingsScreenViewModelTest {
         restTimerSoundOn = MutableStateFlow(true)
         isSupporter = MutableStateFlow(false)
         isWorkoutHeaderSticky = MutableStateFlow(true)
+        useNumberPicker = MutableStateFlow(true)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.language } returns language
@@ -72,6 +73,7 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.restTimerSoundOn } returns restTimerSoundOn
         every { userPreferencesRepository.isSupporter } returns isSupporter
         every { userPreferencesRepository.isWorkoutHeaderSticky } returns isWorkoutHeaderSticky
+        every { userPreferencesRepository.useNumberPicker } returns useNumberPicker
         coEvery {
             userPreferencesRepository.savePreference(
                 capture(key),

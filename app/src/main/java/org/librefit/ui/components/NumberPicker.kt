@@ -117,7 +117,7 @@ fun NumberPicker(
         snapshotFlow { centeredItemIndex }
             .distinctUntilChanged()
             .collect {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
             }
     }
 

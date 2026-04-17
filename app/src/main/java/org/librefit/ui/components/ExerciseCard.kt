@@ -102,6 +102,7 @@ import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import kotlin.math.roundToInt
 import kotlin.math.truncate
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * A custom [ElevatedCard] designed to display an [UiExerciseWithSets] with a uniform appearance across
@@ -517,16 +518,16 @@ private fun Set(
     var inputModalBottomSheetState by remember { mutableStateOf<InputModalBottomSheetState?>(null) }
     var inputSetId by rememberSaveable { mutableStateOf<Long?>(null) }
 
-    if (useNumberPicker && inputModalBottomSheetState != null) {
+    inputModalBottomSheetState?.let {
         InputModalBottomSheet(
-            state = inputModalBottomSheetState!!,
+            state = it,
             onValueChange = { newState ->
                 inputModalBottomSheetState = newState
                 inputSetId?.let { id ->
                     when (newState) {
                         is InputModalBottomSheetState.Weight -> {
                             updateSetLoad(
-                                "${newState.integerWeight}.${newState.decimalWeight}".toDouble(),
+                                newState.totalWeight,
                                 id
                             )
                         }
@@ -535,9 +536,11 @@ private fun Set(
                             updateSetReps(newState.reps, id)
                         }
 
-                        is InputModalBottomSheetState.Time -> {
-                            updateSetTime(newState.minutes * 60 + newState.seconds, id)
+                        is InputModalBottomSheetState.MinutesSeconds -> {
+                            updateSetTime(newState.totalSeconds, id)
                         }
+
+                        else -> error("newState in ExerciseCard should not have this value: $newState")
                     }
                 }
             },
@@ -712,15 +715,13 @@ private fun Set(
                                 .matchParentSize()
                                 .clip(MaterialTheme.shapes.extraLarge)
                                 .clickable(enabled = useNumberPicker) {
-                                    val (minutes, seconds) = Formatter
-                                        .formateSecondsInMinutesAndSeconds(timeValue)
-                                        .split(":")
-                                        .map { it.toInt() }
-
-                                    inputModalBottomSheetState = InputModalBottomSheetState.Time(
-                                        minutes = minutes,
-                                        seconds = seconds
-                                    )
+                                    timeValue.seconds.toComponents { _, minutes, seconds, _ ->
+                                        inputModalBottomSheetState =
+                                            InputModalBottomSheetState.MinutesSeconds(
+                                                minutes = minutes,
+                                                seconds = seconds
+                                            )
+                                    }
                                     inputSetId = set.id
                                 }
                         ) { }

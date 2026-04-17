@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
@@ -42,8 +43,10 @@ class BeforeSavingScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val workoutRepository: WorkoutRepository,
     private val workoutServiceManager: WorkoutServiceManager,
-    private val dataHelper: DataHelper
+    private val dataHelper: DataHelper,
+    userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+    val useNumberPicker = userPreferencesRepository.useNumberPicker
 
     private val runningWorkoutId = savedStateHandle.toRoute<Route.BeforeSavingScreen>().runningWorkoutId
 
