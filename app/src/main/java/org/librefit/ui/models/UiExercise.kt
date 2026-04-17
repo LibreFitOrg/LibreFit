@@ -27,5 +27,6 @@ data class UiExercise(
     val notes: String = "",
     val setMode: SetMode = SetMode.LOAD,
     val restTime: Int = 0,
+    val position: Int = 0,
     val workoutId: Long = 0
 )

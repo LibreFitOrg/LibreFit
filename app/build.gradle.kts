@@ -200,4 +200,7 @@ dependencies {
 
     // Load images asynchronously
     implementation(libs.coil)
+
+    // Reorder items in edit workout/routine lists
+    implementation(libs.reorderable)
 }

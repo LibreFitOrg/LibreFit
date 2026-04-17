@@ -31,6 +31,8 @@ import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.UiWorkout
+import org.librefit.ui.models.moveExercise
+import org.librefit.ui.models.withNormalizedExercisePositions
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import javax.inject.Inject
@@ -111,7 +113,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
         )
 
         _exercises.update { exercises ->
-            exercises + newExercise
+            (exercises + newExercise).withNormalizedExercisePositions()
         }
     }
 
@@ -224,7 +226,15 @@ class EditWorkoutScreenViewModel @Inject constructor(
 
     fun deleteExercise(exerciseId: Long) {
         _exercises.update { currentExercises ->
-            currentExercises.filter { it.exercise.id != exerciseId }
+            currentExercises
+                .filter { it.exercise.id != exerciseId }
+                .withNormalizedExercisePositions()
+        }
+    }
+
+    fun moveExercise(fromIndex: Int, toIndex: Int) {
+        _exercises.update { currentExercises ->
+            currentExercises.moveExercise(fromIndex = fromIndex, toIndex = toIndex)
         }
     }
 
@@ -253,7 +263,9 @@ class EditWorkoutScreenViewModel @Inject constructor(
             workoutRepository.addWorkoutWithExercisesAndSets(
                 WorkoutWithExercisesAndSets(
                     workout = workout.value.copy(state = state).toEntity(),
-                    exercisesWithSets = exercises.value.map { it.toEntity() }
+                    exercisesWithSets = exercises.value
+                        .withNormalizedExercisePositions()
+                        .map { it.toEntity() }
                 )
             )
         }
@@ -268,4 +280,3 @@ class EditWorkoutScreenViewModel @Inject constructor(
         return if (workout.value.id == 0L) null else isRoutine.value
     }
 }
-

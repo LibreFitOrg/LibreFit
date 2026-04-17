@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -53,9 +54,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -92,6 +96,8 @@ import org.librefit.ui.models.UiSet
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -233,6 +239,7 @@ fun SharedTransitionScope.WorkoutScreen(
                 deleteExercise = { id ->
                     idExerciseToDelete.value = id
                 },
+                moveExercise = viewModel::moveExercise,
                 showInfo = { infoMode.value = it },
                 applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance
             )
@@ -293,11 +300,29 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     updateExerciseRestTime: (Int, Long) -> Unit,
     updateExerciseSetMode: (SetMode, Long) -> Unit,
     deleteExercise: (Long) -> Unit,
+    moveExercise: (Int, Int) -> Unit,
     onSelectedExerciseIdChange: (Long, String) -> Unit,
     showInfo: (InfoMode) -> Unit,
     applyPreviousSetPerformance: (Long) -> Unit
 ) {
-    LibreFitLazyColumn {
+    val lazyListState = rememberLazyListState()
+    val hapticFeedback = LocalHapticFeedback.current
+    // We track the exercise id so a release event from one card can't clear the collapse state while another card is still being pressed or dragged.
+    var pressedExerciseId by remember { mutableStateOf<Long?>(null) }
+    var draggingExerciseId by remember { mutableStateOf<Long?>(null) }
+    val isAnyExerciseCollapsed = pressedExerciseId != null || draggingExerciseId != null
+    val exerciseSectionStartIndex = 1
+    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        val fromExerciseIndex = from.index - exerciseSectionStartIndex
+        val toExerciseIndex = (to.index - exerciseSectionStartIndex)
+            .coerceIn(0, exercisesWithSets.lastIndex)
+
+        if (fromExerciseIndex in exercisesWithSets.indices && toExerciseIndex in exercisesWithSets.indices) {
+            moveExercise(fromExerciseIndex, toExerciseIndex)
+        }
+    }
+
+    LibreFitLazyColumn(lazyListState = lazyListState) {
         val headerContent: @Composable LazyItemScope.() -> Unit = {
             ElevatedCard(shape = MaterialTheme.shapes.extraLargeIncreased) {
                 Column(
@@ -378,28 +403,59 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                 items = exercisesWithSets,
                 key = { _, exercise -> exercise.exercise.id }
             ) { i, exerciseWithSets ->
-                ExerciseCard(
-                    modifier = Modifier.animateItem(),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    exerciseWithSets = exerciseWithSets,
-                    previousPerformances = previousPerformances.getOrNull(i),
-                    idSetWithRunningStopwatch = idSetWithRunningStopwatch,
-                    workout = true,
-                    addSet = addSetToExercise,
-                    onDetail = onSelectedExerciseIdChange,
-                    onDelete = deleteExercise,
-                    deleteSet = deleteSet,
-                    showInfo = showInfo,
-                    updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
-                    updateExerciseNotes = updateExerciseNotes,
-                    updateExerciseRestTime = updateExerciseRestTime,
-                    updateExerciseSetMode = updateExerciseSetMode,
-                    updateSetTime = updateSetTime,
-                    updateSetReps = updateSetReps,
-                    updateSetLoad = updateSetLoad,
-                    updateSetCompleted = updateSetCompleted,
-                    applyPreviousSetPerformance = applyPreviousSetPerformance
-                )
+                ReorderableItem(reorderableLazyListState, key = exerciseWithSets.exercise.id) { isDragging ->
+                    val exerciseId = exerciseWithSets.exercise.id
+                    ExerciseCard(
+                        modifier = Modifier.animateItem(),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        exerciseWithSets = exerciseWithSets,
+                        previousPerformances = previousPerformances.getOrNull(i),
+                        idSetWithRunningStopwatch = idSetWithRunningStopwatch,
+                        workout = true,
+                        addSet = addSetToExercise,
+                        onDetail = onSelectedExerciseIdChange,
+                        onDelete = deleteExercise,
+                        isCollapsed = isAnyExerciseCollapsed || isDragging,
+                        showDragHandle = true,
+                        onDragHandlePressedChange = { isPressed ->
+                            if (isPressed) {
+                                pressedExerciseId = exerciseId
+                            } else if (pressedExerciseId == exerciseId) {
+                                pressedExerciseId = null
+                            }
+                        },
+                        dragHandleModifier = Modifier.draggableHandle(
+                            onDragStarted = {
+                                draggingExerciseId = exerciseId
+                                hapticFeedback.performHapticFeedback(
+                                    HapticFeedbackType.GestureThresholdActivate
+                                )
+                            },
+                            onDragStopped = {
+                                if (draggingExerciseId == exerciseId) {
+                                    draggingExerciseId = null
+                                }
+                                if (pressedExerciseId == exerciseId) {
+                                    pressedExerciseId = null
+                                }
+                                hapticFeedback.performHapticFeedback(
+                                    HapticFeedbackType.GestureEnd
+                                )
+                            }
+                        ),
+                        deleteSet = deleteSet,
+                        showInfo = showInfo,
+                        updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
+                        updateExerciseNotes = updateExerciseNotes,
+                        updateExerciseRestTime = updateExerciseRestTime,
+                        updateExerciseSetMode = updateExerciseSetMode,
+                        updateSetTime = updateSetTime,
+                        updateSetReps = updateSetReps,
+                        updateSetLoad = updateSetLoad,
+                        updateSetCompleted = updateSetCompleted,
+                        applyPreviousSetPerformance = applyPreviousSetPerformance
+                    )
+                }
             }
         }
     }
@@ -620,6 +676,7 @@ private fun WorkoutScreenPreview() {
                             updateExerciseRestTime = { _, _ -> },
                             updateExerciseSetMode = { _, _ -> },
                             deleteExercise = {},
+                            moveExercise = { _, _ -> },
                             onSelectedExerciseIdChange = { _, _ -> },
                             showInfo = {},
                             applyPreviousSetPerformance = {}

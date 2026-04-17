@@ -17,8 +17,10 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,6 +31,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -62,6 +66,8 @@ import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -119,6 +125,7 @@ fun SharedTransitionScope.EditWorkoutScreen(
         updateExerciseNotes = viewModel::updateExerciseNotes,
         updateExerciseRestTime = viewModel::updateExerciseRestTime,
         updateExerciseSetMode = viewModel::updateExerciseSetMode,
+        moveExercise = viewModel::moveExercise,
         saveWorkoutWithExercisesInDB = viewModel::saveWorkoutWithExercisesInDB,
     )
 
@@ -146,6 +153,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     updateExerciseNotes: (String, Long) -> Unit,
     updateExerciseRestTime: (Int, Long) -> Unit,
     updateExerciseSetMode: (SetMode, Long) -> Unit,
+    moveExercise: (Int, Int) -> Unit,
     saveWorkoutWithExercisesInDB: () -> Unit
 ) {
 
@@ -184,6 +192,23 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     }
 
     InfoModalBottomSheet(infoMode) { infoMode = InfoMode.DISMISS }
+
+    val lazyListState = rememberLazyListState()
+    val hapticFeedback = LocalHapticFeedback.current
+    // We track the exercise id so a release event from one card can't clear the collapse state while another card is still being pressed or dragged.
+    var pressedExerciseId by remember { mutableStateOf<Long?>(null) }
+    var draggingExerciseId by remember { mutableStateOf<Long?>(null) }
+    val isAnyExerciseCollapsed = pressedExerciseId != null || draggingExerciseId != null
+    val exerciseSectionStartIndex = 3
+    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        val fromExerciseIndex = from.index - exerciseSectionStartIndex
+        val toExerciseIndex = (to.index - exerciseSectionStartIndex)
+            .coerceIn(0, exercisesWithSets.lastIndex)
+
+        if (fromExerciseIndex in exercisesWithSets.indices && toExerciseIndex in exercisesWithSets.indices) {
+            moveExercise(fromExerciseIndex, toExerciseIndex)
+        }
+    }
 
     LibreFitScaffold(
         title = AnnotatedString(
@@ -229,7 +254,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
         fabDescription = stringResource(R.string.add_exercise),
         fabText = stringResource(R.string.add_exercise),
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding, lazyListState = lazyListState) {
             item {
                 OutlinedTextField(
                     shape = MaterialTheme.shapes.large,
@@ -295,31 +320,62 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                     items = exercisesWithSets,
                     key = { _, e -> e.exercise.id }
                 ) { _, exerciseWithSets ->
-                    ExerciseCard(
-                        modifier = Modifier.animateItem(),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        exerciseWithSets = exerciseWithSets,
-                        workout = typeOfEdit == false,
-                        addSet = addSetToExercise,
-                        onDetail = { id, idExerciseDC ->
-                            navController.navigate(
-                                Route.InfoExerciseScreen(
-                                    id,
-                                    idExerciseDC
+                    ReorderableItem(reorderableLazyListState, key = exerciseWithSets.exercise.id) { isDragging ->
+                        val exerciseId = exerciseWithSets.exercise.id
+                        ExerciseCard(
+                            modifier = Modifier.animateItem(),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            exerciseWithSets = exerciseWithSets,
+                            workout = typeOfEdit == false,
+                            addSet = addSetToExercise,
+                            onDetail = { id, idExerciseDC ->
+                                navController.navigate(
+                                    Route.InfoExerciseScreen(
+                                        id,
+                                        idExerciseDC
                                 )
                             ) { launchSingleTop = true }
-                        },
-                        onDelete = deleteExercise,
-                        deleteSet = deleteSet,
-                        updateExerciseNotes = updateExerciseNotes,
-                        updateExerciseRestTime = updateExerciseRestTime,
-                        updateExerciseSetMode = updateExerciseSetMode,
-                        showInfo = onInfoModeChange,
-                        updateSetTime = updateSetTime,
-                        updateSetReps = updateSetReps,
-                        updateSetLoad = updateSetLoad,
-                        updateSetCompleted = updateSetCompleted
-                    )
+                            },
+                            onDelete = deleteExercise,
+                            isCollapsed = isAnyExerciseCollapsed || isDragging,
+                            showDragHandle = true,
+                            onDragHandlePressedChange = { isPressed ->
+                                if (isPressed) {
+                                    pressedExerciseId = exerciseId
+                                } else if (pressedExerciseId == exerciseId) {
+                                    pressedExerciseId = null
+                                }
+                            },
+                            dragHandleModifier = Modifier.draggableHandle(
+                                onDragStarted = {
+                                    draggingExerciseId = exerciseId
+                                    hapticFeedback.performHapticFeedback(
+                                        HapticFeedbackType.GestureThresholdActivate
+                                    )
+                                },
+                                onDragStopped = {
+                                    if (draggingExerciseId == exerciseId) {
+                                        draggingExerciseId = null
+                                    }
+                                    if (pressedExerciseId == exerciseId) {
+                                        pressedExerciseId = null
+                                    }
+                                    hapticFeedback.performHapticFeedback(
+                                        HapticFeedbackType.GestureEnd
+                                    )
+                                }
+                            ),
+                            deleteSet = deleteSet,
+                            updateExerciseNotes = updateExerciseNotes,
+                            updateExerciseRestTime = updateExerciseRestTime,
+                            updateExerciseSetMode = updateExerciseSetMode,
+                            showInfo = onInfoModeChange,
+                            updateSetTime = updateSetTime,
+                            updateSetReps = updateSetReps,
+                            updateSetLoad = updateSetLoad,
+                            updateSetCompleted = updateSetCompleted
+                        )
+                    }
                 }
             }
         }
@@ -381,6 +437,7 @@ private fun EditWorkoutScreenPreview() {
                     updateExerciseNotes = { _, _ -> },
                     updateExerciseRestTime = { _, _ -> },
                     updateExerciseSetMode = { _, _ -> },
+                    moveExercise = { _, _ -> },
                     updateSetTime = { _, _ -> },
                     updateSetReps = { _, _ -> },
                     updateSetLoad = { _, _ -> },

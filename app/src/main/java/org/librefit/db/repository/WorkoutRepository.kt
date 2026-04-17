@@ -35,17 +35,23 @@ import javax.inject.Singleton
 class WorkoutRepository @Inject constructor(
     private val workoutDao: WorkoutDao
 ) {
+    private fun WorkoutWithExercisesAndSets.sortedByExercisePosition(): WorkoutWithExercisesAndSets {
+        return copy(exercisesWithSets = exercisesWithSets.sortedBy { it.exercise.position })
+    }
+
     val completedWorkouts =
         workoutDao.getWorkoutsByStateAndOrderedByCompleted(WorkoutState.COMPLETED)
 
     val routines = workoutDao.getWorkoutsByState(WorkoutState.ROUTINE)
 
     val completedWorkoutsWithExercisesAndSets =
-        workoutDao.getWorkoutsWithExercisesAndSetsByStateAndOrderedByCompleted(WorkoutState.COMPLETED)
+        workoutDao
+            .getWorkoutsWithExercisesAndSetsByStateAndOrderedByCompleted(WorkoutState.COMPLETED)
+            .map { workouts -> workouts.map { it.sortedByExercisePosition() } }
 
-    val runningWorkoutsWithExercisesAndSets = workoutDao.getWorkoutsWithExercisesAndSetsByState(
-        WorkoutState.RUNNING
-    )
+    val runningWorkoutsWithExercisesAndSets =
+        workoutDao.getWorkoutsWithExercisesAndSetsByState(WorkoutState.RUNNING)
+            .map { workouts -> workouts.map { it.sortedByExercisePosition() } }
 
 
 
@@ -77,7 +83,7 @@ class WorkoutRepository @Inject constructor(
         return workoutDao.getWorkoutsWithExercisesAndSetsFromRoutineByState(
             routineId,
             state = WorkoutState.COMPLETED
-        )
+        ).map { it.sortedByExercisePosition() }
     }
 
     /**
@@ -96,7 +102,9 @@ class WorkoutRepository @Inject constructor(
             .map { list ->
                 list.map { w ->
                     w.copy(
-                        exercisesWithSets = w.exercisesWithSets.filter { it.exerciseDC.id == idExerciseDC }
+                        exercisesWithSets = w.exercisesWithSets
+                            .sortedBy { it.exercise.position }
+                            .filter { it.exerciseDC.id == idExerciseDC }
                     )
                 }
             }

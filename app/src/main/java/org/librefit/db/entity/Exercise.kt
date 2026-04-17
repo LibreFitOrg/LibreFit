@@ -32,6 +32,8 @@ import kotlin.random.Random
  * [org.librefit.ui.screens.workout.WorkoutScreen] and [org.librefit.ui.screens.editWorkout.EditWorkoutScreen]
  * @property restTime The rest time between sets in seconds editable by the user in
  * [org.librefit.ui.screens.workout.WorkoutScreen] and [org.librefit.ui.screens.editWorkout.EditWorkoutScreen]
+ * @property position The explicit position of the exercise in its parent workout. It is used to
+ * keep exercise order stable across reloads and edits.
  * @property workoutId This is a foreign key reference to the [Workout] entity.
  *
  */
@@ -51,7 +53,11 @@ import kotlin.random.Random
             onDelete = ForeignKey.CASCADE // Delete exercise when its respective exerciseDC is deleted
         )
     ],
-    indices = [Index(value = ["workoutId"])]
+    indices = [
+        Index(value = ["workoutId"]),
+        Index(value = ["workoutId", "position"]),
+        Index(value = ["idExerciseDC"])
+    ]
 )
 @Serializable
 data class Exercise(
@@ -60,5 +66,6 @@ data class Exercise(
     val notes: String = "",
     val setMode: SetMode = SetMode.LOAD,
     val restTime: Int = 0,
+    val position: Int = 0,
     val workoutId: Long = 0// Foreign key reference to Workout
 )

@@ -101,6 +101,7 @@
     <string name="edit_workout">Edit workout</string>
     <string name="quit_routine_creation_question">Quit routine creation?</string>
     <string name="warning_delete_exercise_from_routine">Warning! Deleting exercises from existing routines will unlink all exercises of derivative workouts.</string>
+    <string name="reorder">Reorder</string>
 
 
     <!-- Error screen-->

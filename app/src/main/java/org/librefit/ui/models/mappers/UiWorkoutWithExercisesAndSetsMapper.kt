@@ -15,7 +15,10 @@ import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
 fun WorkoutWithExercisesAndSets.toUi(): UiWorkoutWithExercisesAndSets {
     return UiWorkoutWithExercisesAndSets(
         workout = workout.toUi(),
-        exercisesWithSets = exercisesWithSets.map { it.toUi() }.toImmutableList()
+        exercisesWithSets = exercisesWithSets
+            .sortedBy { it.exercise.position }
+            .map { it.toUi() }
+            .toImmutableList()
     )
 }
 

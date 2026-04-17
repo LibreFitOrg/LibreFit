@@ -93,7 +93,7 @@ interface WorkoutDao {
      * This function queries the database to fetch all exercises that belong to the given [Exercise.workoutId]
      */
     @Transaction
-    @Query("SELECT * FROM exercises WHERE workoutId = :workoutId")
+    @Query("SELECT * FROM exercises WHERE workoutId = :workoutId ORDER BY position, id")
     suspend fun getExercisesFromWorkout(workoutId: Long): List<ExerciseWithSets>
 
     /**
