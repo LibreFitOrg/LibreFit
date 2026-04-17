@@ -5,9 +5,7 @@
   ~
   ~ LibreFit is subject to additional terms covering author attribution and trademark usage;
   ~ see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
-  -->
-
-<resources>
+  --><resources>
     <string name="app_name">LibreFit</string>
     <string name="home">Startseite</string>
     <string name="profile">Profil</string>
@@ -182,7 +180,7 @@
     <string name="motivation_3">LibreFit ist nur dank Eurer Unterstützung möglich, sei es durch eine Spende oder durch Beiträge zum Code oder zu Übersetzungen.</string>
     <string name="motivation_2">Ich investiere unzählige Stunden in das Entwerfen, Programmieren und Verfeinern jedes einzelnen Details, um das bestmögliche Erlebnis zu schaffen. Das ist mein Engagement für Dich als Nutzer und für eine bessere digitale Welt.</string>
     <string name="motivation_1">LibreFit ist ein Herzensprojekt, das von einer einzigen Person entwickelt wurde, die der Überzeugung ist, dass Software offen, einfach und ansprechend gestaltet sein und vor allem Ihre Privatsphäre respektieren sollte.</string>
-    <string name="together">zusammen</string>
+    <string name="together">gemeinsam entwickeln</string>
     <string name="unknown_error">Unbekannter Fehler</string>
     <string name="algorithm_not_available">Algorithmus nicht verfügbar</string>
     <string name="invalid_code">Ungültiger Code</string>
@@ -335,4 +333,13 @@
     <string name="most_reps">Meisten Wiederholungen</string>
     <string name="session_volume">Einheitsvolumen</string>
     <string name="one_rep_max">Maximale Wiederholungen</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_dutch">Niederländisch</string>
+    <string name="companion_app_desc">Einfach die Begleit-App installieren und auf die Schaltfläche unten klicken.</string>
+    <string name="verify_companion_app">Begleit-App verifizieren</string>
+    <string name="valid_companion_app_signature">Gültige Begleit-App</string>
+    <string name="invalid_companion_app_signature">Ungültige Begleit-App</string>
+    <string name="companion_app_not_found">Begleit-App nicht gefunden</string>
+    <string name="companion_signature_error">Signaturfehler der Begleitet–App</string>
+    <string name="lets_build">Lass uns</string>
 </resources>
