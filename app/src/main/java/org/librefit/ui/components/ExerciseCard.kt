@@ -19,6 +19,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -91,6 +92,8 @@ import org.librefit.enums.InfoMode
 import org.librefit.enums.PreviousPerformanceSet
 import org.librefit.enums.SetMode
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.ui.components.modalBottomSheets.InputModalBottomSheet
+import org.librefit.ui.models.InputModalBottomSheetState
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
@@ -98,6 +101,8 @@ import org.librefit.ui.models.UiSet
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import kotlin.math.roundToInt
+import kotlin.math.truncate
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * A custom [ElevatedCard] designed to display an [UiExerciseWithSets] with a uniform appearance across
@@ -161,6 +166,7 @@ fun SharedTransitionScope.ExerciseCard(
     previousPerformances: List<PreviousPerformanceSet>? = null,
     workout: Boolean = false,
     idSetWithRunningStopwatch: Long? = null,
+    useNumberPicker: Boolean = true,
     addSet: (Long) -> Unit,
     onDetail: (Long, String) -> Unit,
     onDelete: (Long) -> Unit,
@@ -458,6 +464,7 @@ fun SharedTransitionScope.ExerciseCard(
                                 isStopwatchRunning = idSetWithRunningStopwatch == null,
                                 isThisSetStopwatchRunning = idSetWithRunningStopwatch == set.id,
                                 workout = workout,
+                                useNumberPicker = useNumberPicker,
                                 deleteSet = deleteSet,
                                 updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
                                 updateSetTime = updateSetTime,
@@ -493,6 +500,7 @@ private fun Set(
     isStopwatchRunning: Boolean,
     isThisSetStopwatchRunning: Boolean,
     workout: Boolean,
+    useNumberPicker: Boolean,
     deleteSet: (Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
@@ -506,6 +514,42 @@ private fun Set(
     var weightValue by remember(set.load) { mutableStateOf(set.load.toString()) }
 
     val swipeToDismissBoxState = rememberSwipeToDismissBoxState()
+
+    var inputModalBottomSheetState by remember { mutableStateOf<InputModalBottomSheetState?>(null) }
+    var inputSetId by rememberSaveable { mutableStateOf<Long?>(null) }
+
+    inputModalBottomSheetState?.let {
+        InputModalBottomSheet(
+            state = it,
+            onValueChange = { newState ->
+                inputModalBottomSheetState = newState
+                inputSetId?.let { id ->
+                    when (newState) {
+                        is InputModalBottomSheetState.Weight -> {
+                            updateSetLoad(
+                                newState.totalWeight,
+                                id
+                            )
+                        }
+
+                        is InputModalBottomSheetState.Reps -> {
+                            updateSetReps(newState.reps, id)
+                        }
+
+                        is InputModalBottomSheetState.MinutesSeconds -> {
+                            updateSetTime(newState.totalSeconds, id)
+                        }
+
+                        else -> error("newState in ExerciseCard should not have this value: $newState")
+                    }
+                }
+            },
+            onDismiss = {
+                inputModalBottomSheetState = null
+                inputSetId = null
+            }
+        )
+    }
 
     val haptic = LocalHapticFeedback.current
     LaunchedEffect(swipeToDismissBoxState.currentValue) {
@@ -644,15 +688,93 @@ private fun Set(
                         }
                     }
                     //Time
+                    Box {
+                        OutlinedTextField(
+                            shape = MaterialTheme.shapes.large,
+                            modifier = Modifier.width(80.dp),
+                            value = Formatter.formateSecondsInMinutesAndSeconds(timeValue),
+                            onValueChange = { string ->
+                                val newTimeValue =
+                                    Formatter.parseTimeInputToSeconds(string)
+
+                                updateSetTime(newTimeValue, set.id)
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Transparent,
+                                focusedBorderColor = Color.Transparent,
+                                disabledBorderColor = Color.Transparent,
+                                focusedTextColor = contentColor,
+                                unfocusedTextColor = contentColor,
+                            ),
+                            readOnly = useNumberPicker
+                        )
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clip(MaterialTheme.shapes.extraLarge)
+                                .clickable(enabled = useNumberPicker) {
+                                    timeValue.seconds.toComponents { _, minutes, seconds, _ ->
+                                        inputModalBottomSheetState =
+                                            InputModalBottomSheetState.MinutesSeconds(
+                                                minutes = minutes,
+                                                seconds = seconds
+                                            )
+                                    }
+                                    inputSetId = set.id
+                                }
+                        ) { }
+                    }
+                }
+            } else {
+                if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
+                    //Weight
+                    Box {
+                        OutlinedTextField(
+                            shape = MaterialTheme.shapes.large,
+                            modifier = Modifier.width(80.dp),
+                            value = weightValue,
+                            onValueChange = { string ->
+                                weightValue = Formatter.normalizeNumericString(string)
+                                updateSetLoad(Formatter.parseDoubleFromString(weightValue), set.id)
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Transparent,
+                                focusedBorderColor = Color.Transparent,
+                                disabledBorderColor = Color.Transparent,
+                                focusedTextColor = contentColor,
+                                unfocusedTextColor = contentColor,
+                            ),
+                            readOnly = useNumberPicker
+                        )
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clip(MaterialTheme.shapes.extraLarge)
+                                .clickable(enabled = useNumberPicker) {
+                                    inputModalBottomSheetState = InputModalBottomSheetState.Weight(
+                                        integerWeight = set.load.toInt(),
+                                        decimalWeight = ((set.load - truncate(set.load)) * 100f).toInt()
+                                    )
+                                    inputSetId = set.id
+                                }
+                        ) { }
+                    }
+                }
+                //Reps
+                Box {
                     OutlinedTextField(
                         shape = MaterialTheme.shapes.large,
                         modifier = Modifier.width(80.dp),
-                        value = Formatter.formateSecondsInMinutesAndSeconds(timeValue),
+                        value = repValue,
                         onValueChange = { string ->
-                            val newTimeValue =
-                                Formatter.parseTimeInputToSeconds(string)
-
-                            updateSetTime(newTimeValue, set.id)
+                            repValue = Formatter.normalizeNumericString(string)
+                            Formatter.parseIntegerFromString(repValue)?.let {
+                                updateSetReps(it, set.id)
+                            }
                         },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -662,52 +784,21 @@ private fun Set(
                             disabledBorderColor = Color.Transparent,
                             focusedTextColor = contentColor,
                             unfocusedTextColor = contentColor,
-                        )
+                        ),
+                        readOnly = useNumberPicker
                     )
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .clip(MaterialTheme.shapes.extraLarge)
+                            .clickable(enabled = useNumberPicker) {
+                                inputModalBottomSheetState = InputModalBottomSheetState.Reps(
+                                    reps = repValue.toInt()
+                                )
+                                inputSetId = set.id
+                            }
+                    ) { }
                 }
-            } else {
-                if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
-                    //Weight
-                    OutlinedTextField(
-                        shape = MaterialTheme.shapes.large,
-                        modifier = Modifier.width(80.dp),
-                        value = weightValue,
-                        onValueChange = { string ->
-                            weightValue = Formatter.normalizeNumericString(string)
-                            updateSetLoad(Formatter.parseDoubleFromString(weightValue), set.id)
-                        },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedBorderColor = Color.Transparent,
-                            disabledBorderColor = Color.Transparent,
-                            focusedTextColor = contentColor,
-                            unfocusedTextColor = contentColor,
-                        )
-                    )
-                }
-                //Reps
-                OutlinedTextField(
-                    shape = MaterialTheme.shapes.large,
-                    modifier = Modifier.width(80.dp),
-                    value = repValue,
-                    onValueChange = { string ->
-                        repValue = Formatter.normalizeNumericString(string)
-                        Formatter.parseIntegerFromString(repValue)?.let {
-                            updateSetReps(it, set.id)
-                        }
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedBorderColor = Color.Transparent,
-                        disabledBorderColor = Color.Transparent,
-                        focusedTextColor = contentColor,
-                        unfocusedTextColor = contentColor,
-                    )
-                )
             }
 
             if (workout) {

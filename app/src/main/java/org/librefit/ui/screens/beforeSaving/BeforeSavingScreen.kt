@@ -13,7 +13,9 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,8 +38,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -63,6 +67,8 @@ import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.dialogs.ConfirmDialog
+import org.librefit.ui.components.modalBottomSheets.InputModalBottomSheet
+import org.librefit.ui.models.InputModalBottomSheetState
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
@@ -71,6 +77,7 @@ import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatTime
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -87,6 +94,8 @@ fun SharedTransitionScope.BeforeSavingScreen(
     val exercises by viewModel.exercises.collectAsStateWithLifecycle()
 
     val routine by viewModel.routine.collectAsStateWithLifecycle()
+
+    val useNumberPicker by viewModel.useNumberPicker.collectAsStateWithLifecycle()
 
 
     val showUnlikeRoutineDialog = remember { mutableStateOf(false) }
@@ -130,6 +139,22 @@ fun SharedTransitionScope.BeforeSavingScreen(
         }
     }
 
+    var inputModalBottomSheetState by remember { mutableStateOf<InputModalBottomSheetState?>(null) }
+
+    inputModalBottomSheetState?.let {
+        InputModalBottomSheet(
+            state = it,
+            onValueChange = { newState ->
+                if (newState is InputModalBottomSheetState.HoursMinutesSeconds) {
+                    viewModel.setTimeElapsed(newState.totalSeconds)
+                }
+            },
+            onDismiss = {
+                inputModalBottomSheetState = null
+            }
+        )
+    }
+
 
     BeforeSavingScreenContent(
         navController = navController,
@@ -140,12 +165,16 @@ fun SharedTransitionScope.BeforeSavingScreen(
         routine = routine,
         volumeExercises = volume,
         animatedVisibilityScope = animatedVisibilityScope,
+        useNumberPicker = useNumberPicker,
         isTitleTooLong = viewModel.isTitleTooLong(),
         isTitleEmpty = viewModel.isTitleEmpty(),
         updateWorkoutTitle = viewModel::updateWorkoutTitle,
         updateWorkoutNotes = viewModel::updateWorkoutNotes,
         saveExercisesWithWorkout = viewModel::saveExercisesWithWorkout,
-        setTimeElapsed = viewModel::setTimeElapsed
+        setTimeElapsed = viewModel::setTimeElapsed,
+        onInputModalBottomSheetRequest = {
+            inputModalBottomSheetState = it
+        }
     )
 }
 
@@ -162,10 +191,12 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
     isTitleTooLong: Boolean,
     isTitleEmpty: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    useNumberPicker: Boolean,
     updateWorkoutTitle: (String) -> Unit,
     updateWorkoutNotes: (String) -> Unit,
     saveExercisesWithWorkout: () -> Unit,
-    setTimeElapsed: (Int) -> Unit
+    setTimeElapsed: (Int) -> Unit,
+    onInputModalBottomSheetRequest: (InputModalBottomSheetState) -> Unit,
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.overview)),
@@ -229,25 +260,45 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-
-                    OutlinedTextField(
-                        shape = MaterialTheme.shapes.large,
+                    Box(
                         modifier = Modifier.weight(0.5f),
-                        value = formatTime(workout.timeElapsed),
-                        label = { Text(stringResource(R.string.elapsed_time)) },
-                        onValueChange = { string ->
-                            val stringValue = string.filter { it.isDigit() }.takeLast(6)
+                    ) {
+                        OutlinedTextField(
+                            readOnly = useNumberPicker,
+                            shape = MaterialTheme.shapes.large,
+                            value = formatTime(workout.timeElapsed),
+                            label = { Text(stringResource(R.string.elapsed_time)) },
+                            onValueChange = { string ->
+                                val stringValue = string.filter { it.isDigit() }.takeLast(6)
 
-                            val seconds = stringValue.toInt() % 100
-                            val minutes = (stringValue.toInt() % 10000 - seconds) / 100
-                            val hours =
-                                (stringValue.toInt() - stringValue.toInt() % 10000) / 10000
+                                val seconds = stringValue.toInt() % 100
+                                val minutes = (stringValue.toInt() % 10000 - seconds) / 100
+                                val hours =
+                                    (stringValue.toInt() - stringValue.toInt() % 10000) / 10000
 
-                            setTimeElapsed(hours * 3600 + minutes * 60 + seconds)
-                        },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                    )
+                                setTimeElapsed(hours * 3600 + minutes * 60 + seconds)
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .padding(top = 7.dp) // Thin offset to match inner shape
+                                .clip(MaterialTheme.shapes.largeIncreased)
+                                .clickable(enabled = useNumberPicker) {
+                                    onInputModalBottomSheetRequest(
+                                        workout.timeElapsed.seconds.toComponents { hours, minutes, seconds, _ ->
+                                            InputModalBottomSheetState.HoursMinutesSeconds(
+                                                hours = hours.toInt(),
+                                                minutes = minutes,
+                                                seconds = seconds
+                                            )
+                                        }
+                                    )
+                                }
+                        ) { }
+                    }
                     OutlinedTextField(
                         shape = MaterialTheme.shapes.large,
                         modifier = Modifier.weight(0.5f),
@@ -543,11 +594,13 @@ private fun BeforeSavingScreenPreview() {
                     volumeExercises = "$volume",
                     isTitleTooLong = false,
                     isTitleEmpty = false,
+                    useNumberPicker = true,
                     updateWorkoutTitle = {},
                     updateWorkoutNotes = {},
                     saveExercisesWithWorkout = {},
                     setTimeElapsed = {},
-                    animatedVisibilityScope = this
+                    animatedVisibilityScope = this,
+                    onInputModalBottomSheetRequest = {}
                 )
             }
         }

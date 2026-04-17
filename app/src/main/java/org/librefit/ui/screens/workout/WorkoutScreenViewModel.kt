@@ -523,4 +523,6 @@ class WorkoutScreenViewModel @Inject constructor(
 
 
     val isHeaderSticky = userPreferences.isWorkoutHeaderSticky
+
+    val useNumberPicker = userPreferences.useNumberPicker
 }

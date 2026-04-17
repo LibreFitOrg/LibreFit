@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.entity.Measurement
 import org.librefit.db.repository.MeasurementRepository
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.di.qualifiers.DefaultDispatcher
 import org.librefit.enums.MeasurementCardState
 import org.librefit.enums.chart.MeasurementChart
@@ -35,8 +36,12 @@ import javax.inject.Inject
 @HiltViewModel
 class MeasurementScreenViewModel @Inject constructor(
     private val measurementRepository: MeasurementRepository,
-    @param:DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
+    @param:DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
+    userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+    val useNumberPicker = userPreferencesRepository.useNumberPicker
+
+
     private val _measurementChart = MutableStateFlow(MeasurementChart.BODY_WEIGHT)
     val measurementChart = _measurementChart.asStateFlow()
 

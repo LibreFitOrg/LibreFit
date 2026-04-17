@@ -359,6 +359,9 @@
     <string name="librefit_is_under_threat">LibreFit is under threat</string>
     <string name="librefit_is_under_threat_desc">- Starting in September 2026, Google plans to lock down Android by **blocking you from installing any app** unless its developer has paid a fee, registered, and handed over personal ID to Google.\n- This policy destroys Android\'s open ecosystem and **takes away your basic right to choose what software you can run on the device you own**.\n- Please visit [keepandroidopen.org](https://keepandroidopen.org) to learn more about this threat to your digital freedom and how you can help stop it.</string>
 
+    <!-- Input modal bottom sheet -->
+    <string name="weight">Weight</string>
+
 
 
     <!--Exercise card-->
