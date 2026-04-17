@@ -117,9 +117,10 @@ import kotlin.math.roundToInt
  * the [org.librefit.ui.screens.infoExercise.InfoExerciseScreen].
  * @param onDelete A lambda function executed when the *Delete* icon is clicked, it should result in
  * the removal of the card.
- * @param isDragging When `true`, the card collapses its editable body to provide clearer reorder feedback.
+ * @param isCollapsed When `true`, the card collapses its editable body to provide clearer reorder feedback.
  * @param showDragHandle Whether a drag handle should be shown in the top-right corner.
  * @param dragHandleModifier Modifier applied to the optional drag handle.
+ * @param onDragHandlePressedChange Reports whether the drag handle is currently pressed.
  * @param updateExerciseNotes A function to update notes based on [UiExercise.id]. For more details, refer to
  * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExerciseNotes] and
  * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateExerciseNotes].
@@ -169,9 +170,10 @@ fun SharedTransitionScope.ExerciseCard(
     addSet: (Long) -> Unit,
     onDetail: (Long, String) -> Unit,
     onDelete: (Long) -> Unit,
-    isDragging: Boolean = false,
+    isCollapsed: Boolean = false,
     showDragHandle: Boolean = false,
     dragHandleModifier: Modifier = Modifier,
+    onDragHandlePressedChange: (Boolean) -> Unit = {},
     deleteSet: (Long) -> Unit,
     updateExerciseNotes: (String, Long) -> Unit,
     updateExerciseRestTime: (Int, Long) -> Unit,
@@ -186,7 +188,10 @@ fun SharedTransitionScope.ExerciseCard(
 ) {
     val dragHandleInteractionSource = remember { MutableInteractionSource() }
     val isDragHandlePressed by dragHandleInteractionSource.collectIsPressedAsState()
-    val isCollapsed = isDragging || isDragHandlePressed
+
+    LaunchedEffect(isDragHandlePressed) {
+        onDragHandlePressedChange(isDragHandlePressed)
+    }
 
     ElevatedCard(
         modifier = modifier,
