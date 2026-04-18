@@ -22613,5 +22613,513 @@
         "Zottman_Preacher_Curl/1.webp"
     ],
     "id": "Zottman_Preacher_Curl"
+  },
+  {
+    "name": "Arch Hang",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "lats",
+      "shoulders"
+    ],
+    "secondaryMuscles": [
+      "forearms",
+      "middle back"
+    ],
+    "instructions": [
+      "Take a pronated grip on a pull-up bar.",
+      "Hang with arms fully extended.",
+      "Engage your shoulders by pulling them down and back.",
+      "Arch your body, progress towards 90 degrees in your shoulder.",
+      "Elbows should stay straight."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Arch_Hang"
+  },
+  {
+    "name": "Eccentric Pullups",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "lats"
+    ],
+    "secondaryMuscles": [
+      "biceps",
+      "middle back",
+      "forearms"
+    ],
+    "instructions": [
+      "Start at the top position with your chin above the bar, ideally use a box or chair to get there or jump up.",
+      "Grip the bar with your grip of choice.",
+      "Lower your body as slowly as you can, work up to 10 seconds per rep."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Eccentric_Pullups"
+  },
+  {
+    "name": "Assisted Bodyweight Squat",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "instructions": [
+      "Stand with your feet shoulder width apart. Grab something in front of you and use your hands to assist in the squat. Reduce assistance over time.",
+      "Begin the movement by flexing your knees and hips, sitting back with your hips.",
+      "Continue down to full depth if you are able, and quickly reverse the motion until you return to the starting position. As you squat, keep your head and chest up and push your knees out."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Assisted_Bodyweight_Squat"
+  },
+  {
+    "name": "Beginner Shrimp Squat",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "calves",
+      "abductors"
+    ],
+    "instructions": [
+      "Stand on one leg, bend the other leg behind you.",
+      "Lower yourself down slowly until the back knee and toes touch the ground.",
+      "Push through the front foot to stand up, make sure the knee and toes leave the ground at the same time.",
+      "Keep chest up and engage core during the movement, and repeat on the other leg."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Beginner_Shrimp_Squad"
+  },
+  {
+    "name": "Intermediate Shrimp Squat",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "abductors",
+      "glutes",
+      "hamstrings",
+      "calves"
+    ],
+    "instructions": [
+      "Stand on one leg, bend the other leg behind you.",
+      "Lower yourself down slowly until the back knee touches the ground, but the toes do not.",
+      "Push through the front foot to stand up.",
+      "Keep chest up and engage core during the movement, and repeat on the other leg."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Intermediate_Shrimp_Squad"
+  },
+  {
+    "name": "Shrimp Squat",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "abductors",
+      "glutes",
+      "hamstrings",
+      "calves"
+    ],
+    "instructions": [
+      "Stand on one leg, bend the other leg behind you and grab your ankle with your hand on the same side.",
+      "Lower yourself down slowly until the back knee lightly touches the ground.",
+      "Push through the front foot to stand up.",
+      "Keep chest up and engage core during the movement, and repeat on the other leg."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Shrimp_Squad"
+  },
+  {
+    "name": "Pistol Squat",
+    "force": "push",
+    "level": "expert",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "calves",
+      "glutes",
+      "hamstrings"
+    ],
+    "instructions": [
+      "Stand on one leg and extend the other leg forward.",
+      "While keeping your chest upright, lower yourself slowly without letting the extended leg touch the floor.",
+      "Push through the standing foot to get back up."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Pistol_Squat"
+  },
+  {
+    "name": "Parallel Bar Support Hold",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "other",
+    "primaryMuscles": [
+      "triceps"
+    ],
+    "secondaryMuscles": [
+      "shoulders",
+      "chest"
+    ],
+    "instructions": [
+      "Place your hands on the parallel bars and push your body up until your arms are fully extended.",
+      "Keep your core engaged and depress your shoulderblades."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Parallel_Bar_Support_Hold"
+  },
+  {
+    "name": "Eccentric Parallel Bar Dip",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "other",
+    "primaryMuscles": [
+      "triceps"
+    ],
+    "secondaryMuscles": [
+      "chest",
+      "shoulders"
+    ],
+    "instructions": [
+      "Stand between a set of parallel bars. Place a hand on each bar, and then take a small jump to help you get into the starting position with your arms locked out.",
+      "Begin by flexing the elbow, lowering your body until your arms break 90 degrees. Avoid swinging, and maintain good posture throughout the descent.",
+      "Take a small jump to get back to the starting position"
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Eccentric_Parallel_Bar_Dip"
+  },
+  {
+    "name": "Ring Support Hold",
+    "force": "push",
+    "level": "intermediate",
+    "mechanic": "compound",
+    "equipment": "other",
+    "primaryMuscles": [
+      "triceps"
+    ],
+    "secondaryMuscles": [
+      "chest",
+      "shoulders"
+    ],
+    "instructions": [
+      "Grip a ring in each hand, and then take a small jump to help you get into the position with your arms locked out and shoulderblades depressed."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Ring_Support_Hold"
+  },
+  {
+    "name": "RTO Support Hold",
+    "force": "push",
+    "level": "intermediate",
+    "mechanic": "compound",
+    "equipment": "other",
+    "primaryMuscles": [
+      "triceps"
+    ],
+    "secondaryMuscles": [
+      "chest",
+      "shoulders"
+    ],
+    "instructions": [
+      "Grip a ring in each hand, and then take a small jump to help you get into the position with your arms locked out and shoulderblades depressed.",
+      "Slowly rotate your shoulder so your thumbs point out to the sides."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "RTO_Support_Hold"
+  },
+  {
+    "name": "Banded Nordic Curl Negatives",
+    "force": "push",
+    "level": "intermediate",
+    "mechanic": "compound",
+    "equipment": "bands",
+    "primaryMuscles": [
+      "hamstrings"
+    ],
+    "secondaryMuscles": [
+      "calves",
+      "glutes"
+    ],
+    "instructions": [
+      "Kneel on a soft surface and anchor your feet securely, secure a resistance band to an anchor point behind you and loop it around your chest.",
+      "Lower your torso forward slowly while keeping your body in a straight line.",
+      "Do a little push-up when you reach the bottom to get back to the top."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Banded_Nordic_Curl_Negatives"
+  },
+  {
+    "name": "Banded Nordic Curl",
+    "force": "push",
+    "level": "intermediate",
+    "mechanic": "compound",
+    "equipment": "other",
+    "primaryMuscles": [
+      "hamstrings"
+    ],
+    "secondaryMuscles": [
+      "calves",
+      "glutes"
+    ],
+    "instructions": [
+      "Kneel on a soft surface and anchor your feet securely, secure a resistance band to an anchor point behind you and loop it around your chest.",
+      "Lower your torso forward slowly while keeping your body in a straight line.",
+      "Catch yourself in a push-up position at the bottom.",
+      "Squeeze your hamstrings to get back to the starting position."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Banded_Nordic_Curl"
+  },
+  {
+    "name": "Nordic Curl",
+    "force": "push",
+    "level": "expert",
+    "mechanic": "compound",
+    "equipment": "other",
+    "primaryMuscles": [
+      "hamstrings"
+    ],
+    "secondaryMuscles": [
+      "calves",
+      "glutes"
+    ],
+    "instructions": [
+      "Kneel on a soft surface and anchor your feet securely.",
+      "Lower your torso forward slowly while keeping your body in a straight line.",
+      "Catch yourself in a push-up position at the bottom.",
+      "Squeeze your hamstrings to get back to the starting position."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Nordic_Curl"
+  },
+  {
+    "name": "Vertical Row",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "middle back",
+      "lats"
+    ],
+    "secondaryMuscles": [
+      "biceps",
+      "forearms"
+    ],
+    "instructions": [
+      "Grab the bar/rings and hang from them with your body vertical.",
+      "Pull your chest towards the bar and squeeze your shoulder blades together.",
+      "Lower yourself back down slowly"
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Vertical_Row"
+  },
+  {
+    "name": "Incline Row",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "middle back",
+      "lats"
+    ],
+    "secondaryMuscles": [
+      "biceps",
+      "forearms"
+    ],
+    "instructions": [
+      "Grab the bar/rings and hang from them with your body somewhere between vertical and horizontal.",
+      "Pull your chest towards the bar and squeeze your shoulder blades together.",
+      "Lower yourself back down slowly"
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Incline_Row"
+  },
+  {
+    "name": "Horizontal Row",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "middle back",
+      "lats"
+    ],
+    "secondaryMuscles": [
+      "biceps",
+      "forearms"
+    ],
+    "instructions": [
+      "Grab the bar/rings and hang under them with your body straight.",
+      "Pull your chest towards the bar and squeeze your shoulder blades together.",
+      "Lower yourself back down slowly"
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Horizontal_Row"
+  },
+  {
+    "name": "Tucked Hanging Leg Raises",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "isolation",
+    "equipment": "other",
+    "primaryMuscles": [
+      "abdominals"
+    ],
+    "secondaryMuscles": [],
+    "instructions": [
+      "Hang from a pull-up bar with both arms extended at arms length in top of you using either a wide grip or a medium grip. The legs should be straight down with the pelvis rolled slightly backwards. This will be your starting position.",
+      "Raise your knees until the torso makes a 90-degree angle with the legs. Exhale as you perform this movement and hold the contraction for a second or so.",
+      "Go back slowly to the starting position as you breathe in."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Tucked_Hanging_Leg_Raises"
+  },
+  {
+    "name": "Pike Hanging Leg Raises",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "isolation",
+    "equipment": "other",
+    "primaryMuscles": [
+      "abdominals"
+    ],
+    "secondaryMuscles": [],
+    "instructions": [
+      "Hang from a pull-up bar with both arms extended at arms length in top of you using either a wide grip or a medium grip. The legs should be straight down with the pelvis rolled slightly backwards. This will be your starting position.",
+      "Raise your knees until the torso makes a 90-degree angle with the legs, then extend your legs to a straight position. Exhale as you perform this movement and hold the contraction for a second or so.",
+      "Go back slowly to the starting position while keeping the legs straight as you breathe in."
+    ],
+    "category": "strength",
+    "images": [
+    ],
+    "id": "Pike_Hanging_Leg_Raises"
+  },
+  {
+    "name": "Yuri's Shoulder Band Warmup",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "isolation",
+    "equipment": "bands",
+    "primaryMuscles": [
+      "shoulders"
+    ],
+    "secondaryMuscles": [
+      "chest",
+      "lats"
+    ],
+    "instructions": [
+      "https://www.youtube.com/watch?v=UP0MPCSo_Bo"
+    ],
+    "category": "stretching",
+    "images": [
+    ],
+    "id": "Yuri_Shoulder_Band_Warmup"
+  },
+  {
+    "name": "Squat Sky Reaches",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "isolation",
+    "equipment": "bands",
+    "primaryMuscles": [
+      "quadriceps",
+      "glutes"
+    ],
+    "secondaryMuscles": [
+      "shoulders"
+    ],
+    "instructions": [
+      "Start in a deep squat position.",
+      "Grab one ankle with the hand on the opposite side.",
+      "Slowly reach up with the arm on the other side."
+    ],
+    "category": "stretching",
+    "images": [
+    ],
+    "id": "Squat_Sky_Reaches"
+  },
+  {
+    "name": "GMB Wrist Prep",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "isolation",
+    "equipment": "bands",
+    "primaryMuscles": [
+    ],
+    "secondaryMuscles": [
+    ],
+    "instructions": [
+      "https://www.youtube.com/watch?v=mSZWSQSSEjE"
+    ],
+    "category": "stretching",
+    "images": [
+    ],
+    "id": "GMB_Wrist_Prep"
   }
 ]
