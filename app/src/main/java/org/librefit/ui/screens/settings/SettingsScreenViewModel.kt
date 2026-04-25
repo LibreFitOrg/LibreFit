@@ -8,28 +8,34 @@
 
 package org.librefit.ui.screens.settings
 
+import android.net.Uri
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.librefit.db.repository.ImportExportRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.ui.models.BackupEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
-    private val userPreferences: UserPreferencesRepository
+    private val userPreferences: UserPreferencesRepository,
+    private val importExportRepository: ImportExportRepository
 ) : ViewModel() {
     val themeMode = userPreferences.themeMode
     val materialMode = userPreferences.materialMode
@@ -91,11 +97,32 @@ class SettingsScreenViewModel @Inject constructor(
         }
     }
 
-    fun backupImport() {
+    private val _events = MutableSharedFlow<BackupEvent>()
+    val events = _events.asSharedFlow()
 
+    fun backupExport(uri: Uri) {
+        viewModelScope.launch {
+            try {
+                importExportRepository.exportTo(uri)
+            } catch (e: Exception) {
+                // TODO: catch and show
+                _events.emit(
+                    BackupEvent.Error(e.message ?: "Data backup export failed")
+                )
+            }
+        }
     }
 
-    fun backupExport() {
-
+    fun backupImport(uri: Uri) {
+        viewModelScope.launch {
+            try {
+                importExportRepository.importFrom(uri)
+            } catch (e: Exception) {
+                // TODO: catch and show
+                _events.emit(
+                    BackupEvent.Error(e.message ?: "Data backup restore failed")
+                )
+            }
+        }
     }
 }

@@ -265,8 +265,10 @@
     <string name="not_stick_status_bar_desc">The status bar of ongoing workout won\'t be stuck at the top of the screen</string>
     <string name="export_data">Export data</string>
     <string name="export_data_desc">Export the current database</string>
+    <string name="export_data_success">Data exported successfully</string>
     <string name="import_data">Import data</string>
     <string name="import_data_desc">Import backed up data</string>
+    <string name="import_data_success">Data imported successfully</string>
 
 
     <!-- Statistics screen-->

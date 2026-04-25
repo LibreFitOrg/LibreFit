@@ -18,11 +18,11 @@ import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.librefit.MainDispatcherRule
+import org.librefit.db.repository.ImportExportRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
@@ -35,6 +35,7 @@ class SettingsScreenViewModelTest {
 
     // The mock repository
     private lateinit var userPreferencesRepository: UserPreferencesRepository
+    private lateinit var importExportRepository: ImportExportRepository
 
     // The class under test
     private lateinit var viewModel: SettingsScreenViewModel
@@ -56,6 +57,7 @@ class SettingsScreenViewModelTest {
     fun setUp() {
         // Arrange: Create a mock for the repository
         userPreferencesRepository = mockk()
+        importExportRepository = mockk()
         language = MutableStateFlow(Language.SYSTEM)
         themeMode = MutableStateFlow(ThemeMode.SYSTEM)
         keepScreenOn = MutableStateFlow(true)
@@ -113,7 +115,7 @@ class SettingsScreenViewModelTest {
         }
 
         // Arrange: Create the ViewModel instance with the mock repository
-        viewModel = SettingsScreenViewModel(userPreferencesRepository)
+        viewModel = SettingsScreenViewModel(userPreferencesRepository, importExportRepository)
     }
 
     @Test

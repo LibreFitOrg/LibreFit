@@ -8,7 +8,11 @@
 
 package org.librefit.ui.screens.settings
 
+import android.net.Uri
 import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -21,9 +25,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -53,6 +61,7 @@ import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.dialogs.PreferenceDialog
+import org.librefit.ui.models.BackupEvent
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import kotlin.random.Random
@@ -124,8 +133,8 @@ private fun SettingsScreenContent(
     isWorkoutHeaderSticky: Boolean,
     updatePreferences: (List<DialogPreference>) -> Unit,
     saveBooleanValue: (Preferences.Key<Boolean>, value: Boolean) -> Unit,
-    backupExport: () -> Unit,
-    backupImport: () -> Unit
+    backupExport: (Uri) -> Unit,
+    backupImport: (Uri) -> Unit
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.settings)),
@@ -234,8 +243,17 @@ private fun SettingsScreenContent(
             }
 
             item {
+                val launcher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.CreateDocument("application/octet-stream")
+                ) { uri ->
+                    uri?.let { backupExport(it) }
+                }
+
                 SettingItem(
-                    onClick = backupExport,
+                    onClick = {
+                        val fileName = "librefit-backup.db"
+                        launcher.launch(fileName)
+                    },
                     icon = painterResource(R.drawable.ic_backup),
                     settingName = stringResource(id = R.string.export_data),
                     settingDesc = stringResource(R.string.export_data_desc)
@@ -243,8 +261,18 @@ private fun SettingsScreenContent(
             }
 
             item {
+                val launcher =
+                    rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.OpenDocument()
+                    ) { uri: Uri? ->
+                        uri?.let {
+                            backupImport(it)
+                        }
+                    }
                 SettingItem(
-                    onClick = backupImport,
+                    onClick = {
+                        launcher.launch(arrayOf("*/*"))
+                    },
                     icon = painterResource(R.drawable.ic_restore),
                     settingName = stringResource(id = R.string.import_data),
                     settingDesc = stringResource(R.string.import_data_desc)
