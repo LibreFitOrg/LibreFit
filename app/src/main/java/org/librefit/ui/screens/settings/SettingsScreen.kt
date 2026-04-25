@@ -105,7 +105,9 @@ fun SettingsScreen(
         isSupporter = isSupporter,
         isWorkoutHeaderSticky = isWorkoutHeaderSticky,
         updatePreferences = viewModel::updatePreferences,
-        saveBooleanValue = viewModel::savePreference
+        saveBooleanValue = viewModel::savePreference,
+        backupExport = viewModel::backupExport,
+        backupImport = viewModel::backupImport
     )
 }
 
@@ -121,7 +123,9 @@ private fun SettingsScreenContent(
     isSupporter: Boolean,
     isWorkoutHeaderSticky: Boolean,
     updatePreferences: (List<DialogPreference>) -> Unit,
-    saveBooleanValue: (Preferences.Key<Boolean>, value: Boolean) -> Unit
+    saveBooleanValue: (Preferences.Key<Boolean>, value: Boolean) -> Unit,
+    backupExport: () -> Unit,
+    backupImport: () -> Unit
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.settings)),
@@ -228,6 +232,24 @@ private fun SettingsScreenContent(
                     settingName = stringResource(R.string.stick_status_bar)
                 )
             }
+
+            item {
+                SettingItem(
+                    onClick = backupExport,
+                    icon = painterResource(R.drawable.ic_backup),
+                    settingName = stringResource(id = R.string.export_data),
+                    settingDesc = stringResource(R.string.export_data_desc)
+                )
+            }
+
+            item {
+                SettingItem(
+                    onClick = backupImport,
+                    icon = painterResource(R.drawable.ic_restore),
+                    settingName = stringResource(id = R.string.import_data),
+                    settingDesc = stringResource(R.string.import_data_desc)
+                )
+            }
         }
     }
 }
@@ -331,6 +353,8 @@ fun SettingsScreenPreview() {
                     }
                 }
             },
+            backupExport = {},
+            backupImport = {}
         )
     }
 }

@@ -90,4 +90,12 @@ class SettingsScreenViewModel @Inject constructor(
             )
         }
     }
+
+    fun backupImport() {
+
+    }
+
+    fun backupExport() {
+
+    }
 }
