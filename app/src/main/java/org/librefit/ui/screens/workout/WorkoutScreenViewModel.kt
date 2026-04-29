@@ -97,7 +97,7 @@ class WorkoutScreenViewModel @Inject constructor(
             set.elapsedTime
         }
 
-        // The loop is infinite, but the coroutine will be stopped when its Job is cancelled
+        // The loop is infinite, but the coroutine will be stopped when its Job is canceled
         while (true) {
             val currentTime = System.currentTimeMillis()
             val newElapsedTime = initialElapsedTime + ((currentTime - startTime) / 1000)
@@ -544,16 +544,18 @@ class WorkoutScreenViewModel @Inject constructor(
         }
     }
 
-    // Safety-net persistence: writes to DB every 3s if state is pending.
+    // Safety-net persistence: writes to DB every 2s if state is pending.
     // Separate this from UI-driven sync to avoid the heartbeat being reset by frequent timer ticks.
     init {
         viewModelScope.launch(ioDispatcher) {
             // Observe workout and exercises only, ignoring timeElapsed to avoid frequent resets
             combine(workout, exercises) { w, e -> w to e }
-                .debounce(3000L)
-                .distinctUntilChanged()
+                .debounce(2000L)
                 .collect { (w, e) ->
-                    saveRunningWorkout(Triple(w, e, timeElapsed.value))
+                    // Do not save when user navigates away
+                    if (isFocused) {
+                        saveRunningWorkout(Triple(w, e, timeElapsed.value))
+                    }
                 }
         }
     }
