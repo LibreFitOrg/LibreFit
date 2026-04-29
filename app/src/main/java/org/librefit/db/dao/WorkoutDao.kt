@@ -26,6 +26,19 @@ import java.time.LocalDateTime
 @Dao
 interface WorkoutDao {
     /**
+     * Returns a flow that emits a stream of [org.librefit.db.entity.Workout]s ordered by their
+     * creation date
+     */
+    @Query("SELECT * FROM workouts ORDER BY created")
+    fun getAllWorkouts(): Flow<List<Workout>>
+
+    /**
+     * Returns a flow that emits a stream of [org.librefit.db.entity.Exercise]s for each workout
+     */
+    @Query("SELECT * FROM exercises WHERE workoutId IN (:workoutIds)")
+    fun getAllExercises(workoutIds: List<Long>): Flow<List<Exercise>>
+
+    /**
      * Returns a flow that emits a stream of [org.librefit.db.entity.Workout]s filtered by [state]
      */
     @Query("SELECT * FROM workouts WHERE state = :state ORDER BY created")

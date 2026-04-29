@@ -5,8 +5,13 @@ import android.content.Intent
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import org.librefit.db.AppDatabase
+import org.librefit.db.converters.ExportData
+import org.librefit.db.converters.ExportPayload
 import java.io.File
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -16,20 +21,27 @@ class ImportExportRepository @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     suspend fun exportTo(uri: Uri) = withContext(Dispatchers.IO) {
-        val sqliteDb = db.openHelper.writableDatabase
-
-        val tempFile = File(context.cacheDir, "backup.db")
-
-        val path = tempFile.absolutePath.replace("'", "''")
-        sqliteDb.execSQL("VACUUM INTO '$path'")
+        // 1. note the current db migration version
+        // 2. serialize the JSON
+        val workouts = db.getWorkoutDao().getAllWorkouts().first()
+        val workoutIds = workouts.map { it.id }
+        val exercises = db.getWorkoutDao().getAllExercises(workoutIds).first()
+        val payload = ExportPayload(
+            version = 3,
+            data = ExportData(
+                workouts = workouts,
+                exercises = exercises,
+                // TODO
+                sets = db.getWorkoutDao().getAllSets(),
+                measurements = db.getMeasurementDao().getAll(),
+                exerciseDCs = db.getDatasetDao().getAll()
+            )
+        )
 
         context.contentResolver.openOutputStream(uri)?.use { out ->
-            tempFile.inputStream().use { input ->
-                input.copyTo(out)
-            }
+            val json = /* your serializer, e.g. kotlinx.serialization */
+                out.write(json.encodeToString(payload).toByteArray())
         }
-
-        tempFile.delete()
     }
 
     suspend fun importFrom(uri: Uri): Nothing = withContext(Dispatchers.IO) {
