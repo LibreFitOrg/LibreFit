@@ -67,4 +67,26 @@
     <string name="past_measurement">Попереднє вимірювання</string>
     <string name="new_measurement">Нове вимірювання</string>
     <string name="edit_measurement">Редагувати вимірювання</string>
+    <string name="notes">Замітки</string>
+    <string name="title_cannot_be_empty">Заголовок не може бути порожнім</string>
+    <string name="title_length_exceeded_30">Заголовок не може перевищувати 30 символів</string>
+    <string name="edit_routine">Змінити розклад</string>
+    <string name="edit_workout">Коригувати тренування</string>
+    <string name="quit_routine_creation_question">Завершити створення розкладу?</string>
+    <string name="warning_delete_exercise_from_routine">Увага! Видалення вправ із наявних програм призведе до від’єднання всіх вправ у похідних тренуваннях.</string>
+    <string name="reorder">Перегрупувати</string>
+    <string name="application_encountered_error">У роботі програми сталася неочікувана помилка</string>
+    <string name="restart_app">Перезапуск</string>
+    <string name="crash_log">Звіт про збій</string>
+    <string name="report_github">Повідомити на GitHub</string>
+    <string name="stack_trace_not_available">Набір викликів недоступний</string>
+    <string name="quit_adding_exercises_question">Припинити додавати вправи?</string>
+    <string name="quit_adding_exercises_text">Ви впевнені, що хочете вийти? Вибрані вправи не будуть додані.</string>
+    <string name="search_exercise_field">Пошук вправи</string>
+    <string name="no_exercise_found">Вправ не знайдено</string>
+    <string name="filters">Фільтри</string>
+    <string name="warning">Попередження</string>
+    <string name="your_routines">Ваш розпорядок</string>
+    <string name="start_empty_workout">Розпочати тренування без плану</string>
+    <string name="create_routine">Створити розклад</string>
 </resources>
