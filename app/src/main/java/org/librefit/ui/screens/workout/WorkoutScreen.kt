@@ -72,7 +72,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
@@ -252,19 +251,8 @@ fun SharedTransitionScope.WorkoutScreen(
 
 
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    // Save state of running workout when this screen is the primary focus
-    LaunchedEffect(Unit) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.runningWorkoutState.collect {
-                viewModel.saveRunningWorkout(it)
-            }
-        }
-    }
-
-
     // Keep track of focus to play alter sound or not
+    val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {

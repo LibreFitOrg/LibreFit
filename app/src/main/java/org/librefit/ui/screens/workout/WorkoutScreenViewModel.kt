@@ -17,7 +17,7 @@ import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -39,6 +39,8 @@ import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.DatasetRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
+import org.librefit.di.qualifiers.IoDispatcher
+import org.librefit.di.qualifiers.MainDispatcher
 import org.librefit.enums.PreviousPerformanceSet
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
@@ -51,6 +53,7 @@ import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.UiWorkout
+import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import org.librefit.ui.models.moveExercise
@@ -66,7 +69,9 @@ class WorkoutScreenViewModel @Inject constructor(
     private val userPreferences: UserPreferencesRepository,
     private val workoutServiceManager: WorkoutServiceManager,
     private val workoutRepository: WorkoutRepository,
-    private val datasetRepository: DatasetRepository
+    private val datasetRepository: DatasetRepository,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @param:MainDispatcher private val mainDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _idsOfSetsWithStopwatchNotStartedAtLeastOnce =
         MutableStateFlow<Set<Long>>(emptySet())
@@ -127,7 +132,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 val previousEWS =
                     previousWorkout?.exercisesWithSets?.find { it.exerciseDC.id == eWs.exerciseDC.id }
 
-                eWs.sets.mapIndexed { index, _ ->
+                List(eWs.sets.size) { index ->
                     val previousSet = previousEWS?.sets?.getOrNull(index)
                     val reps = previousSet?.reps ?: 0
                     val load = previousSet?.load ?: 0.0
@@ -273,6 +278,7 @@ class WorkoutScreenViewModel @Inject constructor(
         _exercises.update { exercises ->
             (exercises + newExercise).withNormalizedExercisePositions()
         }
+        syncToRepository()
     }
 
     fun addSetToExercise(exerciseId: Long) {
@@ -293,6 +299,7 @@ class WorkoutScreenViewModel @Inject constructor(
         _idsOfSetsWithStopwatchNotStartedAtLeastOnce.update {
             it + newId
         }
+        syncToRepository()
     }
 
     fun updateSetTime(time: Int, id: Long) {
@@ -309,6 +316,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 } else exercise
             }
         }
+        syncToRepository()
     }
 
     fun updateSetReps(reps: Int, id: Long) {
@@ -323,6 +331,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 } else exercise
             }
         }
+        syncToRepository()
     }
 
     fun updateSetLoad(load: Double, id: Long) {
@@ -337,6 +346,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 } else exercise
             }
         }
+        syncToRepository()
     }
 
     fun updateSetCompleted(completed: Boolean, id: Long) {
@@ -355,6 +365,7 @@ class WorkoutScreenViewModel @Inject constructor(
         if (completed && exerciseWithSets.exercise.restTime != 0) {
             startRestTimer(exerciseWithSets.exercise.restTime)
         }
+        syncToRepository()
     }
 
     fun deleteSet(id: Long) {
@@ -372,6 +383,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 } else exercise
             }
         }
+        syncToRepository()
     }
 
     fun updateExerciseNotes(notes: String, id: Long) {
@@ -380,6 +392,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 if (eWs.exercise.id == id) eWs.copy(exercise = eWs.exercise.copy(notes = notes)) else eWs
             }
         }
+        syncToRepository()
     }
 
     fun updateExerciseRestTime(restTime: Int, id: Long) {
@@ -388,6 +401,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 if (eWs.exercise.id == id) eWs.copy(exercise = eWs.exercise.copy(restTime = restTime)) else eWs
             }
         }
+        syncToRepository()
     }
 
     fun updateExerciseSetMode(setMode: SetMode, id: Long) {
@@ -396,6 +410,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 if (eWs.exercise.id == id) eWs.copy(exercise = eWs.exercise.copy(setMode = setMode)) else eWs
             }
         }
+        syncToRepository()
     }
 
     fun deleteExercise(exerciseId: Long) {
@@ -409,12 +424,14 @@ class WorkoutScreenViewModel @Inject constructor(
                 .filter { it.exercise.id != exerciseId }
                 .withNormalizedExercisePositions()
         }
+        syncToRepository()
     }
 
     fun moveExercise(fromIndex: Int, toIndex: Int) {
         _exercises.update { currentExercises ->
             currentExercises.moveExercise(fromIndex = fromIndex, toIndex = toIndex)
         }
+        syncToRepository()
     }
 
     val workoutProgress: StateFlow<Pair<Int, Int>> = exercises
@@ -448,7 +465,7 @@ class WorkoutScreenViewModel @Inject constructor(
 
 
     private fun observeChanges() {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(mainDispatcher) {
             WorkoutService.restTime.collect { newRestTime ->
                 // When timer is over and screen is visible, it plays alert sound only by respecting user preference
                 if (initialRestTime != 1 && newRestTime == 0 && isFocused) {
@@ -474,7 +491,7 @@ class WorkoutScreenViewModel @Inject constructor(
     }
 
     /**
-     * It ensures that [WorkoutService] sends an alert notification only when the app is not focused so
+     * It ensures that [WorkoutService] sends an alert notification only when the app is not focused
      * so only when [isFocused] is `false`
      */
     fun updateFocus(isFocused: Boolean) {
@@ -508,10 +525,38 @@ class WorkoutScreenViewModel @Inject constructor(
     val keepScreenOn = userPreferences.workoutScreenOn
 
 
-    val runningWorkoutState = combine(
-        workout, exercises, timeElapsed
-    ) { w, e, t -> Triple(w, e, t) }
-        .debounce(500L)
+    /**
+     * Auto-syncs UI changes to the repository. This guarantees the repository is the
+     * single source of truth for all uncommitted workout state.
+     */
+    private fun syncToRepository() {
+        viewModelScope.launch(ioDispatcher) {
+            workoutRepository.setPendingWorkout(
+                UiWorkoutWithExercisesAndSets(
+                    workout = workout.value.copy(
+                        state = WorkoutState.RUNNING,
+                        timeElapsed = timeElapsed.value
+                    ),
+                    exercisesWithSets = exercises.value.withNormalizedExercisePositions()
+                        .toImmutableList()
+                )
+            )
+        }
+    }
+
+    // Safety-net persistence: writes to DB every 3s if state is pending.
+    // Separate this from UI-driven sync to avoid the heartbeat being reset by frequent timer ticks.
+    init {
+        viewModelScope.launch(ioDispatcher) {
+            // Observe workout and exercises only, ignoring timeElapsed to avoid frequent resets
+            combine(workout, exercises) { w, e -> w to e }
+                .debounce(3000L)
+                .distinctUntilChanged()
+                .collect { (w, e) ->
+                    saveRunningWorkout(Triple(w, e, timeElapsed.value))
+                }
+        }
+    }
 
     private val _runningWorkoutId = MutableStateFlow(0L)
     val runningWorkoutId = _runningWorkoutId.asStateFlow()

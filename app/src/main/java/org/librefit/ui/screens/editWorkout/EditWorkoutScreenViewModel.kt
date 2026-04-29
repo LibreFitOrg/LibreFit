@@ -14,7 +14,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.WorkoutRepository
+import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
 import org.librefit.enums.exercise.Category
@@ -31,17 +32,19 @@ import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.UiWorkout
-import org.librefit.ui.models.moveExercise
-import org.librefit.ui.models.withNormalizedExercisePositions
+import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
+import org.librefit.ui.models.moveExercise
+import org.librefit.ui.models.withNormalizedExercisePositions
 import javax.inject.Inject
 import kotlin.random.Random
 
 @HiltViewModel
 class EditWorkoutScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val workoutRepository: WorkoutRepository
+    private val workoutRepository: WorkoutRepository,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val workoutId = savedStateHandle.toRoute<Route.EditWorkoutScreen>().workoutId
@@ -60,7 +63,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
     val exercises = _exercises.asStateFlow()
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             if (workoutId != 0L) {
                 val workoutWithExercisesAndSets =
                     workoutRepository.getWorkoutWithExercisesAndSets(workoutId)
@@ -94,6 +97,21 @@ class EditWorkoutScreenViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Auto-syncs UI changes to the repository. This guarantees the repository is always the 
+     * single source of truth, avoiding race conditions during screen transitions.
+     */
+    private fun syncToRepository() {
+        val state = if (isRoutine.value) WorkoutState.ROUTINE else WorkoutState.COMPLETED
+        val workoutWithExercises = UiWorkoutWithExercisesAndSets(
+            workout = workout.value.copy(state = state),
+            exercisesWithSets = exercises.value.withNormalizedExercisePositions().toImmutableList()
+        )
+        viewModelScope.launch(ioDispatcher) {
+            workoutRepository.setPendingWorkout(workoutWithExercises)
+        }
+    }
+
     fun addExerciseWithSets(exerciseDC: ExerciseDC) {
         val newExercise = UiExerciseWithSets(
             exercise = UiExercise(
@@ -115,6 +133,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
         _exercises.update { exercises ->
             (exercises + newExercise).withNormalizedExercisePositions()
         }
+        syncToRepository()
     }
 
     fun addSetToExercise(exerciseId: Long) {
@@ -130,6 +149,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
                 } else exercise
             }
         }
+        syncToRepository()
     }
 
     fun updateSetTime(time: Int, id: Long) {
@@ -144,6 +164,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
                 } else exercise
             }
         }
+        syncToRepository()
     }
 
     fun updateSetReps(reps: Int, id: Long) {
@@ -158,6 +179,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
                 } else exercise
             }
         }
+        syncToRepository()
     }
 
     fun updateSetLoad(load: Double, id: Long) {
@@ -172,6 +194,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
                 } else exercise
             }
         }
+        syncToRepository()
     }
 
     fun updateSetCompleted(completed: Boolean, id: Long) {
@@ -186,6 +209,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
                 } else exercise
             }
         }
+        syncToRepository()
     }
 
     fun deleteSet(id: Long) {
@@ -198,6 +222,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
                 } else exercise
             }
         }
+        syncToRepository()
     }
 
     fun updateExerciseNotes(notes: String, id: Long) {
@@ -206,6 +231,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
                 if (eWs.exercise.id == id) eWs.copy(exercise = eWs.exercise.copy(notes = notes)) else eWs
             }
         }
+        syncToRepository()
     }
 
     fun updateExerciseRestTime(restTime: Int, id: Long) {
@@ -214,6 +240,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
                 if (eWs.exercise.id == id) eWs.copy(exercise = eWs.exercise.copy(restTime = restTime)) else eWs
             }
         }
+        syncToRepository()
     }
 
     fun updateExerciseSetMode(setMode: SetMode, id: Long) {
@@ -222,6 +249,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
                 if (eWs.exercise.id == id) eWs.copy(exercise = eWs.exercise.copy(setMode = setMode)) else eWs
             }
         }
+        syncToRepository()
     }
 
     fun deleteExercise(exerciseId: Long) {
@@ -230,21 +258,25 @@ class EditWorkoutScreenViewModel @Inject constructor(
                 .filter { it.exercise.id != exerciseId }
                 .withNormalizedExercisePositions()
         }
+        syncToRepository()
     }
 
     fun moveExercise(fromIndex: Int, toIndex: Int) {
         _exercises.update { currentExercises ->
             currentExercises.moveExercise(fromIndex = fromIndex, toIndex = toIndex)
         }
+        syncToRepository()
     }
 
 
     fun updateTitle(string: String) {
         _workout.update { it.copy(title = string) }
+        syncToRepository()
     }
 
     fun updateNotes(string: String) {
         _workout.update { it.copy(notes = string) }
+        syncToRepository()
     }
 
     fun isTitleEmpty(): Boolean {
@@ -257,7 +289,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
 
 
     fun saveWorkoutWithExercisesInDB() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             val state = if (isRoutine.value) WorkoutState.ROUTINE else WorkoutState.COMPLETED
 
             workoutRepository.addWorkoutWithExercisesAndSets(
