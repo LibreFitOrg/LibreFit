@@ -161,7 +161,7 @@
     <string name="follow_system">Podle systému</string>
     <string name="theme_dark">Tmavý</string>
     <string name="theme_light">Světlý</string>
-    <string name="material_you">Material You</string>
+    <string name="material_you">Materiál Vy</string>
     <string name="dynamic_color_disabled">Dynamické barvy vypnuty</string>
     <string name="dynamic_color_enabled">Dynamické barvy zapnuty</string>
     <string name="keep_screen_on">Ponechat obrazovku zapnutou</string>
@@ -307,7 +307,7 @@
     <string name="muscle_shoulders">Ramena</string>
     <string name="muscle_traps">Pasti</string>
     <string name="muscle_triceps">trojhlavý sval</string>
-    <string name="category_powerlifting">Powerlifting</string>
+    <string name="category_powerlifting">Power-lifting</string>
     <string name="category_strength">Pevnost</string>
     <string name="category_stretching">Protahování</string>
     <string name="category_cardio">Kardio</string>
@@ -328,4 +328,24 @@
     <string name="paste">Rřilepit</string>
     <string name="undo">Zpět</string>
     <string name="clear">vymazat</string>
+    <string name="use_scroll_wheel_for_input_desc">Pro výběr hodnot a času použijte rolovací kolečko.</string>
+    <string name="not_use_scroll_wheel_for_input_desc">Zadávejte hodnoty přímo pomocí klávesnice místo rolovacího kolečka.</string>
+    <string name="tut_create_routine_5">Gratulujeme, vytvořili jste si svou první rutinu! Nyní ji můžete použít k zahájení tréninku.</string>
+    <string name="complete_workout">Kompletní trénink</string>
+    <string name="tut_complete_workout_headline">Když začnete s tréninkem, zaznamenáváte si živý záznam. LibreFit zobrazuje váš dosavadní výkon pro každou sérii, což usnadňuje vyzývání vlastních činů a snahu o postupné přetížení.</string>
+    <string name="tut_complete_workout_1">Chcete-li začít zapisovat, začněte trénink z jedné ze svých rutin nebo si vyberte prázdný trénink pro spontánní sezení.</string>
+    <string name="tut_complete_workout_2">Pokud jste začali s rutinou, vaše plánované cviky budou předem načteny. Další můžete přidávat i za pochodu.</string>
+    <string name="tut_complete_workout_3">Zaznamenejte si váhu a počet opakování pro každou sérii. Když označíte sérii jako dokončenou, automaticky se spustí časovač odpočinku v dolní části obrazovky.</string>
+    <string name="tut_complete_workout_4">Celkový čas vašeho tréninku je nahoře – klepnutím na tlačítko pozastavit si můžete udělat přestávku. Po dokončení klepněte na tlačítko „Hotovo“ v pravém horním rohu.</string>
+    <string name="tut_complete_workout_5">Na souhrnné obrazovce můžete upravit název, přidat poznámky nebo změnit datum. Klepnutím na tlačítko „Uložit“ v pravém horním rohu uložíte trénink.</string>
+    <string name="tut_complete_workout_6">Gratulujeme, dokončili jste svůj první trénink! Všechny své předchozí tréninky si můžete prohlédnout na obrazovce Profil.</string>
+    <string name="welcome_to">Vítejte v</string>
+    <string name="rest_time_desc">Přestávka se aktivuje po dokončení série a okamžitě se spustí odpočet. Po skončení přestávky se vydá upozornění.</string>
+    <string name="type_of_set_desc">- **Zátěž**: Určený počet opakování provedených proti vnějšímu odporu. *Příklady: bench press, zdvihy s jednoručkami.*\n- **Tělesná hmotnost**: Určený počet opakování provedených s použitím těla jako odporu. *Příklady: shyby, kliky, sedy-lehy.*\n- **Tělesná hmotnost se zátěží**: Určený počet opakování provedených s použitím těla a zátěže jako odporu. *Příklady: shyby se zátěží, kliky se zátěží.*\n- **Trvání**: Měří čas provedení opakování. *Příklady: planky, rozcvička, protahování.*</string>
+    <string name="statistics_desc">- **Uplynulý čas**: celková délka tréninku.\n- **Datum**: označuje datum, kdy byl trénink dokončen.\n- **Objem**: celkové množství zvednuté váhy během tréninku, vypočítané vynásobením počtu opakování provedených pro každou dokončenou sérii zvednutou váhou. Vyšší objem je spojen s větší svalovou hypertrofií a nárůstem síly v průběhu času.\n- **Cvičení**: celkový počet cviků zahrnutých v tomto tréninku.\n- **Celkem sérií**: kumulativní počet sérií plánovaných pro každé cvičení v tréninku. Série je skupina po sobě jdoucích opakování provedených bez odpočinku.\n- **Dokončené série**: počet sérií, které byly dokončeny podle plánu tréninku.</string>
+    <string name="muscle_distribution_desc">- Tento graf zobrazuje **průměrný výkon každého svalu za specifická časová období** na základě zvoleného parametru.\n- Legenda identifikuje časové období reprezentované jednotlivými sloupci.\n- Sloupec **Historické** zahrnuje všechna cvičení dokončená před každým zobrazeným časovým obdobím.\n- Parametr lze změnit výběrem nového parametru nad grafem.</string>
+    <string name="exercises_distribution_desc">- Tento graf zobrazuje **průměrný výkon každého cvičení za konkrétní časové úseky** na základě zvoleného parametru.\n- Legenda identifikuje časové období reprezentované jednotlivými sloupci.\n- Sloupec **Historické** zahrnuje všechny tréninky dokončené před každým zobrazeným časovým úsekem.\n- Parametr lze změnit výběrem nového parametru nad grafem.</string>
+    <string name="librefit_is_under_threat">LibreFit je v ohrožení</string>
+    <string name="librefit_is_under_threat_desc">- Od září 2026 plánuje Google uzamknout Android tím, že **vám zablokuje instalaci jakékoli aplikace**, pokud její vývojář nezaplatil poplatek, nezaregistroval se a nepředal Googlu osobní identifikační údaje.\n- Tato politika ničí otevřený ekosystém Androidu a **odebírá vás o základní právo zvolit si, jaký software můžete spustit na svém zařízení**.\n- Navštivte prosím [keepandroidopen.org](https://keepandroidopen.org), kde se dozvíte více o této hrozbě pro vaši digitální svobodu a o tom, jak ji můžete zastavit.</string>
+    <string name="weight">Hmotnost</string>
 </resources>
