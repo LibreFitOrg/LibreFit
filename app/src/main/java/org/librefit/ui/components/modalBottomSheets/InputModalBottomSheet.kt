@@ -58,9 +58,9 @@ fun InputModalBottomSheet(
 
     var isAnyNumberPickerChanging by rememberSaveable { mutableStateOf(false) }
 
-    // Dismiss automatically after 1 second
-    LaunchedEffect(isAnyNumberPickerChanging) {
-        // Consider only already modified inputs
+    // Dismiss automatically after 1 second of inactivity if value was changed
+    LaunchedEffect(isAnyNumberPickerChanging, state) {
+        // Only trigger if modified and not currently scrolling
         if (initialState != state && !isAnyNumberPickerChanging) {
             delay(
                 timeMillis = 500L
