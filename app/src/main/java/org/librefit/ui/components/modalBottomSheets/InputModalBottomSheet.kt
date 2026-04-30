@@ -26,9 +26,11 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import org.librefit.R
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.ui.components.LibreFitButton
@@ -52,6 +55,19 @@ fun InputModalBottomSheet(
 ) {
     // Save initial state so user can restore it
     val initialState = remember { state }
+
+    var isAnyNumberPickerChanging by rememberSaveable { mutableStateOf(false) }
+
+    // Dismiss automatically after 1 second
+    LaunchedEffect(isAnyNumberPickerChanging) {
+        // Consider only already modified inputs
+        if (initialState != state && !isAnyNumberPickerChanging) {
+            delay(
+                timeMillis = 500L
+            )
+            onDismiss()
+        }
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -97,6 +113,9 @@ fun InputModalBottomSheet(
                                             )
                                         )
                                     },
+                                    onNumberPickerScroll = {
+                                        isAnyNumberPickerChanging = it
+                                    },
                                     textStyle = textStyle
                                 )
                                 Text(
@@ -115,6 +134,9 @@ fun InputModalBottomSheet(
                                             )
                                         )
                                     },
+                                    onNumberPickerScroll = {
+                                        isAnyNumberPickerChanging = it
+                                    },
                                     textStyle = textStyle
                                 )
                                 Text(
@@ -132,6 +154,9 @@ fun InputModalBottomSheet(
                                                 seconds = it
                                             )
                                         )
+                                    },
+                                    onNumberPickerScroll = {
+                                        isAnyNumberPickerChanging = it
                                     },
                                     textStyle = textStyle
                                 )
@@ -149,6 +174,9 @@ fun InputModalBottomSheet(
                                             )
                                         )
                                     },
+                                    onNumberPickerScroll = {
+                                        isAnyNumberPickerChanging = it
+                                    },
                                     textStyle = textStyle
                                 )
                                 Text(
@@ -167,6 +195,9 @@ fun InputModalBottomSheet(
                                             )
                                         )
                                     },
+                                    onNumberPickerScroll = {
+                                        isAnyNumberPickerChanging = it
+                                    },
                                     textStyle = textStyle
                                 )
                             }
@@ -182,6 +213,9 @@ fun InputModalBottomSheet(
                                             )
                                         )
                                     },
+                                    onNumberPickerScroll = {
+                                        isAnyNumberPickerChanging = it
+                                    },
                                     textStyle = textStyle
                                 )
                             }
@@ -196,6 +230,9 @@ fun InputModalBottomSheet(
                                                 integerWeight = it
                                             )
                                         )
+                                    },
+                                    onNumberPickerScroll = {
+                                        isAnyNumberPickerChanging = it
                                     },
                                     textStyle = textStyle
                                 )
@@ -213,6 +250,9 @@ fun InputModalBottomSheet(
                                                 decimalWeight = it
                                             )
                                         )
+                                    },
+                                    onNumberPickerScroll = {
+                                        isAnyNumberPickerChanging = it
                                     },
                                     textStyle = textStyle
                                 )
