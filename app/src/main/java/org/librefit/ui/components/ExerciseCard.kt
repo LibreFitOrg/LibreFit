@@ -182,6 +182,7 @@ fun SharedTransitionScope.ExerciseCard(
     isCollapsed: Boolean = false,
     dragHandleModifier: Modifier = Modifier,
     isDragging: Boolean,
+    dismissScrollWheelInputAutomatically: Boolean,
     onReorderRequest: () -> Unit,
     deleteSet: (Long) -> Unit,
     updateExerciseNotes: (String, Long) -> Unit,
@@ -546,6 +547,7 @@ fun SharedTransitionScope.ExerciseCard(
                                         isThisSetStopwatchRunning = idSetWithRunningStopwatch == set.id,
                                         workout = workout,
                                         useScrollWheelForInput = useScrollWheelForInput,
+                                        dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                                         deleteSet = deleteSet,
                                         updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
                                         updateSetTime = updateSetTime,
@@ -584,6 +586,7 @@ private fun Set(
     isThisSetStopwatchRunning: Boolean,
     workout: Boolean,
     useScrollWheelForInput: Boolean,
+    dismissScrollWheelInputAutomatically: Boolean,
     deleteSet: (Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
@@ -630,7 +633,8 @@ private fun Set(
             onDismiss = {
                 inputModalBottomSheetState = null
                 inputSetId = null
-            }
+            },
+            dismissAutomatically = dismissScrollWheelInputAutomatically
         )
     }
 
@@ -964,6 +968,7 @@ private fun ExerciseCardPreview() {
                     updateIdSetWithRunningStopwatch = { currentIdSetWithRunningSet.value = it },
                     workout = true,
                     isDragging = false,
+                    dismissScrollWheelInputAutomatically = false,
                     updateExerciseNotes = { notes, _ ->
                         e.value = e.value.copy(exercise = e.value.exercise.copy(notes = notes))
                     },

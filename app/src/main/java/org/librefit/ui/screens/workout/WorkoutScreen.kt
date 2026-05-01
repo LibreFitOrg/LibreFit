@@ -137,6 +137,8 @@ fun SharedTransitionScope.WorkoutScreen(
 
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
 
+    val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
+
 
     //It keeps the screen turned on
     if (keepWorkoutScreenOn) {
@@ -219,6 +221,7 @@ fun SharedTransitionScope.WorkoutScreen(
                 workoutProgress = workoutProgress,
                 isHeaderSticky = isHeaderSticky,
                 useScrollWheelForInput = useScrollWheelForInput,
+                dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                 toggleStopwatch = viewModel::toggleStopwatch,
                 updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
                 onSelectedExerciseIdChange = { id, idExerciseDC ->
@@ -280,6 +283,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     idSetWithRunningStopwatch: Long?,
     isHeaderSticky: Boolean,
     useScrollWheelForInput: Boolean,
+    dismissScrollWheelInputAutomatically: Boolean,
     toggleStopwatch: () -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
     addSetToExercise: (Long) -> Unit,
@@ -419,6 +423,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                             }
                         ),
                         isDragging = isDragging,
+                        dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                         onReorderRequest = { isReorderingEnabled = true },
                         deleteSet = deleteSet,
                         showInfo = showInfo,
@@ -643,6 +648,7 @@ private fun WorkoutScreenPreview() {
                             workoutProgress = workoutProgress,
                             isHeaderSticky = true,
                             useScrollWheelForInput = true,
+                            dismissScrollWheelInputAutomatically = false,
                             toggleStopwatch = {},
                             addSetToExercise = {},
                             updateSetTime = { _, _ -> },

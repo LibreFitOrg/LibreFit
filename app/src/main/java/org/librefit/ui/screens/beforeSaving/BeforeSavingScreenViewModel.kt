@@ -51,6 +51,9 @@ class BeforeSavingScreenViewModel @Inject constructor(
 ) : ViewModel() {
     val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
 
+    val dismissScrollWheelInputAutomatically =
+        userPreferencesRepository.dismissScrollWheelInputAutomatically
+
     private val runningWorkoutId = savedStateHandle.toRoute<Route.BeforeSavingScreen>().runningWorkoutId
 
 

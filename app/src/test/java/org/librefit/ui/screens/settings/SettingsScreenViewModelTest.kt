@@ -45,6 +45,7 @@ class SettingsScreenViewModelTest {
     private lateinit var isSupporter: MutableStateFlow<Boolean>
     private lateinit var isWorkoutHeaderSticky: MutableStateFlow<Boolean>
     private lateinit var useScrollWheelForInput: MutableStateFlow<Boolean>
+    private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
 
     @Before
     fun setUp() {
@@ -58,6 +59,7 @@ class SettingsScreenViewModelTest {
         isSupporter = MutableStateFlow(false)
         isWorkoutHeaderSticky = MutableStateFlow(true)
         useScrollWheelForInput = MutableStateFlow(true)
+        dismissScrollWheelAutomatically = MutableStateFlow(false)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.language } returns language
@@ -68,6 +70,7 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.isSupporter } returns isSupporter
         every { userPreferencesRepository.isWorkoutHeaderSticky } returns isWorkoutHeaderSticky
         every { userPreferencesRepository.useScrollWheelForInput } returns useScrollWheelForInput
+        every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
 
         coEvery { userPreferencesRepository.saveLanguage(any()) } answers {
             language.value = Language.entries.find { it.code == firstArg() }!!
@@ -92,6 +95,9 @@ class SettingsScreenViewModelTest {
         }
         coEvery { userPreferencesRepository.saveUseScrollWheelForInput(any()) } answers {
             useScrollWheelForInput.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveDismissScrollWheelInputAutomatically(any()) } answers {
+            dismissScrollWheelAutomatically.value = firstArg()
         }
 
         // Arrange: Create the ViewModel instance with the mock repository
@@ -126,6 +132,11 @@ class SettingsScreenViewModelTest {
     @Test
     fun `initial state - is supporter is is false`() = runTest {
         assertThat(viewModel.isSupporter.value).isFalse()
+    }
+
+    @Test
+    fun `initial state - dismiss scroll wheel automatically is off`() = runTest {
+        assertThat(viewModel.dismissScrollWheelInputAutomatically.value).isFalse()
     }
 
     @Test
@@ -269,6 +280,17 @@ class SettingsScreenViewModelTest {
         viewModel.useScrollWheelForInput.test {
             assertThat(awaitItem()).isEqualTo(true)
             viewModel.saveUseScrollWheelForInput(expected)
+            assertThat(awaitItem()).isEqualTo(expected)
+        }
+    }
+
+    @Test
+    fun `dismiss scroll wheel automatically updates correctly`() = runTest {
+        val expected = true
+
+        viewModel.dismissScrollWheelInputAutomatically.test {
+            assertThat(awaitItem()).isFalse()
+            viewModel.saveDismissScrollWheelInputAutomatically(expected)
             assertThat(awaitItem()).isEqualTo(expected)
         }
     }

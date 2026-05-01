@@ -51,21 +51,24 @@ import org.librefit.ui.theme.LibreFitTheme
 fun InputModalBottomSheet(
     onDismiss: () -> Unit,
     state: InputModalBottomSheetState,
-    onValueChange: (InputModalBottomSheetState) -> Unit
+    onValueChange: (InputModalBottomSheetState) -> Unit,
+    dismissAutomatically: Boolean
 ) {
     // Save initial state so user can restore it
     val initialState = remember { state }
 
     var isAnyNumberPickerChanging by rememberSaveable { mutableStateOf(false) }
 
-    // Dismiss automatically after 1 second of inactivity if value was changed
-    LaunchedEffect(isAnyNumberPickerChanging, state) {
-        // Only trigger if modified and not currently scrolling
-        if (initialState != state && !isAnyNumberPickerChanging) {
-            delay(
-                timeMillis = 500L
-            )
-            onDismiss()
+    if (dismissAutomatically) {
+        // Dismiss automatically after 1 second of inactivity if value was changed
+        LaunchedEffect(isAnyNumberPickerChanging, state) {
+            // Only trigger if modified and not currently scrolling
+            if (initialState != state && !isAnyNumberPickerChanging) {
+                delay(
+                    timeMillis = 500L
+                )
+                onDismiss()
+            }
         }
     }
 
@@ -350,6 +353,7 @@ private fun InputModelBottomSheetPreview() {
                 state = it
             },
             onDismiss = {},
+            dismissAutomatically = false
         )
     }
 }

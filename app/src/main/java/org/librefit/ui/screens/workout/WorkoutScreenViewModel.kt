@@ -582,4 +582,6 @@ class WorkoutScreenViewModel @Inject constructor(
     val isHeaderSticky = userPreferences.isWorkoutHeaderSticky
 
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
+
+    val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
 }

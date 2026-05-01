@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.SetMode
@@ -44,8 +45,12 @@ import kotlin.random.Random
 class EditWorkoutScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val workoutRepository: WorkoutRepository,
-    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+
+    val dismissScrollWheelInputAutomatically =
+        userPreferencesRepository.dismissScrollWheelInputAutomatically
 
     private val workoutId = savedStateHandle.toRoute<Route.EditWorkoutScreen>().workoutId
 

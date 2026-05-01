@@ -46,6 +46,7 @@ class MeasurementScreenViewModelTest {
     private lateinit var measurementsFlow: MutableStateFlow<List<Measurement>>
 
     private lateinit var useScrollWheelForInput: MutableStateFlow<Boolean>
+    private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
 
     // Captured objects
     private val upsertedMeasurementSlot = slot<Measurement>()
@@ -66,6 +67,7 @@ class MeasurementScreenViewModelTest {
         measurementRepository = mockk()
         measurementsFlow = MutableStateFlow(emptyList())
         useScrollWheelForInput = MutableStateFlow(true)
+        dismissScrollWheelAutomatically = MutableStateFlow(false)
 
         userPreferencesRepository = mockk()
 
@@ -93,6 +95,7 @@ class MeasurementScreenViewModelTest {
         }
 
         every { userPreferencesRepository.useScrollWheelForInput } returns useScrollWheelForInput
+        every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
 
 
         viewModel = MeasurementScreenViewModel(
