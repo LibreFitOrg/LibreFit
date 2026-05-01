@@ -82,9 +82,9 @@ fun SharedTransitionScope.ExercisesScreen(
     addExercises: Boolean,
     navController: NavHostController,
     sharedViewModel: SharedViewModel,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: ExercisesScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: ExercisesScreenViewModel = hiltViewModel()
 
     val filteredExerciseList by viewModel.filteredExerciseList.collectAsStateWithLifecycle()
 

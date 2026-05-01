@@ -83,9 +83,9 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun SharedTransitionScope.BeforeSavingScreen(
     navController: NavHostController,
+    viewModel: BeforeSavingScreenViewModel = hiltViewModel(),
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
-    val viewModel: BeforeSavingScreenViewModel = hiltViewModel()
 
     val volume by viewModel.volume.collectAsStateWithLifecycle()
 

@@ -84,9 +84,9 @@ import kotlin.random.Random
 @Composable
 fun SharedTransitionScope.HomeScreen(
     navController: NavHostController,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
-    val viewModel: HomeScreenViewModel = hiltViewModel()
 
     val showKeepAndroidOpen by viewModel.showKeepAndroidOpen.collectAsStateWithLifecycle()
 

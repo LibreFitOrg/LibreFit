@@ -103,10 +103,9 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun SharedTransitionScope.WorkoutScreen(
     navController: NavHostController,
     sharedViewModel: SharedViewModel,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: WorkoutScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: WorkoutScreenViewModel = hiltViewModel()
-
 
     LaunchedEffect(Unit) {
         //It adds the selected exercises from AddExerciseScreen

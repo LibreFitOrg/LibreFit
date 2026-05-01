@@ -98,9 +98,9 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MeasurementScreen(
+    viewModel: MeasurementScreenViewModel = hiltViewModel(),
     navigateBack: () -> Unit
 ) {
-    val viewModel: MeasurementScreenViewModel = hiltViewModel()
 
     val measurements by viewModel.measurements.collectAsStateWithLifecycle()
 

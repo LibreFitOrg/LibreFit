@@ -73,9 +73,9 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun SharedTransitionScope.EditWorkoutScreen(
     sharedViewModel: SharedViewModel,
     navController: NavHostController,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: EditWorkoutScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: EditWorkoutScreenViewModel = hiltViewModel()
 
     val workout by viewModel.workout.collectAsStateWithLifecycle()
 

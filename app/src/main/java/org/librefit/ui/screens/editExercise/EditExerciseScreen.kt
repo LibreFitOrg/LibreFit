@@ -80,9 +80,9 @@ fun SharedTransitionScope.EditExerciseScreen(
     navController: NavHostController,
     animatedVisibilityScope: AnimatedVisibilityScope,
     id: Long, // Used only for transition animation
-    exerciseDCid: String
+    exerciseDCid: String,
+    viewModel: EditExerciseScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: EditExerciseScreenViewModel = hiltViewModel()
 
     val exerciseDC by viewModel.exerciseDC.collectAsStateWithLifecycle()
 

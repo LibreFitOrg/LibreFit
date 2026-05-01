@@ -99,9 +99,9 @@ import kotlin.random.Random
 @Composable
 fun SharedTransitionScope.ProfileScreen(
     navController: NavHostController,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: ProfileScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: ProfileScreenViewModel = hiltViewModel()
 
     val points by viewModel.points.collectAsStateWithLifecycle()
 

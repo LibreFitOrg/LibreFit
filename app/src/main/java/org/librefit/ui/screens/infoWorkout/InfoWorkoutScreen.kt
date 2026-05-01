@@ -77,9 +77,9 @@ import kotlin.random.Random
 fun SharedTransitionScope.InfoWorkoutScreen(
     navController: NavHostController,
     workoutId: Long,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: InfoWorkoutScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: InfoWorkoutScreenViewModel = hiltViewModel()
 
     val points by viewModel.points.collectAsStateWithLifecycle()
 
