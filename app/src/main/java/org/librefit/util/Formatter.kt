@@ -198,15 +198,29 @@ object Formatter {
 
     /**
      * It is used to process user input in [org.librefit.ui.components.ExerciseCard]
-     * text field and return the corresponding float.
+     * text field and return the corresponding double.
      * @param string The string value to be processed
-     * @return A [Double] value corresponding to the sanitized [string].
+     * @param maxIntegerDigits Takes the first [maxIntegerDigits] from integer part of [string] starting from the left.
+     * @param maxDecimalDigits Takes the first [maxDecimalDigits] from fractional part of [string] starting from the left.
+     * @throws IllegalArgumentException if [maxIntegerDigits] or [maxDecimalDigits] are not a value
+     * between 0 and 8
+     * @return A [Double] value corresponding to the sanitized [string]. Null if it's empty or not a double
      */
-    fun parseDoubleFromString(string: String): Double {
+    fun parseDoubleFromString(
+        string: String,
+        @IntRange(0, 8) maxIntegerDigits: Int = 3,
+        @IntRange(0, 8) maxDecimalDigits: Int = 2,
+    ): Double? {
+        require(maxIntegerDigits in 0..8 && maxDecimalDigits in 0..8) {
+            "maxIntegerDigits and maxFractionalDigits must be between 0 and 8. maxIntegerDigits: $maxIntegerDigits. " +
+                    "maxFractionalDigits: $maxDecimalDigits."
+        }
+
         // Keep only digits and dots.
         val sanitized = string
             .replace(",", ".")
             .filter { it.isDigit() || it == '.' }
+            .ifBlank { return null }
 
         // Find the last separator.
         val decimalSeparatorIndex = sanitized.lastIndexOf('.')
@@ -216,18 +230,25 @@ object Formatter {
             val integerPart = sanitized
                 .take(decimalSeparatorIndex)
                 .replace(".", "")
+                .take(maxIntegerDigits)
             val fractionalPart = sanitized
                 .substring(decimalSeparatorIndex + 1)
                 .replace(".", "")
+                .take(maxDecimalDigits)
 
-            "$integerPart.$fractionalPart"
+            if ((integerPart.isBlank() && fractionalPart == "0") || (fractionalPart.isBlank() && integerPart == "0")) {
+                return null
+            } else {
+                "$integerPart.$fractionalPart"
+            }
+
         } else {
             // No separators, just a number
             sanitized
         }
 
         // Safely convert to Double
-        return finalString.toDoubleOrNull() ?: 0.0
+        return finalString.toDoubleOrNull()
     }
 
     /**
