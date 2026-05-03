@@ -593,8 +593,8 @@ private fun Set(
     applyPreviousSet: (Long) -> Unit
 ) {
     val timeValue by rememberUpdatedState(set.elapsedTime)
-    var repValue by remember(set.reps) { mutableStateOf(set.reps.toString()) }
-    var weightValue by rememberSaveable { mutableStateOf(set.load.toString()) }
+    var repValue by rememberSaveable(set.reps) { mutableStateOf(set.reps.toString()) }
+    var weightValue by rememberSaveable(set.load) { mutableStateOf(set.load.toString()) }
 
     val swipeToDismissBoxState = rememberSwipeToDismissBoxState()
 
