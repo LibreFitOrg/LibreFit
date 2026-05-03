@@ -209,9 +209,9 @@ Thanks to everyone who helped the project!
 
 ### 🏗 Contributors
 
-- [dpusceddu](https://github.com/dpusceddu)
+- [dpusceddu](https://github.com/dpusceddu) #25
 
-[Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be listed here.
+> [Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be listed here.
 
 ### 🏋 Dataset contributors
 

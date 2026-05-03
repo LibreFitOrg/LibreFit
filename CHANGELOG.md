@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+> [!IMPORTANT]
+> You now can **share** your **custom exercise** with all LibreFit's users and get its supporter
+> version! See
+> more [here](https://github.com/LibreFitOrg/LibreFit/blob/main/CONTRIBUTING.md#improving-exercises-dataset)
 
+### Added
 - **New 28 exercises with instructions and high-quality images** #28
+- Option to dismiss scroll wheel automatically #52
 
 ### Changed
 - 
@@ -22,8 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix issue where workout metrics did not update after the initial save. #42
-- Fix issue where rest timer notification sound was suppressed by other media. #45
+- Workout metrics did not update after the initial save. #42
+- Rest timer notification sound was suppressed by other media. #45
+- Scroll wheel animation not allowing input #52
 
 > [!TIP]
 > `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md). 
@@ -68,5 +74,5 @@ First public release. Bugs are expected! Report them so they can be fixed.
 
 [Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.2.0...HEAD
 
-[0.2.0]: https://github.com/LibreFitOrg/LibreFit/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/LibreFitOrg/LibreFit/compare/v0.1.5...v0.2.0
 [0.1.5]: https://github.com/LibreFitOrg/LibreFit/releases/tag/v0.1.5
