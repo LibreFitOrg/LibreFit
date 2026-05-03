@@ -122,6 +122,9 @@ fun MeasurementScreen(
 
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
 
+    val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
+
+
     var infoModalBottomSheetState by remember { mutableStateOf<InputModalBottomSheetState?>(null) }
 
     infoModalBottomSheetState?.let {
@@ -135,7 +138,8 @@ fun MeasurementScreen(
             },
             onDismiss = {
                 infoModalBottomSheetState = null
-            }
+            },
+            dismissAutomatically = dismissScrollWheelInputAutomatically
         )
     }
 

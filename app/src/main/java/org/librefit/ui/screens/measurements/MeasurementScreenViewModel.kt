@@ -41,6 +41,9 @@ class MeasurementScreenViewModel @Inject constructor(
 ) : ViewModel() {
     val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
 
+    val dismissScrollWheelInputAutomatically =
+        userPreferencesRepository.dismissScrollWheelInputAutomatically
+
 
     private val _measurementChart = MutableStateFlow(MeasurementChart.BODY_WEIGHT)
     val measurementChart = _measurementChart.asStateFlow()

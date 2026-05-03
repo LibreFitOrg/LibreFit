@@ -268,6 +268,9 @@
     <string name="use_scroll_wheel_for_input">Use scroll wheel for input</string>
     <string name="use_scroll_wheel_for_input_desc">Use a scrollable wheel to select values and time.</string>
     <string name="not_use_scroll_wheel_for_input_desc">Type values directly using the keyboard instead of the scroll wheel.</string>
+    <string name="dismiss_scroll_wheel_automatically">Dismiss scroll wheel automatically</string>
+    <string name="dismiss_scroll_wheel_automatically_desc">The scroll wheel will be dismissed automatically.</string>
+    <string name="dismiss_scroll_wheel_manually_desc">The scroll wheel will have to be dismissed manually.</string>
 
 
     <!-- Statistics screen-->

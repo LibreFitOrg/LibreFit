@@ -48,6 +48,8 @@ private val PAST_VERSION_CODE_KEY = longPreferencesKey("pastVersionCode")
 private val IS_WORKOUT_HEADER_STICKY_KEY = booleanPreferencesKey("is_workout_header_sticky")
 private val SHOW_KEEP_ANDROID_OPEN_KEY = booleanPreferencesKey("showKeepAndroidOpenKey")
 private val USE_SCROLL_WHEEL_FOR_INPUT_KEY = booleanPreferencesKey("use_number_picker")
+private val DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY =
+    booleanPreferencesKey("dismiss_input_modal_bottom_sheet_automatically_key")
 
 /**
  * A repository to handle user preferences using [androidx.datastore.core.DataStore].
@@ -150,6 +152,14 @@ class UserPreferencesRepository @Inject constructor(
             initialValue = true
         )
 
+    val dismissScrollWheelInputAutomatically: StateFlow<Boolean> = dataStore.data
+        .map { preferences -> preferences[DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY] == true }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
+
     /**
      * A Flow that emits the new Locale whenever the app's configuration changes.
      */
@@ -238,5 +248,11 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun saveUseScrollWheelForInput(useScroll: Boolean) {
         dataStore.edit { preferences -> preferences[USE_SCROLL_WHEEL_FOR_INPUT_KEY] = useScroll }
+    }
+
+    suspend fun saveDismissScrollWheelInputAutomatically(dismissAutomatically: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY] = dismissAutomatically
+        }
     }
 }

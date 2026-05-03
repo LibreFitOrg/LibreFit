@@ -9,8 +9,13 @@
 package org.librefit.ui.screens.settings
 
 import android.os.Build
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -83,6 +88,8 @@ fun SettingsScreen(
 
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
 
+    val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
+
     preferences?.let {
         PreferenceDialog(
             currentPreference = currentPreference,
@@ -104,12 +111,14 @@ fun SettingsScreen(
         isSupporter = isSupporter,
         useScrollWheelForInput = useScrollWheelForInput,
         isWorkoutHeaderSticky = isWorkoutHeaderSticky,
+        dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
         updatePreferences = viewModel::updatePreferences,
         onMaterialModeChange = viewModel::saveMaterialMode,
         onKeepWorkoutScreenOnChange = viewModel::saveWorkoutScreenOn,
         onRestTimerSoundOnChange = viewModel::saveRestTimerSoundOn,
         onIsWorkoutHeaderStickyChange = viewModel::saveIsWorkoutHeaderSticky,
-        onUseScrollWheelForInputChange = viewModel::saveUseScrollWheelForInput
+        onUseScrollWheelForInputChange = viewModel::saveUseScrollWheelForInput,
+        onDismissScrollWhellInputAutomaticallyChange = viewModel::saveDismissScrollWheelInputAutomatically
     )
 }
 
@@ -125,12 +134,14 @@ private fun SettingsScreenContent(
     isSupporter: Boolean,
     isWorkoutHeaderSticky: Boolean,
     useScrollWheelForInput: Boolean,
+    dismissScrollWheelInputAutomatically: Boolean,
     updatePreferences: (List<DialogPreference>) -> Unit,
     onMaterialModeChange: (Boolean) -> Unit,
     onKeepWorkoutScreenOnChange: (Boolean) -> Unit,
     onRestTimerSoundOnChange: (Boolean) -> Unit,
     onIsWorkoutHeaderStickyChange: (Boolean) -> Unit,
-    onUseScrollWheelForInputChange: (Boolean) -> Unit
+    onUseScrollWheelForInputChange: (Boolean) -> Unit,
+    onDismissScrollWhellInputAutomaticallyChange: (Boolean) -> Unit,
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.settings)),
@@ -229,6 +240,23 @@ private fun SettingsScreenContent(
                     settingName = stringResource(R.string.use_scroll_wheel_for_input)
                 )
             }
+
+
+            item {
+                AnimatedVisibility(
+                    visible = useScrollWheelForInput,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    SettingItem(
+                        isChecked = dismissScrollWheelInputAutomatically,
+                        onClick = { onDismissScrollWhellInputAutomaticallyChange(!dismissScrollWheelInputAutomatically) },
+                        icon = painterResource(R.drawable.ic_bottom_panel_close),
+                        settingDesc = stringResource(if (dismissScrollWheelInputAutomatically) R.string.dismiss_scroll_wheel_automatically_desc else R.string.dismiss_scroll_wheel_manually_desc),
+                        settingName = stringResource(R.string.dismiss_scroll_wheel_automatically)
+                    )
+                }
+            }
         }
     }
 }
@@ -319,11 +347,13 @@ fun SettingsScreenPreview() {
             isSupporter = Random.nextBoolean(),
             isWorkoutHeaderSticky = isWorkoutHeaderSticky,
             useScrollWheelForInput = useScrollWheelForInput,
+            dismissScrollWheelInputAutomatically = Random.nextBoolean(),
             onMaterialModeChange = { materialModeOn = it },
             onKeepWorkoutScreenOnChange = { keepWorkoutScreenOn = it },
             onRestTimerSoundOnChange = { restTimerSoundOn = it },
             onIsWorkoutHeaderStickyChange = { isWorkoutHeaderSticky = it },
-            onUseScrollWheelForInputChange = { useScrollWheelForInput = it }
+            onUseScrollWheelForInputChange = { useScrollWheelForInput = it },
+            onDismissScrollWhellInputAutomaticallyChange = {}
         )
     }
 }

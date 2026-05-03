@@ -38,6 +38,7 @@ class SettingsScreenViewModel @Inject constructor(
     val isSupporter = userPreferences.isSupporter
     val isWorkoutHeaderSticky = userPreferences.isWorkoutHeaderSticky
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
+    val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
 
     fun saveThemeMode(mode: ThemeMode) {
         viewModelScope.launch { userPreferences.saveThemeMode(mode) }
@@ -65,6 +66,12 @@ class SettingsScreenViewModel @Inject constructor(
 
     fun saveUseScrollWheelForInput(useScroll: Boolean) {
         viewModelScope.launch { userPreferences.saveUseScrollWheelForInput(useScroll) }
+    }
+
+    fun saveDismissScrollWheelInputAutomatically(dismissAutomatically: Boolean) {
+        viewModelScope.launch {
+            userPreferences.saveDismissScrollWheelInputAutomatically(dismissAutomatically)
+        }
     }
 
     private val _preferences = MutableStateFlow<List<DialogPreference>?>(null)

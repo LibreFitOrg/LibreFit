@@ -97,6 +97,8 @@ fun SharedTransitionScope.BeforeSavingScreen(
 
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
 
+    val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
+
 
     val showUnlikeRoutineDialog = remember { mutableStateOf(false) }
 
@@ -152,7 +154,8 @@ fun SharedTransitionScope.BeforeSavingScreen(
             },
             onDismiss = {
                 inputModalBottomSheetState = null
-            }
+            },
+            dismissAutomatically = dismissScrollWheelInputAutomatically
         )
     }
 
