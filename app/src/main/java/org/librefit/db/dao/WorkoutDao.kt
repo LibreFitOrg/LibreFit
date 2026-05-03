@@ -14,8 +14,10 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import org.librefit.db.entity.Exercise
+import org.librefit.db.entity.Measurement
 import org.librefit.db.entity.Set
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.ExerciseWithSets
@@ -25,18 +27,32 @@ import java.time.LocalDateTime
 
 @Dao
 interface WorkoutDao {
-    /**
-     * Returns a flow that emits a stream of [org.librefit.db.entity.Workout]s ordered by their
-     * creation date
-     */
-    @Query("SELECT * FROM workouts ORDER BY created")
-    fun getAllWorkouts(): Flow<List<Workout>>
+    @Upsert
+    suspend fun upsertWorkouts(workouts: List<Workout>)
+
+    @Upsert
+    suspend fun upsertExercises(exercises: List<Exercise>)
+
+    @Upsert
+    suspend fun upsertSets(sets: List<Set>)
 
     /**
-     * Returns a flow that emits a stream of [org.librefit.db.entity.Exercise]s for each workout
+     * Returns a list of [org.librefit.db.entity.Workout]s ordered by their creation date
+     */
+    @Query("SELECT * FROM workouts ORDER BY created")
+    suspend fun getAllWorkouts(): List<Workout>
+
+    /**
+     * Returns a list of [org.librefit.db.entity.Exercise]s for each workout
      */
     @Query("SELECT * FROM exercises WHERE workoutId IN (:workoutIds)")
-    fun getAllExercises(workoutIds: List<Long>): Flow<List<Exercise>>
+    suspend fun getAllExercises(workoutIds: List<Long>): List<Exercise>
+
+    /**
+     * Returns a list of [org.librefit.db.entity.Set]s for each exercise
+     */
+    @Query("SELECT * FROM sets WHERE exerciseId IN (:exerciseIds)")
+    suspend fun getAllSets(exerciseIds: List<Long>): List<Set>
 
     /**
      * Returns a flow that emits a stream of [org.librefit.db.entity.Workout]s filtered by [state]

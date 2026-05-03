@@ -9,6 +9,8 @@
 package org.librefit.ui.screens.settings
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -45,6 +47,8 @@ class SettingsScreenViewModel @Inject constructor(
     val isSupporter = userPreferences.isSupporter
     val isWorkoutHeaderSticky = userPreferences.isWorkoutHeaderSticky
 
+    private val _isImporting = MutableStateFlow(false)
+    val isImporting = _isImporting.asStateFlow()
 
     fun <T> savePreference(key: Preferences.Key<T>, value: T) {
         viewModelScope.launch {
@@ -105,7 +109,6 @@ class SettingsScreenViewModel @Inject constructor(
             try {
                 importExportRepository.exportTo(uri)
             } catch (e: Exception) {
-                // TODO: catch and show
                 _events.emit(
                     BackupEvent.Error(e.message ?: "Data backup export failed")
                 )
@@ -115,13 +118,15 @@ class SettingsScreenViewModel @Inject constructor(
 
     fun backupImport(uri: Uri) {
         viewModelScope.launch {
+            _isImporting.value = true
             try {
                 importExportRepository.importFrom(uri)
             } catch (e: Exception) {
-                // TODO: catch and show
                 _events.emit(
                     BackupEvent.Error(e.message ?: "Data backup restore failed")
                 )
+            } finally {
+                _isImporting.value = false
             }
         }
     }

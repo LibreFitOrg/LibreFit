@@ -8,20 +8,28 @@
 
 package org.librefit.ui.screens.settings
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -93,6 +101,8 @@ fun SettingsScreen(
 
     val isWorkoutHeaderSticky by viewModel.isWorkoutHeaderSticky.collectAsStateWithLifecycle()
 
+    val isImporting by viewModel.isImporting.collectAsStateWithLifecycle()
+
     preferences?.let {
         PreferenceDialog(
             currentPreference = currentPreference,
@@ -101,7 +111,18 @@ fun SettingsScreen(
         ) {
             viewModel.updatePreferences(null)
         }
+    }
 
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let { viewModel.backupExport(it) }
+    }
+
+    val importLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let { viewModel.backupImport(it) }
     }
 
     SettingsScreenContent(
@@ -115,8 +136,12 @@ fun SettingsScreen(
         isWorkoutHeaderSticky = isWorkoutHeaderSticky,
         updatePreferences = viewModel::updatePreferences,
         saveBooleanValue = viewModel::savePreference,
-        backupExport = viewModel::backupExport,
-        backupImport = viewModel::backupImport
+        onExportClicked = {
+            val fileName = "librefit-backup.json"
+            exportLauncher.launch(fileName)
+        },
+        onImportClicked = { importLauncher.launch(arrayOf("*/*")) },
+        isImporting = isImporting
     )
 }
 
@@ -133,8 +158,9 @@ private fun SettingsScreenContent(
     isWorkoutHeaderSticky: Boolean,
     updatePreferences: (List<DialogPreference>) -> Unit,
     saveBooleanValue: (Preferences.Key<Boolean>, value: Boolean) -> Unit,
-    backupExport: (Uri) -> Unit,
-    backupImport: (Uri) -> Unit
+    onExportClicked: () -> Unit,
+    onImportClicked: () -> Unit,
+    isImporting: Boolean
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.settings)),
@@ -243,17 +269,8 @@ private fun SettingsScreenContent(
             }
 
             item {
-                val launcher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.CreateDocument("application/octet-stream")
-                ) { uri ->
-                    uri?.let { backupExport(it) }
-                }
-
                 SettingItem(
-                    onClick = {
-                        val fileName = "librefit-backup.db"
-                        launcher.launch(fileName)
-                    },
+                    onClick = onExportClicked,
                     icon = painterResource(R.drawable.ic_backup),
                     settingName = stringResource(id = R.string.export_data),
                     settingDesc = stringResource(R.string.export_data_desc)
@@ -261,23 +278,24 @@ private fun SettingsScreenContent(
             }
 
             item {
-                val launcher =
-                    rememberLauncherForActivityResult(
-                        contract = ActivityResultContracts.OpenDocument()
-                    ) { uri: Uri? ->
-                        uri?.let {
-                            backupImport(it)
-                        }
-                    }
                 SettingItem(
-                    onClick = {
-                        launcher.launch(arrayOf("*/*"))
-                    },
+                    onClick = onImportClicked,
                     icon = painterResource(R.drawable.ic_restore),
                     settingName = stringResource(id = R.string.import_data),
                     settingDesc = stringResource(R.string.import_data_desc)
                 )
             }
+        }
+    }
+
+    if (isImporting) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.4f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
         }
     }
 }
@@ -381,8 +399,9 @@ fun SettingsScreenPreview() {
                     }
                 }
             },
-            backupExport = {},
-            backupImport = {}
+            onExportClicked = {},
+            onImportClicked = {},
+            isImporting = false
         )
     }
 }

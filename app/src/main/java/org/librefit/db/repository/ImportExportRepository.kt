@@ -3,17 +3,21 @@ package org.librefit.db.repository
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
+import androidx.room.withTransaction
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import org.librefit.db.AppDatabase
 import org.librefit.db.converters.ExportData
 import org.librefit.db.converters.ExportPayload
-import java.io.File
 import javax.inject.Inject
+import org.librefit.db.entity.Exercise
+import org.librefit.db.entity.LocalDateTimeSerializer
+import java.time.LocalDateTime
 import kotlin.system.exitProcess
 
 class ImportExportRepository @Inject constructor(
@@ -23,50 +27,111 @@ class ImportExportRepository @Inject constructor(
     suspend fun exportTo(uri: Uri) = withContext(Dispatchers.IO) {
         // 1. note the current db migration version
         // 2. serialize the JSON
-        val workouts = db.getWorkoutDao().getAllWorkouts().first()
+        val workouts = db.getWorkoutDao().getAllWorkouts()
+
         val workoutIds = workouts.map { it.id }
-        val exercises = db.getWorkoutDao().getAllExercises(workoutIds).first()
+        val exercises = db.getWorkoutDao().getAllExercises(workoutIds)
+
+        val exerciseIds = exercises.map { it.id }
+        val sets = db.getWorkoutDao().getAllSets(exerciseIds)
+
+        val measurements = db.getMeasurementDao().getAllMeasurementsForBackup()
+
+        val exerciseDCs = db.getDatasetDao().getAllExerciseDCs()
+
+        Log.d("EXPORT", "workouts=${workouts.size}")
+        Log.d("EXPORT", "exercises=${exercises.size}")
+        Log.d("EXPORT", "sets=${sets.size}")
+
         val payload = ExportPayload(
             version = 3,
             data = ExportData(
                 workouts = workouts,
                 exercises = exercises,
-                // TODO
-                sets = db.getWorkoutDao().getAllSets(),
-                measurements = db.getMeasurementDao().getAll(),
-                exerciseDCs = db.getDatasetDao().getAll()
+                sets = sets,
+                measurements = measurements,
+                exerciseDCs = exerciseDCs
             )
         )
 
-        context.contentResolver.openOutputStream(uri)?.use { out ->
-            val json = /* your serializer, e.g. kotlinx.serialization */
-                out.write(json.encodeToString(payload).toByteArray())
+        val outputStream = context.contentResolver.openOutputStream(uri)
+            ?: error("Cannot open output stream for export URI")
+
+        outputStream.use { out ->
+            val json = Json {
+                prettyPrint = true
+                ignoreUnknownKeys = true
+                encodeDefaults = true
+                serializersModule = SerializersModule {
+                    contextual(LocalDateTime::class, LocalDateTimeSerializer)
+                }
+            }
+            out.write(json.encodeToString(payload).toByteArray())
+            out.flush()
         }
+
+        outputStream.close()
     }
 
-    suspend fun importFrom(uri: Uri): Nothing = withContext(Dispatchers.IO) {
-        val dbFile = context.getDatabasePath(AppDatabase.NAME)
+    private fun normalizeExercises(exercises: List<Exercise>): List<Exercise> {
+        return exercises
+            .groupBy { it.workoutId }
+            .flatMap { (_, group) ->
+                group
+                    .sortedBy { it.id }
+                    .mapIndexed { index, exercise ->
+                        exercise.copy(position = index)
+                    }
+            }
+    }
 
-        AppDatabase.closeInstance()
+    suspend fun importFrom(uri: Uri) = withContext(Dispatchers.IO) {
+        val json = Json { ignoreUnknownKeys = true }
 
-        val tempFile = File(context.cacheDir, "restore.db")
+        val payload = context.contentResolver.openInputStream(uri)?.use { input ->
+            context.contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
 
-        context.contentResolver.openInputStream(uri)?.use { input ->
-            tempFile.outputStream().use { output ->
-                input.copyTo(output)
+            val text = input.bufferedReader().readText()
+            json.decodeFromString<ExportPayload>(text)
+        } ?: return@withContext
+
+        Log.d("IMPORT", "workouts ids = ${payload.data.workouts.map { it.id }}")
+        Log.d("IMPORT", "exercises ids = ${payload.data.exercises.map { it.id }}")
+
+        db.withTransaction {
+
+            val workoutDao = db.getWorkoutDao()
+            val measurementDao = db.getMeasurementDao()
+            val datasetDao = db.getDatasetDao()
+
+            // 1. UPSERT WORKOUTS
+            workoutDao.upsertWorkouts(payload.data.workouts)
+
+            // 2. UPSERT EXERCISES
+            // normalizing because of the migration to V3 of the DB schema
+            val normalizedExercises = if (payload.version < 3)
+                normalizeExercises(payload.data.exercises)
+            else
+                payload.data.exercises
+            workoutDao.upsertExercises(normalizedExercises)
+
+            // 3. UPSERT SETS
+            workoutDao.upsertSets(payload.data.sets)
+
+            // 4. UPSERT MEASUREMENTS
+            payload.data.measurements.forEach {
+                measurementDao.upsertMeasurement(it)
+            }
+
+            // 5. UPSERT DATASETS
+            payload.data.exerciseDCs.forEach {
+                datasetDao.upsertExercise(it)
             }
         }
 
-        val wal = File(dbFile.path + "-wal")
-        val shm = File(dbFile.path + "-shm")
-
-        wal.delete()
-        shm.delete()
-
-        tempFile.copyTo(dbFile, overwrite = true)
-        tempFile.delete()
-
-        AppDatabase.getInstance(context) // Reinitialize with the new DB file
         // restart app process cleanly
         val intent = context.packageManager
             .getLaunchIntentForPackage(context.packageName)

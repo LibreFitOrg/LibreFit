@@ -30,6 +30,9 @@ interface MeasurementDao {
     @Query("SELECT * FROM measurements ORDER BY date DESC")
     fun getAllMeasurements(): Flow<List<Measurement>>
 
+    @Query("SELECT * FROM measurements ORDER BY date DESC")
+    suspend fun getAllMeasurementsForBackup(): List<Measurement>
+
     @Query("SELECT * FROM measurements WHERE date <= :cutoff ORDER BY date DESC")
     suspend fun getLastMeasurementByCutoff(cutoff: LocalDateTime): Measurement?
 }

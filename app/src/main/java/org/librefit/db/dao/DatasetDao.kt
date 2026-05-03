@@ -23,6 +23,9 @@ interface DatasetDao {
     @Query("SELECT * FROM dataset ORDER BY name")
     fun getDataset(): Flow<List<ExerciseDC>>
 
+    @Query("SELECT * FROM dataset ORDER BY name")
+    suspend fun getAllExerciseDCs(): List<ExerciseDC>
+
     @Query("SELECT * FROM dataset WHERE isCustomExercise")
     fun getCustomExercises(): Flow<List<ExerciseDC>>
 
