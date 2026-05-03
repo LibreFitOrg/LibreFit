@@ -46,6 +46,12 @@ enum class Equipment : ExerciseProperty {
     @SerialName(value = "e-z curl bar")
     E_Z_CURL_BAR,
 
+    @SerialName(value = "pull-up bar")
+    PULL_UP_BAR,
+
+    @SerialName(value = "rings")
+    RINGS,
+
     @SerialName(value = "other")
     OTHER
 }

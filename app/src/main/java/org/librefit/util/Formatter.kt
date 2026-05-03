@@ -55,6 +55,8 @@ object Formatter {
             Equipment.BARBELL -> R.string.equipment_barbell
             Equipment.EXERCISE_BALL -> R.string.equipment_exercise_ball
             Equipment.E_Z_CURL_BAR -> R.string.equipment_ez_curl_bar
+            Equipment.PULL_UP_BAR -> R.string.equipment_pull_up_bar
+            Equipment.RINGS -> R.string.equipment_rings
             Equipment.OTHER -> R.string.equipment_other
             Muscle.ABDOMINALS -> R.string.muscle_abdominals
             Muscle.ABDUCTORS -> R.string.muscle_abductors

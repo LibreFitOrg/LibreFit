@@ -64,6 +64,8 @@
     <string name="Odweta" translatable="false">Odweta</string>
     <string name="dpusceddu" translatable="false">dpusceddu</string>
     <string name="url_dpusceddu" translatable="false">https://github.com/dpusceddu</string>
+    <string name="b3nj5m1n" translatable="false">b3nj5m1n</string>
+    <string name="url_b3nj5m1n" translatable="false">https://github.com/b3nj5m1n</string>
 
 
     <!--Before saving screen-->
@@ -427,6 +429,8 @@
     <string name="equipment_barbell">Barbell</string>
     <string name="equipment_exercise_ball">Exercise ball</string>
     <string name="equipment_ez_curl_bar">EZ curl bar</string>
+    <string name="equipment_pull_up_bar">Pull-up bar</string>
+    <string name="equipment_rings">Rings</string>
     <string name="equipment_other">Other</string>
 
     <string name="muscle_abdominals">Abdominals</string>

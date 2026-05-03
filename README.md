@@ -213,6 +213,11 @@ Thanks to everyone who helped the project!
 
 [Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be listed here.
 
+### 🏋 Dataset contributors
+
+- [b3nj5m1n](https://github.com/b3nj5m1n) #28
+
+> [Contribute to dataset](CONTRIBUTING.md#improving-exercises-dataset) to be listed here.
 
 ### 🌐 Translators
 
