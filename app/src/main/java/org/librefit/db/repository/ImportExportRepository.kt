@@ -39,10 +39,6 @@ class ImportExportRepository @Inject constructor(
 
         val exerciseDCs = db.getDatasetDao().getAllExerciseDCs()
 
-        Log.d("EXPORT", "workouts=${workouts.size}")
-        Log.d("EXPORT", "exercises=${exercises.size}")
-        Log.d("EXPORT", "sets=${sets.size}")
-
         val payload = ExportPayload(
             version = 3,
             data = ExportData(
@@ -97,9 +93,6 @@ class ImportExportRepository @Inject constructor(
             val text = input.bufferedReader().readText()
             json.decodeFromString<ExportPayload>(text)
         } ?: return@withContext
-
-        Log.d("IMPORT", "workouts ids = ${payload.data.workouts.map { it.id }}")
-        Log.d("IMPORT", "exercises ids = ${payload.data.exercises.map { it.id }}")
 
         db.withTransaction {
 
