@@ -49,6 +49,8 @@ class EditWorkoutScreenViewModel @Inject constructor(
     userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
+    val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
+
     val dismissScrollWheelInputAutomatically =
         userPreferencesRepository.dismissScrollWheelInputAutomatically
 
