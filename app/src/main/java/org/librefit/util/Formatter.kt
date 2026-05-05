@@ -208,11 +208,11 @@ object Formatter {
      */
     fun parseDoubleFromString(
         string: String,
-        @IntRange(0, 8) maxIntegerDigits: Int = 3,
-        @IntRange(0, 8) maxDecimalDigits: Int = 2,
+        @IntRange(0, 3) maxIntegerDigits: Int = 3,
+        @IntRange(0, 2) maxDecimalDigits: Int = 2,
     ): Double? {
-        require(maxIntegerDigits in 0..8 && maxDecimalDigits in 0..8) {
-            "maxIntegerDigits and maxFractionalDigits must be between 0 and 8. maxIntegerDigits: $maxIntegerDigits. " +
+        require(maxIntegerDigits in 0..3 && maxDecimalDigits in 0..2) {
+            "maxIntegerDigits and maxFractionalDigits must be positive but lower than 3 and 2, respectively. maxIntegerDigits: $maxIntegerDigits. " +
                     "maxFractionalDigits: $maxDecimalDigits."
         }
 
@@ -263,11 +263,11 @@ object Formatter {
      */
     fun normalizeNumericString(
         string: String,
-        @IntRange(0, 8) maxIntegerDigits: Int = 3,
-        @IntRange(0, 8) maxDecimalDigits: Int = 2,
+        @IntRange(0, 3) maxIntegerDigits: Int = 3,
+        @IntRange(0, 2) maxDecimalDigits: Int = 2,
     ): String {
-        require(maxIntegerDigits in 0..8 && maxDecimalDigits in 0..8) {
-            "maxIntegerDigits and maxFractionalDigits must be between 0 and 8. maxIntegerDigits: $maxIntegerDigits. " +
+        require(maxIntegerDigits in 0..3 && maxDecimalDigits in 0..2) {
+            "maxIntegerDigits and maxFractionalDigits must be positive but lower than 3 and 3, respectively. maxIntegerDigits: $maxIntegerDigits. " +
                     "maxFractionalDigits: $maxDecimalDigits."
         }
 

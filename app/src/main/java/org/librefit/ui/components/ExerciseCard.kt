@@ -599,7 +599,7 @@ private fun Set(
 ) {
     val timeValue by rememberUpdatedState(set.elapsedTime)
     var repValue by rememberSaveable(set.reps) { mutableStateOf(set.reps.toString()) }
-    var weightValue by rememberSaveable(set.load) { mutableStateOf(set.load.toString()) }
+    var weightValue by rememberSaveable { mutableStateOf(set.load.toString()) }
 
     val swipeToDismissBoxState = rememberSwipeToDismissBoxState()
 
@@ -829,9 +829,10 @@ private fun Set(
                             onValueChange = { string ->
                                 weightValue = Formatter.normalizeNumericString(string)
 
-                                Formatter.parseDoubleFromString(weightValue)?.let {
-                                    updateSetLoad(it, set.id)
-                                }
+                                updateSetLoad(
+                                    Formatter.parseDoubleFromString(weightValue) ?: 0.0,
+                                    set.id
+                                )
                             },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
