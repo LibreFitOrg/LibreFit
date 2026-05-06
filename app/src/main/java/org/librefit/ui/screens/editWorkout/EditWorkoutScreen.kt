@@ -253,7 +253,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
             if (typeOfEdit == false) stringResource(R.string.done)
             else stringResource(R.string.save)
         ),
-        actionsEnabled = listOf(!isTitleEmpty && !isTitleTooLong && exercisesWithSets.isNotEmpty()),
+        actionsEnabled = listOf(!isTitleEmpty && !isTitleTooLong && if (typeOfEdit != false) true else exercisesWithSets.isNotEmpty()),
         fabIcon = painterResource(R.drawable.ic_add),
         fabAction = {
             navController.navigate(Route.ExercisesScreen(addExercises = true)) {
