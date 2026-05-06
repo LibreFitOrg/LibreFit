@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Option to dismiss scroll wheel automatically [#52](https://github.com/LibreFitOrg/LibreFit/pull/52)
 
 ### Changed
-- 
+
+- Save routines even when empty [#53](https://github.com/LibreFitOrg/LibreFit/issues/53)
 
 ### Deprecated
 -
