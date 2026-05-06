@@ -167,8 +167,7 @@ We will then take care of the question as soon as possible.
 
 ## 📜 License
 
-LibreFit is licensed under the [GNU General Public License v3.0 (GPL-3)](COPYING), and it is subject
-to these [additional terms](ADDITIONAL_TERMS.md).
+LibreFit is licensed under the [GNU General Public License v3.0 (GPL-3)](COPYING), and it is subject to these [additional terms](ADDITIONAL_TERMS.md).
 
 In short, this means you are free to use, modify, and distribute the code, but you must:
 
@@ -203,19 +202,20 @@ Thanks to everyone who helped the project!
 ### 💖 Donators
 
 - FlashyGhost
+- jakedevs
 - Anonymous donators
 
 > [Donate](README.md#-donate) to be listed here.
 
 ### 🏗 Contributors
 
-- [dpusceddu](https://github.com/dpusceddu) #25
+- [dpusceddu](https://github.com/dpusceddu) : [#25](https://github.com/LibreFitOrg/LibreFit/pull/25)
 
 > [Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be listed here.
 
 ### 🏋 Dataset contributors
 
-- [b3nj5m1n](https://github.com/b3nj5m1n) #28
+- [b3nj5m1n](https://github.com/b3nj5m1n) : [#28](https://github.com/LibreFitOrg/LibreFit/pull/28)
 
 > [Contribute to dataset](CONTRIBUTING.md#improving-exercises-dataset) to be listed here.
 

@@ -297,6 +297,24 @@ fun AboutScreen(navController: NavHostController) {
             }
 
             item {
+                HeadlineText(stringResource(R.string.donators))
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.FlashyGhost)
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.jakedevs)
+                )
+            }
+
+            item {
                 HeadlineText(stringResource(R.string.contributors))
             }
 
@@ -317,17 +335,6 @@ fun AboutScreen(navController: NavHostController) {
                     onClick = {
                         url.value = resources.getString(R.string.url_b3nj5m1n)
                     }
-                )
-            }
-
-            item {
-                HeadlineText(stringResource(R.string.donators))
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.FlashyGhost)
                 )
             }
 
