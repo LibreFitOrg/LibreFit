@@ -209,13 +209,13 @@ Thanks to everyone who helped the project!
 
 ### 🏗 Contributors
 
-- [dpusceddu](https://github.com/dpusceddu) [#25](https://github.com/LibreFitOrg/LibreFit/pull/25)
+- [dpusceddu](https://github.com/dpusceddu) : [#25](https://github.com/LibreFitOrg/LibreFit/pull/25)
 
 > [Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be listed here.
 
 ### 🏋 Dataset contributors
 
-- [b3nj5m1n](https://github.com/b3nj5m1n) [#28](https://github.com/LibreFitOrg/LibreFit/pull/28)
+- [b3nj5m1n](https://github.com/b3nj5m1n) : [#28](https://github.com/LibreFitOrg/LibreFit/pull/28)
 
 > [Contribute to dataset](CONTRIBUTING.md#improving-exercises-dataset) to be listed here.
 
