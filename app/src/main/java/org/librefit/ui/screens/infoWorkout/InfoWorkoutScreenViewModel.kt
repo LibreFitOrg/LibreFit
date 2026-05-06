@@ -61,8 +61,10 @@ class InfoWorkoutScreenViewModel @Inject constructor(
             val workoutWithExercisesAndSets =
                 workoutRepository.getWorkoutWithExercisesAndSets(workoutId)
 
+            val workout = workoutWithExercisesAndSets.workout
+
             _workout.update {
-                workoutWithExercisesAndSets.workout
+                workout
             }
 
             _exercises.update {
@@ -71,17 +73,17 @@ class InfoWorkoutScreenViewModel @Inject constructor(
 
             if (isRoutine()) {
                 _routine.update {
-                    workout.value
+                    workout
                 }
 
                 //If the workout is a routine, then retrieve all past completed workout associated with it
                 _completedWorkoutsWithExercises.update {
                     workoutRepository
-                        .getCompletedWorkoutsWithExercisesAndSetsFromRoutine(routineId = workout.value.routineId)
+                        .getCompletedWorkoutsWithExercisesAndSetsFromRoutine(routineId = workout.routineId)
                 }
             } else {
                 _routine.update {
-                    workoutRepository.getRoutineFromRoutineID(workout.value.routineId).toUi()
+                    workoutRepository.getRoutineFromRoutineID(workout.routineId).toUi()
                 }
             }
 
@@ -89,7 +91,7 @@ class InfoWorkoutScreenViewModel @Inject constructor(
             // Calculate volume
             val volumeValue = dataHelper.fetchVolumeFromWorkout(
                 WorkoutWithExercisesAndSets(
-                    workout.value.toEntity(),
+                    workout.toEntity(),
                     exercises.value.map { it.toEntity() })
             )
 
