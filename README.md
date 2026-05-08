@@ -203,6 +203,8 @@ Thanks to everyone who helped the project!
 
 - FlashyGhost
 - jakedevs
+- [debianite65](https://github.com/debianite65)
+- The Blue Blurr
 - Anonymous donators
 
 > [Donate](README.md#-donate) to be listed here.

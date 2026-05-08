@@ -315,6 +315,23 @@ fun AboutScreen(navController: NavHostController) {
             }
 
             item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.debianite65),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_debianite65)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.the_blue_blurr)
+                )
+            }
+
+            item {
                 HeadlineText(stringResource(R.string.contributors))
             }
 
