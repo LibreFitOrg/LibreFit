@@ -36,9 +36,9 @@ class ImportExportRepository @Inject constructor(
         val exerciseIds = exercises.map { it.id }
         val sets = db.getWorkoutDao().getAllSets(exerciseIds)
 
-        val measurements = db.getMeasurementDao().getAllMeasurementsForBackup()
+        val measurements = db.getMeasurementDao().getAllMeasurementsOnce()
 
-        val exerciseDCs = db.getDatasetDao().getAllExerciseDCs()
+        val exerciseDCs = db.getDatasetDao().getDatasetOnce()
 
         val payload = ExportPayload(
             version = 3,
