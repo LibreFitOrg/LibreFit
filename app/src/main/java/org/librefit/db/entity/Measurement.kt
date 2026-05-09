@@ -23,7 +23,7 @@ data class Measurement(
     @get:FloatRange(0.0, 300.0) val bodyWeight: Double = 0.0,
     @get:IntRange(0, 100) val bodyFatPercentage: Int = 0,
     @get:IntRange(0, 100) val muscleMassPercentage: Int = 0,
-    @Contextual
+    @Serializable(with = LocalDateTimeSerializer::class)
     val date: LocalDateTime = LocalDateTime.now(),
     val notes: String = ""
 )
