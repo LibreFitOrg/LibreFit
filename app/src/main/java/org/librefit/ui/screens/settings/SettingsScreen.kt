@@ -28,6 +28,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -118,43 +120,18 @@ fun SettingsScreen(
         uri?.let { viewModel.backupImport(it) }
     }
 
-    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
-            when (event) {
-                SettingsEvent.ImportSuccess -> {
-                    Toast.makeText(
-                        context,
-                        "Import successful",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                SettingsEvent.ImportFailed -> {
-                    Toast.makeText(
-                        context,
-                        "Import failed",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                SettingsEvent.ExportSuccess -> {
-                    Toast.makeText(
-                        context,
-                        "Export successful",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                SettingsEvent.ExportFailed -> {
-                    Toast.makeText(
-                        context,
-                        "Export failed",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            val message = when (event) {
+                SettingsEvent.ImportSuccess -> viewModel.importSuccessToast
+                SettingsEvent.ImportFailed -> viewModel.importFailedToast
+                SettingsEvent.ExportSuccess -> viewModel.exportSuccessToast
+                SettingsEvent.ExportFailed -> viewModel.exportFailedToast
             }
+
+            snackbarHostState.showSnackbar(message)
         }
     }
 
@@ -174,7 +151,8 @@ fun SettingsScreen(
             exportLauncher.launch(fileName)
         },
         onImportClicked = { importLauncher.launch(arrayOf("*/*")) },
-        isImporting = isImporting
+        isImporting = isImporting,
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -193,11 +171,13 @@ private fun SettingsScreenContent(
     saveBooleanValue: (Preferences.Key<Boolean>, value: Boolean) -> Unit,
     onExportClicked: () -> Unit,
     onImportClicked: () -> Unit,
-    isImporting: Boolean
+    isImporting: Boolean,
+    snackbarHostState: SnackbarHostState
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.settings)),
-        navigateBack = navController::navigateUp
+        navigateBack = navController::navigateUp,
+        snackbarHostState = snackbarHostState
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding) {
             item { HeadlineText(text = stringResource(id = R.string.appearance)) }
@@ -434,7 +414,8 @@ fun SettingsScreenPreview() {
             },
             onExportClicked = {},
             onImportClicked = {},
-            isImporting = false
+            isImporting = false,
+            snackbarHostState = SnackbarHostState()
         )
     }
 }

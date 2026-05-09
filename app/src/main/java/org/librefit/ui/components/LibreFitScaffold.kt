@@ -25,6 +25,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -64,6 +66,7 @@ import org.librefit.R
  * @param fabDescription An optional string that provides a description of the [fabIcon] and [fabAction]
  * for accessibility purposes. See [Icon] and [FloatingActionButton]
  * @param fabText If this string is passed, the fab becomes [ExtendedFloatingActionButton] (a wider fab to accommodate a [fabText])
+ * @param snackbarHostState snackbar host needed for snackbar display
  * @param bottomBar The bottom bar of the scaffold. By default there's no bottom bar.
  * @param content A composable lambda that defines the main content of the screen.
  */
@@ -81,10 +84,12 @@ fun LibreFitScaffold(
     fabIcon: Painter? = null,
     fabDescription: String? = null,
     fabText: String? = null,
+    snackbarHostState: SnackbarHostState? = null,
     bottomBar: @Composable (() -> Unit)? = null,
     content: @Composable ((PaddingValues) -> Unit),
 ) {
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState ?: SnackbarHostState()) },
         modifier = Modifier.imePadding(),
         topBar = {
             if (title != null || navigateBack != null || actions.isNotEmpty()) {

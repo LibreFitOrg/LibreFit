@@ -8,11 +8,13 @@
 
 package org.librefit.ui.screens.settings
 
+import android.content.Context
 import android.net.Uri
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,6 +26,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.librefit.R
 import org.librefit.db.repository.ImportExportRepository
 import org.librefit.db.repository.ImportResult
 import org.librefit.db.repository.UserPreferencesRepository
@@ -34,6 +37,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
+    @param:ApplicationContext private val context: Context,
     private val userPreferences: UserPreferencesRepository,
     private val importExportRepository: ImportExportRepository
 ) : ViewModel() {
@@ -57,6 +61,10 @@ class SettingsScreenViewModel @Inject constructor(
         }
     }
 
+    val importSuccessToast = context.getString(R.string.import_data_success)
+    val importFailedToast = context.getString(R.string.import_data_failed)
+    val exportSuccessToast = context.getString(R.string.export_data_success)
+    val exportFailedToast = context.getString(R.string.export_data_failed)
 
     private val _preferences = MutableStateFlow<List<DialogPreference>?>(null)
     val preferences = _preferences.asStateFlow()
