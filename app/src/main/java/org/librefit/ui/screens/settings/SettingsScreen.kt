@@ -8,14 +8,9 @@
 
 package org.librefit.ui.screens.settings
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
@@ -33,8 +28,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,6 +52,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.collect
 import org.librefit.R
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.DialogPreference
@@ -69,7 +63,6 @@ import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.dialogs.PreferenceDialog
-import org.librefit.ui.models.BackupEvent
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import kotlin.random.Random
@@ -123,6 +116,46 @@ fun SettingsScreen(
         ActivityResultContracts.OpenDocument()
     ) { uri ->
         uri?.let { viewModel.backupImport(it) }
+    }
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                SettingsEvent.ImportSuccess -> {
+                    Toast.makeText(
+                        context,
+                        "Import successful",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                SettingsEvent.ImportFailed -> {
+                    Toast.makeText(
+                        context,
+                        "Import failed",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                SettingsEvent.ExportSuccess -> {
+                    Toast.makeText(
+                        context,
+                        "Export successful",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                SettingsEvent.ExportFailed -> {
+                    Toast.makeText(
+                        context,
+                        "Export failed",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
     }
 
     SettingsScreenContent(

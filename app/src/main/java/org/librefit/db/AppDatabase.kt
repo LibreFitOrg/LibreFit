@@ -8,10 +8,8 @@
 
 package org.librefit.db
 
-import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
@@ -39,29 +37,6 @@ import org.librefit.db.entity.Workout
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         const val NAME = "librefit_database"
-
-        @Volatile
-        private var INSTANCE: AppDatabase? = null
-
-        fun getInstance(context: Context): AppDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    NAME
-                )
-                    .addMigrations(MIGRATION_2_3)
-                    .build()
-
-                INSTANCE = instance
-                instance
-            }
-        }
-
-        fun closeInstance() {
-            INSTANCE?.close()
-            INSTANCE = null
-        }
 
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {

@@ -9,8 +9,6 @@
 package org.librefit.ui.screens.settings
 
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,11 +25,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.repository.ImportExportRepository
+import org.librefit.db.repository.ImportResult
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.ui.models.BackupEvent
 import javax.inject.Inject
 
 @HiltViewModel
@@ -101,17 +99,16 @@ class SettingsScreenViewModel @Inject constructor(
         }
     }
 
-    private val _events = MutableSharedFlow<BackupEvent>()
+    private val _events = MutableSharedFlow<SettingsEvent>()
     val events = _events.asSharedFlow()
 
     fun backupExport(uri: Uri) {
         viewModelScope.launch {
             try {
                 importExportRepository.exportTo(uri)
+                _events.emit(SettingsEvent.ExportSuccess)
             } catch (e: Exception) {
-                _events.emit(
-                    BackupEvent.Error(e.message ?: "Data backup export failed")
-                )
+                _events.emit(SettingsEvent.ExportFailed)
             }
         }
     }
@@ -119,15 +116,21 @@ class SettingsScreenViewModel @Inject constructor(
     fun backupImport(uri: Uri) {
         viewModelScope.launch {
             _isImporting.value = true
-            try {
-                importExportRepository.importFrom(uri)
-            } catch (e: Exception) {
-                _events.emit(
-                    BackupEvent.Error(e.message ?: "Data backup restore failed")
-                )
-            } finally {
-                _isImporting.value = false
+
+            val result = importExportRepository.importFrom(uri)
+            when (result) {
+                is ImportResult.Success -> _events.emit(SettingsEvent.ImportSuccess)
+                is ImportResult.Error -> _events.emit(SettingsEvent.ImportFailed)
             }
+
+            _isImporting.value = false
         }
     }
+}
+
+sealed class SettingsEvent {
+    data object ExportSuccess : SettingsEvent()
+    data object ExportFailed : SettingsEvent()
+    data object ImportSuccess : SettingsEvent()
+    data object ImportFailed : SettingsEvent()
 }

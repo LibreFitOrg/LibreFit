@@ -33,6 +33,12 @@ interface WorkoutDao {
     @Query("SELECT * FROM workouts ORDER BY created")
     suspend fun getAllWorkouts(): List<Workout>
 
+    @Query("SELECT * FROM workouts ORDER BY created")
+    fun getAllWorkoutsWithExercisesAndSets(): Flow<List<WorkoutWithExercisesAndSets>>
+
+    @Query("SELECT * FROM workouts ORDER BY created")
+    suspend fun getAllWorkoutsWithExercisesAndSetsOnce(): List<WorkoutWithExercisesAndSets>
+
     /**
      * Returns a list of [org.librefit.db.entity.Exercise]s for each workout
      */
