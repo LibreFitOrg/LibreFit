@@ -27,15 +27,6 @@ import java.time.LocalDateTime
 
 @Dao
 interface WorkoutDao {
-    @Upsert
-    suspend fun upsertWorkouts(workouts: List<Workout>)
-
-    @Upsert
-    suspend fun upsertExercises(exercises: List<Exercise>)
-
-    @Upsert
-    suspend fun upsertSets(sets: List<Set>)
-
     /**
      * Returns a list of [org.librefit.db.entity.Workout]s ordered by their creation date
      */

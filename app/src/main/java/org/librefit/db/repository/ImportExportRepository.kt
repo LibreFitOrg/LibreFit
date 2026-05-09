@@ -16,6 +16,8 @@ import org.librefit.db.converters.ExportPayload
 import javax.inject.Inject
 import org.librefit.db.entity.Exercise
 import org.librefit.db.entity.LocalDateTimeSerializer
+import org.librefit.db.relations.ExerciseWithSets
+import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.di.qualifiers.IoDispatcher
 import java.time.LocalDateTime
 import kotlin.system.exitProcess
@@ -26,28 +28,27 @@ class ImportExportRepository @Inject constructor(
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend fun exportTo(uri: Uri) = withContext(Dispatchers.IO) {
-        // 1. note the current db migration version
-        // 2. serialize the JSON
-        val workouts = db.getWorkoutDao().getAllWorkouts()
+        val workoutDao = db.getWorkoutDao()
+        val measurementDao = db.getMeasurementDao()
 
-        val workoutIds = workouts.map { it.id }
-        val exercises = db.getWorkoutDao().getAllExercises(workoutIds)
+        val workouts = workoutDao.getAllWorkouts()
 
-        val exerciseIds = exercises.map { it.id }
-        val sets = db.getWorkoutDao().getAllSets(exerciseIds)
+        val measurements = measurementDao.getAllMeasurementsOnce()
 
-        val measurements = db.getMeasurementDao().getAllMeasurementsOnce()
+        val workoutsWithExercisesAndSets = workouts.map { workout ->
+            val exercisesWithSets = workoutDao.getExercisesFromWorkout(workout.id)
 
-        val exerciseDCs = db.getDatasetDao().getDatasetOnce()
+            WorkoutWithExercisesAndSets(
+                workout = workout,
+                exercisesWithSets = exercisesWithSets
+            )
+        }
 
         val payload = ExportPayload(
-            version = 3,
+            schemaVersion = db.openHelper.readableDatabase.version,
             data = ExportData(
-                workouts = workouts,
-                exercises = exercises,
-                sets = sets,
+                workoutsWithExercisesAndSets = workoutsWithExercisesAndSets,
                 measurements = measurements,
-                exerciseDCs = exerciseDCs
             )
         )
 
@@ -70,16 +71,14 @@ class ImportExportRepository @Inject constructor(
         outputStream.close()
     }
 
-    private fun normalizeExercises(exercises: List<Exercise>): List<Exercise> {
-        return exercises
-            .groupBy { it.workoutId }
-            .flatMap { (_, group) ->
-                group
-                    .sortedBy { it.id }
-                    .mapIndexed { index, exercise ->
-                        exercise.copy(position = index)
-                    }
-            }
+    fun upgradeToLatest(data: Any, version: Int): ImportFileV5 {
+        return when (version) {
+            2 -> v4ToV5(v3ToV4(v2ToV3(data)))
+            3 -> v4ToV5(v3ToV4(data))
+            4 -> v4ToV5(data)
+            5 -> data
+            else -> error("Unsupported version")
+        }
     }
 
     suspend fun importFrom(uri: Uri) = withContext(ioDispatcher) {
@@ -96,36 +95,21 @@ class ImportExportRepository @Inject constructor(
         } ?: return@withContext
 
         db.withTransaction {
-
             val workoutDao = db.getWorkoutDao()
             val measurementDao = db.getMeasurementDao()
-            val datasetDao = db.getDatasetDao()
 
-            // 1. UPSERT WORKOUTS
-            workoutDao.upsertWorkouts(payload.data.workouts)
+            // 1. UPSERT WORKOUTS WITH EXERCISES AND SETS
+            payload.data.workoutsWithExercisesAndSets.forEach {
+                workoutDao.addWorkoutWithExercisesAndSets(it)
+            }
 
-            // 2. UPSERT EXERCISES
-            // normalizing because of the migration to V3 of the DB schema
-            val normalizedExercises = if (payload.version < 3)
-                normalizeExercises(payload.data.exercises)
-            else
-                payload.data.exercises
-            workoutDao.upsertExercises(normalizedExercises)
-
-            // 3. UPSERT SETS
-            workoutDao.upsertSets(payload.data.sets)
-
-            // 4. UPSERT MEASUREMENTS
+            // 2. UPSERT MEASUREMENTS
             payload.data.measurements.forEach {
                 measurementDao.upsertMeasurement(it)
             }
-
-            // 5. UPSERT DATASETS
-            payload.data.exerciseDCs.forEach {
-                datasetDao.upsertExercise(it)
-            }
         }
 
+        // TODO: remove the restart logic and handle it with better UX
         // restart app process cleanly
         val intent = context.packageManager
             .getLaunchIntentForPackage(context.packageName)
