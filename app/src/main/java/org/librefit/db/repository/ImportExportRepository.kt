@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.room.withTransaction
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -17,12 +18,14 @@ import org.librefit.db.converters.ExportPayload
 import javax.inject.Inject
 import org.librefit.db.entity.Exercise
 import org.librefit.db.entity.LocalDateTimeSerializer
+import org.librefit.di.qualifiers.IoDispatcher
 import java.time.LocalDateTime
 import kotlin.system.exitProcess
 
 class ImportExportRepository @Inject constructor(
     private val db: AppDatabase,
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend fun exportTo(uri: Uri) = withContext(Dispatchers.IO) {
         // 1. note the current db migration version
@@ -81,7 +84,7 @@ class ImportExportRepository @Inject constructor(
             }
     }
 
-    suspend fun importFrom(uri: Uri) = withContext(Dispatchers.IO) {
+    suspend fun importFrom(uri: Uri) = withContext(ioDispatcher) {
         val json = Json { ignoreUnknownKeys = true }
 
         val payload = context.contentResolver.openInputStream(uri)?.use { input ->
