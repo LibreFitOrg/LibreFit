@@ -101,6 +101,9 @@ class SettingsScreenViewModel @Inject constructor(
         }
     }
 
+    private val _events = MutableSharedFlow<BackupEvent>()
+    val events = _events.asSharedFlow()
+
     fun backupExport(uri: Uri) {
         viewModelScope.launch {
             try {
