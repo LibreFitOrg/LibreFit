@@ -22,7 +22,7 @@ import kotlin.system.exitProcess
 
 class ImportExportRepository @Inject constructor(
     private val db: AppDatabase,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     suspend fun exportTo(uri: Uri) = withContext(Dispatchers.IO) {
         // 1. note the current db migration version
