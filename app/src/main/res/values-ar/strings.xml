@@ -26,4 +26,5 @@
     <string name="tutorial_desc">تعلم كيفية إنشاء روتينات وتتبع تمارينك الرياضية.</string>
     <string name="donators">المتبرعون</string>
     <string name="view_online_version">عرض النسخة online</string>
+    <string name="app_works_without_permission">سيعمل التطبيق حتى بدون هذا الإذن.</string>
 </resources>
