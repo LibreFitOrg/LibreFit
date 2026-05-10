@@ -15,7 +15,7 @@
     <string name="contribute">Contribuir</string>
     <string name="info">Información</string>
     <string name="privacy_policy">Política de privacidad</string>
-    <string name="privacy_policy_desc">"LibreFit no accede a la Web. Todo dato del usuario  será guardado en este dispositivo."</string>
+    <string name="privacy_policy_desc">LibreFit no accede a la Web. Todo dato del usuario será guardado en este dispositivo.</string>
     <string name="website">Sitio Web</string>
     <string name="source_code">Código fuente</string>
     <string name="license">Licencia</string>
@@ -178,4 +178,8 @@
     <string name="language_chinese_simplified">Chino simplificado</string>
     <string name="stick_status_bar">Fijar barra de estado</string>
     <string name="use_scroll_wheel_for_input">Utiliza la rueda de desplazamiento para introducir datos</string>
+    <string name="algorithm_not_available">Algoritmo no disponible</string>
+    <string name="exercise_saved">Ejercicio guardado</string>
+    <string name="valid_companion_app_signature">Validar aplicación complementaria</string>
+    <string name="invalid_companion_app_signature">Inválida aplicación complementaria</string>
 </resources>
