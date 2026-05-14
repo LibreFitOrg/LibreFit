@@ -1392,6 +1392,36 @@
     "id": "Barbell_Incline_Shoulder_Raise"
   },
   {
+    "name": "Barbell Jefferson Curl",
+    "force": "pull",
+    "level": "intermediate",
+    "mechanic": "compound",
+    "equipment": "barbell",
+    "primaryMuscles": [
+      "lower back",
+      "hamstrings"
+    ],
+    "secondaryMuscles": [
+      "glutes",
+      "traps",
+      "calves"
+    ],
+    "instructions": [
+      "Stand on an elevated platform or box with feet hip-width apart, holding a barbell with a shoulder-width grip in front of your thighs. This will be your starting position.",
+      "Begin by tucking your chin to your chest, then slowly round your spine downward vertebra by vertebra, allowing the barbell to travel down your legs.",
+      "Continue curling forward until you feel a deep stretch through your hamstrings and entire posterior chain, or until the barbell reaches its lowest comfortable point.",
+      "Hold the bottom position briefly, breathing steadily and relaxing into the stretch.",
+      "Slowly reverse the movement by stacking your vertebrae back up from the lumbar spine upward, returning to a fully upright standing position.",
+      "Repeat for the recommended number of repetitions. Use a light weight to prioritize mobility and controlled movement over load."
+    ],
+    "category": "stretching",
+    "images": [
+        "Barbell_Jefferson_Curl/0.webp",
+        "Barbell_Jefferson_Curl/1.webp"
+    ],
+    "id": "Barbell_Jefferson_Curl"
+  },
+  {
     "name": "Barbell Lunge",
     "force": "push",
     "level": "intermediate",
