@@ -151,7 +151,7 @@
     <string name="rest">Descanso</string>
     <string name="add_ten_seconds">+10s</string>
     <string name="reduce_ten_seconds">-10s</string>
-    <string name="donators">Donantes</string>
+    <string name="donators">Donadores</string>
     <string name="workout">entrenamiento</string>
     <string name="pause">Pausa</string>
     <string name="elapsed_time">Tiempo transcurrido</string>
