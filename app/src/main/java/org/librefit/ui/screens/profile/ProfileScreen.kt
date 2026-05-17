@@ -564,13 +564,13 @@ private fun ProfileScreenPreview() {
             title = buildAnnotatedString {
                 GetAppNameInAnnotatedBuilder(MaterialTheme.typography.titleLargeEmphasized)
             },
-            actions = listOf({ }, { }, { }),
-            actionsIcons = listOf(
+            actions = persistentListOf({ }, { }, { }),
+            actionsIcons = persistentListOf(
                 painterResource(R.drawable.ic_favorite),
                 painterResource(R.drawable.ic_info),
                 painterResource(R.drawable.ic_settings)
             ),
-            actionsElevated = listOf(false, false, false),
+            actionsElevated = persistentListOf(false, false, false),
             fabIcon = painterResource(R.drawable.ic_add),
             bottomBar = {
                 NavigationBar {
