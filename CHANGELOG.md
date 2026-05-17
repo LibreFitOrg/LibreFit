@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rest timer notification sound was suppressed by other media. [#45](https://github.com/LibreFitOrg/LibreFit/issues/45)
 - Scroll wheel animation not allowing input [#47](https://github.com/LibreFitOrg/LibreFit/issues/47)
 - Parsing logic when typing weight [#43](https://github.com/LibreFitOrg/LibreFit/issues/43)
+- Typing time logic and parsing [#66](https://github.com/LibreFitOrg/LibreFit/issues/66)
 
 > [!TIP]
 > `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
