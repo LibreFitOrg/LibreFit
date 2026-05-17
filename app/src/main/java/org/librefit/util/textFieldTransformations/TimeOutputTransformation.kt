@@ -12,7 +12,9 @@ import androidx.compose.foundation.text.input.OutputTransformation
 import androidx.compose.foundation.text.input.TextFieldBuffer
 import androidx.compose.foundation.text.input.insert
 import androidx.compose.foundation.text.input.placeCursorAtEnd
+import androidx.compose.runtime.Immutable
 
+@Immutable
 class TimeOutputTransformation(
     private val useAlsoHours: Boolean = false
 ) : OutputTransformation {

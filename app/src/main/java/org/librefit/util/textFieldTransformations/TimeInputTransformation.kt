@@ -11,9 +11,11 @@ package org.librefit.util.textFieldTransformations
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldBuffer
 import androidx.compose.foundation.text.input.delete
+import androidx.compose.runtime.Immutable
 import androidx.core.text.isDigitsOnly
 
 
+@Immutable
 class TimeInputTransformation(
     useAlsoHours: Boolean = false
 ) : InputTransformation {
