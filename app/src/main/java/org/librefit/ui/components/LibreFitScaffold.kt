@@ -119,7 +119,7 @@ fun LibreFitScaffold(
                         val haptic = LocalHapticFeedback.current
 
                         val interactionSources =
-                            remember(actions) { List(actions.size) { MutableInteractionSource() } }
+                            remember(actions.size) { List(actions.size) { MutableInteractionSource() } }
                         ButtonGroup(
                             overflowIndicator = {},
                         ) {
