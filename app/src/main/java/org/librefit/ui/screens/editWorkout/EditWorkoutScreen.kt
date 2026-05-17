@@ -234,7 +234,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                 showConfirmDialog = true
             }
         },
-        actions = listOf {
+        actions = persistentListOf({
             if (typeOfEdit == false) {
                 navController.navigate(
                     Route.BeforeSavingScreen(
@@ -248,12 +248,12 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                     popUpTo(Route.MainScreen) { inclusive = false }
                 }
             }
-        },
-        actionsDescription = listOf(
+        }),
+        actionsDescription = persistentListOf(
             if (typeOfEdit == false) stringResource(R.string.done)
             else stringResource(R.string.save)
         ),
-        actionsEnabled = listOf(!isTitleEmpty && !isTitleTooLong && if (typeOfEdit != false) true else exercisesWithSets.isNotEmpty()),
+        actionsEnabled = persistentListOf(!isTitleEmpty && !isTitleTooLong && if (typeOfEdit != false) true else exercisesWithSets.isNotEmpty()),
         fabIcon = painterResource(R.drawable.ic_add),
         fabAction = {
             navController.navigate(Route.ExercisesScreen(addExercises = true)) {

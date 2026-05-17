@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > [!IMPORTANT]
 > You now can **share** your **custom exercise** with all LibreFit's users and get its supporter version! See
 > more [here](https://github.com/LibreFitOrg/LibreFit/blob/main/CONTRIBUTING.md#improving-exercises-dataset)
+>
+> Now LibreFit is **mirrored in Codeberg**! See the [announcement](https://github.com/LibreFitOrg/LibreFit/discussions/81)
 
 ### Added
 
@@ -31,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Workout metrics did not update after the initial save. [#42](https://github.com/LibreFitOrg/LibreFit/issues/42)
 - Rest timer notification sound was suppressed by other media. [#45](https://github.com/LibreFitOrg/LibreFit/issues/45)
 - Scroll wheel animation not allowing input [#47](https://github.com/LibreFitOrg/LibreFit/issues/47)
+- Rare crash in info workout screen [#64](https://github.com/LibreFitOrg/LibreFit/issues/64)
 - Parsing logic when typing weight [#43](https://github.com/LibreFitOrg/LibreFit/issues/43)
 - Typing time logic and parsing [#66](https://github.com/LibreFitOrg/LibreFit/issues/66)
 

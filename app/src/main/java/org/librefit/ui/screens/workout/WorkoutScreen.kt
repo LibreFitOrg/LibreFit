@@ -189,15 +189,15 @@ fun SharedTransitionScope.WorkoutScreen(
             viewModel.stopWorkoutService()
             navController.navigateUp()
         },
-        actions = listOf {
+        actions = persistentListOf({
             navController.navigate(
                 Route.BeforeSavingScreen(
                     runningWorkoutId = runningWorkoutId
                 ),
             ) { launchSingleTop = true }
-        },
-        actionsEnabled = listOf(!exercisesWithSets.isEmpty()),
-        actionsDescription = listOf(stringResource(R.string.done)),
+        }),
+        actionsEnabled = persistentListOf(!exercisesWithSets.isEmpty()),
+        actionsDescription = persistentListOf(stringResource(R.string.done)),
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             FloatingWorkoutActionBar(
@@ -614,9 +614,9 @@ private fun WorkoutScreenPreview() {
                 LibreFitScaffold(
                     title = AnnotatedString(stringResource(R.string.workout)),
                     navigateBack = {},
-                    actions = listOf {},
-                    actionsEnabled = listOf(e.isNotEmpty()),
-                    actionsDescription = listOf(stringResource(R.string.done)),
+                    actions = persistentListOf({}),
+                    actionsEnabled = persistentListOf(e.isNotEmpty()),
+                    actionsDescription = persistentListOf(stringResource(R.string.done)),
                 ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
                         WorkoutScreenContent(

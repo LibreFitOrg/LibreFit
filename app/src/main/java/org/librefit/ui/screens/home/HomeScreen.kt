@@ -63,6 +63,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.pages.MainScreenPages
@@ -385,13 +386,13 @@ fun HomeScreenPreview() {
             title = buildAnnotatedString {
                 GetAppNameInAnnotatedBuilder(MaterialTheme.typography.titleLargeEmphasized)
             },
-            actions = listOf({ }, { }, { }),
-            actionsIcons = listOf(
+            actions = persistentListOf({ }, { }, { }),
+            actionsIcons = persistentListOf(
                 painterResource(R.drawable.ic_favorite),
                 painterResource(R.drawable.ic_info),
                 painterResource(R.drawable.ic_settings)
             ),
-            actionsElevated = listOf(true, false, false),
+            actionsElevated = persistentListOf(true, false, false),
             fabAction = {},
             fabIcon = painterResource(R.drawable.ic_add),
             fabText = stringResource(R.string.create_routine),

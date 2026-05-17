@@ -172,7 +172,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
     LibreFitScaffold(
         title = AnnotatedString(stringResource(if (isRoutine) R.string.routine else R.string.workout)),
         navigateBack = navController::navigateUp,
-        actions = listOf(
+        actions = persistentListOf(
             {
                 navController.navigate(Route.EditWorkoutScreen(workoutId = workout.id)) {
                     launchSingleTop = true
@@ -182,11 +182,11 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                 showConfirmDialog = true
             }
         ),
-        actionsIcons = listOf(
+        actionsIcons = persistentListOf(
             painterResource(R.drawable.ic_edit),
             painterResource(R.drawable.ic_delete)
         ),
-        actionsElevated = listOf(false, false)
+        actionsElevated = persistentListOf(false, false)
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding) {
             item {

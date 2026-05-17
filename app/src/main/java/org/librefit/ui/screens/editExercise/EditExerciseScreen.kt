@@ -57,6 +57,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
+import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.enums.SuccessMessage
@@ -176,12 +177,12 @@ private fun SharedTransitionScope.EditExerciseScreenContent(
         navigateBack = {
             showConfirmExitDialog.value = true
         },
-        actions = listOf {
+        actions = persistentListOf({
             saveExercise()
             navigateToSuccessScreen()
-        },
-        actionsEnabled = listOf(name.isNotEmpty()),
-        actionsDescription = listOf(stringResource(R.string.save)),
+        }),
+        actionsEnabled = persistentListOf(name.isNotEmpty()),
+        actionsDescription = persistentListOf(stringResource(R.string.save)),
     ) { innerPadding ->
         LibreFitLazyColumn(
             innerPadding = innerPadding,

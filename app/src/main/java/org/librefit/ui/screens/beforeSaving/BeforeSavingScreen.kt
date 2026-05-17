@@ -244,15 +244,15 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.overview)),
         navigateBack = navController::navigateUp,
-        actions = listOf {
+        actions = persistentListOf({
             saveExercisesWithWorkout()
             navController.navigate(Route.SuccessScreen(SuccessMessage.WORKOUT_SAVED)) {
                 launchSingleTop = true
                 popUpTo(Route.MainScreen) { inclusive = false }
             }
-        },
-        actionsDescription = listOf(stringResource(R.string.save)),
-        actionsEnabled = listOf(!isTitleEmpty && !isTitleTooLong)
+        }),
+        actionsDescription = persistentListOf(stringResource(R.string.save)),
+        actionsEnabled = persistentListOf(!isTitleEmpty && !isTitleTooLong)
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding) {
             item {
