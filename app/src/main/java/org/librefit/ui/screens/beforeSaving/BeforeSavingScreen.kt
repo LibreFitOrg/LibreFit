@@ -21,6 +21,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ElevatedCard
@@ -35,10 +38,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +59,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.collectLatest
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
@@ -76,7 +82,8 @@ import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
-import org.librefit.util.Formatter.formatTime
+import org.librefit.util.textFieldTransformations.TimeInputTransformation
+import org.librefit.util.textFieldTransformations.TimeOutputTransformation
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -202,6 +209,38 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
     setTimeElapsed: (Int) -> Unit,
     onInputModalBottomSheetRequest: (InputModalBottomSheetState) -> Unit,
 ) {
+    val timeTextFieldState = rememberTextFieldState(
+        initialText = Formatter.formatTime(workout.timeElapsed).filter { it != ':' }
+    )
+    val inputTransformation = remember { TimeInputTransformation(true) }
+    val outputTransformation = remember { TimeOutputTransformation(true) }
+
+    // Sync elapsed time with time text field
+    LaunchedEffect(workout.timeElapsed) {
+        val formatted =
+            Formatter.formatTime(workout.timeElapsed).filter { it != ':' }
+        if (timeTextFieldState.text.toString() != formatted) {
+            // Update ONLY when state differs and user apply previous set but when he edited with the keyboard
+            timeTextFieldState.setTextAndPlaceCursorAtEnd(formatted)
+        }
+    }
+
+    // Sync time text field with elapsed time
+    LaunchedEffect(timeTextFieldState) {
+        snapshotFlow { timeTextFieldState.text.toString() }.collectLatest { rawText ->
+            val padded = rawText.padStart(6, '0')
+            val seconds = padded.takeLast(2)
+            val minutes = padded.dropLast(2).takeLast(2)
+            val hours = padded.dropLast(4).takeLast(2)
+            val newValue = Formatter.parseTimeInputToSeconds(
+                input = "$hours:$minutes:$seconds"
+            )
+            if (newValue != workout.timeElapsed) {
+                setTimeElapsed(newValue)
+            }
+        }
+    }
+
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.overview)),
         navigateBack = navController::navigateUp,
@@ -270,19 +309,11 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                         OutlinedTextField(
                             readOnly = useScrollWheelForInput,
                             shape = MaterialTheme.shapes.large,
-                            value = formatTime(workout.timeElapsed),
+                            state = timeTextFieldState,
                             label = { Text(stringResource(R.string.elapsed_time)) },
-                            onValueChange = { string ->
-                                val stringValue = string.filter { it.isDigit() }.takeLast(6)
-
-                                val seconds = stringValue.toInt() % 100
-                                val minutes = (stringValue.toInt() % 10000 - seconds) / 100
-                                val hours =
-                                    (stringValue.toInt() - stringValue.toInt() % 10000) / 10000
-
-                                setTimeElapsed(hours * 3600 + minutes * 60 + seconds)
-                            },
-                            singleLine = true,
+                            lineLimits = TextFieldLineLimits.SingleLine,
+                            inputTransformation = inputTransformation,
+                            outputTransformation = outputTransformation,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
                         if (useScrollWheelForInput) {
