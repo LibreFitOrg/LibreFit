@@ -99,9 +99,9 @@ import kotlin.random.Random
 @Composable
 fun SharedTransitionScope.ProfileScreen(
     navController: NavHostController,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: ProfileScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: ProfileScreenViewModel = hiltViewModel()
 
     val points by viewModel.points.collectAsStateWithLifecycle()
 
@@ -564,13 +564,13 @@ private fun ProfileScreenPreview() {
             title = buildAnnotatedString {
                 GetAppNameInAnnotatedBuilder(MaterialTheme.typography.titleLargeEmphasized)
             },
-            actions = listOf({ }, { }, { }),
-            actionsIcons = listOf(
+            actions = persistentListOf({ }, { }, { }),
+            actionsIcons = persistentListOf(
                 painterResource(R.drawable.ic_favorite),
                 painterResource(R.drawable.ic_info),
                 painterResource(R.drawable.ic_settings)
             ),
-            actionsElevated = listOf(false, false, false),
+            actionsElevated = persistentListOf(false, false, false),
             fabIcon = painterResource(R.drawable.ic_add),
             bottomBar = {
                 NavigationBar {

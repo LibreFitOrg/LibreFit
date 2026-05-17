@@ -98,9 +98,9 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MeasurementScreen(
+    viewModel: MeasurementScreenViewModel = hiltViewModel(),
     navigateBack: () -> Unit
 ) {
-    val viewModel: MeasurementScreenViewModel = hiltViewModel()
 
     val measurements by viewModel.measurements.collectAsStateWithLifecycle()
 
@@ -122,6 +122,9 @@ fun MeasurementScreen(
 
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
 
+    val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
+
+
     var infoModalBottomSheetState by remember { mutableStateOf<InputModalBottomSheetState?>(null) }
 
     infoModalBottomSheetState?.let {
@@ -135,7 +138,8 @@ fun MeasurementScreen(
             },
             onDismiss = {
                 infoModalBottomSheetState = null
-            }
+            },
+            dismissAutomatically = dismissScrollWheelInputAutomatically
         )
     }
 
@@ -214,7 +218,10 @@ fun MeasurementScreen(
         updateMeasurementCardState = viewModel::updateMeasurementCardState,
         navigateBack = navigateBack,
         onInputModalBottomSheetRequest = {
-            infoModalBottomSheetState = it
+            infoModalBottomSheetState = InputModalBottomSheetState.Weight(
+                integerWeight = bodyweight?.toInt() ?: 0,
+                decimalWeight = bodyweight?.getDecimalDigitsAsInteger() ?: 0
+            )
         }
     )
 }
@@ -243,7 +250,7 @@ private fun MeasurementScreenContent(
     updateMeasurementCardState: (MeasurementCardState) -> Unit,
     updateChartMode: (MeasurementChart) -> Unit,
     navigateBack: () -> Unit,
-    onInputModalBottomSheetRequest: (InputModalBottomSheetState) -> Unit
+    onInputModalBottomSheetRequest: () -> Unit
 ) {
 
     val focusManager = LocalFocusManager.current
@@ -337,19 +344,7 @@ private fun MeasurementScreenContent(
                                             .matchParentSize()
                                             .padding(top = 7.dp) // Thin offset to match inner shape
                                             .clip(MaterialTheme.shapes.largeIncreased)
-                                            .clickable {
-                                                val value =
-                                                    Formatter.normalizeNumericString(bodyweightValue)
-
-                                                val weight = Formatter.parseDoubleFromString(value)
-
-                                                onInputModalBottomSheetRequest(
-                                                    InputModalBottomSheetState.Weight(
-                                                        integerWeight = weight.toInt(),
-                                                        decimalWeight = weight.getDecimalDigitsAsInteger()
-                                                    )
-                                                )
-                                            }
+                                            .clickable { onInputModalBottomSheetRequest() }
                                     ) { }
                                 }
                             }

@@ -47,8 +47,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.ui.theme.LibreFitTheme
 import kotlin.math.abs
@@ -57,10 +58,12 @@ import kotlin.math.abs
  * @param visibleItemsCount it must be a positive and odd number. Default value is recommended.
  * @throws IllegalArgumentException when [visibleItemsCount] is not odd.
  */
+@OptIn(FlowPreview::class)
 @Composable
 fun NumberPicker(
     value: Int,
     onValueChange: (Int) -> Unit,
+    onNumberPickerScroll: (Boolean) -> Unit,
     options: ImmutableList<Int>,
     label: (Int) -> String = { it.toString() },
     textStyle: TextStyle = LocalTextStyle.current,
@@ -124,17 +127,24 @@ fun NumberPicker(
     // Get the latest value and callback inside a long-running LaunchedEffect without restarting it
     val latestOnValueChange by rememberUpdatedState(onValueChange)
 
-    // Update parent when scrolling stops
+    // Update parent when scrolling
     LaunchedEffect(listState) {
-        snapshotFlow { listState.isScrollInProgress }
+        snapshotFlow { centeredItemIndex }
             .distinctUntilChanged()
-            .filter { !it } // Only proceed when scroll has stopped
-            .collect {
-                val realIndex = centeredItemIndex - padCount
+            .debounce(300) // Increase this to discard higher frequent changes
+            .collect { index ->
+                val realIndex = index - padCount
                 options.getOrNull(realIndex)?.let { newItem ->
                     if (newItem != value) latestOnValueChange(newItem)
                 }
             }
+    }
+
+    // Notify caller if number picker is changing
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.isScrollInProgress }
+            .distinctUntilChanged()
+            .collect(onNumberPickerScroll)
     }
 
     // Sync with external value changes
@@ -244,7 +254,8 @@ fun NumberPickerPreview() {
                 label = { "$it" },
                 textStyle = MaterialTheme.typography.titleLargeEmphasized,
                 options = (0..100).toImmutableList(),
-                enableDividers = true
+                enableDividers = true,
+                onNumberPickerScroll = {}
             )
         }
     }

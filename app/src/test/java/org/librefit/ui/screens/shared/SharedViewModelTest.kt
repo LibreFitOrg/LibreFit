@@ -8,13 +8,11 @@
 
 package org.librefit.ui.screens.shared
 
-import androidx.datastore.preferences.core.Preferences
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -25,10 +23,6 @@ import org.librefit.db.repository.UserPreferencesRepository
 class SharedViewModelTest {
     // The mock repository
     private lateinit var userPreferencesRepository: UserPreferencesRepository
-
-    // Captured objects
-    private val key = slot<Preferences.Key<Any>>()
-    private val valueKey = slot<Any>()
 
     // The class to test
     private lateinit var viewModel: SharedViewModel
@@ -50,25 +44,15 @@ class SharedViewModelTest {
         every { userPreferencesRepository.showWelcomeScreen } returns showWelcomeScreen
         every { userPreferencesRepository.requestPermissionsNextTime } returns requestPermissionNextTime
         every { userPreferencesRepository.isSupporter } returns isSupporter
-        coEvery {
-            userPreferencesRepository.savePreference(
-                capture(key),
-                capture(valueKey)
-            )
-        } answers {
-            val value = valueKey.captured
-            when (key.captured) {
-                UserPreferencesRepository.showWelcomeScreenKey -> {
-                    showWelcomeScreen.value = value as Boolean
-                }
-                UserPreferencesRepository.requestPermissionsNextTimeKey -> {
-                    requestPermissionNextTime.value = value as Boolean
-                }
-                UserPreferencesRepository.isSupporterKey -> {
-                    isSupporter.value = value as Boolean
-                }
-                else -> error("Invalid key")
-            }
+
+        coEvery { userPreferencesRepository.saveShowWelcomeScreen(any()) } answers {
+            showWelcomeScreen.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveRequestPermissionsNextTime(any()) } answers {
+            requestPermissionNextTime.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveIsSupporter(any()) } answers {
+            isSupporter.value = firstArg()
         }
 
         // Arrange: Create the ViewModel instance with the mock repository

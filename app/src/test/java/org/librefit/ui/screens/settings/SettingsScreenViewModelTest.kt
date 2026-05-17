@@ -8,13 +8,11 @@
 
 package org.librefit.ui.screens.settings
 
-import androidx.datastore.preferences.core.Preferences
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -47,10 +45,7 @@ class SettingsScreenViewModelTest {
     private lateinit var isSupporter: MutableStateFlow<Boolean>
     private lateinit var isWorkoutHeaderSticky: MutableStateFlow<Boolean>
     private lateinit var useScrollWheelForInput: MutableStateFlow<Boolean>
-
-    // Captured objects
-    private val key = slot<Preferences.Key<Any>>()
-    private val valueKey = slot<Any>()
+    private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
 
     @Before
     fun setUp() {
@@ -64,6 +59,7 @@ class SettingsScreenViewModelTest {
         isSupporter = MutableStateFlow(false)
         isWorkoutHeaderSticky = MutableStateFlow(true)
         useScrollWheelForInput = MutableStateFlow(true)
+        dismissScrollWheelAutomatically = MutableStateFlow(false)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.language } returns language
@@ -74,51 +70,34 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.isSupporter } returns isSupporter
         every { userPreferencesRepository.isWorkoutHeaderSticky } returns isWorkoutHeaderSticky
         every { userPreferencesRepository.useScrollWheelForInput } returns useScrollWheelForInput
-        coEvery {
-            userPreferencesRepository.savePreference(
-                capture(key),
-                capture(valueKey)
-            )
-        } answers {
-            val value = valueKey.captured
-            when (key.captured) {
-                UserPreferencesRepository.languageKey -> {
-                    language.value = checkNotNull(Language.entries.find { it.code == value }) {
-                        "Invalid language value: $value"
-                    }
-                }
+        every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
 
-                UserPreferencesRepository.themeModeKey -> {
-                    themeMode.value = checkNotNull(ThemeMode.entries.find { it.value == value }) {
-                        "Invalid theme value: $value"
-                    }
-                }
-
-                UserPreferencesRepository.keepOnWorkoutScreenKey -> {
-                    keepScreenOn.value = value as Boolean
-                }
-
-                UserPreferencesRepository.materialModeKey -> {
-                    materialModeOn.value = value as Boolean
-                }
-
-                UserPreferencesRepository.restTimerSoundKey -> {
-                    restTimerSoundOn.value = value as Boolean
-                }
-
-                UserPreferencesRepository.isSupporterKey -> {
-                    isSupporter.value = value as Boolean
-                }
-
-                UserPreferencesRepository.isWorkoutHeaderStickyKey -> {
-                    isWorkoutHeaderSticky.value = value as Boolean
-                }
-
-                UserPreferencesRepository.useScrollWheelForInputKey -> {
-                    useScrollWheelForInput.value = value as Boolean
-                }
-                else -> error("Invalid key")
-            }
+        coEvery { userPreferencesRepository.saveLanguage(any()) } answers {
+            language.value = Language.entries.find { it.code == firstArg() }!!
+        }
+        coEvery { userPreferencesRepository.saveThemeMode(any()) } answers {
+            themeMode.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveMaterialMode(any()) } answers {
+            materialModeOn.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveWorkoutScreenOn(any()) } answers {
+            keepScreenOn.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveRestTimerSoundOn(any()) } answers {
+            restTimerSoundOn.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveIsSupporter(any()) } answers {
+            isSupporter.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveIsWorkoutHeaderSticky(any()) } answers {
+            isWorkoutHeaderSticky.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveUseScrollWheelForInput(any()) } answers {
+            useScrollWheelForInput.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveDismissScrollWheelInputAutomatically(any()) } answers {
+            dismissScrollWheelAutomatically.value = firstArg()
         }
 
         // Arrange: Create the ViewModel instance with the mock repository
@@ -156,13 +135,8 @@ class SettingsScreenViewModelTest {
     }
 
     @Test
-    fun `initial state - preferences is null`() = runTest {
-        assertThat(viewModel.preferences.value).isNull()
-    }
-
-    @Test
-    fun `initial state - current preference is null`() = runTest {
-        assertThat(viewModel.currentPreference.value).isNull()
+    fun `initial state - dismiss scroll wheel automatically is off`() = runTest {
+        assertThat(viewModel.dismissScrollWheelInputAutomatically.value).isFalse()
     }
 
     @Test
@@ -206,16 +180,8 @@ class SettingsScreenViewModelTest {
             viewModel.currentPreference.test {
                 // Initial emission
                 assertThat(awaitItem()).isNull()
-
-                // Act: update preference
-                viewModel.savePreference(UserPreferencesRepository.languageKey, expected.code)
-
-
-                // Act: update preferences
-                val newPreferences = Language.entries
-                viewModel.updatePreferences(newPreferences)
-
-                // Assert: current preference match the preferences type
+                viewModel.saveLanguage(expected)
+                viewModel.updatePreferences(Language.entries)
                 assertThat(awaitItem()).isEqualTo(expected)
             }
         }
@@ -226,14 +192,7 @@ class SettingsScreenViewModelTest {
             viewModel.currentPreference.test {
                 // Initial emission
                 assertThat(awaitItem()).isNull()
-
-                // Act: update preference
-                viewModel.savePreference(
-                    UserPreferencesRepository.languageKey,
-                    Language.ENGLISH.code
-                )
-
-                // Assert: current preference must be null (because preferences is null), so no more emissions
+                viewModel.saveLanguage(Language.ENGLISH)
                 expectNoEvents()
             }
         }
@@ -246,11 +205,7 @@ class SettingsScreenViewModelTest {
         viewModel.language.test {
             // Initial emission
             assertThat(awaitItem()).isEqualTo(Language.SYSTEM)
-
-            // Act: update preference
-            viewModel.savePreference(UserPreferencesRepository.languageKey, expected.code)
-
-            // Assert: update is correct
+            viewModel.saveLanguage(expected)
             assertThat(awaitItem()).isEqualTo(expected)
         }
     }
@@ -263,11 +218,7 @@ class SettingsScreenViewModelTest {
         viewModel.themeMode.test {
             // Initial emission
             assertThat(awaitItem()).isEqualTo(ThemeMode.SYSTEM)
-
-            // Act: update preference
-            viewModel.savePreference(UserPreferencesRepository.themeModeKey, expected.value)
-
-            // Assert: update is correct
+            viewModel.saveThemeMode(expected)
             assertThat(awaitItem()).isEqualTo(expected)
         }
     }
@@ -280,11 +231,7 @@ class SettingsScreenViewModelTest {
         viewModel.materialMode.test {
             // Initial emission
             assertThat(awaitItem()).isEqualTo(false)
-
-            // Act: update preference
-            viewModel.savePreference(UserPreferencesRepository.materialModeKey, expected)
-
-            // Assert: update is correct
+            viewModel.saveMaterialMode(expected)
             assertThat(awaitItem()).isEqualTo(expected)
         }
     }
@@ -297,11 +244,7 @@ class SettingsScreenViewModelTest {
         viewModel.keepScreenOn.test {
             // Initial emission
             assertThat(awaitItem()).isEqualTo(true)
-
-            // Act: update preference
-            viewModel.savePreference(UserPreferencesRepository.keepOnWorkoutScreenKey, expected)
-
-            // Assert: update is correct
+            viewModel.saveWorkoutScreenOn(expected)
             assertThat(awaitItem()).isEqualTo(expected)
         }
     }
@@ -314,28 +257,7 @@ class SettingsScreenViewModelTest {
         viewModel.restTimerSoundOn.test {
             // Initial emission
             assertThat(awaitItem()).isEqualTo(true)
-
-            // Act: update preference
-            viewModel.savePreference(UserPreferencesRepository.restTimerSoundKey, expected)
-
-            // Assert: update is correct
-            assertThat(awaitItem()).isEqualTo(expected)
-        }
-    }
-
-    @Test
-    fun `is supporter updates correctly`() = runTest {
-        // Arrange: set expected value
-        val expected = true
-
-        viewModel.isSupporter.test {
-            // Initial emission
-            assertThat(awaitItem()).isEqualTo(false)
-
-            // Act: update preference
-            viewModel.savePreference(UserPreferencesRepository.isSupporterKey, expected)
-
-            // Assert: update is correct
+            viewModel.saveRestTimerSoundOn(expected)
             assertThat(awaitItem()).isEqualTo(expected)
         }
     }
@@ -346,7 +268,7 @@ class SettingsScreenViewModelTest {
 
         viewModel.isWorkoutHeaderSticky.test {
             assertThat(awaitItem()).isEqualTo(true)
-            viewModel.savePreference(UserPreferencesRepository.isWorkoutHeaderStickyKey, expected)
+            viewModel.saveIsWorkoutHeaderSticky(expected)
             assertThat(awaitItem()).isEqualTo(expected)
         }
     }
@@ -357,7 +279,18 @@ class SettingsScreenViewModelTest {
 
         viewModel.useScrollWheelForInput.test {
             assertThat(awaitItem()).isEqualTo(true)
-            viewModel.savePreference(UserPreferencesRepository.useScrollWheelForInputKey, expected)
+            viewModel.saveUseScrollWheelForInput(expected)
+            assertThat(awaitItem()).isEqualTo(expected)
+        }
+    }
+
+    @Test
+    fun `dismiss scroll wheel automatically updates correctly`() = runTest {
+        val expected = true
+
+        viewModel.dismissScrollWheelInputAutomatically.test {
+            assertThat(awaitItem()).isFalse()
+            viewModel.saveDismissScrollWheelInputAutomatically(expected)
             assertThat(awaitItem()).isEqualTo(expected)
         }
     }
@@ -381,27 +314,6 @@ class SettingsScreenViewModelTest {
             assertThat(awaitItem()).isEqualTo(ThemeMode.SYSTEM)
             viewModel.updateDialogPreference(expected)
             assertThat(awaitItem()).isEqualTo(expected)
-        }
-    }
-
-    @Test
-    fun `update preferences with empty list preserves current`() = runTest {
-        viewModel.preferences.test {
-            // Initial emission
-            assertThat(awaitItem()).isNull()
-
-            // Act: update preferences
-            val initialPreferences = Language.entries
-            viewModel.updatePreferences(initialPreferences)
-
-            // Assert: first update
-            assertThat(awaitItem()).isEqualTo(initialPreferences)
-
-            // Act: update with empty
-            viewModel.updatePreferences(emptyList())
-
-            // Assert: should not change (no new emission)
-            expectNoEvents()
         }
     }
 }

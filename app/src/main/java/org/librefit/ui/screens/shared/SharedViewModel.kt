@@ -41,10 +41,7 @@ class SharedViewModel @Inject constructor(
 
     fun doNotShowWelcomeScreenAgain() {
         viewModelScope.launch {
-            userPreferencesRepository.savePreference(
-                key = UserPreferencesRepository.showWelcomeScreenKey,
-                value = false
-            )
+            userPreferencesRepository.saveShowWelcomeScreen(false)
         }
     }
 
@@ -55,10 +52,7 @@ class SharedViewModel @Inject constructor(
 
     fun saveRequestPermissionAgainPreference(value: Boolean) {
         viewModelScope.launch {
-            userPreferencesRepository.savePreference(
-                key = UserPreferencesRepository.requestPermissionsNextTimeKey,
-                value = value
-            )
+            userPreferencesRepository.saveRequestPermissionsNextTime(value)
         }
     }
 
@@ -70,10 +64,7 @@ class SharedViewModel @Inject constructor(
         viewModelScope.launch {
             // A delay to le the user visualize the successful result
             delay(1000)
-            userPreferencesRepository.savePreference(
-                key = UserPreferencesRepository.isSupporterKey,
-                value = value
-            )
+            userPreferencesRepository.saveIsSupporter(value)
         }
     }
 }

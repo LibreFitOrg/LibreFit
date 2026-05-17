@@ -1,0 +1,3 @@
+🐛 Fixed
+- Fix issue where workout metrics did not update after the initial save.
+- Fix issue where rest timer notification sound was suppressed by other media.

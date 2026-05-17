@@ -36,6 +36,21 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private val THEME_MODE_KEY = intPreferencesKey("theme_mode")
+private val MATERIAL_MODE_KEY = booleanPreferencesKey("material_mode")
+private val KEEP_ON_WORKOUT_SCREEN_KEY = booleanPreferencesKey("workout_screen_on")
+private val REQUEST_PERMISSIONS_NEXT_TIME_KEY = booleanPreferencesKey("ask_permission_again")
+private val LANGUAGE_KEY = stringPreferencesKey("language")
+private val REST_TIMER_SOUND_KEY = booleanPreferencesKey("alert_sound")
+private val SHOW_WELCOME_SCREEN_KEY = booleanPreferencesKey("show_welcome_screen")
+private val IS_SUPPORTER_KEY = booleanPreferencesKey("is_supporter")
+private val PAST_VERSION_CODE_KEY = longPreferencesKey("pastVersionCode")
+private val IS_WORKOUT_HEADER_STICKY_KEY = booleanPreferencesKey("is_workout_header_sticky")
+private val SHOW_KEEP_ANDROID_OPEN_KEY = booleanPreferencesKey("showKeepAndroidOpenKey")
+private val USE_SCROLL_WHEEL_FOR_INPUT_KEY = booleanPreferencesKey("use_number_picker")
+private val DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY =
+    booleanPreferencesKey("dismiss_input_modal_bottom_sheet_automatically_key")
+
 /**
  * A repository to handle user preferences using [androidx.datastore.core.DataStore].
  *
@@ -46,24 +61,10 @@ class UserPreferencesRepository @Inject constructor(
     @param:ApplicationScope private val applicationScope: CoroutineScope,
     private val application: Application
 ) {
-    companion object {
-        val themeModeKey = intPreferencesKey("theme_mode")
-        val materialModeKey = booleanPreferencesKey("material_mode")
-        val keepOnWorkoutScreenKey = booleanPreferencesKey("workout_screen_on")
-        val requestPermissionsNextTimeKey = booleanPreferencesKey("ask_permission_again")
-        val languageKey = stringPreferencesKey("language")
-        val restTimerSoundKey = booleanPreferencesKey("alert_sound")
-        val showWelcomeScreenKey = booleanPreferencesKey("show_welcome_screen")
-        val isSupporterKey = booleanPreferencesKey("is_supporter")
-        val pastVersionCodeKey = longPreferencesKey("pastVersionCode")
-        val isWorkoutHeaderStickyKey = booleanPreferencesKey("is_workout_header_sticky")
-        val showKeepAndroidOpenKey = booleanPreferencesKey("showKeepAndroidOpenKey")
-        val useScrollWheelForInputKey = booleanPreferencesKey("use_number_picker")
-    }
 
     val themeMode: StateFlow<ThemeMode> = dataStore.data
         .map { preferences ->
-            ThemeMode.entries.find { it.value == preferences[themeModeKey] } ?: ThemeMode.SYSTEM
+            ThemeMode.entries.find { it.value == preferences[THEME_MODE_KEY] } ?: ThemeMode.SYSTEM
         }
         .stateIn(
             scope = applicationScope,
@@ -72,7 +73,7 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     val materialMode: StateFlow<Boolean> = dataStore.data
-        .map { preferences -> preferences[materialModeKey] == true }
+        .map { preferences -> preferences[MATERIAL_MODE_KEY] == true }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
@@ -80,7 +81,7 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     val workoutScreenOn: StateFlow<Boolean> = dataStore.data
-        .map { preferences -> preferences[keepOnWorkoutScreenKey] != false }
+        .map { preferences -> preferences[KEEP_ON_WORKOUT_SCREEN_KEY] != false }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
@@ -88,7 +89,7 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     val requestPermissionsNextTime: StateFlow<Boolean> = dataStore.data
-        .map { preferences -> preferences[requestPermissionsNextTimeKey] != false }
+        .map { preferences -> preferences[REQUEST_PERMISSIONS_NEXT_TIME_KEY] != false }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
@@ -96,7 +97,7 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     val restTimerSoundOn: StateFlow<Boolean> = dataStore.data
-        .map { preferences -> preferences[restTimerSoundKey] != false }
+        .map { preferences -> preferences[REST_TIMER_SOUND_KEY] != false }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
@@ -104,7 +105,7 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     val showWelcomeScreen: StateFlow<Boolean> = dataStore.data
-        .map { preferences -> preferences[showWelcomeScreenKey] != false }
+        .map { preferences -> preferences[SHOW_WELCOME_SCREEN_KEY] != false }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
@@ -112,7 +113,7 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     val isSupporter: StateFlow<Boolean> = dataStore.data
-        .map { preferences -> preferences[isSupporterKey] == true }
+        .map { preferences -> preferences[IS_SUPPORTER_KEY] == true }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
@@ -120,7 +121,7 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     val pastVersionCode: StateFlow<Long> = dataStore.data
-        .map { preferences -> preferences[pastVersionCodeKey] ?: -1L }
+        .map { preferences -> preferences[PAST_VERSION_CODE_KEY] ?: -1L }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
@@ -128,7 +129,7 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     val isWorkoutHeaderSticky: StateFlow<Boolean> = dataStore.data
-        .map { preferences -> preferences[isWorkoutHeaderStickyKey] != false }
+        .map { preferences -> preferences[IS_WORKOUT_HEADER_STICKY_KEY] != false }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
@@ -136,7 +137,7 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     val showKeepAndroidOpen: StateFlow<Boolean> = dataStore.data
-        .map { preferences -> preferences[showKeepAndroidOpenKey] != false }
+        .map { preferences -> preferences[SHOW_KEEP_ANDROID_OPEN_KEY] != false }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
@@ -144,11 +145,19 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     val useScrollWheelForInput: StateFlow<Boolean> = dataStore.data
-        .map { preferences -> preferences[useScrollWheelForInputKey] != false }
+        .map { preferences -> preferences[USE_SCROLL_WHEEL_FOR_INPUT_KEY] != false }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
             initialValue = true
+        )
+
+    val dismissScrollWheelInputAutomatically: StateFlow<Boolean> = dataStore.data
+        .map { preferences -> preferences[DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY] == true }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
         )
 
     /**
@@ -192,15 +201,58 @@ class UserPreferencesRepository @Inject constructor(
             initialValue = Language.SYSTEM
         )
 
-    suspend fun <T> savePreference(key: Preferences.Key<T>, value: T) {
-        if (key == languageKey && value is String) {
-            AppCompatDelegate.setApplicationLocales(
-                LocaleListCompat.forLanguageTags(value)
-            )
-        } else {
-            dataStore.edit { preferences ->
-                preferences[key] = value
-            }
+    suspend fun saveThemeMode(mode: ThemeMode) {
+        dataStore.edit { preferences -> preferences[THEME_MODE_KEY] = mode.value }
+    }
+
+    suspend fun saveMaterialMode(isEnabled: Boolean) {
+        dataStore.edit { preferences -> preferences[MATERIAL_MODE_KEY] = isEnabled }
+    }
+
+    suspend fun saveWorkoutScreenOn(isOn: Boolean) {
+        dataStore.edit { preferences -> preferences[KEEP_ON_WORKOUT_SCREEN_KEY] = isOn }
+    }
+
+    suspend fun saveRequestPermissionsNextTime(shouldAsk: Boolean) {
+        dataStore.edit { preferences -> preferences[REQUEST_PERMISSIONS_NEXT_TIME_KEY] = shouldAsk }
+    }
+
+    suspend fun saveLanguage(languageCode: String) {
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageCode))
+        dataStore.edit { preferences -> preferences[LANGUAGE_KEY] = languageCode }
+    }
+
+    suspend fun saveRestTimerSoundOn(isOn: Boolean) {
+        dataStore.edit { preferences -> preferences[REST_TIMER_SOUND_KEY] = isOn }
+    }
+
+    suspend fun saveShowWelcomeScreen(show: Boolean) {
+        dataStore.edit { preferences -> preferences[SHOW_WELCOME_SCREEN_KEY] = show }
+    }
+
+    suspend fun saveIsSupporter(isSupporter: Boolean) {
+        dataStore.edit { preferences -> preferences[IS_SUPPORTER_KEY] = isSupporter }
+    }
+
+    suspend fun savePastVersionCode(versionCode: Long) {
+        dataStore.edit { preferences -> preferences[PAST_VERSION_CODE_KEY] = versionCode }
+    }
+
+    suspend fun saveIsWorkoutHeaderSticky(isSticky: Boolean) {
+        dataStore.edit { preferences -> preferences[IS_WORKOUT_HEADER_STICKY_KEY] = isSticky }
+    }
+
+    suspend fun saveShowKeepAndroidOpen(show: Boolean) {
+        dataStore.edit { preferences -> preferences[SHOW_KEEP_ANDROID_OPEN_KEY] = show }
+    }
+
+    suspend fun saveUseScrollWheelForInput(useScroll: Boolean) {
+        dataStore.edit { preferences -> preferences[USE_SCROLL_WHEEL_FOR_INPUT_KEY] = useScroll }
+    }
+
+    suspend fun saveDismissScrollWheelInputAutomatically(dismissAutomatically: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY] = dismissAutomatically
         }
     }
 }

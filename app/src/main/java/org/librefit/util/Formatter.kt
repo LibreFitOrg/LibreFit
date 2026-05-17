@@ -55,6 +55,8 @@ object Formatter {
             Equipment.BARBELL -> R.string.equipment_barbell
             Equipment.EXERCISE_BALL -> R.string.equipment_exercise_ball
             Equipment.E_Z_CURL_BAR -> R.string.equipment_ez_curl_bar
+            Equipment.PULL_UP_BAR -> R.string.equipment_pull_up_bar
+            Equipment.RINGS -> R.string.equipment_rings
             Equipment.OTHER -> R.string.equipment_other
             Muscle.ABDOMINALS -> R.string.muscle_abdominals
             Muscle.ABDUCTORS -> R.string.muscle_abductors
@@ -198,15 +200,29 @@ object Formatter {
 
     /**
      * It is used to process user input in [org.librefit.ui.components.ExerciseCard]
-     * text field and return the corresponding float.
+     * text field and return the corresponding double.
      * @param string The string value to be processed
-     * @return A [Double] value corresponding to the sanitized [string].
+     * @param maxIntegerDigits Takes the first [maxIntegerDigits] from integer part of [string] starting from the left.
+     * @param maxDecimalDigits Takes the first [maxDecimalDigits] from fractional part of [string] starting from the left.
+     * @throws IllegalArgumentException if [maxIntegerDigits] or [maxDecimalDigits] are not a value
+     * between 0 and 8
+     * @return A [Double] value corresponding to the sanitized [string]. Null if it's empty or not a double
      */
-    fun parseDoubleFromString(string: String): Double {
+    fun parseDoubleFromString(
+        string: String,
+        @IntRange(0, 3) maxIntegerDigits: Int = 3,
+        @IntRange(0, 2) maxDecimalDigits: Int = 2,
+    ): Double? {
+        require(maxIntegerDigits in 0..3 && maxDecimalDigits in 0..2) {
+            "maxIntegerDigits and maxFractionalDigits must be positive but lower than 3 and 2, respectively. maxIntegerDigits: $maxIntegerDigits. " +
+                    "maxFractionalDigits: $maxDecimalDigits."
+        }
+
         // Keep only digits and dots.
         val sanitized = string
             .replace(",", ".")
             .filter { it.isDigit() || it == '.' }
+            .ifBlank { return null }
 
         // Find the last separator.
         val decimalSeparatorIndex = sanitized.lastIndexOf('.')
@@ -216,18 +232,25 @@ object Formatter {
             val integerPart = sanitized
                 .take(decimalSeparatorIndex)
                 .replace(".", "")
+                .take(maxIntegerDigits)
             val fractionalPart = sanitized
                 .substring(decimalSeparatorIndex + 1)
                 .replace(".", "")
+                .take(maxDecimalDigits)
 
-            "$integerPart.$fractionalPart"
+            if ((integerPart.isBlank() && fractionalPart == "0") || (fractionalPart.isBlank() && integerPart == "0")) {
+                return null
+            } else {
+                "$integerPart.$fractionalPart"
+            }
+
         } else {
             // No separators, just a number
             sanitized
         }
 
         // Safely convert to Double
-        return finalString.toDoubleOrNull() ?: 0.0
+        return finalString.toDoubleOrNull()
     }
 
     /**
@@ -242,11 +265,11 @@ object Formatter {
      */
     fun normalizeNumericString(
         string: String,
-        @IntRange(0, 8) maxIntegerDigits: Int = 3,
-        @IntRange(0, 8) maxDecimalDigits: Int = 2,
+        @IntRange(0, 3) maxIntegerDigits: Int = 3,
+        @IntRange(0, 2) maxDecimalDigits: Int = 2,
     ): String {
-        require(maxIntegerDigits in 0..8 && maxDecimalDigits in 0..8) {
-            "maxIntegerDigits and maxFractionalDigits must be between 0 and 8. maxIntegerDigits: $maxIntegerDigits. " +
+        require(maxIntegerDigits in 0..3 && maxDecimalDigits in 0..2) {
+            "maxIntegerDigits and maxFractionalDigits must be positive but lower than 3 and 3, respectively. maxIntegerDigits: $maxIntegerDigits. " +
                     "maxFractionalDigits: $maxDecimalDigits."
         }
 

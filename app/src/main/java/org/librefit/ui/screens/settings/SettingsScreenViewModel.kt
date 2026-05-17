@@ -8,7 +8,6 @@
 
 package org.librefit.ui.screens.settings
 
-import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,17 +38,41 @@ class SettingsScreenViewModel @Inject constructor(
     val isSupporter = userPreferences.isSupporter
     val isWorkoutHeaderSticky = userPreferences.isWorkoutHeaderSticky
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
+    val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
 
-
-    fun <T> savePreference(key: Preferences.Key<T>, value: T) {
-        viewModelScope.launch {
-            userPreferences.savePreference(
-                key = key,
-                value = value
-            )
-        }
+    fun saveThemeMode(mode: ThemeMode) {
+        viewModelScope.launch { userPreferences.saveThemeMode(mode) }
     }
 
+    fun saveLanguage(language: Language) {
+        viewModelScope.launch { userPreferences.saveLanguage(language.code) }
+    }
+
+    fun saveMaterialMode(isEnabled: Boolean) {
+        viewModelScope.launch { userPreferences.saveMaterialMode(isEnabled) }
+    }
+
+    fun saveWorkoutScreenOn(isOn: Boolean) {
+        viewModelScope.launch { userPreferences.saveWorkoutScreenOn(isOn) }
+    }
+
+    fun saveRestTimerSoundOn(isOn: Boolean) {
+        viewModelScope.launch { userPreferences.saveRestTimerSoundOn(isOn) }
+    }
+
+    fun saveIsWorkoutHeaderSticky(isSticky: Boolean) {
+        viewModelScope.launch { userPreferences.saveIsWorkoutHeaderSticky(isSticky) }
+    }
+
+    fun saveUseScrollWheelForInput(useScroll: Boolean) {
+        viewModelScope.launch { userPreferences.saveUseScrollWheelForInput(useScroll) }
+    }
+
+    fun saveDismissScrollWheelInputAutomatically(dismissAutomatically: Boolean) {
+        viewModelScope.launch {
+            userPreferences.saveDismissScrollWheelInputAutomatically(dismissAutomatically)
+        }
+    }
 
     private val _preferences = MutableStateFlow<List<DialogPreference>?>(null)
     val preferences = _preferences.asStateFlow()
@@ -81,14 +104,8 @@ class SettingsScreenViewModel @Inject constructor(
 
     fun updateDialogPreference(newPreference: DialogPreference) {
         when (newPreference) {
-            is Language -> savePreference(
-                UserPreferencesRepository.languageKey,
-                newPreference.code
-            )
-            is ThemeMode -> savePreference(
-                UserPreferencesRepository.themeModeKey,
-                newPreference.value
-            )
+            is Language -> saveLanguage(newPreference)
+            is ThemeMode -> saveThemeMode(newPreference)
         }
     }
 }

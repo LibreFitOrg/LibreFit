@@ -70,9 +70,9 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun SharedTransitionScope.CalendarScreen(
     navController: NavHostController,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: CalendarScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: CalendarScreenViewModel = hiltViewModel()
 
     val yearRange by viewModel.yearRange.collectAsStateWithLifecycle()
 

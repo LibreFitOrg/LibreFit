@@ -281,13 +281,14 @@ fun LibreFitTheme(
 
     val useDynamicColor = dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
-    val colors = when {
-        useDynamicColor && useDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
-        useDynamicColor && !useDarkTheme -> dynamicLightColorScheme(LocalContext.current)
-        useDarkTheme -> darkScheme
-        else -> lightScheme
-    }
-
+    val colors = animateColorScheme(
+        colorScheme = when {
+            useDynamicColor && useDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
+            useDynamicColor && !useDarkTheme -> dynamicLightColorScheme(LocalContext.current)
+            useDarkTheme -> darkScheme
+            else -> lightScheme
+        }
+    )
 
     MaterialExpressiveTheme(
         colorScheme = colors,
@@ -298,11 +299,11 @@ fun LibreFitTheme(
         if (!view.isInEditMode) {
             SideEffect {
                 val window = (view.context as Activity).window
-
-                //Changes status color bar according to the theme mode
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                    !useDarkTheme
-
+                
+                WindowCompat.getInsetsController(window, view).apply {
+                    isAppearanceLightStatusBars = !useDarkTheme
+                    isAppearanceLightNavigationBars = !useDarkTheme
+                }
             }
         }
         content()

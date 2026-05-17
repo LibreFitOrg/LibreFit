@@ -50,6 +50,8 @@
     <string name="lets_build_it_together">Let\'s build it together</string>
     <string name="tutorial_desc">Learn how to create routines and track your workouts.</string>
     <string name="donators">Donators</string>
+    <string name="codeberg" translatable="false">Codeberg</string>
+    <string name="url_source_code_codeberg">https://codeberg.org/LibreFitOrg/LibreFit</string>
 
     <!-- username and url of donators, contributors and translators -->
     <string name="doen1el" translatable="false">doen1el</string>
@@ -64,6 +66,12 @@
     <string name="Odweta" translatable="false">Odweta</string>
     <string name="dpusceddu" translatable="false">dpusceddu</string>
     <string name="url_dpusceddu" translatable="false">https://github.com/dpusceddu</string>
+    <string name="b3nj5m1n" translatable="false">b3nj5m1n</string>
+    <string name="url_b3nj5m1n" translatable="false">https://github.com/b3nj5m1n</string>
+    <string name="jakedevs" translatable="false">jakedevs</string>
+    <string name="url_debianite65" translatable="false">https://github.com/debianite65</string>
+    <string name="debianite65" translatable="false">debianite65</string>
+    <string name="the_blue_blurr" translatable="false">The Blue Blurr</string>
 
 
     <!--Before saving screen-->
@@ -268,6 +276,9 @@
     <string name="use_scroll_wheel_for_input">Use scroll wheel for input</string>
     <string name="use_scroll_wheel_for_input_desc">Use a scrollable wheel to select values and time.</string>
     <string name="not_use_scroll_wheel_for_input_desc">Type values directly using the keyboard instead of the scroll wheel.</string>
+    <string name="dismiss_scroll_wheel_automatically">Dismiss scroll wheel automatically</string>
+    <string name="dismiss_scroll_wheel_automatically_desc">The scroll wheel will be dismissed automatically.</string>
+    <string name="dismiss_scroll_wheel_manually_desc">The scroll wheel will have to be dismissed manually.</string>
 
 
     <!-- Statistics screen-->
@@ -424,6 +435,8 @@
     <string name="equipment_barbell">Barbell</string>
     <string name="equipment_exercise_ball">Exercise ball</string>
     <string name="equipment_ez_curl_bar">EZ curl bar</string>
+    <string name="equipment_pull_up_bar">Pull-up bar</string>
+    <string name="equipment_rings">Rings</string>
     <string name="equipment_other">Other</string>
 
     <string name="muscle_abdominals">Abdominals</string>

@@ -277,6 +277,17 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
+                    icon = painterResource(R.drawable.ic_codeberg),
+                    text = stringResource(R.string.codeberg),
+                    description = stringResource(R.string.source_code),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_source_code_codeberg)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
                     icon = painterResource(R.drawable.ic_contract),
                     text = stringResource(R.string.dependencies),
                     onClick = {
@@ -297,6 +308,41 @@ fun AboutScreen(navController: NavHostController) {
             }
 
             item {
+                HeadlineText(stringResource(R.string.donators))
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.FlashyGhost)
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.jakedevs)
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.debianite65),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_debianite65)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.the_blue_blurr)
+                )
+            }
+
+            item {
                 HeadlineText(stringResource(R.string.contributors))
             }
 
@@ -311,13 +357,12 @@ fun AboutScreen(navController: NavHostController) {
             }
 
             item {
-                HeadlineText(stringResource(R.string.donators))
-            }
-
-            item {
                 AboutItem(
                     icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.FlashyGhost)
+                    text = stringResource(R.string.b3nj5m1n),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_b3nj5m1n)
+                    }
                 )
             }
 

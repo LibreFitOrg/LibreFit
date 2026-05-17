@@ -129,6 +129,8 @@ import kotlin.time.Duration.Companion.seconds
  * @param dragHandleModifier Modifier applied to the optional drag handle.
  * @param onReorderRequest A lambda triggered when the `reorder` option from dropdown menu is pressed.
  * @param isDragging when `true`, it applies a shadow to further emphasize with a shadow that the card is dragged.
+ * @param useScrollWheelForInput If `true`, [InputModalBottomSheet] appears instead of keyboard
+ * @param dismissScrollWheelInputAutomatically If both this and [useScrollWheelForInput] are `true`, the [InputModalBottomSheet] will be dismissed automatically after first edit.
  * @param updateExerciseNotes A function to update notes based on [UiExercise.id]. For more details, refer to
  * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExerciseNotes] and
  * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateExerciseNotes].
@@ -175,13 +177,14 @@ fun SharedTransitionScope.ExerciseCard(
     previousPerformances: List<PreviousPerformanceSet>? = null,
     workout: Boolean = false,
     idSetWithRunningStopwatch: Long? = null,
-    useScrollWheelForInput: Boolean = true,
     addSet: (Long) -> Unit,
     onDetail: (Long, String) -> Unit,
     onDelete: (Long) -> Unit,
     isCollapsed: Boolean = false,
     dragHandleModifier: Modifier = Modifier,
     isDragging: Boolean,
+    useScrollWheelForInput: Boolean,
+    dismissScrollWheelInputAutomatically: Boolean,
     onReorderRequest: () -> Unit,
     deleteSet: (Long) -> Unit,
     updateExerciseNotes: (String, Long) -> Unit,
@@ -546,6 +549,7 @@ fun SharedTransitionScope.ExerciseCard(
                                         isThisSetStopwatchRunning = idSetWithRunningStopwatch == set.id,
                                         workout = workout,
                                         useScrollWheelForInput = useScrollWheelForInput,
+                                        dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                                         deleteSet = deleteSet,
                                         updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
                                         updateSetTime = updateSetTime,
@@ -584,6 +588,7 @@ private fun Set(
     isThisSetStopwatchRunning: Boolean,
     workout: Boolean,
     useScrollWheelForInput: Boolean,
+    dismissScrollWheelInputAutomatically: Boolean,
     deleteSet: (Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
@@ -593,8 +598,8 @@ private fun Set(
     applyPreviousSet: (Long) -> Unit
 ) {
     val timeValue by rememberUpdatedState(set.elapsedTime)
-    var repValue by remember(set.reps) { mutableStateOf(set.reps.toString()) }
-    var weightValue by remember(set.load) { mutableStateOf(set.load.toString()) }
+    var repValue by rememberSaveable(set.reps) { mutableStateOf(set.reps.toString()) }
+    var weightValue by rememberSaveable { mutableStateOf(set.load.toString()) }
 
     val swipeToDismissBoxState = rememberSwipeToDismissBoxState()
 
@@ -630,7 +635,8 @@ private fun Set(
             onDismiss = {
                 inputModalBottomSheetState = null
                 inputSetId = null
-            }
+            },
+            dismissAutomatically = dismissScrollWheelInputAutomatically
         )
     }
 
@@ -822,7 +828,11 @@ private fun Set(
                             value = weightValue,
                             onValueChange = { string ->
                                 weightValue = Formatter.normalizeNumericString(string)
-                                updateSetLoad(Formatter.parseDoubleFromString(weightValue), set.id)
+
+                                updateSetLoad(
+                                    Formatter.parseDoubleFromString(weightValue) ?: 0.0,
+                                    set.id
+                                )
                             },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -964,6 +974,8 @@ private fun ExerciseCardPreview() {
                     updateIdSetWithRunningStopwatch = { currentIdSetWithRunningSet.value = it },
                     workout = true,
                     isDragging = false,
+                    useScrollWheelForInput = false,
+                    dismissScrollWheelInputAutomatically = false,
                     updateExerciseNotes = { notes, _ ->
                         e.value = e.value.copy(exercise = e.value.exercise.copy(notes = notes))
                     },

@@ -6,8 +6,9 @@
 
 [![GitHub Downloads](https://img.shields.io/github/downloads/LibreFitOrg/LibreFit/total?style=for-the-badge&logo=github&labelColor=20232A&color=82D3E3)](https://tooomm.github.io/github-release-stats/?username=LibreFitOrg&repository=LibreFit)
 [![F-droid Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Forg.librefit.app.json&query=%24.total_downloads&style=for-the-badge&label=Downloads&logo=fdroid&labelColor=20232A&color=82D3E3)](https://f-droid.org/packages/org.librefit.app)
-[![Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/stargazers)
 [![GitHub Release](https://img.shields.io/github/v/release/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
+[![Codeberg Mirror](https://img.shields.io/badge/Codeberg-Mirror-black?style=for-the-badge&logo=codeberg&labelColor=20232A&color=82D3E3)](https://codeberg.org/LibreFitOrg/LibreFit)
 [![License](https://img.shields.io/github/license/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/blob/main/COPYING)
 [![CI Status](https://img.shields.io/github/actions/workflow/status/LibreFitOrg/LibreFit/android-ci.yml?style=for-the-badge&labelColor=20232A&logo=github&logoColor=white)](https://github.com/LibreFitOrg/LibreFit/actions)
 
@@ -119,6 +120,8 @@ To donate, you can either send use the Monero address below or visit the [donati
 
 See [Contributing to source code](CONTRIBUTING.md#your-first-code-contribution)
 
+You can also follow the development on [Codeberg mirror](https://codeberg.org/LibreFitOrg/LibreFit).
+
 ### 🌐 Translations
 
 See [Contributing to translations](CONTRIBUTING.md#translations) to discover how to contribute.
@@ -141,6 +144,7 @@ If you then still feel the need to ask a question and need clarification, we rec
 following:
 
 - Open a [Discussion](https://github.com/LibreFitOrg/LibreFit/discussions/new).
+- Join our [Simplex Group](https://smp8.simplex.im/g#8i6S-FJPVTn_DqIBBqQcTarcVgkaMqUP6a3piCqpnLA).
 - Provide as much context as you can about what you're running into.
 - Provide project and platform versions, depending on what seems relevant.
 
@@ -166,8 +170,7 @@ We will then take care of the question as soon as possible.
 
 ## 📜 License
 
-LibreFit is licensed under the [GNU General Public License v3.0 or later (GPL v3.0 or later)](COPYING), and it is subject
-to these [additional terms](ADDITIONAL_TERMS.md).
+LibreFit is licensed under the [GNU General Public License v3.0 or later (GPL v3.0 or later)](COPYING), and it is subject to these [additional terms](ADDITIONAL_TERMS.md).
 
 In short, this means you are free to use, modify, and distribute the code, but you must:
 
@@ -202,16 +205,24 @@ Thanks to everyone who helped the project!
 ### 💖 Donators
 
 - FlashyGhost
+- jakedevs
+- [debianite65](https://github.com/debianite65)
+- The Blue Blurr
 - Anonymous donators
 
 > [Donate](README.md#-donate) to be listed here.
 
 ### 🏗 Contributors
 
-- [dpusceddu](https://github.com/dpusceddu)
+- [dpusceddu](https://github.com/dpusceddu) : [#25](https://github.com/LibreFitOrg/LibreFit/pull/25)
 
-[Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be listed here.
+> [Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be listed here.
 
+### 🏋 Dataset contributors
+
+- [b3nj5m1n](https://github.com/b3nj5m1n) : [#28](https://github.com/LibreFitOrg/LibreFit/pull/28)
+
+> [Contribute to dataset](CONTRIBUTING.md#improving-exercises-dataset) to be listed here.
 
 ### 🌐 Translators
 

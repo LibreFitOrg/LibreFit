@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.WorkoutRepository
+import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.WorkoutState
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
@@ -43,7 +44,8 @@ import kotlin.random.Random
 class InfoWorkoutScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val workoutRepository: WorkoutRepository,
-    dataHelper: DataHelper
+    dataHelper: DataHelper,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val workoutId = savedStateHandle.toRoute<Route.InfoWorkoutScreen>().workoutId
@@ -57,12 +59,14 @@ class InfoWorkoutScreenViewModel @Inject constructor(
     init {
         require(workoutId != 0L) { "workoutId must be not equal to 0" }
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             val workoutWithExercisesAndSets =
                 workoutRepository.getWorkoutWithExercisesAndSets(workoutId)
 
+            val workout = workoutWithExercisesAndSets.workout
+
             _workout.update {
-                workoutWithExercisesAndSets.workout
+                workout
             }
 
             _exercises.update {
@@ -71,17 +75,17 @@ class InfoWorkoutScreenViewModel @Inject constructor(
 
             if (isRoutine()) {
                 _routine.update {
-                    workout.value
+                    workout
                 }
 
                 //If the workout is a routine, then retrieve all past completed workout associated with it
                 _completedWorkoutsWithExercises.update {
                     workoutRepository
-                        .getCompletedWorkoutsWithExercisesAndSetsFromRoutine(routineId = workout.value.routineId)
+                        .getCompletedWorkoutsWithExercisesAndSetsFromRoutine(routineId = workout.routineId)
                 }
             } else {
                 _routine.update {
-                    workoutRepository.getRoutineFromRoutineID(workout.value.routineId).toUi()
+                    workoutRepository.getRoutineFromRoutineID(workout.routineId).toUi()
                 }
             }
 
@@ -89,7 +93,7 @@ class InfoWorkoutScreenViewModel @Inject constructor(
             // Calculate volume
             val volumeValue = dataHelper.fetchVolumeFromWorkout(
                 WorkoutWithExercisesAndSets(
-                    workout.value.toEntity(),
+                    workout.toEntity(),
                     exercises.value.map { it.toEntity() })
             )
 
@@ -109,7 +113,7 @@ class InfoWorkoutScreenViewModel @Inject constructor(
     }
 
     fun deleteWorkout() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             workoutRepository.deleteWorkout(workout.value.toEntity())
         }
     }
@@ -125,7 +129,7 @@ class InfoWorkoutScreenViewModel @Inject constructor(
             UiWorkout()
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             workoutRepository.updateWorkout(workout.value.toEntity())
         }
     }

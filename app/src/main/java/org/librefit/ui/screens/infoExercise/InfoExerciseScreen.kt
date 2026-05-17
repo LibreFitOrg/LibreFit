@@ -126,9 +126,9 @@ import kotlin.random.Random
 fun SharedTransitionScope.InfoExerciseScreen(
     id: Long,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: InfoExerciseScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: InfoExerciseScreenViewModel = hiltViewModel()
 
     val workoutsWithExercises by viewModel.workoutsWithExercises.collectAsStateWithLifecycle()
 
@@ -191,7 +191,7 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
     LibreFitScaffold(
         navigateBack = navController::navigateUp,
         actions = if (exerciseDC.isCustomExercise) {
-            listOf(
+            persistentListOf(
                 {
                     navController.navigate(
                         Route.EditExerciseScreen(
@@ -207,14 +207,17 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
                 }
             )
         } else {
-            emptyList()
+            persistentListOf()
         },
         actionsIcons = if (exerciseDC.isCustomExercise) {
-            listOf(painterResource(R.drawable.ic_edit), painterResource(R.drawable.ic_delete))
+            persistentListOf(
+                painterResource(R.drawable.ic_edit),
+                painterResource(R.drawable.ic_delete)
+            )
         } else {
-            emptyList()
+            persistentListOf()
         },
-        actionsElevated = listOf(false, false)
+        actionsElevated = persistentListOf(false, false)
     ) { innerPadding ->
         BoxWithConstraints(
             modifier = Modifier.padding(innerPadding)
