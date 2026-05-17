@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Workout metrics did not update after the initial save. [#42](https://github.com/LibreFitOrg/LibreFit/issues/42)
 - Rest timer notification sound was suppressed by other media. [#45](https://github.com/LibreFitOrg/LibreFit/issues/45)
 - Scroll wheel animation not allowing input [#47](https://github.com/LibreFitOrg/LibreFit/issues/47)
+- Rare crash in info workout screen [#64](https://github.com/LibreFitOrg/LibreFit/issues/64)
 - Parsing logic when typing weight [#43](https://github.com/LibreFitOrg/LibreFit/issues/43)
 
 > [!TIP]
