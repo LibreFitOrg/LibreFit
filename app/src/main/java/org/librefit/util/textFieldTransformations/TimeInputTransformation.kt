@@ -11,7 +11,6 @@ package org.librefit.util.textFieldTransformations
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldBuffer
 import androidx.compose.foundation.text.input.delete
-import androidx.compose.foundation.text.input.placeCursorAtEnd
 import androidx.core.text.isDigitsOnly
 
 
@@ -30,6 +29,5 @@ class TimeInputTransformation(
         } else {
             revertAllChanges()
         }
-        placeCursorAtEnd()
     }
 }
