@@ -170,7 +170,7 @@ We will then take care of the question as soon as possible.
 
 ## 📜 License
 
-LibreFit is licensed under the [GNU General Public License v3.0 (GPL-3)](COPYING), and it is subject to these [additional terms](ADDITIONAL_TERMS.md).
+LibreFit is licensed under the [GNU General Public License v3.0 or later (GPL v3.0 or later)](COPYING), and it is subject to these [additional terms](ADDITIONAL_TERMS.md).
 
 In short, this means you are free to use, modify, and distribute the code, but you must:
 

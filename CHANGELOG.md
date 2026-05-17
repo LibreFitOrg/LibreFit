@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Save routines even when empty [#53](https://github.com/LibreFitOrg/LibreFit/issues/53)
+- Make license clearer [#36](https://github.com/LibreFitOrg/LibreFit/pull/36)
 
 ### Deprecated
 -
