@@ -50,6 +50,8 @@
     <string name="lets_build_it_together">Let\'s build it together</string>
     <string name="tutorial_desc">Learn how to create routines and track your workouts.</string>
     <string name="donators">Donators</string>
+    <string name="codeberg" translatable="false">Codeberg</string>
+    <string name="url_source_code_codeberg">https://codeberg.org/LibreFitOrg/LibreFit</string>
 
     <!-- username and url of donators, contributors and translators -->
     <string name="doen1el" translatable="false">doen1el</string>

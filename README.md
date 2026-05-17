@@ -6,8 +6,9 @@
 
 [![GitHub Downloads](https://img.shields.io/github/downloads/LibreFitOrg/LibreFit/total?style=for-the-badge&logo=github&labelColor=20232A&color=82D3E3)](https://tooomm.github.io/github-release-stats/?username=LibreFitOrg&repository=LibreFit)
 [![F-droid Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Forg.librefit.app.json&query=%24.total_downloads&style=for-the-badge&label=Downloads&logo=fdroid&labelColor=20232A&color=82D3E3)](https://f-droid.org/packages/org.librefit.app)
-[![Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/stargazers)
 [![GitHub Release](https://img.shields.io/github/v/release/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
+[![Codeberg Mirror](https://img.shields.io/badge/Codeberg-Mirror-black?style=for-the-badge&logo=codeberg&labelColor=20232A&color=82D3E3)](https://codeberg.org/LibreFitOrg/LibreFit)
 [![License](https://img.shields.io/github/license/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/blob/main/COPYING)
 [![CI Status](https://img.shields.io/github/actions/workflow/status/LibreFitOrg/LibreFit/android-ci.yml?style=for-the-badge&labelColor=20232A&logo=github&logoColor=white)](https://github.com/LibreFitOrg/LibreFit/actions)
 
@@ -118,6 +119,8 @@ To donate, you can either send use the Monero address below or visit the [donati
 ### 🏗 Contribute to source code
 
 See [Contributing to source code](CONTRIBUTING.md#your-first-code-contribution)
+
+You can also follow the development on [Codeberg mirror](https://codeberg.org/LibreFitOrg/LibreFit).
 
 ### 🌐 Translations
 

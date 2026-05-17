@@ -277,6 +277,17 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
+                    icon = painterResource(R.drawable.ic_codeberg),
+                    text = stringResource(R.string.codeberg),
+                    description = stringResource(R.string.source_code),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_source_code_codeberg)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
                     icon = painterResource(R.drawable.ic_contract),
                     text = stringResource(R.string.dependencies),
                     onClick = {
