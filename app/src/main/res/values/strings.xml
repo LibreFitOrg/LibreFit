@@ -252,6 +252,20 @@
     <string name="screen_on_desc">Screen stays on during workout</string>
     <string name="screen_off_desc">Screen does not stay on during workout</string>
     <string name="settings_general">General</string>
+    <string name="rest_timer_sound">Rest timer sound</string>
+    <string name="rest_timer_sound_on_desc">Play a sound when rest timer ends</string>
+    <string name="rest_timer_sound_off_desc">Rest timer alerts will be silent</string>
+    <string name="stick_status_bar">Stick status bar</string>
+    <string name="stick_status_bar_desc">The status bar of ongoing workout will be stuck at the top of the screen</string>
+    <string name="not_stick_status_bar_desc">The status bar of ongoing workout won\'t be stuck at the top of the screen</string>
+    <string name="use_scroll_wheel_for_input">Use scroll wheel for input</string>
+    <string name="use_scroll_wheel_for_input_desc">Use a scrollable wheel to select values and time.</string>
+    <string name="not_use_scroll_wheel_for_input_desc">Type values directly using the keyboard instead of the scroll wheel.</string>
+    <string name="dismiss_scroll_wheel_automatically">Dismiss scroll wheel automatically</string>
+    <string name="dismiss_scroll_wheel_automatically_desc">The scroll wheel will be dismissed automatically.</string>
+    <string name="dismiss_scroll_wheel_manually_desc">The scroll wheel will have to be dismissed manually.</string>
+
+    <!--- Languages -->
     <string name="language">Language</string>
     <string name="language_english_nt" translatable="false">English</string>
     <string name="language_english">English</string>
@@ -267,18 +281,10 @@
     <string name="language_spanish">Spanish</string>
     <string name="language_chinese_simplified_nt" translatable="false">简体中文</string>
     <string name="language_chinese_simplified">Chinese simplified</string>
-    <string name="rest_timer_sound">Rest timer sound</string>
-    <string name="rest_timer_sound_on_desc">Play a sound when rest timer ends</string>
-    <string name="rest_timer_sound_off_desc">Rest timer alerts will be silent</string>
-    <string name="stick_status_bar">Stick status bar</string>
-    <string name="stick_status_bar_desc">The status bar of ongoing workout will be stuck at the top of the screen</string>
-    <string name="not_stick_status_bar_desc">The status bar of ongoing workout won\'t be stuck at the top of the screen</string>
-    <string name="use_scroll_wheel_for_input">Use scroll wheel for input</string>
-    <string name="use_scroll_wheel_for_input_desc">Use a scrollable wheel to select values and time.</string>
-    <string name="not_use_scroll_wheel_for_input_desc">Type values directly using the keyboard instead of the scroll wheel.</string>
-    <string name="dismiss_scroll_wheel_automatically">Dismiss scroll wheel automatically</string>
-    <string name="dismiss_scroll_wheel_automatically_desc">The scroll wheel will be dismissed automatically.</string>
-    <string name="dismiss_scroll_wheel_manually_desc">The scroll wheel will have to be dismissed manually.</string>
+    <string name="language_galician_nt" translatable="false">Galego</string>
+    <string name="language_galician">Galician</string>
+    <string name="language_brazilian_portuguese_nt" translatable="false">Português (Brasil)</string>
+    <string name="language_brazilian_portuguese">Brazilian portuguese</string>
 
 
     <!-- Statistics screen-->

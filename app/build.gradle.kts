@@ -47,7 +47,9 @@ android {
             useSupportLibrary = true
         }
         androidResources {
-            localeFilters += listOf("en", "it", "de", "nl", "es", "cs", "zh-rCN")
+            localeFilters += setOf(
+                "en", "it", "de", "nl", "es", "cs", "zh-rCN", "pt-rBR", "gl"
+            )
         }
 
         // Do not use System.currentTimeMillis()
