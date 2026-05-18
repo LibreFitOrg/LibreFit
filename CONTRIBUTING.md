@@ -194,6 +194,7 @@ the latest Android toolkit:
 > [!CAUTION]
 > All Weblate translators who **logged in with GitHub**, can just receive code just as Contributors
 > by logging in here: https://librefit.org/donate.
+>
 > If that is not the case, unfortunately, there isn't the automatic reward system for translators
 > yet! To get the supporter code, send a message by visiting contact
 > page: https://librefit.org/contact.
@@ -203,8 +204,7 @@ We want LibreFit to be accessible to everyone!
 - We use **Weblate** for translations. Join our project here: https://hosted.weblate.org/projects/librefit/librefit/
 - Please, **do not blindly accept machine or AI translations** as they do not understand the
   context. Always double check all translations and their use in LibreFit.
-- Please **do not** submit Pull Requests for `strings.xml` files directly, as they will be
-  overwritten by the translation platform sync.
+- A language will be added once it is **completed at least 70%**.
 
 > Thanks to [Weblate](https://weblate.org) for hosting LibreFit's translations!
 
