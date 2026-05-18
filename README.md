@@ -226,11 +226,59 @@ Thanks to everyone who helped the project!
 
 ### 🌐 Translators
 
-- [doen1el](https://github.com/doen1el)  🇩🇪
-- Odweta 🇨🇿
-- [kid1412621](https://github.com/kid1412621) 🇨🇳
-- [mwesten](https://github.com/mwesten) 🇳🇱
-- [VA5H-One](https://github.com/VA5H-One) 🇪🇸
+#### Arabic 🇸🇦
+
+- [AhmedAwad7](https://github.com/AhmedAwad7) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- [b0saleh](https://github.com/b0saleh) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Brazilian Portuguese 🇧🇷
+
+- [miguelsoaresouza8-droid](https://github.com/miguelsoaresouza8-droid) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Catalan 🇪🇸
+
+- [DoubleCheddarBurger](https://github.com/DoubleCheddarBurger) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Czech 🇨🇿
+
+- Odweta
+
+#### Dutch 🇳🇱
+
+- [mwesten](https://github.com/mwesten)
+
+#### French 🇫🇷
+
+- [Spartang-117](https://github.com/Spartang-117) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Galician 🇪🇸
+
+- josé m [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### German 🇩🇪
+
+- [doen1el](https://github.com/doen1el)
+
+#### Hindi 🇮🇳
+
+- [SilentCoderHere](https://github.com/SilentCoderHere) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Indonesian 🇮🇩
+
+- [raihankr](https://github.com/raihankr) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Simplified Chinese 🇨🇳
+
+- [kid1412621](https://github.com/kid1412621)
+
+#### Spanish 🇪🇸
+
+- [SelwynDO](https://github.com/SelwynDO) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- [VA5H-One](https://github.com/VA5H-One)
+
+#### Ukrainian 🇺🇦
+
+- UnknownLi [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
 
 > [Contribute to translations](CONTRIBUTING.md#translations) to be listed here.
 
