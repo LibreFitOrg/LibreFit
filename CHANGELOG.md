@@ -8,10 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 > [!IMPORTANT]
-> You now can **share** your **custom exercise** with all LibreFit's users and get its supporter version! See
+> You now can **share** your **custom exercise** with LibreFit's community and get a supporter code! See
 > more [here](https://github.com/LibreFitOrg/LibreFit/blob/main/CONTRIBUTING.md#improving-exercises-dataset)
 >
-> Now LibreFit is **mirrored in Codeberg**! See the [announcement](https://github.com/LibreFitOrg/LibreFit/discussions/81)
+> LibreFit is **now mirrored on Codeberg**! See the [announcement](https://github.com/LibreFitOrg/LibreFit/discussions/81)
 
 ### Added
 
@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Scroll wheel animation not allowing input [#47](https://github.com/LibreFitOrg/LibreFit/issues/47)
 - Rare crash in info workout screen [#64](https://github.com/LibreFitOrg/LibreFit/issues/64)
 - Parsing logic when typing weight [#43](https://github.com/LibreFitOrg/LibreFit/issues/43)
+- Typing time logic and parsing [#66](https://github.com/LibreFitOrg/LibreFit/issues/66)
 
 > [!TIP]
 > `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).

@@ -33,6 +33,9 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuGroup
@@ -66,9 +69,9 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -92,6 +95,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.collectLatest
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.PreviousPerformanceSet
@@ -106,6 +110,8 @@ import org.librefit.ui.models.UiSet
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.getDecimalDigitsAsInteger
+import org.librefit.util.textFieldTransformations.TimeInputTransformation
+import org.librefit.util.textFieldTransformations.TimeOutputTransformation
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 
@@ -597,9 +603,43 @@ private fun Set(
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
     applyPreviousSet: (Long) -> Unit
 ) {
-    val timeValue by rememberUpdatedState(set.elapsedTime)
+    val timeTextFieldState = rememberTextFieldState(
+        initialText = Formatter.formateSecondsInMinutesAndSeconds(set.elapsedTime)
+            .filter { it != ':' }
+    )
+    var timeFieldEditedByKeyboard by rememberSaveable { mutableStateOf(false) }
     var repValue by rememberSaveable(set.reps) { mutableStateOf(set.reps.toString()) }
     var weightValue by rememberSaveable { mutableStateOf(set.load.toString()) }
+
+    // Sync elapsed time with time text field
+    LaunchedEffect(set.elapsedTime) {
+        val formatted =
+            Formatter.formateSecondsInMinutesAndSeconds(set.elapsedTime).filter { it != ':' }
+        if (timeTextFieldState.text.toString() != formatted && !timeFieldEditedByKeyboard) {
+            // Update ONLY when state differs and user apply previous set but when he edited with the keyboard
+            timeTextFieldState.setTextAndPlaceCursorAtEnd(formatted)
+        } else {
+            timeFieldEditedByKeyboard = false
+        }
+    }
+
+    // Sync time text field with elapsed time
+    LaunchedEffect(timeTextFieldState) {
+        snapshotFlow { timeTextFieldState.text.toString() }.collectLatest { rawText ->
+            val padded = rawText.padStart(4, '0')
+            val seconds = padded.takeLast(2)
+            val minutes = padded.dropLast(2).takeLast(2)
+            val newValue = Formatter.parseTimeInputToSeconds(
+                input = "$minutes:$seconds"
+            )
+            if (newValue != set.elapsedTime) {
+                updateSetTime(newValue, set.id)
+
+                // Signal user edited with keyboard -> Do not update again in launched effect above
+                timeFieldEditedByKeyboard = true
+            }
+        }
+    }
 
     val swipeToDismissBoxState = rememberSwipeToDismissBoxState()
 
@@ -781,14 +821,10 @@ private fun Set(
                         OutlinedTextField(
                             shape = MaterialTheme.shapes.large,
                             modifier = Modifier.width(80.dp),
-                            value = Formatter.formateSecondsInMinutesAndSeconds(timeValue),
-                            onValueChange = { string ->
-                                val newTimeValue =
-                                    Formatter.parseTimeInputToSeconds(string)
-
-                                updateSetTime(newTimeValue, set.id)
-                            },
-                            singleLine = true,
+                            state = timeTextFieldState,
+                            lineLimits = TextFieldLineLimits.SingleLine,
+                            inputTransformation = TimeInputTransformation(),
+                            outputTransformation = TimeOutputTransformation(),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedBorderColor = Color.Transparent,
@@ -805,7 +841,7 @@ private fun Set(
                                     .matchParentSize()
                                     .clip(MaterialTheme.shapes.extraLarge)
                                     .clickable {
-                                        timeValue.seconds.toComponents { _, minutes, seconds, _ ->
+                                        set.elapsedTime.seconds.toComponents { _, minutes, seconds, _ ->
                                             inputModalBottomSheetState =
                                                 InputModalBottomSheetState.MinutesSeconds(
                                                     minutes = minutes,

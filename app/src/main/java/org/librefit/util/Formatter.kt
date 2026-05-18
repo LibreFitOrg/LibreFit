@@ -339,7 +339,7 @@ object Formatter {
         val minutes = if (parts.size > 1) parts[parts.size - 2].toIntOrNull() ?: 0 else 0
         val hours = if (parts.size > 2) parts[parts.size - 3].toIntOrNull() ?: 0 else 0
 
-        return (hours * 3600) + (minutes * 60) + seconds
+        return (hours * 3600) + (minutes.coerceAtMost(59) * 60) + seconds.coerceAtMost(59)
     }
 
 
