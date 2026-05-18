@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 > [!IMPORTANT]
-> You now can **share** your **custom exercise** with LibreFit's community and get a supporter code! See
+> You now can **share** your **custom exercise** with LibreFit's community and get a *supporter code*! See
 > more [here](https://github.com/LibreFitOrg/LibreFit/blob/main/CONTRIBUTING.md#improving-exercises-dataset)
 >
 > LibreFit is **now mirrored on Codeberg**! See the [announcement](https://github.com/LibreFitOrg/LibreFit/discussions/81)
@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **New 28 exercises with instructions and high-quality images** [#28](https://github.com/LibreFitOrg/LibreFit/pull/28)
 - Option to dismiss scroll wheel automatically [#52](https://github.com/LibreFitOrg/LibreFit/pull/52)
+- New languages: Portuguese (Brazil) 🇧🇷, Galician
 
 ### Changed
 
