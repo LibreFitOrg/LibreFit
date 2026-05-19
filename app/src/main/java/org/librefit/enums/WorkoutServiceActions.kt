@@ -15,5 +15,9 @@ enum class WorkoutServiceActions(val string: String) {
     MODIFY_REST_TIMER("PAUSE_REST_TIMER"),
     WORKOUT_FOCUS("WORKOUT_FOCUS"),
     STOP_SERVICE("STOP_SERVICE"),
-    SET_ELAPSED_TIME("SET_ELAPSED_TIME")
+    SET_ELAPSED_TIME("SET_ELAPSED_TIME"),
+    /** Start a HIIT countdown timer (counts down from targetDuration to 0). */
+    START_COUNTDOWN("START_COUNTDOWN"),
+    /** Cancel an active countdown without advancing to rest. */
+    CANCEL_COUNTDOWN("CANCEL_COUNTDOWN")
 }

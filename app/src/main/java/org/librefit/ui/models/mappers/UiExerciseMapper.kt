@@ -19,7 +19,9 @@ fun Exercise.toUi(): UiExercise {
         setMode = this.setMode,
         restTime = this.restTime,
         position = this.position,
-        workoutId = this.workoutId
+        workoutId = this.workoutId,
+        targetDuration = this.targetDuration,
+        autoAdvanceSets = this.autoAdvanceSets
     )
 }
 
@@ -31,6 +33,8 @@ fun UiExercise.toEntity(): Exercise {
         setMode = this.setMode,
         restTime = this.restTime,
         position = this.position,
-        workoutId = this.workoutId
+        workoutId = this.workoutId,
+        targetDuration = this.targetDuration,
+        autoAdvanceSets = this.autoAdvanceSets
     )
 }

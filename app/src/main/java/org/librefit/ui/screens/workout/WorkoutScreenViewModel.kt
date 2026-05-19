@@ -455,6 +455,29 @@ class WorkoutScreenViewModel @Inject constructor(
     val isStopwatchPaused = WorkoutService.isStopwatchPaused
     val restTime = WorkoutService.restTime
 
+    // ── HIIT countdown state from service ──
+    val countdownTime = WorkoutService.countdownTime
+    val isCountdownActive = WorkoutService.isCountdownActive
+    val countdownTotal = WorkoutService.countdownTotal
+
+    /**
+     * HIIT phase tracks the autonomous set→rest→set cycle for DURATION exercises
+     * that have [UiExercise.autoAdvanceSets] enabled.
+     */
+    sealed class HiitPhase {
+        /** No HIIT countdown running – manual mode or waiting for user to press play. */
+        data object Idle : HiitPhase()
+        /** Countdown is active for the given exercise/set. */
+        data class SetCountdown(val exerciseId: Long, val setIndex: Int) : HiitPhase()
+        /** Rest countdown between HIIT sets. */
+        data class RestBetweenSets(val exerciseId: Long, val nextSetIndex: Int) : HiitPhase()
+        /** All sets for the current HIIT exercise are complete. */
+        data object ExerciseDone : HiitPhase()
+    }
+
+    private val _hiitPhase = MutableStateFlow<HiitPhase>(HiitPhase.Idle)
+    val hiitPhase = _hiitPhase.asStateFlow()
+
 
     private var initialRestTime = 1
     private var isFocused = true
@@ -463,6 +486,8 @@ class WorkoutScreenViewModel @Inject constructor(
     init {
         workoutServiceManager.startStopwatch()
         observeChanges()
+        observeHiitCountdownFinished()
+        observeHiitRestFinished()
     }
 
 
@@ -478,6 +503,105 @@ class WorkoutScreenViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    // ── HIIT auto-advance logic ──
+
+    /**
+     * Start a HIIT countdown for a specific exercise and set.
+     * The service will count down [UiExercise.targetDuration] seconds, then auto-start rest.
+     */
+    fun startHiitCountdown(exerciseId: Long, setIndex: Int) {
+        val eWs = exercises.value.find { it.exercise.id == exerciseId } ?: return
+        val exercise = eWs.exercise
+        if (exercise.setMode != SetMode.DURATION || exercise.targetDuration <= 0) return
+
+        _hiitPhase.update { HiitPhase.SetCountdown(exerciseId, setIndex) }
+        workoutServiceManager.startCountdown(
+            durationSeconds = exercise.targetDuration,
+            restDurationSeconds = exercise.restTime
+        )
+    }
+
+    /** Cancel an active HIIT countdown and return to idle. */
+    fun cancelHiitCountdown() {
+        workoutServiceManager.cancelCountdown()
+        _hiitPhase.update { HiitPhase.Idle }
+    }
+
+    /**
+     * Observes [WorkoutService.countdownFinished].
+     * When a countdown completes, marks the set done and transitions to rest phase.
+     */
+    private fun observeHiitCountdownFinished() {
+        viewModelScope.launch(mainDispatcher) {
+            WorkoutService.countdownFinished.collect { finished ->
+                if (!finished) return@collect
+                val phase = _hiitPhase.value
+                if (phase is HiitPhase.SetCountdown) {
+                    // Mark the current set as completed
+                    val eWs = exercises.value.find { it.exercise.id == phase.exerciseId }
+                    if (eWs != null) {
+                        val set = eWs.sets.getOrNull(phase.setIndex)
+                        if (set != null) {
+                            // Update elapsed time and completion
+                            updateSetTime(eWs.exercise.targetDuration, set.id)
+                            _exercises.update { currentExercises ->
+                                currentExercises.map { exercise ->
+                                    if (exercise.sets.any { it.id == set.id }) {
+                                        exercise.copy(
+                                            sets = exercise.sets.map {
+                                                if (it.id == set.id) it.copy(completed = true) else it
+                                            }.toImmutableList()
+                                        )
+                                    } else exercise
+                                }
+                            }
+                            syncToRepository()
+                        }
+
+                        val nextSetIndex = phase.setIndex + 1
+                        if (nextSetIndex < eWs.sets.size && eWs.exercise.autoAdvanceSets) {
+                            // Rest timer was already auto-started by the service
+                            _hiitPhase.update {
+                                HiitPhase.RestBetweenSets(phase.exerciseId, nextSetIndex)
+                            }
+                        } else {
+                            _hiitPhase.update { HiitPhase.ExerciseDone }
+                        }
+                    }
+                }
+                // Acknowledge signal
+                WorkoutService.clearCountdownFinished()
+            }
+        }
+    }
+
+    /**
+     * Observes rest timer. When rest finishes during a HIIT [HiitPhase.RestBetweenSets],
+     * auto-starts the next set's countdown.
+     */
+    private fun observeHiitRestFinished() {
+        viewModelScope.launch(mainDispatcher) {
+            var previousRestTime = 0
+            WorkoutService.restTime.collect { currentRestTime ->
+                // Detect transition from >0 to 0
+                if (previousRestTime > 0 && currentRestTime == 0) {
+                    val phase = _hiitPhase.value
+                    if (phase is HiitPhase.RestBetweenSets) {
+                        // Auto-start next set countdown
+                        startHiitCountdown(phase.exerciseId, phase.nextSetIndex)
+                    }
+                }
+                previousRestTime = currentRestTime
+            }
+        }
+    }
+
+    /** Reset HIIT phase back to idle (e.g. when user moves to next exercise). */
+    fun resetHiitPhase() {
+        workoutServiceManager.cancelCountdown()
+        _hiitPhase.update { HiitPhase.Idle }
     }
 
     fun toggleStopwatch() {

@@ -37,6 +37,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -302,7 +303,8 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
 
                             InfoExercisePages.INSTRUCTIONS -> InstructionsPage(
                                 maxHeight,
-                                exerciseDC.instructions
+                                exerciseDC.instructions,
+                                exerciseDC.cautions
                             )
 
                             null -> error("Invalid page index: $pageIndex. Expected: ${0..InfoExercisePages.entries.size}")
@@ -475,6 +477,7 @@ private fun DetailsPage(
 private fun InstructionsPage(
     maxHeight: Dp,
     instructions: List<String>,
+    cautions: String = ""
 ) {
     LazyColumn(
         modifier = Modifier.height(maxHeight),
@@ -493,6 +496,44 @@ private fun InstructionsPage(
                     }
                 }
             )
+        }
+        if (cautions.isNotBlank()) {
+            item {
+                Spacer(Modifier.height(8.dp))
+                HorizontalDivider()
+                Spacer(Modifier.height(8.dp))
+                ElevatedCard(
+                    shape = MaterialTheme.shapes.large,
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_warning),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                            Text(
+                                text = "Common Mistakes",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                        }
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = cautions,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
+                }
+            }
         }
     }
 }

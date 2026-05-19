@@ -25,7 +25,8 @@ fun ExerciseDC.toUi(): UiExerciseDC {
         instructions = this.instructions.toImmutableList(),
         category = this.category,
         images = this.images.toImmutableList(),
-        isCustomExercise = this.isCustomExercise
+        isCustomExercise = this.isCustomExercise,
+        cautions = this.cautions
     )
 }
 
@@ -42,6 +43,7 @@ fun UiExerciseDC.toEntity(): ExerciseDC {
         instructions = this.instructions,
         category = this.category,
         images = this.images,
-        isCustomExercise = this.isCustomExercise
+        isCustomExercise = this.isCustomExercise,
+        cautions = this.cautions
     )
 }

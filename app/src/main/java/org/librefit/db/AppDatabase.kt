@@ -27,7 +27,7 @@ import org.librefit.db.entity.Workout
 
 @Database(
     entities = [Workout::class, Exercise::class, Set::class, Measurement::class, ExerciseDC::class],
-    version = 3,
+    version = 4,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2)
@@ -37,6 +37,31 @@ import org.librefit.db.entity.Workout
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         const val NAME = "librefit_database"
+
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Add HIIT countdown fields to exercises table
+                db.execSQL(
+                    """
+                    ALTER TABLE exercises
+                    ADD COLUMN targetDuration INTEGER NOT NULL DEFAULT 0
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    """
+                    ALTER TABLE exercises
+                    ADD COLUMN autoAdvanceSets INTEGER NOT NULL DEFAULT 0
+                    """.trimIndent()
+                )
+                // Add cautions field to dataset (ExerciseDC) table
+                db.execSQL(
+                    """
+                    ALTER TABLE dataset
+                    ADD COLUMN cautions TEXT NOT NULL DEFAULT ''
+                    """.trimIndent()
+                )
+            }
+        }
 
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {

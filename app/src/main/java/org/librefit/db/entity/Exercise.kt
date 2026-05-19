@@ -67,5 +67,9 @@ data class Exercise(
     val setMode: SetMode = SetMode.LOAD,
     val restTime: Int = 0,
     val position: Int = 0,
-    val workoutId: Long = 0// Foreign key reference to Workout
+    val workoutId: Long = 0,// Foreign key reference to Workout
+    /** Target duration in seconds for DURATION sets used in countdown mode (HIIT). 0 = use stopwatch instead. */
+    val targetDuration: Int = 0,
+    /** When true, sets auto-advance: countdown → rest → next set countdown, without user input. */
+    val autoAdvanceSets: Boolean = false
 )
