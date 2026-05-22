@@ -607,7 +607,6 @@ private fun Set(
         initialText = Formatter.formateSecondsInMinutesAndSeconds(set.elapsedTime)
             .filter { it != ':' }
     )
-    var timeFieldEditedByKeyboard by rememberSaveable { mutableStateOf(false) }
     var repValue by rememberSaveable(set.reps) { mutableStateOf(set.reps.toString()) }
     var weightValue by rememberSaveable { mutableStateOf(set.load.toString()) }
 
@@ -615,11 +614,8 @@ private fun Set(
     LaunchedEffect(set.elapsedTime) {
         val formatted =
             Formatter.formateSecondsInMinutesAndSeconds(set.elapsedTime).filter { it != ':' }
-        if (timeTextFieldState.text.toString() != formatted && !timeFieldEditedByKeyboard) {
-            // Update ONLY when state differs and user apply previous set but when he edited with the keyboard
+        if (timeTextFieldState.text.toString() != formatted) {
             timeTextFieldState.setTextAndPlaceCursorAtEnd(formatted)
-        } else {
-            timeFieldEditedByKeyboard = false
         }
     }
 
@@ -634,9 +630,6 @@ private fun Set(
             )
             if (newValue != set.elapsedTime) {
                 updateSetTime(newValue, set.id)
-
-                // Signal user edited with keyboard -> Do not update again in launched effect above
-                timeFieldEditedByKeyboard = true
             }
         }
     }
