@@ -61,7 +61,7 @@ fun InputModalBottomSheet(
     var isAnyNumberPickerChanging by rememberSaveable { mutableStateOf(false) }
 
     val sheetState = rememberBottomSheetState(
-        initialValue = SheetValue.PartiallyExpanded
+        initialValue = SheetValue.Hidden
     )
 
     if (dismissAutomatically) {
