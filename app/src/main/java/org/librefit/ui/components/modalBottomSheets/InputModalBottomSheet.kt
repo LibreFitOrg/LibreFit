@@ -23,8 +23,9 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,6 +60,10 @@ fun InputModalBottomSheet(
 
     var isAnyNumberPickerChanging by rememberSaveable { mutableStateOf(false) }
 
+    val sheetState = rememberBottomSheetState(
+        initialValue = SheetValue.PartiallyExpanded
+    )
+
     if (dismissAutomatically) {
         // Dismiss automatically after 1 second of inactivity if value was changed
         LaunchedEffect(isAnyNumberPickerChanging, state) {
@@ -67,14 +72,14 @@ fun InputModalBottomSheet(
                 delay(
                     timeMillis = 500L
                 )
-                onDismiss()
+                sheetState.hide()
             }
         }
     }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState()
+        sheetState = sheetState
     ) {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(15.dp),
