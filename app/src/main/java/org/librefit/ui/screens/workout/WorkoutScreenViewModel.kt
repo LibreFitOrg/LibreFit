@@ -406,6 +406,29 @@ class WorkoutScreenViewModel @Inject constructor(
         syncToRepository()
     }
 
+    fun updateExerciseTargetDuration(targetDuration: Int, id: Long) {
+        _exercises.update { currentExercises ->
+            currentExercises.map { eWs ->
+                if (eWs.exercise.id == id) {
+                    eWs.copy(exercise = eWs.exercise.copy(targetDuration = targetDuration))
+                } else eWs
+            }
+        }
+        syncToRepository()
+    }
+
+    fun updateExerciseAutoAdvanceSets(autoAdvance: Boolean, id: Long) {
+        _exercises.update { currentExercises ->
+            currentExercises.map { eWs ->
+                if (eWs.exercise.id == id) {
+                    eWs.copy(exercise = eWs.exercise.copy(autoAdvanceSets = autoAdvance))
+                } else eWs
+            }
+        }
+        if (!autoAdvance) cancelHiitCountdown()
+        syncToRepository()
+    }
+
     fun updateExerciseSetMode(setMode: SetMode, id: Long) {
         _exercises.update { currentExercises ->
             currentExercises.map { eWs ->
@@ -459,21 +482,6 @@ class WorkoutScreenViewModel @Inject constructor(
     val countdownTime = WorkoutService.countdownTime
     val isCountdownActive = WorkoutService.isCountdownActive
     val countdownTotal = WorkoutService.countdownTotal
-
-    /**
-     * HIIT phase tracks the autonomous set→rest→set cycle for DURATION exercises
-     * that have [UiExercise.autoAdvanceSets] enabled.
-     */
-    sealed class HiitPhase {
-        /** No HIIT countdown running – manual mode or waiting for user to press play. */
-        data object Idle : HiitPhase()
-        /** Countdown is active for the given exercise/set. */
-        data class SetCountdown(val exerciseId: Long, val setIndex: Int) : HiitPhase()
-        /** Rest countdown between HIIT sets. */
-        data class RestBetweenSets(val exerciseId: Long, val nextSetIndex: Int) : HiitPhase()
-        /** All sets for the current HIIT exercise are complete. */
-        data object ExerciseDone : HiitPhase()
-    }
 
     private val _hiitPhase = MutableStateFlow<HiitPhase>(HiitPhase.Idle)
     val hiitPhase = _hiitPhase.asStateFlow()
@@ -539,39 +547,34 @@ class WorkoutScreenViewModel @Inject constructor(
                 if (!finished) return@collect
                 val phase = _hiitPhase.value
                 if (phase is HiitPhase.SetCountdown) {
-                    // Mark the current set as completed
                     val eWs = exercises.value.find { it.exercise.id == phase.exerciseId }
                     if (eWs != null) {
-                        val set = eWs.sets.getOrNull(phase.setIndex)
-                        if (set != null) {
-                            // Update elapsed time and completion
+                        eWs.sets.getOrNull(phase.setIndex)?.let { set ->
+                            // Mark the set complete and persist its elapsed time. We skip
+                            // [updateSetCompleted] because the service already auto-starts the
+                            // rest timer after the countdown finishes.
                             updateSetTime(eWs.exercise.targetDuration, set.id)
                             _exercises.update { currentExercises ->
-                                currentExercises.map { exercise ->
-                                    if (exercise.sets.any { it.id == set.id }) {
-                                        exercise.copy(
-                                            sets = exercise.sets.map {
-                                                if (it.id == set.id) it.copy(completed = true) else it
+                                currentExercises.map { e ->
+                                    if (e.sets.any { it.id == set.id }) {
+                                        e.copy(
+                                            sets = e.sets.map { s ->
+                                                if (s.id == set.id) s.copy(completed = true) else s
                                             }.toImmutableList()
                                         )
-                                    } else exercise
+                                    } else e
                                 }
                             }
                             syncToRepository()
                         }
-
-                        val nextSetIndex = phase.setIndex + 1
-                        if (nextSetIndex < eWs.sets.size && eWs.exercise.autoAdvanceSets) {
-                            // Rest timer was already auto-started by the service
-                            _hiitPhase.update {
-                                HiitPhase.RestBetweenSets(phase.exerciseId, nextSetIndex)
-                            }
-                        } else {
-                            _hiitPhase.update { HiitPhase.ExerciseDone }
+                        _hiitPhase.update {
+                            phase.nextPhaseAfterCountdown(
+                                totalSets = eWs.sets.size,
+                                autoAdvance = eWs.exercise.autoAdvanceSets
+                            )
                         }
                     }
                 }
-                // Acknowledge signal
                 WorkoutService.clearCountdownFinished()
             }
         }
@@ -596,12 +599,6 @@ class WorkoutScreenViewModel @Inject constructor(
                 previousRestTime = currentRestTime
             }
         }
-    }
-
-    /** Reset HIIT phase back to idle (e.g. when user moves to next exercise). */
-    fun resetHiitPhase() {
-        workoutServiceManager.cancelCountdown()
-        _hiitPhase.update { HiitPhase.Idle }
     }
 
     fun toggleStopwatch() {

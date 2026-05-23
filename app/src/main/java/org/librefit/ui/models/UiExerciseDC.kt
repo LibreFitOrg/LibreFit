@@ -38,6 +38,5 @@ data class UiExerciseDC(
     val instructions: ImmutableList<String> = persistentListOf(),
     val category: Category = Category.POWERLIFTING,
     val images: ImmutableList<String> = persistentListOf(),
-    val isCustomExercise: Boolean = false,
-    val cautions: String = ""
+    val isCustomExercise: Boolean = false
 )

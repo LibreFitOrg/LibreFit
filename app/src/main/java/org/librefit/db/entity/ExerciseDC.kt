@@ -199,7 +199,5 @@ data class ExerciseDC(
     val instructions: List<String> = listOf(),
     val category: Category = Category.POWERLIFTING,
     val images: List<String> = listOf(),
-    val isCustomExercise: Boolean = false,
-    /** Common mistakes and cautions for the exercise (user-facing text). */
-    val cautions: String = ""
+    val isCustomExercise: Boolean = false
 )

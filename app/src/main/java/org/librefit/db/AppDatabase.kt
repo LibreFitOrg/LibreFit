@@ -40,7 +40,6 @@ abstract class AppDatabase : RoomDatabase() {
 
         val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // Add HIIT countdown fields to exercises table
                 db.execSQL(
                     """
                     ALTER TABLE exercises
@@ -51,13 +50,6 @@ abstract class AppDatabase : RoomDatabase() {
                     """
                     ALTER TABLE exercises
                     ADD COLUMN autoAdvanceSets INTEGER NOT NULL DEFAULT 0
-                    """.trimIndent()
-                )
-                // Add cautions field to dataset (ExerciseDC) table
-                db.execSQL(
-                    """
-                    ALTER TABLE dataset
-                    ADD COLUMN cautions TEXT NOT NULL DEFAULT ''
                     """.trimIndent()
                 )
             }
