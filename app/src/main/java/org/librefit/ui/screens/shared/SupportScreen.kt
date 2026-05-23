@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.platform.nativeClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -379,7 +380,7 @@ fun SupportScreen(
                                                 code = if (code.isNotBlank()) {
                                                     ""
                                                 } else {
-                                                    clipboardManager.nativeClipboard.primaryClip?.getItemAt(
+                                                    clipboardManager.nativeClipboardManager.primaryClip?.getItemAt(
                                                         0
                                                     )?.text?.toString() ?: ""
                                                 }
