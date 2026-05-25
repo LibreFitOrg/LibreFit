@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +21,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
+import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
 import org.librefit.helpers.DataHelper
@@ -42,8 +45,14 @@ class BeforeSavingScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val workoutRepository: WorkoutRepository,
     private val workoutServiceManager: WorkoutServiceManager,
-    private val dataHelper: DataHelper
+    private val dataHelper: DataHelper,
+    userPreferencesRepository: UserPreferencesRepository,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
+    val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
+
+    val dismissScrollWheelInputAutomatically =
+        userPreferencesRepository.dismissScrollWheelInputAutomatically
 
     private val runningWorkoutId = savedStateHandle.toRoute<Route.BeforeSavingScreen>().runningWorkoutId
 
@@ -59,8 +68,9 @@ class BeforeSavingScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            val pendingWorkout = workoutRepository.getPendingWorkout()
             val runningWorkoutWithExercises =
-                workoutRepository.getWorkoutWithExercisesAndSets(runningWorkoutId)
+                pendingWorkout ?: workoutRepository.getWorkoutWithExercisesAndSets(runningWorkoutId)
 
             val e = runningWorkoutWithExercises.exercisesWithSets
 
@@ -152,7 +162,8 @@ class BeforeSavingScreenViewModel @Inject constructor(
     fun saveExercisesWithWorkout() {
         workoutServiceManager.stopService()
 
-        viewModelScope.launch {
+        viewModelScope.launch(ioDispatcher) {
+            workoutRepository.setPendingWorkout(null)
             workoutRepository.addWorkoutWithExercisesAndSets(
                 WorkoutWithExercisesAndSets(
                     workout = workout.value.copy(

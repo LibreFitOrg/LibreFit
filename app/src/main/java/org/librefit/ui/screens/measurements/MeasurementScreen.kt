@@ -9,8 +9,10 @@
 package org.librefit.ui.screens.measurements
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -47,6 +49,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
@@ -76,9 +79,12 @@ import org.librefit.ui.components.animations.EmptyLottie
 import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.components.charts.Point
 import org.librefit.ui.components.dialogs.ConfirmDialog
+import org.librefit.ui.components.modalBottomSheets.InputModalBottomSheet
+import org.librefit.ui.models.InputModalBottomSheetState
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatDetails
+import org.librefit.util.Formatter.getDecimalDigitsAsInteger
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -92,9 +98,9 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MeasurementScreen(
+    viewModel: MeasurementScreenViewModel = hiltViewModel(),
     navigateBack: () -> Unit
 ) {
-    val viewModel: MeasurementScreenViewModel = hiltViewModel()
 
     val measurements by viewModel.measurements.collectAsStateWithLifecycle()
 
@@ -113,6 +119,29 @@ fun MeasurementScreen(
     val measurementCardState by viewModel.measurementCardState.collectAsStateWithLifecycle()
 
     val date by viewModel.date.collectAsStateWithLifecycle()
+
+    val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
+
+    val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
+
+
+    var infoModalBottomSheetState by remember { mutableStateOf<InputModalBottomSheetState?>(null) }
+
+    infoModalBottomSheetState?.let {
+        InputModalBottomSheet(
+            state = it,
+            onValueChange = { newState ->
+                if (newState is InputModalBottomSheetState.Weight) {
+                    infoModalBottomSheetState = newState
+                    viewModel.updateBodyweight("${newState.totalWeight}")
+                }
+            },
+            onDismiss = {
+                infoModalBottomSheetState = null
+            },
+            dismissAutomatically = dismissScrollWheelInputAutomatically
+        )
+    }
 
     val datePickerState = rememberDatePickerState()
     val showDatePickerDialog = remember { mutableStateOf(false) }
@@ -173,6 +202,7 @@ fun MeasurementScreen(
         fatMass = fatMass?.toString() ?: "",
         leanMass = leanMass?.toString() ?: "",
         notes = notes,
+        useScrollWheelForInput = useScrollWheelForInput,
         measurementChart = measurementChart,
         updateBodyweight = viewModel::updateBodyweight,
         updateFatMass = viewModel::updateFatMass,
@@ -186,7 +216,13 @@ fun MeasurementScreen(
         upsertMeasurement = viewModel::upsertMeasurementToDB,
         updateChartMode = viewModel::updateMeasurementChart,
         updateMeasurementCardState = viewModel::updateMeasurementCardState,
-        navigateBack = navigateBack
+        navigateBack = navigateBack,
+        onInputModalBottomSheetRequest = {
+            infoModalBottomSheetState = InputModalBottomSheetState.Weight(
+                integerWeight = bodyweight?.toInt() ?: 0,
+                decimalWeight = bodyweight?.getDecimalDigitsAsInteger() ?: 0
+            )
+        }
     )
 }
 
@@ -195,13 +231,14 @@ fun MeasurementScreen(
 private fun MeasurementScreenContent(
     measurements: List<Measurement>,
     listChartData: List<Point>,
-    bodyweight: String,
+    bodyweight: Double?,
     fatMass: String,
     leanMass: String,
     notes: String,
     date: LocalDateTime,
     measurementChart: MeasurementChart,
     measurementCardState: MeasurementCardState,
+    useScrollWheelForInput: Boolean,
     updateBodyweight: (String) -> Unit,
     updateLeanMass: (String) -> Unit,
     updateFatMass: (String) -> Unit,
@@ -213,6 +250,7 @@ private fun MeasurementScreenContent(
     updateMeasurementCardState: (MeasurementCardState) -> Unit,
     updateChartMode: (MeasurementChart) -> Unit,
     navigateBack: () -> Unit,
+    onInputModalBottomSheetRequest: () -> Unit
 ) {
 
     val focusManager = LocalFocusManager.current
@@ -220,6 +258,8 @@ private fun MeasurementScreenContent(
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+
+    var bodyweightValue by remember(bodyweight) { mutableStateOf(bodyweight?.toString() ?: "") }
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.measurements)),
@@ -280,22 +320,34 @@ private fun MeasurementScreenContent(
                         }
 
                         Row {
-                            OutlinedTextField(
-                                shape = MaterialTheme.shapes.large,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .focusRequester(focusRequester),
-                                value = bodyweight,
-                                label = { Text(text = stringResource(R.string.body_weight)) },
-                                suffix = { Text(stringResource(R.string.kg)) },
-                                isError = bodyweight.isBlank(),
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Decimal,
-                                    showKeyboardOnFocus = true
-                                ),
-                                onValueChange = updateBodyweight
-                            )
+                            Box(Modifier.weight(1f)) {
+                                OutlinedTextField(
+                                    shape = MaterialTheme.shapes.large,
+                                    modifier = Modifier.focusRequester(focusRequester),
+                                    value = bodyweightValue,
+                                    label = { Text(text = stringResource(R.string.body_weight)) },
+                                    suffix = { Text(stringResource(R.string.kg)) },
+                                    isError = bodyweightValue.isBlank(),
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Decimal,
+                                        showKeyboardOnFocus = true
+                                    ),
+                                    onValueChange = {
+                                        bodyweightValue = Formatter.normalizeNumericString(it)
+                                        updateBodyweight(bodyweightValue)
+                                    },
+                                )
+                                if (useScrollWheelForInput) {
+                                    Box(
+                                        modifier = Modifier
+                                            .matchParentSize()
+                                            .padding(top = 7.dp) // Thin offset to match inner shape
+                                            .clip(MaterialTheme.shapes.largeIncreased)
+                                            .clickable { onInputModalBottomSheetRequest() }
+                                    ) { }
+                                }
+                            }
                             Spacer(Modifier.width(10.dp))
                             OutlinedTextField(
                                 shape = MaterialTheme.shapes.large,
@@ -390,7 +442,7 @@ private fun MeasurementScreenContent(
                                     if (measurementCardState == MeasurementCardState.NEW)
                                         R.drawable.ic_add else R.drawable.ic_edit
                                 ),
-                                enabled = bodyweight.isNotBlank() && bodyweight.toDoubleOrNull() != 0.0
+                                enabled = bodyweightValue.isNotBlank() && bodyweightValue.toDoubleOrNull() != null && bodyweightValue.toDoubleOrNull() != 0.0
                             ) {
                                 upsertMeasurement()
 
@@ -610,7 +662,7 @@ private fun MeasurementScreenPreview() {
             updateIdMeasurement = { idMeasurement.longValue = it },
             upsertMeasurement = {},
             updateChartMode = {},
-            bodyweight = "72",
+            bodyweight = 72.0,
             fatMass = "12",
             leanMass = "22",
             notes = "This is a note",
@@ -619,7 +671,9 @@ private fun MeasurementScreenPreview() {
             updateFatMass = {},
             updateNotes = {},
             updateMeasurementCardState = {},
-            navigateBack = {}
+            navigateBack = {},
+            useScrollWheelForInput = true,
+            onInputModalBottomSheetRequest = {}
         )
     }
 }

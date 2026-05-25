@@ -73,13 +73,17 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun SharedTransitionScope.EditWorkoutScreen(
     sharedViewModel: SharedViewModel,
     navController: NavHostController,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: EditWorkoutScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: EditWorkoutScreenViewModel = hiltViewModel()
 
     val workout by viewModel.workout.collectAsStateWithLifecycle()
 
     val exercises by viewModel.exercises.collectAsStateWithLifecycle()
+
+    val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
+
+    val dismissInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         sharedViewModel.getSelectedExercisesList().forEach(viewModel::addExerciseWithSets)
@@ -110,6 +114,8 @@ fun SharedTransitionScope.EditWorkoutScreen(
         workout = workout,
         isTitleTooLong = viewModel.isTitleTooLong(),
         isTitleEmpty = viewModel.isTitleEmpty(),
+        dismissInputAutomatically = dismissInputAutomatically,
+        useScrollWheelForInput = useScrollWheelForInput,
         updateTitle = viewModel::updateTitle,
         updateNotes = viewModel::updateNotes,
         updateSetTime = viewModel::updateSetTime,
@@ -140,6 +146,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     workout: UiWorkout,
     isTitleTooLong: Boolean,
     isTitleEmpty: Boolean,
+    dismissInputAutomatically: Boolean,
+    useScrollWheelForInput: Boolean,
     updateTitle: (String) -> Unit,
     updateNotes: (String) -> Unit,
     deleteSet: (Long) -> Unit,
@@ -226,7 +234,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                 showConfirmDialog = true
             }
         },
-        actions = listOf {
+        actions = persistentListOf({
             if (typeOfEdit == false) {
                 navController.navigate(
                     Route.BeforeSavingScreen(
@@ -240,12 +248,12 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                     popUpTo(Route.MainScreen) { inclusive = false }
                 }
             }
-        },
-        actionsDescription = listOf(
+        }),
+        actionsDescription = persistentListOf(
             if (typeOfEdit == false) stringResource(R.string.done)
             else stringResource(R.string.save)
         ),
-        actionsEnabled = listOf(!isTitleEmpty && !isTitleTooLong && exercisesWithSets.isNotEmpty()),
+        actionsEnabled = persistentListOf(!isTitleEmpty && !isTitleTooLong && if (typeOfEdit != false) true else exercisesWithSets.isNotEmpty()),
         fabIcon = painterResource(R.drawable.ic_add),
         fabAction = {
             navController.navigate(Route.ExercisesScreen(addExercises = true)) {
@@ -329,6 +337,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                             workout = typeOfEdit == false,
                             addSet = addSetToExercise,
                             isDragging = isDragging,
+                            useScrollWheelForInput = useScrollWheelForInput,
+                            dismissScrollWheelInputAutomatically = dismissInputAutomatically,
                             onDetail = { id, idExerciseDC ->
                                 navController.navigate(
                                     Route.InfoExerciseScreen(
@@ -412,6 +422,8 @@ private fun EditWorkoutScreenPreview() {
                     workout = UiWorkout(title = "\uD83C\uDFCB Upper body"),
                     isTitleTooLong = false,
                     isTitleEmpty = false,
+                    useScrollWheelForInput = false,
+                    dismissInputAutomatically = false,
                     updateTitle = { _ -> },
                     updateNotes = { _ -> },
                     addSetToExercise = { _ -> },

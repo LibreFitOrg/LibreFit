@@ -57,6 +57,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
 import org.librefit.db.entity.ExerciseDC
@@ -82,9 +83,9 @@ fun SharedTransitionScope.ExercisesScreen(
     addExercises: Boolean,
     navController: NavHostController,
     sharedViewModel: SharedViewModel,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: ExercisesScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: ExercisesScreenViewModel = hiltViewModel()
 
     val filteredExerciseList by viewModel.filteredExerciseList.collectAsStateWithLifecycle()
 
@@ -120,10 +121,10 @@ fun SharedTransitionScope.ExercisesScreen(
     }
 
     val actions = remember {
-        if (addExercises) listOf {
+        if (addExercises) persistentListOf({
             navController.navigateUp()
             sharedViewModel.setSelectedExercisesList(selectedExercisesList.map { it.toEntity() })
-        } else listOf()
+        }) else persistentListOf()
     }
 
 
@@ -163,7 +164,7 @@ private fun SharedTransitionScope.ExercisesScreenContent(
     toggleSelectedExercise: (String) -> Unit,
     updateQuery: (String) -> Unit,
     updateFilter: (FilterValue) -> Unit,
-    actions: List<() -> Unit>,
+    actions: ImmutableList<() -> Unit>,
     navigateBack: () -> Unit,
     navigateToInfoExercise: (ExerciseDC) -> Unit,
     navigateToEditExercise: () -> Unit
@@ -177,8 +178,8 @@ private fun SharedTransitionScope.ExercisesScreenContent(
         title = AnnotatedString(stringResource(id = R.string.exercises)),
         navigateBack = navigateBack,
         actions = actions,
-        actionsDescription = listOf(stringResource(R.string.add)),
-        actionsEnabled = listOf(selectedExercisesIdList.isNotEmpty()),
+        actionsDescription = persistentListOf(stringResource(R.string.add)),
+        actionsEnabled = persistentListOf(selectedExercisesIdList.isNotEmpty()),
         fabAction = navigateToEditExercise,
         fabText = stringResource(R.string.create_exercise),
         fabIcon = painterResource(R.drawable.ic_add),
@@ -418,7 +419,7 @@ private fun ExercisesScreenPreview() {
                     toggleSelectedExercise = {},
                     updateQuery = { query = it },
                     updateFilter = { filterValue = it },
-                    actions = listOf {},
+                    actions = persistentListOf({}),
                     navigateBack = {},
                     navigateToInfoExercise = {},
                     navigateToEditExercise = {}

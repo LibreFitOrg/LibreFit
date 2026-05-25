@@ -68,4 +68,14 @@
     <string name="muscle_shoulders">肩部</string>
     <string name="muscle_traps">斜方肌</string>
     <string name="muscle_triceps">肱三头肌</string>
+    <string name="contributors">贡献者</string>
+    <string name="delete">删除</string>
+    <string name="seconds">秒</string>
+    <string name="done">完成</string>
+    <string name="menu">菜单</string>
+    <string name="min">分</string>
+    <string name="set">组</string>
+    <string name="reps">次</string>
+    <string name="bodyweight">自重</string>
+    <string name="most_reps">最多次数</string>
 </resources>

@@ -37,9 +37,9 @@ import kotlin.random.Random
 
 @Composable
 fun StatisticsScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: StatisticsScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: StatisticsScreenViewModel = hiltViewModel()
 
     val muscleDistributionPoints by viewModel.muscleDistributionPoints.collectAsStateWithLifecycle()
 

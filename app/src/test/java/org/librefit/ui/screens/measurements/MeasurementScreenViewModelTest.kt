@@ -23,6 +23,7 @@ import org.junit.Test
 import org.librefit.MainDispatcherRule
 import org.librefit.db.entity.Measurement
 import org.librefit.db.repository.MeasurementRepository
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.MeasurementCardState
 import org.librefit.enums.chart.MeasurementChart
 import java.time.LocalDateTime
@@ -36,11 +37,16 @@ class MeasurementScreenViewModelTest {
     // The mock repository
     private lateinit var measurementRepository: MeasurementRepository
 
+    private lateinit var userPreferencesRepository: UserPreferencesRepository
+
     // The class under test
     private lateinit var viewModel: MeasurementScreenViewModel
 
     // A controllable flow to simulate repository emissions
     private lateinit var measurementsFlow: MutableStateFlow<List<Measurement>>
+
+    private lateinit var useScrollWheelForInput: MutableStateFlow<Boolean>
+    private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
 
     // Captured objects
     private val upsertedMeasurementSlot = slot<Measurement>()
@@ -60,6 +66,10 @@ class MeasurementScreenViewModelTest {
         // Arrange: Create a mock for the repository
         measurementRepository = mockk()
         measurementsFlow = MutableStateFlow(emptyList())
+        useScrollWheelForInput = MutableStateFlow(true)
+        dismissScrollWheelAutomatically = MutableStateFlow(false)
+
+        userPreferencesRepository = mockk()
 
         // Arrange: Tell the mock what to return when `measurements` is accessed
         every { measurementRepository.measurements } returns measurementsFlow
@@ -84,8 +94,15 @@ class MeasurementScreenViewModelTest {
             measurementsFlow.value = updatedList
         }
 
+        every { userPreferencesRepository.useScrollWheelForInput } returns useScrollWheelForInput
+        every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
 
-        viewModel = MeasurementScreenViewModel(measurementRepository, defaultDispatcher = mainDispatcherRule.testDispatcher)
+
+        viewModel = MeasurementScreenViewModel(
+            measurementRepository,
+            defaultDispatcher = mainDispatcherRule.testDispatcher,
+            userPreferencesRepository = userPreferencesRepository
+        )
     }
 
     @Test
@@ -109,8 +126,8 @@ class MeasurementScreenViewModelTest {
     }
 
     @Test
-    fun `initial state - body weight is empty `() = runTest {
-        assertThat(viewModel.bodyWeight.value).isEmpty()
+    fun `initial state - body weight is 0,0 `() = runTest {
+        assertThat(viewModel.bodyWeight.value).isEqualTo(0.0)
     }
 
     @Test

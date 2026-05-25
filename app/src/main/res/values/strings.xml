@@ -50,6 +50,8 @@
     <string name="lets_build_it_together">Let\'s build it together</string>
     <string name="tutorial_desc">Learn how to create routines and track your workouts.</string>
     <string name="donators">Donators</string>
+    <string name="codeberg" translatable="false">Codeberg</string>
+    <string name="url_source_code_codeberg">https://codeberg.org/LibreFitOrg/LibreFit</string>
 
     <!-- username and url of donators, contributors and translators -->
     <string name="doen1el" translatable="false">doen1el</string>
@@ -62,6 +64,32 @@
     <string name="url_VA5H_One" translatable="false">https://github.com/VA5H-One</string>
     <string name="FlashyGhost" translatable="false">FlashyGhost</string>
     <string name="Odweta" translatable="false">Odweta</string>
+    <string name="dpusceddu" translatable="false">dpusceddu</string>
+    <string name="url_dpusceddu" translatable="false">https://github.com/dpusceddu</string>
+    <string name="b3nj5m1n" translatable="false">b3nj5m1n</string>
+    <string name="url_b3nj5m1n" translatable="false">https://github.com/b3nj5m1n</string>
+    <string name="jakedevs" translatable="false">jakedevs</string>
+    <string name="url_debianite65" translatable="false">https://github.com/debianite65</string>
+    <string name="debianite65" translatable="false">debianite65</string>
+    <string name="the_blue_blurr" translatable="false">The Blue Blurr</string>
+    <string name="AhmedAwad7" translatable="false">AhmedAwad7</string>
+    <string name="url_AhmedAwad7" translatable="false">https://github.com/AhmedAwad7</string>
+    <string name="b0saleh" translatable="false">b0saleh</string>
+    <string name="url_b0saleh" translatable="false">https://github.com/b0saleh</string>
+    <string name="miguelsoaresouza8_droid" translatable="false">miguelsoaresouza8-droid</string>
+    <string name="url_miguelsoaresouza8_droid" translatable="false">https://github.com/miguelsoaresouza8-droid</string>
+    <string name="DoubleCheddarBurger" translatable="false">DoubleCheddarBurger</string>
+    <string name="url_DoubleCheddarBurger" translatable="false">https://github.com/DoubleCheddarBurger</string>
+    <string name="Spartang_117" translatable="false">Spartang-117</string>
+    <string name="url_Spartang_117" translatable="false">https://github.com/Spartang-117</string>
+    <string name="josé_m" translatable="false">josé m</string>
+    <string name="raihankr" translatable="false">raihankr</string>
+    <string name="url_raihankr" translatable="false">https://github.com/raihankr</string>
+    <string name="SelwynDO" translatable="false">SelwynDO</string>
+    <string name="url_SelwynDO" translatable="false">https://github.com/SelwynDO</string>
+    <string name="SilentCoderHere" translatable="false">SilentCoderHere</string>
+    <string name="url_SilentCoderHere" translatable="false">https://github.com/SilentCoderHere</string>
+    <string name="UnknownLi" translatable="false">UnknownLi</string>
 
 
     <!--Before saving screen-->
@@ -242,6 +270,28 @@
     <string name="screen_on_desc">Screen stays on during workout</string>
     <string name="screen_off_desc">Screen does not stay on during workout</string>
     <string name="settings_general">General</string>
+    <string name="rest_timer_sound">Rest timer sound</string>
+    <string name="rest_timer_sound_on_desc">Play a sound when rest timer ends</string>
+    <string name="rest_timer_sound_off_desc">Rest timer alerts will be silent</string>
+    <string name="stick_status_bar">Stick status bar</string>
+    <string name="stick_status_bar_desc">The status bar of ongoing workout will be stuck at the top of the screen</string>
+    <string name="not_stick_status_bar_desc">The status bar of ongoing workout won\'t be stuck at the top of the screen</string>
+    <string name="use_scroll_wheel_for_input">Use scroll wheel for input</string>
+    <string name="use_scroll_wheel_for_input_desc">Use a scrollable wheel to select values and time.</string>
+    <string name="not_use_scroll_wheel_for_input_desc">Type values directly using the keyboard instead of the scroll wheel.</string>
+    <string name="dismiss_scroll_wheel_automatically">Dismiss scroll wheel automatically</string>
+    <string name="dismiss_scroll_wheel_automatically_desc">The scroll wheel will be dismissed automatically.</string>
+    <string name="dismiss_scroll_wheel_manually_desc">The scroll wheel will have to be dismissed manually.</string>
+    <string name="export_data">Export data</string>
+    <string name="export_data_desc">Export the current database</string>
+    <string name="export_data_success">Data exported successfully</string>
+    <string name="export_data_failed">Data export failed</string>
+    <string name="import_data">Import data</string>
+    <string name="import_data_desc">Import backed up data</string>
+    <string name="import_data_success">Data imported successfully</string>
+    <string name="import_data_failed">Data import failed</string>
+
+    <!--- Languages -->
     <string name="language">Language</string>
     <string name="language_english_nt" translatable="false">English</string>
     <string name="language_english">English</string>
@@ -257,21 +307,22 @@
     <string name="language_spanish">Spanish</string>
     <string name="language_chinese_simplified_nt" translatable="false">简体中文</string>
     <string name="language_chinese_simplified">Chinese simplified</string>
-    <string name="rest_timer_sound">Rest timer sound</string>
-    <string name="rest_timer_sound_on_desc">Play a sound when rest timer ends</string>
-    <string name="rest_timer_sound_off_desc">Rest timer alerts will be silent</string>
-    <string name="stick_status_bar">Stick status bar</string>
-    <string name="stick_status_bar_desc">The status bar of ongoing workout will be stuck at the top of the screen</string>
-    <string name="not_stick_status_bar_desc">The status bar of ongoing workout won\'t be stuck at the top of the screen</string>
-    <string name="export_data">Export data</string>
-    <string name="export_data_desc">Export the current database</string>
-    <string name="export_data_success">Data exported successfully</string>
-    <string name="export_data_failed">Data export failed</string>
-    <string name="import_data">Import data</string>
-    <string name="import_data_desc">Import backed up data</string>
-    <string name="import_data_success">Data imported successfully</string>
-    <string name="import_data_failed">Data import failed</string>
-
+    <string name="language_galician_nt" translatable="false">Galego</string>
+    <string name="language_galician">Galician</string>
+    <string name="language_brazilian_portuguese_nt" translatable="false">Português (Brasil)</string>
+    <string name="language_brazilian_portuguese">Brazilian portuguese</string>
+    <string name="language_arabic_nt" translatable="false">العربية</string>
+    <string name="language_arabic">Arabic</string>
+    <string name="language_catalan_nt" translatable="false">Català</string>
+    <string name="language_catalan">Catalan</string>
+    <string name="language_french_nt" translatable="false">Français</string>
+    <string name="language_french">French</string>
+    <string name="language_hindi_nt" translatable="false">हिंदी</string>
+    <string name="language_hindi">Hindi</string>
+    <string name="language_indonesian_nt" translatable="false">Bahasa Indonesia</string>
+    <string name="language_indonesian">Indonesian</string>
+    <string name="language_ukrainian_nt" translatable="false">українська</string>
+    <string name="language_ukrainian">Ukrainian</string>
 
     <!-- Statistics screen-->
     <string name="past">Past</string>
@@ -368,6 +419,9 @@
     <string name="librefit_is_under_threat">LibreFit is under threat</string>
     <string name="librefit_is_under_threat_desc">- Starting in September 2026, Google plans to lock down Android by **blocking you from installing any app** unless its developer has paid a fee, registered, and handed over personal ID to Google.\n- This policy destroys Android\'s open ecosystem and **takes away your basic right to choose what software you can run on the device you own**.\n- Please visit [keepandroidopen.org](https://keepandroidopen.org) to learn more about this threat to your digital freedom and how you can help stop it.</string>
 
+    <!-- Input modal bottom sheet -->
+    <string name="weight">Weight</string>
+
 
 
     <!--Exercise card-->
@@ -424,6 +478,8 @@
     <string name="equipment_barbell">Barbell</string>
     <string name="equipment_exercise_ball">Exercise ball</string>
     <string name="equipment_ez_curl_bar">EZ curl bar</string>
+    <string name="equipment_pull_up_bar">Pull-up bar</string>
+    <string name="equipment_rings">Rings</string>
     <string name="equipment_other">Other</string>
 
     <string name="muscle_abdominals">Abdominals</string>
@@ -475,5 +531,7 @@
     <string name="name">Name</string>
     <string name="edit">Edit</string>
     <string name="do_not_show_again">Do not show again</string>
+    <string name="undo">Undo</string>
+    <string name="clear">Clear</string>
 
 </resources>

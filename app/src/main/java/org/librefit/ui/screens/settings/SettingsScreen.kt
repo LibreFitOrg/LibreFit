@@ -9,12 +9,16 @@
 package org.librefit.ui.screens.settings
 
 import android.os.Build
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,13 +40,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,7 +56,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.flow.collect
 import org.librefit.R
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.DialogPreference
@@ -72,10 +73,9 @@ import kotlin.random.Random
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SettingsScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: SettingsScreenViewModel = hiltViewModel()
 ) {
-
-    val viewModel: SettingsScreenViewModel = hiltViewModel()
 
 
     val selectedLanguage by viewModel.language.collectAsStateWithLifecycle()
@@ -97,6 +97,10 @@ fun SettingsScreen(
     val isWorkoutHeaderSticky by viewModel.isWorkoutHeaderSticky.collectAsStateWithLifecycle()
 
     val isImporting by viewModel.isImporting.collectAsStateWithLifecycle()
+
+    val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
+
+    val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
 
     preferences?.let {
         PreferenceDialog(
@@ -143,7 +147,9 @@ fun SettingsScreen(
         keepWorkoutScreenOn = keepWorkoutScreenOn,
         restTimerSoundOn = restTimerSoundOn,
         isSupporter = isSupporter,
+        useScrollWheelForInput = useScrollWheelForInput,
         isWorkoutHeaderSticky = isWorkoutHeaderSticky,
+        dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
         updatePreferences = viewModel::updatePreferences,
         saveBooleanValue = viewModel::savePreference,
         onExportClicked = {
@@ -152,7 +158,13 @@ fun SettingsScreen(
         },
         onImportClicked = { importLauncher.launch(arrayOf("*/*")) },
         isImporting = isImporting,
-        snackbarHostState = snackbarHostState
+        snackbarHostState = snackbarHostState,
+        onMaterialModeChange = viewModel::saveMaterialMode,
+        onKeepWorkoutScreenOnChange = viewModel::saveWorkoutScreenOn,
+        onRestTimerSoundOnChange = viewModel::saveRestTimerSoundOn,
+        onIsWorkoutHeaderStickyChange = viewModel::saveIsWorkoutHeaderSticky,
+        onUseScrollWheelForInputChange = viewModel::saveUseScrollWheelForInput,
+        onDismissScrollWhellInputAutomaticallyChange = viewModel::saveDismissScrollWheelInputAutomatically
     )
 }
 
@@ -167,12 +179,20 @@ private fun SettingsScreenContent(
     restTimerSoundOn: Boolean,
     isSupporter: Boolean,
     isWorkoutHeaderSticky: Boolean,
+    useScrollWheelForInput: Boolean,
+    dismissScrollWheelInputAutomatically: Boolean,
     updatePreferences: (List<DialogPreference>) -> Unit,
     saveBooleanValue: (Preferences.Key<Boolean>, value: Boolean) -> Unit,
     onExportClicked: () -> Unit,
     onImportClicked: () -> Unit,
     isImporting: Boolean,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    onMaterialModeChange: (Boolean) -> Unit,
+    onKeepWorkoutScreenOnChange: (Boolean) -> Unit,
+    onRestTimerSoundOnChange: (Boolean) -> Unit,
+    onIsWorkoutHeaderStickyChange: (Boolean) -> Unit,
+    onUseScrollWheelForInputChange: (Boolean) -> Unit,
+    onDismissScrollWhellInputAutomaticallyChange: (Boolean) -> Unit,
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.settings)),
@@ -198,10 +218,7 @@ private fun SettingsScreenContent(
                     SettingItem(
                         onClick = {
                             if (isSupporter) {
-                                saveBooleanValue(
-                                    UserPreferencesRepository.materialModeKey,
-                                    !materialModeOn
-                                )
+                                onMaterialModeChange(!materialModeOn)
                             } else {
                                 navController.navigate(Route.SupportScreen(true)) {
                                     launchSingleTop = true
@@ -234,12 +251,7 @@ private fun SettingsScreenContent(
 
             item {
                 SettingItem(
-                    onClick = {
-                        saveBooleanValue(
-                            UserPreferencesRepository.keepOnWorkoutScreenKey,
-                            !keepWorkoutScreenOn
-                        )
-                    },
+                    onClick = { onKeepWorkoutScreenOnChange(!keepWorkoutScreenOn) },
                     icon = painterResource(R.drawable.ic_keep),
                     settingName = stringResource(id = R.string.keep_screen_on),
                     settingDesc = stringResource(
@@ -251,12 +263,7 @@ private fun SettingsScreenContent(
 
             item {
                 SettingItem(
-                    onClick = {
-                        saveBooleanValue(
-                            UserPreferencesRepository.restTimerSoundKey,
-                            !restTimerSoundOn
-                        )
-                    },
+                    onClick = { onRestTimerSoundOnChange(!restTimerSoundOn) },
                     icon = painterResource(R.drawable.ic_notification_sound),
                     settingName = stringResource(id = R.string.rest_timer_sound),
                     settingDesc = stringResource(
@@ -269,12 +276,7 @@ private fun SettingsScreenContent(
             item {
                 SettingItem(
                     isChecked = isWorkoutHeaderSticky,
-                    onClick = {
-                        saveBooleanValue(
-                            UserPreferencesRepository.isWorkoutHeaderStickyKey,
-                            !isWorkoutHeaderSticky
-                        )
-                    },
+                    onClick = { onIsWorkoutHeaderStickyChange(!isWorkoutHeaderSticky) },
                     icon = painterResource(R.drawable.ic_sticker),
                     settingDesc = stringResource(if (isWorkoutHeaderSticky) R.string.stick_status_bar_desc else R.string.not_stick_status_bar_desc),
                     settingName = stringResource(R.string.stick_status_bar)
@@ -297,6 +299,33 @@ private fun SettingsScreenContent(
                     settingName = stringResource(id = R.string.import_data),
                     settingDesc = stringResource(R.string.import_data_desc)
                 )
+            }
+
+            item {
+                SettingItem(
+                    isChecked = useScrollWheelForInput,
+                    onClick = { onUseScrollWheelForInputChange(!useScrollWheelForInput) },
+                    icon = painterResource(R.drawable.ic_scroll_vertical),
+                    settingDesc = stringResource(if (useScrollWheelForInput) R.string.use_scroll_wheel_for_input_desc else R.string.not_use_scroll_wheel_for_input_desc),
+                    settingName = stringResource(R.string.use_scroll_wheel_for_input)
+                )
+            }
+
+
+            item {
+                AnimatedVisibility(
+                    visible = useScrollWheelForInput,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    SettingItem(
+                        isChecked = dismissScrollWheelInputAutomatically,
+                        onClick = { onDismissScrollWhellInputAutomaticallyChange(!dismissScrollWheelInputAutomatically) },
+                        icon = painterResource(R.drawable.ic_bottom_panel_close),
+                        settingDesc = stringResource(if (dismissScrollWheelInputAutomatically) R.string.dismiss_scroll_wheel_automatically_desc else R.string.dismiss_scroll_wheel_manually_desc),
+                        settingName = stringResource(R.string.dismiss_scroll_wheel_automatically)
+                    )
+                }
             }
         }
     }
@@ -383,6 +412,7 @@ fun SettingsScreenPreview() {
     var keepWorkoutScreenOn by remember { mutableStateOf(Random.nextBoolean()) }
     var restTimerSoundOn by remember { mutableStateOf(Random.nextBoolean()) }
     var isWorkoutHeaderSticky by remember { mutableStateOf(Random.nextBoolean()) }
+    var useScrollWheelForInput by remember { mutableStateOf(Random.nextBoolean()) }
 
     val theme = ThemeMode.entries.random()
 
@@ -415,7 +445,15 @@ fun SettingsScreenPreview() {
             onExportClicked = {},
             onImportClicked = {},
             isImporting = false,
-            snackbarHostState = SnackbarHostState()
+            snackbarHostState = SnackbarHostState(),
+            useScrollWheelForInput = useScrollWheelForInput,
+            dismissScrollWheelInputAutomatically = Random.nextBoolean(),
+            onMaterialModeChange = { materialModeOn = it },
+            onKeepWorkoutScreenOnChange = { keepWorkoutScreenOn = it },
+            onRestTimerSoundOnChange = { restTimerSoundOn = it },
+            onIsWorkoutHeaderStickyChange = { isWorkoutHeaderSticky = it },
+            onUseScrollWheelForInputChange = { useScrollWheelForInput = it },
+            onDismissScrollWhellInputAutomaticallyChange = {}
         )
     }
 }

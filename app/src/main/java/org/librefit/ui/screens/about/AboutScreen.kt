@@ -277,6 +277,17 @@ fun AboutScreen(navController: NavHostController) {
 
             item {
                 AboutItem(
+                    icon = painterResource(R.drawable.ic_codeberg),
+                    text = stringResource(R.string.codeberg),
+                    description = stringResource(R.string.source_code),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_source_code_codeberg)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
                     icon = painterResource(R.drawable.ic_contract),
                     text = stringResource(R.string.dependencies),
                     onClick = {
@@ -304,6 +315,54 @@ fun AboutScreen(navController: NavHostController) {
                 AboutItem(
                     icon = painterResource(R.drawable.ic_person),
                     text = stringResource(R.string.FlashyGhost)
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.jakedevs)
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.debianite65),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_debianite65)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.the_blue_blurr)
+                )
+            }
+
+            item {
+                HeadlineText(stringResource(R.string.contributors))
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.dpusceddu),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_dpusceddu)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.b3nj5m1n),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_b3nj5m1n)
+                    }
                 )
             }
 
@@ -360,6 +419,110 @@ fun AboutScreen(navController: NavHostController) {
                     onClick = {
                         url.value = resources.getString(R.string.url_VA5H_One)
                     }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.AhmedAwad7),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_arabic),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_AhmedAwad7)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.b0saleh),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_arabic),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_b0saleh)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.miguelsoaresouza8_droid),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_brazilian_portuguese),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_miguelsoaresouza8_droid)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.DoubleCheddarBurger),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_catalan),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_DoubleCheddarBurger)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.Spartang_117),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_Spartang_117)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.josé_m),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_galician),
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.SilentCoderHere),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_hindi),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_SilentCoderHere)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.raihankr),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_indonesian),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_raihankr)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.SelwynDO),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_spanish),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_SelwynDO)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.UnknownLi),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_ukrainian),
                 )
             }
         }

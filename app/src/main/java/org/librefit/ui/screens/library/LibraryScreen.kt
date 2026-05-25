@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
 import org.librefit.enums.pages.MainScreenPages
 import org.librefit.enums.userPreferences.ThemeMode
@@ -76,14 +77,6 @@ fun LibraryScreen() {
         mutableStateOf(colors.random())
     }
 
-    /**
-     * Only used to preview animation in android studio
-     */
-    val animatedColor by animateColorAsState(
-        targetValue = currentColor,
-        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
-        label = "ColorAnimation"
-    )
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -119,13 +112,13 @@ private fun LibraryScreenPreview() {
             title = buildAnnotatedString {
                 GetAppNameInAnnotatedBuilder(MaterialTheme.typography.titleLargeEmphasized)
             },
-            actions = listOf({ }, { }, { }),
-            actionsIcons = listOf(
+            actions = persistentListOf({ }, { }, { }),
+            actionsIcons = persistentListOf(
                 painterResource(R.drawable.ic_favorite),
                 painterResource(R.drawable.ic_info),
                 painterResource(R.drawable.ic_settings)
             ),
-            actionsElevated = listOf(false, false, false),
+            actionsElevated = persistentListOf(false, false, false),
             bottomBar = {
                 NavigationBar {
                     MainScreenPages.entries.forEach { page ->

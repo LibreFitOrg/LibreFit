@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.navigation.NavHostController
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import org.librefit.R
 import org.librefit.enums.pages.MainScreenPages
@@ -72,17 +73,17 @@ fun SharedTransitionScope.MainScreen(
         title = buildAnnotatedString {
             GetAppNameInAnnotatedBuilder(MaterialTheme.typography.titleLargeEmphasized)
         },
-        actions = listOf(
+        actions = persistentListOf(
             { navController.navigate(Route.SupportScreen()) { launchSingleTop = true } },
             { navController.navigate(Route.AboutScreen) { launchSingleTop = true } },
             { navController.navigate(Route.SettingsScreen) { launchSingleTop = true } }
         ),
-        actionsIcons = listOf(
+        actionsIcons = persistentListOf(
             painterResource(R.drawable.ic_favorite),
             painterResource(R.drawable.ic_info),
             painterResource(R.drawable.ic_settings)
         ),
-        actionsElevated = listOf(true, false, false),
+        actionsElevated = persistentListOf(true, false, false),
         fabAction = if (pagerState.currentPage == MainScreenPages.HOME.ordinal) fabAction else null,
         fabIcon = painterResource(R.drawable.ic_add),
         fabDescription = stringResource(R.string.create_routine),

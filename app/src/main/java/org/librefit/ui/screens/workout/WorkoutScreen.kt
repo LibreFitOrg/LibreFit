@@ -72,7 +72,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
@@ -104,10 +103,9 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun SharedTransitionScope.WorkoutScreen(
     navController: NavHostController,
     sharedViewModel: SharedViewModel,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: WorkoutScreenViewModel = hiltViewModel()
 ) {
-    val viewModel: WorkoutScreenViewModel = hiltViewModel()
-
 
     LaunchedEffect(Unit) {
         //It adds the selected exercises from AddExerciseScreen
@@ -135,6 +133,10 @@ fun SharedTransitionScope.WorkoutScreen(
     val runningWorkoutId by viewModel.runningWorkoutId.collectAsStateWithLifecycle()
 
     val isHeaderSticky by viewModel.isHeaderSticky.collectAsStateWithLifecycle()
+
+    val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
+
+    val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
 
 
     //It keeps the screen turned on
@@ -187,15 +189,15 @@ fun SharedTransitionScope.WorkoutScreen(
             viewModel.stopWorkoutService()
             navController.navigateUp()
         },
-        actions = listOf {
+        actions = persistentListOf({
             navController.navigate(
                 Route.BeforeSavingScreen(
                     runningWorkoutId = runningWorkoutId
                 ),
             ) { launchSingleTop = true }
-        },
-        actionsEnabled = listOf(!exercisesWithSets.isEmpty()),
-        actionsDescription = listOf(stringResource(R.string.done)),
+        }),
+        actionsEnabled = persistentListOf(!exercisesWithSets.isEmpty()),
+        actionsDescription = persistentListOf(stringResource(R.string.done)),
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             FloatingWorkoutActionBar(
@@ -217,6 +219,8 @@ fun SharedTransitionScope.WorkoutScreen(
                 isStopwatchPaused = isStopwatchPaused,
                 workoutProgress = workoutProgress,
                 isHeaderSticky = isHeaderSticky,
+                useScrollWheelForInput = useScrollWheelForInput,
+                dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                 toggleStopwatch = viewModel::toggleStopwatch,
                 updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
                 onSelectedExerciseIdChange = { id, idExerciseDC ->
@@ -249,19 +253,8 @@ fun SharedTransitionScope.WorkoutScreen(
 
 
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    // Save state of running workout when this screen is the primary focus
-    LaunchedEffect(Unit) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.runningWorkoutState.collect {
-                viewModel.saveRunningWorkout(it)
-            }
-        }
-    }
-
-
     // Keep track of focus to play alter sound or not
+    val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -288,6 +281,8 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     workoutProgress: Pair<Int, Int>,
     idSetWithRunningStopwatch: Long?,
     isHeaderSticky: Boolean,
+    useScrollWheelForInput: Boolean,
+    dismissScrollWheelInputAutomatically: Boolean,
     toggleStopwatch: () -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
     addSetToExercise: (Long) -> Unit,
@@ -411,6 +406,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                         exerciseWithSets = exerciseWithSets,
                         previousPerformances = previousPerformances.getOrNull(i),
                         idSetWithRunningStopwatch = idSetWithRunningStopwatch,
+                        useScrollWheelForInput = useScrollWheelForInput,
                         workout = true,
                         addSet = addSetToExercise,
                         onDetail = onSelectedExerciseIdChange,
@@ -426,6 +422,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                             }
                         ),
                         isDragging = isDragging,
+                        dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                         onReorderRequest = { isReorderingEnabled = true },
                         deleteSet = deleteSet,
                         showInfo = showInfo,
@@ -617,9 +614,9 @@ private fun WorkoutScreenPreview() {
                 LibreFitScaffold(
                     title = AnnotatedString(stringResource(R.string.workout)),
                     navigateBack = {},
-                    actions = listOf {},
-                    actionsEnabled = listOf(e.isNotEmpty()),
-                    actionsDescription = listOf(stringResource(R.string.done)),
+                    actions = persistentListOf({}),
+                    actionsEnabled = persistentListOf(e.isNotEmpty()),
+                    actionsDescription = persistentListOf(stringResource(R.string.done)),
                 ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
                         WorkoutScreenContent(
@@ -649,6 +646,8 @@ private fun WorkoutScreenPreview() {
                             isStopwatchPaused = false,
                             workoutProgress = workoutProgress,
                             isHeaderSticky = true,
+                            useScrollWheelForInput = true,
+                            dismissScrollWheelInputAutomatically = false,
                             toggleStopwatch = {},
                             addSetToExercise = {},
                             updateSetTime = { _, _ -> },

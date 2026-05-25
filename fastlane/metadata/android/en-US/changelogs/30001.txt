@@ -1,0 +1,16 @@
+✨ Added
+- New 28 exercises with instructions and high-quality images
+- Option to dismiss scroll wheel automatically
+- New languages: Portuguese (Brazil) 🇧🇷, Galician
+
+🔧 Changed
+- Save routines even when empty.
+- Make license clearer.
+
+🐛 Fixed
+- Workout metrics did not update after the initial save.
+- Rest timer notification sound was suppressed by other media.
+- Scroll wheel animation not allowing input.
+- Rare crash in info workout screen.
+- Parsing logic when typing weight.
+- Typing time logic and parsing.

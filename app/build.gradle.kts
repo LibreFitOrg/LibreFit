@@ -21,7 +21,7 @@ plugins {
 
 android {
     namespace = "org.librefit"
-    compileSdk = 36
+    compileSdk = 37
 
     buildFeatures {
         buildConfig = true
@@ -37,17 +37,19 @@ android {
     defaultConfig {
         applicationId = "org.librefit.app"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
 
-        versionName = "0.1.5"
-        versionCode = 10501
+        versionName = "0.3.0"
+        versionCode = 30001
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
         androidResources {
-            localeFilters += listOf("en", "it", "de", "nl", "es", "cs", "zh-rCN")
+            localeFilters += setOf(
+                "en", "it", "de", "nl", "es", "cs", "zh-rCN", "pt-rBR", "gl"
+            )
         }
 
         // Do not use System.currentTimeMillis()

@@ -78,10 +78,7 @@ class DatasetRepository @Inject constructor(
                 datasetDao.setDataset(exercises)
 
                 // Save version
-                userPreferencesRepository.savePreference(
-                    key = UserPreferencesRepository.pastVersionCodeKey,
-                    value = currentVersion
-                )
+                userPreferencesRepository.savePastVersionCode(currentVersion)
             }
         }
     }

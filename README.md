@@ -1,13 +1,15 @@
 <div align="center">
 
-<img src="assets/logo.svg" alt="Logo" style="width: 60%">
+<img src="fastlane/metadata/android/en-US/images/featureGraphic.png" alt="LibreFit's graphic">
 
 # LibreFit - The free and private workout tracker
 
 [![GitHub Downloads](https://img.shields.io/github/downloads/LibreFitOrg/LibreFit/total?style=for-the-badge&logo=github&labelColor=20232A&color=82D3E3)](https://tooomm.github.io/github-release-stats/?username=LibreFitOrg&repository=LibreFit)
 [![F-droid Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Forg.librefit.app.json&query=%24.total_downloads&style=for-the-badge&label=Downloads&logo=fdroid&labelColor=20232A&color=82D3E3)](https://f-droid.org/packages/org.librefit.app)
-[![Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/stargazers)
 [![GitHub Release](https://img.shields.io/github/v/release/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
+[![Codeberg Mirror](https://img.shields.io/badge/Codeberg-Mirror-black?style=for-the-badge&logo=codeberg&labelColor=20232A&color=82D3E3)](https://codeberg.org/LibreFitOrg/LibreFit)
+[![Codeberg Stars](https://img.shields.io/gitea/stars/LibreFitOrg/LibreFit?gitea_url=https%3A%2F%2Fcodeberg.org%2F&style=for-the-badge&logo=codeberg&labelColor=20232A&color=82D3E3)](https://codeberg.org/LibreFitOrg/LibreFit/stars)
 [![License](https://img.shields.io/github/license/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/blob/main/COPYING)
 [![CI Status](https://img.shields.io/github/actions/workflow/status/LibreFitOrg/LibreFit/android-ci.yml?style=for-the-badge&labelColor=20232A&logo=github&logoColor=white)](https://github.com/LibreFitOrg/LibreFit/actions)
 
@@ -119,6 +121,8 @@ To donate, you can either send use the Monero address below or visit the [donati
 
 See [Contributing to source code](CONTRIBUTING.md#your-first-code-contribution)
 
+You can also follow the development on [Codeberg mirror](https://codeberg.org/LibreFitOrg/LibreFit).
+
 ### 🌐 Translations
 
 See [Contributing to translations](CONTRIBUTING.md#translations) to discover how to contribute.
@@ -141,6 +145,7 @@ If you then still feel the need to ask a question and need clarification, we rec
 following:
 
 - Open a [Discussion](https://github.com/LibreFitOrg/LibreFit/discussions/new).
+- Join our [Simplex Group](https://smp8.simplex.im/g#8i6S-FJPVTn_DqIBBqQcTarcVgkaMqUP6a3piCqpnLA).
 - Provide as much context as you can about what you're running into.
 - Provide project and platform versions, depending on what seems relevant.
 
@@ -166,8 +171,7 @@ We will then take care of the question as soon as possible.
 
 ## 📜 License
 
-LibreFit is licensed under the [GNU General Public License v3.0 (GPL-3)](COPYING), and it is subject
-to these [additional terms](ADDITIONAL_TERMS.md).
+LibreFit is licensed under the [GNU General Public License v3.0 or later (GPL v3.0 or later)](COPYING), and it is subject to these [additional terms](ADDITIONAL_TERMS.md).
 
 In short, this means you are free to use, modify, and distribute the code, but you must:
 
@@ -199,25 +203,85 @@ They are continuously reviewed and regenerated in order to improve their quality
 
 Thanks to everyone who helped the project!
 
+<img src="https://contrib.rocks/image?repo=LibreFitOrg/LibreFit"/>
+
 ### 💖 Donators
 
 - FlashyGhost
+- jakedevs
+- [debianite65](https://github.com/debianite65)
+- The Blue Blurr
 - Anonymous donators
 
 > [Donate](README.md#-donate) to be listed here.
 
 ### 🏗 Contributors
 
-[Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be the **first** person listed.
+- [dpusceddu](https://github.com/dpusceddu) : [#25](https://github.com/LibreFitOrg/LibreFit/pull/25)
 
+> [Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be listed here.
+
+### 🏋 Dataset contributors
+
+- [b3nj5m1n](https://github.com/b3nj5m1n) : [#28](https://github.com/LibreFitOrg/LibreFit/pull/28)
+
+> [Contribute to dataset](CONTRIBUTING.md#improving-exercises-dataset) to be listed here.
 
 ### 🌐 Translators
 
-- [doen1el](https://github.com/doen1el)  🇩🇪
-- Odweta 🇨🇿
-- [kid1412621](https://github.com/kid1412621) 🇨🇳
-- [mwesten](https://github.com/mwesten) 🇳🇱
-- [VA5H-One](https://github.com/VA5H-One) 🇪🇸
+#### Arabic 🇸🇦
+
+- [AhmedAwad7](https://github.com/AhmedAwad7) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- [b0saleh](https://github.com/b0saleh) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Brazilian Portuguese 🇧🇷
+
+- [miguelsoaresouza8-droid](https://github.com/miguelsoaresouza8-droid) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Catalan 🇪🇸
+
+- [DoubleCheddarBurger](https://github.com/DoubleCheddarBurger) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Czech 🇨🇿
+
+- Odweta
+
+#### Dutch 🇳🇱
+
+- [mwesten](https://github.com/mwesten)
+
+#### French 🇫🇷
+
+- [Spartang-117](https://github.com/Spartang-117) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Galician 🇪🇸
+
+- josé m [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### German 🇩🇪
+
+- [doen1el](https://github.com/doen1el)
+
+#### Hindi 🇮🇳
+
+- [SilentCoderHere](https://github.com/SilentCoderHere) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Indonesian 🇮🇩
+
+- [raihankr](https://github.com/raihankr) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Simplified Chinese 🇨🇳
+
+- [kid1412621](https://github.com/kid1412621)
+
+#### Spanish 🇪🇸
+
+- [SelwynDO](https://github.com/SelwynDO) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- [VA5H-One](https://github.com/VA5H-One)
+
+#### Ukrainian 🇺🇦
+
+- UnknownLi [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
 
 > [Contribute to translations](CONTRIBUTING.md#translations) to be listed here.
 

@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import org.librefit.R
 import org.librefit.enums.pages.TutorialContent
@@ -91,13 +92,13 @@ fun TutorialScreen(
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.tutorial)),
         navigateBack = navigateBack,
-        actions = if (fromWelcomeScreen) listOf {
+        actions = if (fromWelcomeScreen) persistentListOf({
             navController.navigate(Route.MainScreen) {
                 launchSingleTop = true
                 popUpTo(Route.TutorialScreen()) { inclusive = true }
             }
-        } else emptyList(),
-        actionsDescription = listOf(stringResource(R.string.done))
+        }) else persistentListOf(),
+        actionsDescription = persistentListOf(stringResource(R.string.done))
     ) { innerPadding ->
         LibreFitLazyColumn(
             innerPadding = innerPadding,

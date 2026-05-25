@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ SPDX-License-Identifier: GPL-3.0-or-later
   ~ Copyright (c) 2024-2026. The LibreFit Contributors
   ~
   ~ LibreFit is subject to additional terms covering author attribution and trademark usage;
   ~ see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
-  -->
-
-<resources>
+  --><resources>
     <string name="app_name">LibreFit</string>
     <string name="home">Home</string>
     <string name="profile">Profilo</string>
@@ -32,7 +31,7 @@
     <string name="contributors">Contributori</string>
     <string name="founder">Fondatore</string>
     <string name="translators">Traduttori</string>
-    <string name="contributed_to">"Contribuito a: "</string>
+    <string name="contributed_to">Contribuito a:</string>
     <string name="version">Versione</string>
     <string name="dependencies">Dipendenze</string>
     <string name="lets_build_it_together">Costruiamolo insieme</string>
@@ -296,11 +295,11 @@
     <string name="tut_create_routine_4">Aggiusta le serie, ripetizioni e l\'ordine dei tuoi esercizi. Quando sei pronto, tocca il pulsante \'Salva\' in alto a destra.</string>
     <string name="tut_create_routine_5">Congratulazioni, hai creato la tua prima routine! Ora puoi usarla per iniziare un allenamento.</string>
     <string name="complete_workout">Completa allenamento</string>
-    <string name="tut_complete_workout_headline">"Quando inizi un allenamento, stai registrando una sessione in tempo reale. LibreFit mostra la tua performance precedente per ogni serie, rendendo facile sfidarti e mirare al sovraccarico progressivo. "</string>
+    <string name="tut_complete_workout_headline">Quando inizi un allenamento, stai registrando una sessione in tempo reale. LibreFit mostra la tua performance precedente per ogni serie, rendendo facile sfidarti e mirare al sovraccarico progressivo.</string>
     <string name="tut_complete_workout_1">Per iniziare la registrazione, inizia un allenamento da una delle tue routine oppure scegli un allenamento vuoto per una sessione spontanea.</string>
     <string name="tut_complete_workout_2">Se hai iniziato da una routine, i tuoi esercizi programmati saranno precaricati. Puoi comunque aggiungerne altri durante la sessione.</string>
     <string name="tut_complete_workout_3">Registra il peso e le ripetizioni per ogni serie. Quando segni una serie come completata, il timer di riposo in fondo allo schermo partirà automaticamente.</string>
-    <string name="tut_complete_workout_4">"Il tuo tempo totale d'allenamento è in cima—clicca il pulsante di pausa per prenderti una pausa. Quando hai terminato, tocca il pulsate 'Fatto' in alto a destra. "</string>
+    <string name="tut_complete_workout_4">Il tuo tempo totale d\'allenamento è in cima—clicca il pulsante di pausa per prenderti una pausa. Quando hai terminato, tocca il pulsate \'Fatto\' in alto a destra.</string>
     <string name="tut_complete_workout_5">Nella schermata riassuntiva, puoi modificare il titolo, aggiungere note o cambiare la data. Tocca \'Salva\' in alto a destra per salvare l\'allenamento.</string>
     <string name="supporter_version">Versione Sostenitore</string>
     <string name="supporter_version_desc_1">Diventa un sostenitore donando, contribuendo al codice sorgente, traducendo o aggiungendo un esercizio al dataset.</string>
@@ -342,5 +341,19 @@
     <string name="edit">Modifica</string>
     <string name="librefit_is_under_threat">LibreFit è in pericolo</string>
     <string name="do_not_show_again">Non mostrare di nuovo</string>
-
+    <string name="donators">Donatori</string>
+    <string name="reorder">Riordinare</string>
+    <string name="language_german">Tedesco</string>
+    <string name="language_dutch">Olandese</string>
+    <string name="language_czech">Ceco</string>
+    <string name="language_spanish">Spagnolo</string>
+    <string name="language_chinese_simplified">Cinese semplificato</string>
+    <string name="use_scroll_wheel_for_input">Utilizzare la rotellina per l\'input</string>
+    <string name="use_scroll_wheel_for_input_desc">Utilizza una rotella di scorrimento per selezionare valori e intervalli di tempo.</string>
+    <string name="not_use_scroll_wheel_for_input_desc">Digita i valori direttamente usando la tastiera anziché la rotellina di scorrimento.</string>
+    <string name="weight">Peso</string>
+    <string name="undo">Annulla</string>
+    <string name="clear">Pulisci</string>
+    <string name="equipment_rings">Anelli</string>
+    <string name="equipment_pull_up_bar">Sbarra per trazioni</string>
 </resources>

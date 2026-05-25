@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="more_options">خيارات إضافية</string>
+    <string name="library">المكتبة</string>
+    <string name="open">فتح</string>
+    <string name="copy">نسخ</string>
+    <string name="donate">تبرع</string>
+    <string name="info">معلومات</string>
+    <string name="privacy_policy">سياسة الخصوصية</string>
+    <string name="contributed_to">ساهم في:</string>
+    <string name="dependencies">التبعيات</string>
+    <string name="about">عن</string>
+    <string name="app_name">LibreFit</string>
+    <string name="profile">الملف الشخصي</string>
+    <string name="settings">الإعدادات</string>
+    <string name="privacy_policy_desc">لا يستطيع تطبيق LibreFit الوصول إلى الإنترنت. وهذا يعني أن بيانات المستخدم لا تغادر الجهاز أبداً.</string>
+    <string name="website">الموقع الإلكتروني</string>
+    <string name="source_code">الكود المصدري</string>
+    <string name="license">التراخيص</string>
+    <string name="license_desc">LibreFit مرخص بموجب رخصة جنو العمومية العامة الإصدار 3.0 (GPL-3).</string>
+    <string name="contributors">المساهمون</string>
+    <string name="founder">المؤسس</string>
+    <string name="translators">المترجمون</string>
+    <string name="version">الإصدار</string>
+    <string name="lets_build_it_together">لنبنيها معاً</string>
+    <string name="tutorial_desc">تعلم كيفية إنشاء روتينات وتتبع تمارينك الرياضية.</string>
+    <string name="donators">المتبرعون</string>
+    <string name="view_online_version">عرض النسخة online</string>
+    <string name="app_works_without_permission">سيعمل التطبيق حتى بدون هذا الإذن.</string>
+</resources>

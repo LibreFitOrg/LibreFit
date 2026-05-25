@@ -49,10 +49,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun saveKeepOpenAndroidCheckbox(showAgain : Boolean) {
         viewModelScope.launch {
-            userPreferences.savePreference(
-                UserPreferencesRepository.showKeepAndroidOpenKey,
-                !showAgain
-            )
+            userPreferences.saveShowKeepAndroidOpen(!showAgain)
         }
     }
 

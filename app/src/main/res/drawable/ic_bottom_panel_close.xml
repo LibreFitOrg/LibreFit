@@ -1,0 +1,16 @@
+<!--
+  ~ SPDX-License-Identifier: GPL-3.0-or-later
+  ~ Copyright (c) 2026. The LibreFit Contributors
+  ~
+  ~ LibreFit is subject to additional terms covering author attribution and trademark usage;
+  ~ see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <path
+        android:fillColor="#1f1f1f"
+        android:pathData="m480,460 l160,-160L320,300l160,160ZM760,120q33,0 56.5,23.5T840,200v560q0,33 -23.5,56.5T760,840L200,840q-33,0 -56.5,-23.5T120,760v-560q0,-33 23.5,-56.5T200,120h560ZM200,640v120h560v-120L200,640ZM760,560v-360L200,200v360h560ZM200,640v120,-120Z" />
+</vector>

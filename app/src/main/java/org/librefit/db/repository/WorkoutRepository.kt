@@ -10,6 +10,8 @@ package org.librefit.db.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.librefit.db.dao.WorkoutDao
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
@@ -35,6 +37,22 @@ import javax.inject.Singleton
 class WorkoutRepository @Inject constructor(
     private val workoutDao: WorkoutDao
 ) {
+    private val mutex = Mutex()
+
+    /**
+     * Cache for unsaved edits. Repository-scoped to ensure data integrity across navigation 
+     * and system-level lifecycle events.
+     */
+    private var pendingWorkoutState: UiWorkoutWithExercisesAndSets? = null
+
+    suspend fun setPendingWorkout(state: UiWorkoutWithExercisesAndSets?) = mutex.withLock {
+        pendingWorkoutState = state
+    }
+
+    suspend fun getPendingWorkout(): UiWorkoutWithExercisesAndSets? = mutex.withLock {
+        pendingWorkoutState
+    }
+
     private fun WorkoutWithExercisesAndSets.sortedByExercisePosition(): WorkoutWithExercisesAndSets {
         return copy(exercisesWithSets = exercisesWithSets.sortedBy { it.exercise.position })
     }

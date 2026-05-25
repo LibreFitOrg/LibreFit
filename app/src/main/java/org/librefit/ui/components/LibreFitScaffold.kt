@@ -30,7 +30,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -39,6 +41,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
 
 
@@ -75,11 +79,11 @@ import org.librefit.R
 fun LibreFitScaffold(
     title: AnnotatedString? = null,
     navigateBack: (() -> Unit)? = null,
-    actions: List<() -> Unit> = listOf(),
-    actionsEnabled: List<Boolean> = listOf(),
-    actionsDescription: List<String?> = listOf(),
-    actionsIcons: List<Painter> = listOf(),
-    actionsElevated: List<Boolean> = listOf(),
+    actions: ImmutableList<() -> Unit> = persistentListOf(),
+    actionsEnabled: ImmutableList<Boolean> = persistentListOf(),
+    actionsDescription: ImmutableList<String?> = persistentListOf(),
+    actionsIcons: ImmutableList<Painter> = persistentListOf(),
+    actionsElevated: ImmutableList<Boolean> = persistentListOf(),
     fabAction: (() -> Unit)? = null,
     fabIcon: Painter? = null,
     fabDescription: String? = null,
@@ -135,6 +139,7 @@ fun LibreFitScaffold(
 
                                 customItem(
                                     buttonGroupContent = {
+                                        val currentAction by rememberUpdatedState(action)
                                         if (icon != null) {
                                             IconButton(
                                                 modifier = interactionSources.getOrNull(index)
@@ -142,7 +147,7 @@ fun LibreFitScaffold(
                                                     ?: Modifier,
                                                 onClick = {
                                                     haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
-                                                    action()
+                                                    currentAction()
                                                 },
                                                 shapes = IconButtonDefaults.shapes(),
                                                 interactionSource = interactionSources.getOrNull(
@@ -166,7 +171,7 @@ fun LibreFitScaffold(
                                                     ?: Modifier,
                                                 onClick = {
                                                     haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
-                                                    action()
+                                                    currentAction()
                                                 },
                                                 shapes = ButtonDefaults.shapes(),
                                                 interactionSource = interactionSources.getOrNull(
