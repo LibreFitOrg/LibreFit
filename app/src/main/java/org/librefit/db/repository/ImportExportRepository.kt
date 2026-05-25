@@ -3,12 +3,15 @@ package org.librefit.db.repository
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.room.Database
 import androidx.room.withTransaction
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import org.librefit.R
 import org.librefit.db.AppDatabase
+import org.librefit.db.Schema
 import javax.inject.Inject
 import org.librefit.db.importExport.dto.ExportData
 import org.librefit.db.importExport.dto.ExportPayload
@@ -53,7 +56,7 @@ class ImportExportRepository @Inject constructor(
     suspend fun importFrom(uri: Uri): ImportResult = withContext(ioDispatcher) {
         val json = Json { ignoreUnknownKeys = true }
 
-        val payload = context.contentResolver.openInputStream(uri)?.use { input ->
+        val rawPayload = context.contentResolver.openInputStream(uri)?.use { input ->
             context.contentResolver.takePersistableUriPermission(
                 uri,
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -61,27 +64,68 @@ class ImportExportRepository @Inject constructor(
 
             val text = input.bufferedReader().readText()
             json.decodeFromString<ExportPayload>(text)
-        } ?: return@withContext ImportResult.Error("Error reading from file")
+        } ?: return@withContext ImportResult.Error(context.getString(R.string.import_data_failed))
 
-        db.withTransaction {
-            val workoutDao = db.getWorkoutDao()
-            val measurementDao = db.getMeasurementDao()
+        val payload = migratePayload(rawPayload)
 
-            // 1. CONVERT INTO ENTITIES AND UPSERT WORKOUTS
-            val relations = payload.data.workouts.map {
-                it.toRelation()
-            }
-            relations.forEach {
-                workoutDao.addWorkoutWithExercisesAndSets(it)
-            }
+        val workoutDao = db.getWorkoutDao()
+        val measurementDao = db.getMeasurementDao()
 
-            // 2. UPSERT MEASUREMENTS
-            payload.data.measurements.forEach {
-                measurementDao.upsertMeasurement(it)
-            }
+        // 1. CONVERT INTO ENTITIES AND UPSERT WORKOUTS
+        val relations = payload.data.workouts.map {
+            it.toRelation()
+        }
+        relations.forEach {
+            workoutDao.addWorkoutWithExercisesAndSets(it)
+        }
+
+        // 2. UPSERT MEASUREMENTS
+        payload.data.measurements.forEach {
+            measurementDao.upsertMeasurement(it)
         }
 
         return@withContext ImportResult.Success
+    }
+
+    private val currentSchemaVersion = Schema.VERSION
+
+    private fun migratePayload(payload: ExportPayload): ExportPayload {
+        var current = payload
+
+        while (current.schemaVersion < currentSchemaVersion) {
+            current = when (current.schemaVersion) {
+                1 -> migrateV1ToV2(current)
+                2 -> migrateV2ToV3(current)
+                else -> error("${context.getString(R.string.unsupported_schema_version)}: ${current.schemaVersion}")
+            }
+        }
+
+        return current
+    }
+
+    private fun migrateV1ToV2(payload: ExportPayload): ExportPayload {
+        return payload.copy(schemaVersion = 2)
+    }
+
+    private fun migrateV2ToV3(payload: ExportPayload): ExportPayload {
+        return payload.copy(
+            schemaVersion = 3,
+            data = payload.data.copy(
+                workouts = payload.data.workouts.map { workout ->
+                    workout.copy(
+                        exercises = workout.exercises
+                            .groupBy { it.workoutId }
+                            .flatMap { (_, exercises) ->
+                                exercises
+                                    .sortedBy { it.id }
+                                    .mapIndexed { index, exercise ->
+                                        exercise.copy(position = index)
+                                    }
+                            }
+                    )
+                }
+            )
+        )
     }
 }
 
