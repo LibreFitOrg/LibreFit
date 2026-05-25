@@ -11,14 +11,17 @@ package org.librefit.ui.screens.settings
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -162,7 +165,7 @@ fun SettingsScreen(
         onRestTimerSoundOnChange = viewModel::saveRestTimerSoundOn,
         onIsWorkoutHeaderStickyChange = viewModel::saveIsWorkoutHeaderSticky,
         onUseScrollWheelForInputChange = viewModel::saveUseScrollWheelForInput,
-        onDismissScrollWhellInputAutomaticallyChange = viewModel::saveDismissScrollWheelInputAutomatically,
+        onDismissScrollWheelInputAutomaticallyChange = viewModel::saveDismissScrollWheelInputAutomatically,
         dialogMessage = dialogMessage,
         dismissDialog = viewModel::dismissDialog,
     )
@@ -191,153 +194,160 @@ private fun SettingsScreenContent(
     onRestTimerSoundOnChange: (Boolean) -> Unit,
     onIsWorkoutHeaderStickyChange: (Boolean) -> Unit,
     onUseScrollWheelForInputChange: (Boolean) -> Unit,
-    onDismissScrollWhellInputAutomaticallyChange: (Boolean) -> Unit,
+    onDismissScrollWheelInputAutomaticallyChange: (Boolean) -> Unit,
     dialogMessage: String?,
     dismissDialog: () -> Unit
 ) {
-    LibreFitScaffold(
-        title = AnnotatedString(stringResource(id = R.string.settings)),
-        navigateBack = navController::navigateUp
-    ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
-            item { HeadlineText(text = stringResource(id = R.string.appearance)) }
+    Box {
+        LibreFitScaffold(
+            title = AnnotatedString(stringResource(id = R.string.settings)),
+            navigateBack = navController::navigateUp
+        ) { innerPadding ->
+            LibreFitLazyColumn(innerPadding) {
+                item { HeadlineText(text = stringResource(id = R.string.appearance)) }
 
-            item {
-                SettingItem(
-                    onClick = { updatePreferences(ThemeMode.entries) },
-                    icon = painterResource(R.drawable.ic_dark_mode),
-                    settingName = stringResource(id = R.string.theme),
-                    settingDesc = stringResource(
-                        id = Formatter.preferenceToStringId(selectedTheme)
-                    )
-                )
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 item {
                     SettingItem(
-                        onClick = {
-                            if (isSupporter) {
-                                onMaterialModeChange(!materialModeOn)
-                            } else {
-                                navController.navigate(Route.SupportScreen(true)) {
-                                    launchSingleTop = true
-                                }
-                            }
-                        },
-                        icon = painterResource(R.drawable.ic_material),
-                        settingName = stringResource(id = R.string.material_you),
+                        onClick = { updatePreferences(ThemeMode.entries) },
+                        icon = painterResource(R.drawable.ic_dark_mode),
+                        settingName = stringResource(id = R.string.theme),
                         settingDesc = stringResource(
-                            id = if (materialModeOn) R.string.dynamic_color_enabled else R.string.dynamic_color_disabled
-                        ),
-                        isChecked = materialModeOn
+                            id = Formatter.preferenceToStringId(selectedTheme)
+                        )
                     )
                 }
-            }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    item {
+                        SettingItem(
+                            onClick = {
+                                if (isSupporter) {
+                                    onMaterialModeChange(!materialModeOn)
+                                } else {
+                                    navController.navigate(Route.SupportScreen(true)) {
+                                        launchSingleTop = true
+                                    }
+                                }
+                            },
+                            icon = painterResource(R.drawable.ic_material),
+                            settingName = stringResource(id = R.string.material_you),
+                            settingDesc = stringResource(
+                                id = if (materialModeOn) R.string.dynamic_color_enabled else R.string.dynamic_color_disabled
+                            ),
+                            isChecked = materialModeOn
+                        )
+                    }
+                }
 
 
-            item { HeadlineText(text = stringResource(id = R.string.settings_general)) }
+                item { HeadlineText(text = stringResource(id = R.string.settings_general)) }
 
-            item {
-                SettingItem(
-                    onClick = { updatePreferences(Language.entries) },
-                    icon = painterResource(R.drawable.ic_translate),
-                    settingName = stringResource(id = R.string.language),
-                    settingDesc = stringResource(
-                        id = Formatter.preferenceToStringId(selectedLanguage)
-                    )
-                )
-            }
-
-            item {
-                SettingItem(
-                    onClick = { onKeepWorkoutScreenOnChange(!keepWorkoutScreenOn) },
-                    icon = painterResource(R.drawable.ic_keep),
-                    settingName = stringResource(id = R.string.keep_screen_on),
-                    settingDesc = stringResource(
-                        id = if (keepWorkoutScreenOn) R.string.screen_on_desc else R.string.screen_off_desc
-                    ),
-                    isChecked = keepWorkoutScreenOn
-                )
-            }
-
-            item {
-                SettingItem(
-                    onClick = { onRestTimerSoundOnChange(!restTimerSoundOn) },
-                    icon = painterResource(R.drawable.ic_notification_sound),
-                    settingName = stringResource(id = R.string.rest_timer_sound),
-                    settingDesc = stringResource(
-                        id = if (restTimerSoundOn) R.string.rest_timer_sound_on_desc else R.string.rest_timer_sound_off_desc
-                    ),
-                    isChecked = restTimerSoundOn
-                )
-            }
-
-            item {
-                SettingItem(
-                    isChecked = isWorkoutHeaderSticky,
-                    onClick = { onIsWorkoutHeaderStickyChange(!isWorkoutHeaderSticky) },
-                    icon = painterResource(R.drawable.ic_sticker),
-                    settingDesc = stringResource(if (isWorkoutHeaderSticky) R.string.stick_status_bar_desc else R.string.not_stick_status_bar_desc),
-                    settingName = stringResource(R.string.stick_status_bar)
-                )
-            }
-
-            item {
-                SettingItem(
-                    onClick = onExportClicked,
-                    icon = painterResource(R.drawable.ic_backup),
-                    settingName = stringResource(id = R.string.export_data),
-                    settingDesc = stringResource(R.string.export_data_desc)
-                )
-            }
-
-            item {
-                SettingItem(
-                    onClick = onImportClicked,
-                    icon = painterResource(R.drawable.ic_restore),
-                    settingName = stringResource(id = R.string.import_data),
-                    settingDesc = stringResource(R.string.import_data_desc)
-                )
-            }
-
-            item {
-                SettingItem(
-                    isChecked = useScrollWheelForInput,
-                    onClick = { onUseScrollWheelForInputChange(!useScrollWheelForInput) },
-                    icon = painterResource(R.drawable.ic_scroll_vertical),
-                    settingDesc = stringResource(if (useScrollWheelForInput) R.string.use_scroll_wheel_for_input_desc else R.string.not_use_scroll_wheel_for_input_desc),
-                    settingName = stringResource(R.string.use_scroll_wheel_for_input)
-                )
-            }
-
-
-            item {
-                AnimatedVisibility(
-                    visible = useScrollWheelForInput,
-                    enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically()
-                ) {
+                item {
                     SettingItem(
-                        isChecked = dismissScrollWheelInputAutomatically,
-                        onClick = { onDismissScrollWhellInputAutomaticallyChange(!dismissScrollWheelInputAutomatically) },
-                        icon = painterResource(R.drawable.ic_bottom_panel_close),
-                        settingDesc = stringResource(if (dismissScrollWheelInputAutomatically) R.string.dismiss_scroll_wheel_automatically_desc else R.string.dismiss_scroll_wheel_manually_desc),
-                        settingName = stringResource(R.string.dismiss_scroll_wheel_automatically)
+                        onClick = { updatePreferences(Language.entries) },
+                        icon = painterResource(R.drawable.ic_translate),
+                        settingName = stringResource(id = R.string.language),
+                        settingDesc = stringResource(
+                            id = Formatter.preferenceToStringId(selectedLanguage)
+                        )
                     )
+                }
+
+                item {
+                    SettingItem(
+                        onClick = { onKeepWorkoutScreenOnChange(!keepWorkoutScreenOn) },
+                        icon = painterResource(R.drawable.ic_keep),
+                        settingName = stringResource(id = R.string.keep_screen_on),
+                        settingDesc = stringResource(
+                            id = if (keepWorkoutScreenOn) R.string.screen_on_desc else R.string.screen_off_desc
+                        ),
+                        isChecked = keepWorkoutScreenOn
+                    )
+                }
+
+                item {
+                    SettingItem(
+                        onClick = { onRestTimerSoundOnChange(!restTimerSoundOn) },
+                        icon = painterResource(R.drawable.ic_notification_sound),
+                        settingName = stringResource(id = R.string.rest_timer_sound),
+                        settingDesc = stringResource(
+                            id = if (restTimerSoundOn) R.string.rest_timer_sound_on_desc else R.string.rest_timer_sound_off_desc
+                        ),
+                        isChecked = restTimerSoundOn
+                    )
+                }
+
+                item {
+                    SettingItem(
+                        isChecked = isWorkoutHeaderSticky,
+                        onClick = { onIsWorkoutHeaderStickyChange(!isWorkoutHeaderSticky) },
+                        icon = painterResource(R.drawable.ic_sticker),
+                        settingDesc = stringResource(if (isWorkoutHeaderSticky) R.string.stick_status_bar_desc else R.string.not_stick_status_bar_desc),
+                        settingName = stringResource(R.string.stick_status_bar)
+                    )
+                }
+
+                item {
+                    SettingItem(
+                        onClick = onExportClicked,
+                        icon = painterResource(R.drawable.ic_backup),
+                        settingName = stringResource(id = R.string.export_data),
+                        settingDesc = stringResource(R.string.export_data_desc)
+                    )
+                }
+
+                item {
+                    SettingItem(
+                        onClick = onImportClicked,
+                        icon = painterResource(R.drawable.ic_restore),
+                        settingName = stringResource(id = R.string.import_data),
+                        settingDesc = stringResource(R.string.import_data_desc)
+                    )
+                }
+
+                item {
+                    SettingItem(
+                        isChecked = useScrollWheelForInput,
+                        onClick = { onUseScrollWheelForInputChange(!useScrollWheelForInput) },
+                        icon = painterResource(R.drawable.ic_scroll_vertical),
+                        settingDesc = stringResource(if (useScrollWheelForInput) R.string.use_scroll_wheel_for_input_desc else R.string.not_use_scroll_wheel_for_input_desc),
+                        settingName = stringResource(R.string.use_scroll_wheel_for_input)
+                    )
+                }
+
+
+                item {
+                    AnimatedVisibility(
+                        visible = useScrollWheelForInput,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        SettingItem(
+                            isChecked = dismissScrollWheelInputAutomatically,
+                            onClick = { onDismissScrollWheelInputAutomaticallyChange(!dismissScrollWheelInputAutomatically) },
+                            icon = painterResource(R.drawable.ic_bottom_panel_close),
+                            settingDesc = stringResource(if (dismissScrollWheelInputAutomatically) R.string.dismiss_scroll_wheel_automatically_desc else R.string.dismiss_scroll_wheel_manually_desc),
+                            settingName = stringResource(R.string.dismiss_scroll_wheel_automatically)
+                        )
+                    }
                 }
             }
         }
-    }
 
-    if (isImporting) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.4f)),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
+        AnimatedContent(
+            targetState = isImporting,
+            label = "loading_overlay"
+        ) { loading ->
+            if (loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.4f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
         }
     }
 
@@ -472,7 +482,7 @@ fun SettingsScreenPreview() {
             onRestTimerSoundOnChange = { restTimerSoundOn = it },
             onIsWorkoutHeaderStickyChange = { isWorkoutHeaderSticky = it },
             onUseScrollWheelForInputChange = { useScrollWheelForInput = it },
-            onDismissScrollWhellInputAutomaticallyChange = {},
+            onDismissScrollWheelInputAutomaticallyChange = {},
             dialogMessage = null,
             dismissDialog = {},
         )
