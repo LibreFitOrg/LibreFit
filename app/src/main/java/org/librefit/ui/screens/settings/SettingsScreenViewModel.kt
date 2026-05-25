@@ -68,6 +68,17 @@ class SettingsScreenViewModel @Inject constructor(
     val exportSuccessToast = context.getString(R.string.export_data_success)
     val exportFailedToast = context.getString(R.string.export_data_failed)
 
+    private val _dialogMessage = MutableStateFlow<String?>(null)
+    val dialogMessage = _dialogMessage.asStateFlow()
+
+    fun showDialog(message: String) {
+        _dialogMessage.value = message
+    }
+
+    fun dismissDialog() {
+        _dialogMessage.value = null
+    }
+
     fun saveThemeMode(mode: ThemeMode) {
         viewModelScope.launch { userPreferences.saveThemeMode(mode) }
     }
