@@ -608,7 +608,7 @@ private fun Set(
             .filter { it != ':' }
     )
     var repValue by rememberSaveable(set.reps) { mutableStateOf(set.reps.toString()) }
-    var weightValue by rememberSaveable { mutableStateOf(set.load.toString()) }
+    var weightValue by rememberSaveable(set.load) { mutableStateOf(set.load.toString()) }
 
     // Sync elapsed time with time text field
     LaunchedEffect(set.elapsedTime) {
