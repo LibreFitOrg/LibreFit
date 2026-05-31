@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ SPDX-License-Identifier: GPL-3.0-or-later
   ~ Copyright (c) 2026. The LibreFit Contributors
   ~
   ~ LibreFit is subject to additional terms covering author attribution and trademark usage;
   ~ see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
-  -->
-
-<resources>
+  --><resources>
     <string name="home">Inicio</string>
     <string name="profile">Perfil</string>
     <string name="settings">Ajustes</string>
@@ -360,4 +359,73 @@
     <string name="tut_create_routine_1">Presiona el botón + en la esquina inferior derecha para empezar a crear una nueva rutina.</string>
     <string name="rest_time_is_over">El tiempo de descanso ha terminado!</string>
     <string name="resume">Reanudar</string>
+    <string name="UnknownLi" translatable="false"></string>
+    <string name="Spartang_117" translatable="false"></string>
+    <string name="equipment_rings"></string>
+    <string name="kg" translatable="false"></string>
+    <string name="url_github_search_issue" translatable="false"></string>
+    <string name="language_dutch_nt" translatable="false"></string>
+    <string name="language_ukrainian_nt" translatable="false"></string>
+    <string name="url_kid1412621" translatable="false"></string>
+    <string name="url_mwesten" translatable="false"></string>
+    <string name="url_SelwynDO" translatable="false"></string>
+    <string name="url_debianite65" translatable="false"></string>
+    <string name="raihankr" translatable="false"></string>
+    <string name="mwesten" translatable="false"></string>
+    <string name="VA5H_One" translatable="false"></string>
+    <string name="language_brazilian_portuguese_nt" translatable="false"></string>
+    <string name="language_hindi_nt" translatable="false"></string>
+    <string name="url_doen1el" translatable="false"></string>
+    <string name="url_SilentCoderHere" translatable="false"></string>
+    <string name="kid1412621" translatable="false"></string>
+    <string name="FlashyGhost" translatable="false"></string>
+    <string name="github" translatable="false"></string>
+    <string name="SilentCoderHere" translatable="false"></string>
+    <string name="b0saleh" translatable="false"></string>
+    <string name="language_french_nt" translatable="false"></string>
+    <string name="muscle_quadriceps"></string>
+    <string name="equipment_pull_up_bar"></string>
+    <string name="language_indonesian_nt" translatable="false"></string>
+    <string name="dpusceddu" translatable="false"></string>
+    <string name="jakedevs" translatable="false"></string>
+    <string name="Odweta" translatable="false"></string>
+    <string name="equipment_other"></string>
+    <string name="the_blue_blurr" translatable="false"></string>
+    <string name="doen1el" translatable="false"></string>
+    <string name="language_chinese_simplified_nt" translatable="false"></string>
+    <string name="language_arabic_nt" translatable="false"></string>
+    <string name="miguelsoaresouza8_droid" translatable="false"></string>
+    <string name="category_strongman"></string>
+    <string name="url_contribute" translatable="false"></string>
+    <string name="language_czech_nt" translatable="false"></string>
+    <string name="url_b3nj5m1n" translatable="false"></string>
+    <string name="url_VA5H_One" translatable="false"></string>
+    <string name="equipment_ez_curl_bar"></string>
+    <string name="url_Spartang_117" translatable="false"></string>
+    <string name="url_raihankr" translatable="false"></string>
+    <string name="language_english_nt" translatable="false"></string>
+    <string name="muscle_lower_back"></string>
+    <string name="url_gpl3" translatable="false"></string>
+    <string name="language_catalan_nt" translatable="false"></string>
+    <string name="url_IamDg" translatable="false"></string>
+    <string name="url_DoubleCheddarBurger" translatable="false"></string>
+    <string name="url_donate" translatable="false"></string>
+    <string name="language_italian_nt" translatable="false"></string>
+    <string name="url_b0saleh" translatable="false"></string>
+    <string name="mechanic_isolation"></string>
+    <string name="url_source_code" translatable="false"></string>
+    <string name="url_privacy" translatable="false"></string>
+    <string name="b3nj5m1n" translatable="false"></string>
+    <string name="debianite65" translatable="false"></string>
+    <string name="url_miguelsoaresouza8_droid" translatable="false"></string>
+    <string name="language_german_nt" translatable="false"></string>
+    <string name="language_spanish_nt" translatable="false"></string>
+    <string name="url_website" translatable="false"></string>
+    <string name="AhmedAwad7" translatable="false"></string>
+    <string name="SelwynDO" translatable="false"></string>
+    <string name="url_dpusceddu" translatable="false"></string>
+    <string name="url_AhmedAwad7" translatable="false"></string>
+    <string name="DoubleCheddarBurger" translatable="false"></string>
+    <string name="codeberg" translatable="false"></string>
+    <string name="josé_m" translatable="false"></string>
 </resources>
