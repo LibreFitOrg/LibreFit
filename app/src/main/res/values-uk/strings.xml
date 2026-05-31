@@ -89,4 +89,337 @@
     <string name="your_routines">Ваш розпорядок</string>
     <string name="start_empty_workout">Розпочати тренування без плану</string>
     <string name="create_routine">Створити розклад</string>
+    <string name="UnknownLi" translatable="false"></string>
+    <string name="equipment"></string>
+    <string name="muscle_triceps"></string>
+    <string name="exercises_distribution"></string>
+    <string name="verify_companion_app"></string>
+    <string name="Spartang_117" translatable="false"></string>
+    <string name="motivation_3"></string>
+    <string name="type_of_set_desc"></string>
+    <string name="librefit_signature_error"></string>
+    <string name="delete_exercise_from_dataset_desc"></string>
+    <string name="workout_info_channel_title"></string>
+    <string name="language_english"></string>
+    <string name="most_reps"></string>
+    <string name="language_chinese_simplified"></string>
+    <string name="muscle_distribution_desc"></string>
+    <string name="theme_light"></string>
+    <string name="delete_exercise_question"></string>
+    <string name="delete_routine_question"></string>
+    <string name="month"></string>
+    <string name="delete_running_workout_text"></string>
+    <string name="rest_timer_channel_desc"></string>
+    <string name="url_dialog"></string>
+    <string name="session_volume"></string>
+    <string name="muscle_shoulders"></string>
+    <string name="dynamic_color_disabled"></string>
+    <string name="save"></string>
+    <string name="any"></string>
+    <string name="discard_running_workout_question"></string>
+    <string name="language_ukrainian"></string>
+    <string name="equipment_rings"></string>
+    <string name="screen_on_desc"></string>
+    <string name="privacy_notice_foreground_perm"></string>
+    <string name="ok_dialog"></string>
+    <string name="delete_measurement_question"></string>
+    <string name="equipment_exercise_ball"></string>
+    <string name="linked_routine"></string>
+    <string name="equipment_machine"></string>
+    <string name="quit_workout_text"></string>
+    <string name="invalid_public_key_encoding"></string>
+    <string name="force"></string>
+    <string name="rest_timer_channel_title"></string>
+    <string name="category_powerlifting"></string>
+    <string name="kg" translatable="false"></string>
+    <string name="privacy_notice_optional_perm"></string>
+    <string name="open_the_workout"></string>
+    <string name="dont_ask_again"></string>
+    <string name="valid_code"></string>
+    <string name="quit_dialog"></string>
+    <string name="url_github_search_issue" translatable="false"></string>
+    <string name="url_source_code_codeberg"></string>
+    <string name="language_czech"></string>
+    <string name="tut_create_routine_1"></string>
+    <string name="code_desc"></string>
+    <string name="muscle_hamstrings"></string>
+    <string name="language_dutch_nt" translatable="false"></string>
+    <string name="past_workouts"></string>
+    <string name="language_ukrainian_nt" translatable="false"></string>
+    <string name="url_kid1412621" translatable="false"></string>
+    <string name="theme_dark"></string>
+    <string name="second_abbreviation"></string>
+    <string name="url_mwesten" translatable="false"></string>
+    <string name="use_scroll_wheel_for_input_desc"></string>
+    <string name="tutorial"></string>
+    <string name="url_SelwynDO" translatable="false"></string>
+    <string name="quit_workout_question"></string>
+    <string name="privacy_notice_summary"></string>
+    <string name="level_expert"></string>
+    <string name="app_works_without_permission"></string>
+    <string name="url_debianite65" translatable="false"></string>
+    <string name="raihankr" translatable="false"></string>
+    <string name="equipment_barbell"></string>
+    <string name="stick_status_bar"></string>
+    <string name="rest_time_desc"></string>
+    <string name="total_volume"></string>
+    <string name="mwesten" translatable="false"></string>
+    <string name="muscle_middle_back"></string>
+    <string name="VA5H_One" translatable="false"></string>
+    <string name="language_brazilian_portuguese_nt" translatable="false"></string>
+    <string name="do_not_show_again"></string>
+    <string name="language_hindi_nt" translatable="false"></string>
+    <string name="equipment_dumbbell"></string>
+    <string name="url_doen1el" translatable="false"></string>
+    <string name="insert_code"></string>
+    <string name="muscles"></string>
+    <string name="muscle_lats"></string>
+    <string name="checkbox"></string>
+    <string name="clear"></string>
+    <string name="settings_general"></string>
+    <string name="companion_app_desc"></string>
+    <string name="tut_complete_workout_3"></string>
+    <string name="days"></string>
+    <string name="instructions"></string>
+    <string name="valid_companion_app_signature"></string>
+    <string name="pause"></string>
+    <string name="url_SilentCoderHere" translatable="false"></string>
+    <string name="dismiss_scroll_wheel_manually_desc"></string>
+    <string name="rest"></string>
+    <string name="discard_running_workout_and_select_routine_text"></string>
+    <string name="kid1412621" translatable="false"></string>
+    <string name="privacy_notice"></string>
+    <string name="FlashyGhost" translatable="false"></string>
+    <string name="github" translatable="false"></string>
+    <string name="category_strength"></string>
+    <string name="muscle_glutes"></string>
+    <string name="add_to_empty_workout"></string>
+    <string name="edit"></string>
+    <string name="not_enough_data"></string>
+    <string name="category_cardio"></string>
+    <string name="SilentCoderHere" translatable="false"></string>
+    <string name="min"></string>
+    <string name="librefit_is_under_threat"></string>
+    <string name="delete_measurement_text"></string>
+    <string name="cancel_dialog"></string>
+    <string name="confirm_delete"></string>
+    <string name="b0saleh" translatable="false"></string>
+    <string name="language_french_nt" translatable="false"></string>
+    <string name="muscle_quadriceps"></string>
+    <string name="past_month"></string>
+    <string name="theme"></string>
+    <string name="type_of_set"></string>
+    <string name="librefit_made_by_you"></string>
+    <string name="year"></string>
+    <string name="equipment_pull_up_bar"></string>
+    <string name="invalid_companion_app_signature"></string>
+    <string name="appearance"></string>
+    <string name="language_indonesian_nt" translatable="false"></string>
+    <string name="rest_time_is_over"></string>
+    <string name="years"></string>
+    <string name="tut_create_routine_3"></string>
+    <string name="one_rep_max"></string>
+    <string name="material_you"></string>
+    <string name="privacy_notice_default_perm"></string>
+    <string name="name"></string>
+    <string name="resume"></string>
+    <string name="coming_soon"></string>
+    <string name="seconds"></string>
+    <string name="rest_timer_sound_on_desc"></string>
+    <string name="before_starting_the_workout"></string>
+    <string name="muscles_distribution"></string>
+    <string name="tut_create_routine_4"></string>
+    <string name="dpusceddu" translatable="false"></string>
+    <string name="discard_changes_text"></string>
+    <string name="jakedevs" translatable="false"></string>
+    <string name="language_arabic"></string>
+    <string name="help"></string>
+    <string name="Odweta" translatable="false"></string>
+    <string name="librefit_is_under_threat_desc"></string>
+    <string name="together"></string>
+    <string name="statistics_desc"></string>
+    <string name="session_reps"></string>
+    <string name="muscle_calves"></string>
+    <string name="language_dutch"></string>
+    <string name="label_continue"></string>
+    <string name="show_only_custom_exercises"></string>
+    <string name="verify_code"></string>
+    <string name="elapsed_time"></string>
+    <string name="language_italian"></string>
+    <string name="delete"></string>
+    <string name="not_use_scroll_wheel_for_input_desc"></string>
+    <string name="equipment_other"></string>
+    <string name="menu"></string>
+    <string name="dismiss_scroll_wheel_automatically_desc"></string>
+    <string name="delete_routine_text"></string>
+    <string name="open_this_routine"></string>
+    <string name="the_blue_blurr" translatable="false"></string>
+    <string name="motivation_1"></string>
+    <string name="total_time"></string>
+    <string name="doen1el" translatable="false"></string>
+    <string name="tut_complete_workout_5"></string>
+    <string name="muscle_abdominals"></string>
+    <string name="language_chinese_simplified_nt" translatable="false"></string>
+    <string name="complete_workout"></string>
+    <string name="language_arabic_nt" translatable="false"></string>
+    <string name="verify_companion_or_code"></string>
+    <string name="tut_complete_workout_1"></string>
+    <string name="thank_supporter"></string>
+    <string name="rest_timer_sound"></string>
+    <string name="dynamic_color_enabled"></string>
+    <string name="your_workouts"></string>
+    <string name="keep_screen_on"></string>
+    <string name="miguelsoaresouza8_droid" translatable="false"></string>
+    <string name="skip_for_now"></string>
+    <string name="supporter_version"></string>
+    <string name="notifications_permission_desc"></string>
+    <string name="category_strongman"></string>
+    <string name="url_contribute" translatable="false"></string>
+    <string name="primary_muscles"></string>
+    <string name="muscle_chest"></string>
+    <string name="paste"></string>
+    <string name="muscle_neck"></string>
+    <string name="previous"></string>
+    <string name="invalid_code"></string>
+    <string name="exercises_distribution_desc"></string>
+    <string name="invalid_signature_encoding"></string>
+    <string name="total_reps"></string>
+    <string name="unknown_error"></string>
+    <string name="dismiss_scroll_wheel_automatically"></string>
+    <string name="delete_workout_text"></string>
+    <string name="others"></string>
+    <string name="undo"></string>
+    <string name="language_czech_nt" translatable="false"></string>
+    <string name="tut_complete_workout_4"></string>
+    <string name="level_beginner"></string>
+    <string name="welcome_to"></string>
+    <string name="language_catalan"></string>
+    <string name="create_exercises"></string>
+    <string name="mechanic"></string>
+    <string name="past"></string>
+    <string name="url_b3nj5m1n" translatable="false"></string>
+    <string name="status"></string>
+    <string name="details"></string>
+    <string name="use_scroll_wheel_for_input"></string>
+    <string name="missing_dot_separator"></string>
+    <string name="url_VA5H_One" translatable="false"></string>
+    <string name="language_spanish"></string>
+    <string name="companion_signature_error"></string>
+    <string name="equipment_ez_curl_bar"></string>
+    <string name="language_french"></string>
+    <string name="finished_on"></string>
+    <string name="delete_exercise_from_dataset"></string>
+    <string name="url_Spartang_117" translatable="false"></string>
+    <string name="best_set_volume"></string>
+    <string name="muscle_abductors"></string>
+    <string name="delete_workout_question"></string>
+    <string name="url_raihankr" translatable="false"></string>
+    <string name="tap_a_workout"></string>
+    <string name="language_english_nt" translatable="false"></string>
+    <string name="category_olympic_weightlifting"></string>
+    <string name="level"></string>
+    <string name="tut_create_routine_2"></string>
+    <string name="category_plyometrics"></string>
+    <string name="start_creating_routine"></string>
+    <string name="history"></string>
+    <string name="language_brazilian_portuguese"></string>
+    <string name="privacy_notice_notification_perm"></string>
+    <string name="muscle_lower_back"></string>
+    <string name="tut_complete_workout_6"></string>
+    <string name="not_stick_status_bar_desc"></string>
+    <string name="workout"></string>
+    <string name="follow_system"></string>
+    <string name="motivation_4"></string>
+    <string name="screen_off_desc"></string>
+    <string name="url_gpl3" translatable="false"></string>
+    <string name="language_catalan_nt" translatable="false"></string>
+    <string name="url_IamDg" translatable="false"></string>
+    <string name="language"></string>
+    <string name="inappropriate_public_key_string"></string>
+    <string name="equipment_cable"></string>
+    <string name="notifications_permission"></string>
+    <string name="workout_info_channel_desc"></string>
+    <string name="rest_timer_sound_off_desc"></string>
+    <string name="tut_complete_workout_headline"></string>
+    <string name="algorithm_not_available"></string>
+    <string name="best_time"></string>
+    <string name="url_DoubleCheddarBurger" translatable="false"></string>
+    <string name="invalid_public_key"></string>
+    <string name="url_donate" translatable="false"></string>
+    <string name="language_italian_nt" translatable="false"></string>
+    <string name="start_routine"></string>
+    <string name="best_experience_permissions"></string>
+    <string name="supporter_version_desc_2"></string>
+    <string name="url_b0saleh" translatable="false"></string>
+    <string name="routine_saved"></string>
+    <string name="motivation_2"></string>
+    <string name="heaviest_weight"></string>
+    <string name="url_source_code" translatable="false"></string>
+    <string name="url_privacy" translatable="false"></string>
+    <string name="rest_time"></string>
+    <string name="b3nj5m1n" translatable="false"></string>
+    <string name="equipment_foam_roll"></string>
+    <string name="debianite65" translatable="false"></string>
+    <string name="force_static"></string>
+    <string name="language_hindi"></string>
+    <string name="add_ten_seconds"></string>
+    <string name="url_miguelsoaresouza8_droid" translatable="false"></string>
+    <string name="measurements"></string>
+    <string name="reduce_ten_seconds"></string>
+    <string name="lets_build"></string>
+    <string name="force_pull"></string>
+    <string name="tut_complete_workout_2"></string>
+    <string name="language_german_nt" translatable="false"></string>
+    <string name="language_spanish_nt" translatable="false"></string>
+    <string name="to_verify"></string>
+    <string name="months"></string>
+    <string name="weight"></string>
+    <string name="url_website" translatable="false"></string>
+    <string name="discard_changes_question"></string>
+    <string name="tut_create_routine_5"></string>
+    <string name="discard_dialog"></string>
+    <string name="language_indonesian"></string>
+    <string name="unlink_dialog"></string>
+    <string name="AhmedAwad7" translatable="false"></string>
+    <string name="category"></string>
+    <string name="SelwynDO" translatable="false"></string>
+    <string name="muscle_adductors"></string>
+    <string name="start_completing_workout"></string>
+    <string name="past_week"></string>
+    <string name="tut_create_routine_headline"></string>
+    <string name="url_dpusceddu" translatable="false"></string>
+    <string name="add"></string>
+    <string name="companion_app_not_found"></string>
+    <string name="supporter_version_desc_1"></string>
+    <string name="secondary_muscles"></string>
+    <string name="url_AhmedAwad7" translatable="false"></string>
+    <string name="privacy"></string>
+    <string name="DoubleCheddarBurger" translatable="false"></string>
+    <string name="force_push"></string>
+    <string name="stick_status_bar_desc"></string>
+    <string name="time"></string>
+    <string name="equipment_kettlebells"></string>
+    <string name="calendar"></string>
+    <string name="public_key_not_initialized_properly"></string>
+    <string name="duration"></string>
+    <string name="day"></string>
+    <string name="nothing_to_show"></string>
+    <string name="category_stretching"></string>
+    <string name="resume_workout"></string>
+    <string name="malformed_code"></string>
+    <string name="language_german"></string>
+    <string name="past_year"></string>
+    <string name="workout_saved"></string>
+    <string name="new_workout"></string>
+    <string name="librefit_app_not_found"></string>
+    <string name="exercise_saved"></string>
+    <string name="codeberg" translatable="false"></string>
+    <string name="step"></string>
+    <string name="muscle_traps"></string>
+    <string name="muscle_biceps"></string>
+    <string name="level_intermediate"></string>
+    <string name="week_streak"></string>
+    <string name="muscle_forearms"></string>
+    <string name="josé_m" translatable="false"></string>
+    <string name="done"></string>
 </resources>
