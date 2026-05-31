@@ -1,0 +1,3 @@
+🐛 Fixed
+- Visual bug causing weight field to not show current value
+- Initial state of input sheet
