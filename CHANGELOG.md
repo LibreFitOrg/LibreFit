@@ -20,9 +20,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -
 
 ### Fixed
+-
 
+> [!TIP]
+> `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
+> For normal use, download `LibreFit.apk`
+
+## [0.3.1] - 2026-05-31
+
+This is a hotfix for a bug in the weight value of a set: the underlying data were correctly updated, so the issue was only in the visualization.
+
+### Fixed
+
+- Visual bug causing weight field to not show current value [#90](https://github.com/LibreFitOrg/LibreFit/issues/90)
 - Initial state of input sheet [#88](https://github.com/LibreFitOrg/LibreFit/pull/88)
-- Visual bug where weight field doesn't show current value [#90](https://github.com/LibreFitOrg/LibreFit/issues/90)
 
 > [!TIP]
 > `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
@@ -99,7 +110,9 @@ Thank you for your support!
 
 First public release. Bugs are expected! Report them so they can be fixed.
 
-[Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.3.1...HEAD
+
+[0.3.1]: https://github.com/LibreFitOrg/LibreFit/compare/v0.3.0...v0.3.1
 
 [0.3.0]: https://github.com/LibreFitOrg/LibreFit/compare/v0.2.0...v0.3.0
 
