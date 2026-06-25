@@ -94,6 +94,26 @@
     <string name="url_xorodev" translatable="false">https://github.com/xorodev</string>
     <string name="johncorea580_crypto" translatable="false">johncorea580-crypto</string>
     <string name="url_johncorea580_crypto" translatable="false">https://github.com/johncorea580-crypto</string>
+    <string name="theswordsgame" translatable="false">theswordsgame</string>
+    <string name="ylconion" translatable="false">ylconion</string>
+    <string name="url_ylconion" translatable="false">https://github.com/ylconion</string>
+    <string name="zei_dan" translatable="false">zei dan</string>
+    <string name="url_zei_dan" translatable="false">https://github.com/bakamake</string>
+    <string name="Robin_Schanbacher" translatable="false">Robin Schanbacher</string>
+    <string name="url_Robin_Schanbacher" translatable="false">https://github.com/RobinS-T470s</string>
+    <string name="sprivaq" translatable="false">sprivaq</string>
+    <string name="url_sprivaq" translatable="false">https://github.com/sprivaq</string>
+    <string name="Safi_Ullah" translatable="false">Safi Ullah</string>
+    <string name="url_Safi_Ullah" translatable="false">https://github.com/Safi-Ullah-1060</string>
+    <string name="dzjulis" translatable="false">джулис</string>
+    <string name="url_dzjulis" translatable="false">https://github.com/vuichka</string>
+    <string name="Jae_Hyuk_Lee" translatable="false">Jae Hyuk Lee</string>
+    <string name="Semprista" translatable="false">Semprista</string>
+    <string name="url_Semprista" translatable="false">https://github.com/Semprista</string>
+    <string name="mister_bum" translatable="false">mister-bum</string>
+    <string name="url_mister_bum" translatable="false">https://github.com/mister-bum</string>
+    <string name="BigP0tato" translatable="false">BigP0tato</string>
+    <string name="url_BigP0tato" translatable="false">https://github.com/B1gP0tato</string>
 
 
     <!--Before saving screen-->
@@ -317,6 +337,14 @@
     <string name="language_indonesian">Indonesian</string>
     <string name="language_ukrainian_nt" translatable="false">українська</string>
     <string name="language_ukrainian">Ukrainian</string>
+    <string name="language_polish_nt" translatable="false">Polski</string>
+    <string name="language_polish">Polish</string>
+    <string name="language_urdu_nt" translatable="false">اُردُو</string>
+    <string name="language_urdu">Urdu</string>
+    <string name="language_russian_nt" translatable="false">Русский</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_korean_nt" translatable="false">한국어</string>
+    <string name="language_korean">Korean</string>
 
     <!-- Statistics screen-->
     <string name="past">Past</string>

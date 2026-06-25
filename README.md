@@ -249,10 +249,15 @@ Thanks to everyone who helped the project!
 #### French 🇫🇷
 
 - [Spartang-117](https://github.com/Spartang-117) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- [Semprista](https://github.com/Semprista)
+- [BigP0tato](https://github.com/B1gP0tato)
 
 #### German 🇩🇪
 
 - [doen1el](https://github.com/doen1el)
+- [Robin Schanbacher](https://github.com/RobinS-T470s)
+- [sprivaq](https://github.com/sprivaq)
+- [mister-bum](https://github.com/mister-bum)
 
 #### Hindi 🇮🇳
 
@@ -262,9 +267,23 @@ Thanks to everyone who helped the project!
 
 - [raihankr](https://github.com/raihankr) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
 
+#### Korean 🇰🇷
+
+- Jae Hyuk Lee
+
+#### Polish 🇵🇱
+
+- theswordsgame
+
+#### Russian 🇷🇺
+
+- [джулис](https://github.com/vuichka)
+
 #### Simplified Chinese 🇨🇳
 
 - [kid1412621](https://github.com/kid1412621)
+- [ylconion](https://github.com/ylconion)
+- [zei dan](https://github.com/bakamake)
 
 #### Spanish 🇪🇸
 
@@ -278,6 +297,10 @@ Thanks to everyone who helped the project!
 #### Ukrainian 🇺🇦
 
 - UnknownLi [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+
+#### Urdu 🇵🇰
+
+- [Safi Ullah](https://github.com/Safi-Ullah-1060)
 
 > [Contribute to translations](CONTRIBUTING.md#translations) to be listed here.
 
