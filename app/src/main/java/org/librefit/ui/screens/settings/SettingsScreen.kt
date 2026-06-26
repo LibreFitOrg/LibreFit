@@ -9,6 +9,7 @@
 package org.librefit.ui.screens.settings
 
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
@@ -43,6 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.health.connect.client.PermissionController
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -90,6 +92,14 @@ fun SettingsScreen(
 
     val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
 
+    val healthConnectState by viewModel.healthConnectState.collectAsStateWithLifecycle()
+
+    val healthConnectPermissionLauncher = rememberLauncherForActivityResult(
+        contract = PermissionController.createRequestPermissionResultContract()
+    ) { grantedPermissions ->
+        viewModel.updateHealthConnectPermissions(grantedPermissions)
+    }
+
     preferences?.let {
         PreferenceDialog(
             currentPreference = currentPreference,
@@ -109,6 +119,7 @@ fun SettingsScreen(
         keepWorkoutScreenOn = keepWorkoutScreenOn,
         restTimerSoundOn = restTimerSoundOn,
         isSupporter = isSupporter,
+        healthConnectState = healthConnectState,
         useScrollWheelForInput = useScrollWheelForInput,
         isWorkoutHeaderSticky = isWorkoutHeaderSticky,
         dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
@@ -118,6 +129,19 @@ fun SettingsScreen(
         onRestTimerSoundOnChange = viewModel::saveRestTimerSoundOn,
         onIsWorkoutHeaderStickyChange = viewModel::saveIsWorkoutHeaderSticky,
         onUseScrollWheelForInputChange = viewModel::saveUseScrollWheelForInput,
+        onHealthConnectClick = {
+            val isHealthConnectEnabled = healthConnectState.isEnabled &&
+                healthConnectState.hasPermissions
+
+            when {
+                !healthConnectState.isAvailable -> Unit
+                isHealthConnectEnabled -> viewModel.updateHealthConnectEnabled(false)
+                !healthConnectState.hasPermissions -> {
+                    healthConnectPermissionLauncher.launch(viewModel.healthConnectPermissions)
+                }
+                else -> viewModel.updateHealthConnectEnabled(true)
+            }
+        },
         onDismissScrollWhellInputAutomaticallyChange = viewModel::saveDismissScrollWheelInputAutomatically
     )
 }
@@ -132,6 +156,7 @@ private fun SettingsScreenContent(
     keepWorkoutScreenOn: Boolean,
     restTimerSoundOn: Boolean,
     isSupporter: Boolean,
+    healthConnectState: HealthConnectState,
     isWorkoutHeaderSticky: Boolean,
     useScrollWheelForInput: Boolean,
     dismissScrollWheelInputAutomatically: Boolean,
@@ -141,6 +166,7 @@ private fun SettingsScreenContent(
     onRestTimerSoundOnChange: (Boolean) -> Unit,
     onIsWorkoutHeaderStickyChange: (Boolean) -> Unit,
     onUseScrollWheelForInputChange: (Boolean) -> Unit,
+    onHealthConnectClick: () -> Unit,
     onDismissScrollWhellInputAutomaticallyChange: (Boolean) -> Unit,
 ) {
     LibreFitScaffold(
@@ -222,6 +248,39 @@ private fun SettingsScreenContent(
             }
 
             item {
+                val isHealthConnectEnabled = healthConnectState.isEnabled &&
+                    healthConnectState.hasPermissions
+
+                SettingItem(
+                    enabled = healthConnectState.isAvailable && !healthConnectState.isExporting,
+                    onClick = onHealthConnectClick,
+                    icon = painterResource(R.drawable.ic_monitor_weight),
+                    settingName = stringResource(id = R.string.health_connect),
+                    settingDesc = when {
+                        !healthConnectState.isAvailable -> {
+                            stringResource(id = R.string.health_connect_unavailable_desc)
+                        }
+                        healthConnectState.isExporting -> {
+                            stringResource(id = R.string.health_connect_exporting_desc)
+                        }
+                        healthConnectState.exportedRecords != null -> {
+                            stringResource(
+                                id = R.string.health_connect_exported_desc,
+                                healthConnectState.exportedRecords
+                            )
+                        }
+                        healthConnectState.hasPermissions -> {
+                            stringResource(id = R.string.health_connect_export_desc)
+                        }
+                        else -> {
+                            stringResource(id = R.string.health_connect_permissions_desc)
+                        }
+                    },
+                    isChecked = isHealthConnectEnabled
+                )
+            }
+
+            item {
                 SettingItem(
                     isChecked = isWorkoutHeaderSticky,
                     onClick = { onIsWorkoutHeaderStickyChange(!isWorkoutHeaderSticky) },
@@ -268,12 +327,14 @@ private fun SettingItem(
     icon: Painter,
     settingName: String,
     settingDesc: String,
+    enabled: Boolean = true,
     isChecked: Boolean? = null
 ) {
     val haptic = LocalHapticFeedback.current
 
     Button(
         modifier = Modifier.animateContentSize(),
+        enabled = enabled,
         onClick = {
             haptic.performHapticFeedback(
                 hapticFeedbackType = isChecked?.let {
@@ -316,6 +377,7 @@ private fun SettingItem(
         isChecked?.let {
             Switch(
                 checked = it,
+                enabled = enabled,
                 onCheckedChange = null
             )
         }
@@ -345,6 +407,7 @@ fun SettingsScreenPreview() {
             restTimerSoundOn = restTimerSoundOn,
             updatePreferences = {},
             isSupporter = Random.nextBoolean(),
+            healthConnectState = HealthConnectState(isAvailable = true),
             isWorkoutHeaderSticky = isWorkoutHeaderSticky,
             useScrollWheelForInput = useScrollWheelForInput,
             dismissScrollWheelInputAutomatically = Random.nextBoolean(),
@@ -353,6 +416,7 @@ fun SettingsScreenPreview() {
             onRestTimerSoundOnChange = { restTimerSoundOn = it },
             onIsWorkoutHeaderStickyChange = { isWorkoutHeaderSticky = it },
             onUseScrollWheelForInputChange = { useScrollWheelForInput = it },
+            onHealthConnectClick = {},
             onDismissScrollWhellInputAutomaticallyChange = {}
         )
     }

@@ -17,18 +17,23 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.librefit.db.repository.MeasurementRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.health.HealthConnectRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
-    private val userPreferences: UserPreferencesRepository
+    private val userPreferences: UserPreferencesRepository,
+    private val measurementRepository: MeasurementRepository,
+    private val healthConnectRepository: HealthConnectRepository
 ) : ViewModel() {
     val themeMode = userPreferences.themeMode
     val materialMode = userPreferences.materialMode
@@ -39,6 +44,19 @@ class SettingsScreenViewModel @Inject constructor(
     val isWorkoutHeaderSticky = userPreferences.isWorkoutHeaderSticky
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
     val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
+    val healthConnectPermissions = healthConnectRepository.writePermissions
+
+    private val _healthConnectState = MutableStateFlow(HealthConnectState())
+    val healthConnectState = _healthConnectState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            userPreferences.healthConnectEnabled.collect { isEnabled ->
+                _healthConnectState.update { it.copy(isEnabled = isEnabled) }
+            }
+        }
+        refreshHealthConnectState()
+    }
 
     fun saveThemeMode(mode: ThemeMode) {
         viewModelScope.launch { userPreferences.saveThemeMode(mode) }
@@ -71,6 +89,85 @@ class SettingsScreenViewModel @Inject constructor(
     fun saveDismissScrollWheelInputAutomatically(dismissAutomatically: Boolean) {
         viewModelScope.launch {
             userPreferences.saveDismissScrollWheelInputAutomatically(dismissAutomatically)
+        }
+    }
+
+    fun refreshHealthConnectState() {
+        viewModelScope.launch {
+            val isAvailable = healthConnectRepository.isAvailable()
+            val hasPermissions = isAvailable && healthConnectRepository.hasWritePermissions()
+
+            _healthConnectState.update {
+                it.copy(
+                    isAvailable = isAvailable,
+                    hasPermissions = hasPermissions,
+                    isExporting = false
+                )
+            }
+        }
+    }
+
+    fun updateHealthConnectPermissions(grantedPermissions: Set<String>) {
+        viewModelScope.launch {
+            val hasPermissions = grantedPermissions.containsAll(healthConnectPermissions)
+            if (hasPermissions) {
+                userPreferences.saveHealthConnectEnabled(true)
+                _healthConnectState.update {
+                    it.copy(hasPermissions = true, isEnabled = true, exportedRecords = null)
+                }
+                exportMeasurementsToHealthConnect()
+            } else {
+                userPreferences.saveHealthConnectEnabled(false)
+                _healthConnectState.update {
+                    it.copy(
+                        hasPermissions = false,
+                        isEnabled = false,
+                        exportedRecords = null
+                    )
+                }
+            }
+        }
+    }
+
+    fun updateHealthConnectEnabled(isEnabled: Boolean) {
+        viewModelScope.launch {
+            userPreferences.saveHealthConnectEnabled(isEnabled)
+
+            if (isEnabled) {
+                _healthConnectState.update { it.copy(isEnabled = true, exportedRecords = null) }
+                exportMeasurementsToHealthConnect()
+            } else {
+                _healthConnectState.update {
+                    it.copy(isEnabled = false, isExporting = false, exportedRecords = null)
+                }
+            }
+        }
+    }
+
+    private suspend fun exportMeasurementsToHealthConnect() {
+        _healthConnectState.update { it.copy(isExporting = true, exportedRecords = null) }
+
+        runCatching {
+            healthConnectRepository.exportMeasurements(measurementRepository.measurements.first())
+        }.onSuccess { exportedRecords ->
+            _healthConnectState.update {
+                it.copy(
+                    isExporting = false,
+                    hasPermissions = true,
+                    isEnabled = true,
+                    exportedRecords = exportedRecords
+                )
+            }
+        }.onFailure {
+            userPreferences.saveHealthConnectEnabled(false)
+            _healthConnectState.update {
+                it.copy(
+                    isExporting = false,
+                    hasPermissions = false,
+                    isEnabled = false,
+                    exportedRecords = null
+                )
+            }
         }
     }
 
@@ -109,3 +206,11 @@ class SettingsScreenViewModel @Inject constructor(
         }
     }
 }
+
+data class HealthConnectState(
+    val isAvailable: Boolean = false,
+    val hasPermissions: Boolean = false,
+    val isEnabled: Boolean = false,
+    val isExporting: Boolean = false,
+    val exportedRecords: Int? = null
+)

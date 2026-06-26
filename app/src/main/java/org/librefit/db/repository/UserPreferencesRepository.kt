@@ -50,6 +50,7 @@ private val SHOW_KEEP_ANDROID_OPEN_KEY = booleanPreferencesKey("showKeepAndroidO
 private val USE_SCROLL_WHEEL_FOR_INPUT_KEY = booleanPreferencesKey("use_number_picker")
 private val DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY =
     booleanPreferencesKey("dismiss_input_modal_bottom_sheet_automatically_key")
+private val HEALTH_CONNECT_ENABLED_KEY = booleanPreferencesKey("health_connect_enabled")
 
 /**
  * A repository to handle user preferences using [androidx.datastore.core.DataStore].
@@ -160,6 +161,14 @@ class UserPreferencesRepository @Inject constructor(
             initialValue = false
         )
 
+    val healthConnectEnabled: StateFlow<Boolean> = dataStore.data
+        .map { preferences -> preferences[HEALTH_CONNECT_ENABLED_KEY] == true }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
+
     /**
      * A Flow that emits the new Locale whenever the app's configuration changes.
      */
@@ -254,5 +263,9 @@ class UserPreferencesRepository @Inject constructor(
         dataStore.edit { preferences ->
             preferences[DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY] = dismissAutomatically
         }
+    }
+
+    suspend fun saveHealthConnectEnabled(isEnabled: Boolean) {
+        dataStore.edit { preferences -> preferences[HEALTH_CONNECT_ENABLED_KEY] = isEnabled }
     }
 }

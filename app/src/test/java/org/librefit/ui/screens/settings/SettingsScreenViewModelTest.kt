@@ -20,9 +20,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.librefit.MainDispatcherRule
+import org.librefit.db.entity.Measurement
+import org.librefit.db.repository.MeasurementRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.health.HealthConnectRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsScreenViewModelTest {
@@ -32,6 +35,8 @@ class SettingsScreenViewModelTest {
 
     // The mock repository
     private lateinit var userPreferencesRepository: UserPreferencesRepository
+    private lateinit var measurementRepository: MeasurementRepository
+    private lateinit var healthConnectRepository: HealthConnectRepository
 
     // The class under test
     private lateinit var viewModel: SettingsScreenViewModel
@@ -46,11 +51,15 @@ class SettingsScreenViewModelTest {
     private lateinit var isWorkoutHeaderSticky: MutableStateFlow<Boolean>
     private lateinit var useScrollWheelForInput: MutableStateFlow<Boolean>
     private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
+    private lateinit var healthConnectEnabled: MutableStateFlow<Boolean>
+    private lateinit var measurements: MutableStateFlow<List<Measurement>>
 
     @Before
     fun setUp() {
         // Arrange: Create a mock for the repository
         userPreferencesRepository = mockk()
+        measurementRepository = mockk()
+        healthConnectRepository = mockk()
         language = MutableStateFlow(Language.SYSTEM)
         themeMode = MutableStateFlow(ThemeMode.SYSTEM)
         keepScreenOn = MutableStateFlow(true)
@@ -60,6 +69,8 @@ class SettingsScreenViewModelTest {
         isWorkoutHeaderSticky = MutableStateFlow(true)
         useScrollWheelForInput = MutableStateFlow(true)
         dismissScrollWheelAutomatically = MutableStateFlow(false)
+        healthConnectEnabled = MutableStateFlow(false)
+        measurements = MutableStateFlow(emptyList())
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.language } returns language
@@ -71,6 +82,12 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.isWorkoutHeaderSticky } returns isWorkoutHeaderSticky
         every { userPreferencesRepository.useScrollWheelForInput } returns useScrollWheelForInput
         every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
+        every { userPreferencesRepository.healthConnectEnabled } returns healthConnectEnabled
+        every { measurementRepository.measurements } returns measurements
+        every { healthConnectRepository.writePermissions } returns emptySet()
+        every { healthConnectRepository.isAvailable() } returns false
+        coEvery { healthConnectRepository.hasWritePermissions() } returns false
+        coEvery { healthConnectRepository.exportMeasurements(any()) } returns 0
 
         coEvery { userPreferencesRepository.saveLanguage(any()) } answers {
             language.value = Language.entries.find { it.code == firstArg() }!!
@@ -99,9 +116,16 @@ class SettingsScreenViewModelTest {
         coEvery { userPreferencesRepository.saveDismissScrollWheelInputAutomatically(any()) } answers {
             dismissScrollWheelAutomatically.value = firstArg()
         }
+        coEvery { userPreferencesRepository.saveHealthConnectEnabled(any()) } answers {
+            healthConnectEnabled.value = firstArg()
+        }
 
         // Arrange: Create the ViewModel instance with the mock repository
-        viewModel = SettingsScreenViewModel(userPreferencesRepository)
+        viewModel = SettingsScreenViewModel(
+            userPreferencesRepository,
+            measurementRepository,
+            healthConnectRepository
+        )
     }
 
     @Test
@@ -292,6 +316,19 @@ class SettingsScreenViewModelTest {
             assertThat(awaitItem()).isFalse()
             viewModel.saveDismissScrollWheelInputAutomatically(expected)
             assertThat(awaitItem()).isEqualTo(expected)
+        }
+    }
+
+    @Test
+    fun `health connect switch can be disabled locally`() = runTest {
+        healthConnectEnabled.value = true
+
+        viewModel.updateHealthConnectEnabled(false)
+
+        viewModel.healthConnectState.test {
+            val state = awaitItem()
+            assertThat(state.isEnabled).isFalse()
+            assertThat(state.exportedRecords).isNull()
         }
     }
 

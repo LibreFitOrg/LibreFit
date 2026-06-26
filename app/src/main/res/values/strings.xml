@@ -266,6 +266,7 @@
     <string name="privacy_notice_summary">LibreFit provides **maximum privacy** as it **cannot access the Internet**. In addition, all permissions are **optional** and do not allow data collection.</string>
     <string name="privacy_notice_optional_perm">Optional permissions</string>
     <string name="privacy_notice_notification_perm">**Notifications**: This permission allows the app to send notifications about your ongoing workout sessions and alerts when rest periods are over.</string>
+    <string name="privacy_notice_health_connect_perm">**Health Connect**: This permission allows the app to write body weight and body fat measurements to Health Connect only when you enable Health Connect in settings.</string>
     <string name="privacy_notice_default_perm">Permission granted by default</string>
     <string name="privacy_notice_foreground_perm">**Foreground Service**: This permission is automatically granted when LibreFit is installed and this allows it to run in the foreground during a workout.</string>
 
@@ -294,6 +295,12 @@
     <string name="screen_on_desc">Screen stays on during workout</string>
     <string name="screen_off_desc">Screen does not stay on during workout</string>
     <string name="settings_general">General</string>
+    <string name="health_connect">Health Connect</string>
+    <string name="health_connect_permissions_desc">Allow LibreFit to write body weight and body fat.</string>
+    <string name="health_connect_export_desc">Export body measurements to Health Connect.</string>
+    <string name="health_connect_exporting_desc">Exporting body measurements.</string>
+    <string name="health_connect_exported_desc">Exported %1$d measurement records.</string>
+    <string name="health_connect_unavailable_desc">Health Connect is not available on this device.</string>
     <string name="rest_timer_sound">Rest timer sound</string>
     <string name="rest_timer_sound_on_desc">Play a sound when rest timer ends</string>
     <string name="rest_timer_sound_off_desc">Rest timer alerts will be silent</string>
