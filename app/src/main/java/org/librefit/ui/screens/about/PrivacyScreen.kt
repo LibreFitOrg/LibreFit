@@ -66,6 +66,7 @@ fun PrivacyScreen(
                     stringResource(R.string.privacy_notice_summary)
                             + "\n\n## " + stringResource(R.string.privacy_notice_optional_perm)
                             + "\n\n" + stringResource(R.string.privacy_notice_notification_perm)
+                            + "\n\n" + stringResource(R.string.privacy_notice_health_connect_perm)
                             + "\n\n## " + stringResource(R.string.privacy_notice_default_perm)
                             + "\n\n" + stringResource(R.string.privacy_notice_foreground_perm)
                 )
