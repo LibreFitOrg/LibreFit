@@ -23516,5 +23516,105 @@
       "GMB_Wrist_Prep/6.webp"
     ],
     "id": "GMB_Wrist_Prep"
+  },
+  {
+    "name": "Wall Sit",
+    "force": "static",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": ["quadriceps"],
+    "secondaryMuscles": ["glutes", "hamstrings", "calves"],
+    "instructions": [
+      "Stand with your back flat against a wall and your feet shoulder-width apart.",
+      "Slide your back down the wall until your thighs are parallel to the floor, creating a 90-degree angle at your knees.",
+      "Keep your knees aligned with your toes and do not let them go past your toes.",
+      "Hold this position with your core engaged and your back pressed flat against the wall.",
+      "Hold for the prescribed amount of time, keeping your breathing steady."
+    ],
+    "category": "strength",
+    "images": ["Wall_sit/0.webp", "Wall_sit/1.webp"],
+    "id": "Wall_Sit"
+  },
+  {
+    "name": "Plank Shoulder Taps",
+    "force": "static",
+    "level": "intermediate",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": ["abdominals"],
+    "secondaryMuscles": ["chest", "shoulders", "triceps"],
+    "instructions": [
+      "Start in a high plank position with your hands directly under your shoulders and your body forming a straight line from head to heels.",
+      "Engage your core and glutes to keep your hips stable and prevent them from rotating.",
+      "Lift your right hand off the floor and tap your left shoulder.",
+      "Return your right hand to the starting position.",
+      "Lift your left hand off the floor and tap your right shoulder.",
+      "Return your left hand to the starting position.",
+      "Continue alternating taps for the prescribed number of repetitions, keeping your hips as still as possible."
+    ],
+    "category": "strength",
+    "images": ["Plank_Shoulder_Taps/0.webp", "Plank_Shoulder_Taps/1.webp"],
+    "id": "Plank_Shoulder_Taps"
+  },
+  {
+    "name": "Bottom Push-Up Hold",
+    "force": "static",
+    "level": "intermediate",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": ["chest"],
+    "secondaryMuscles": ["shoulders", "triceps", "abdominals"],
+    "instructions": [
+      "Start in a standard push-up position with your hands slightly wider than shoulder-width apart.",
+      "Lower your body slowly until your chest is about 2-3 inches above the ground.",
+      "Pause and hold this bottom position with your chest hovering just above the floor.",
+      "Keep your body in a straight line from head to heels with your core engaged.",
+      "Hold for the prescribed amount of time, maintaining tension in your chest, shoulders, and triceps.",
+      "Avoid letting your hips sag or pike up during the hold."
+    ],
+    "category": "strength",
+    "images": ["Bottom_Pushup_Hold/0.webp", "Bottom_Pushup_Hold/1.webp"],
+    "id": "Bottom_Pushup_Hold"
+  },
+  {
+    "name": "Cobra Stretch",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "isolation",
+    "equipment": "body only",
+    "primaryMuscles": ["lower back"],
+    "secondaryMuscles": ["chest", "shoulders", "abdominals"],
+    "instructions": [
+      "Lie face down on the floor with your legs extended behind you and the tops of your feet flat on the ground.",
+      "Place your hands directly under your shoulders with your palms flat on the floor and elbows bent.",
+      "Press through your hands to slowly lift your chest off the floor while keeping your hips and pelvis in contact with the ground.",
+      "Straighten your arms as much as comfortable, arching your back gently.",
+      "Look slightly upward and hold the stretch for 10-30 seconds while breathing deeply.",
+      "Slowly lower your chest back to the starting position."
+    ],
+    "category": "stretching",
+    "images": ["Cobra_Stretch/0.webp", "Cobra_Stretch/1.webp"],
+    "id": "Cobra_Stretch"
+  },
+  {
+    "name": "Jumping Jacks",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": ["quadriceps"],
+    "secondaryMuscles": ["calves", "glutes", "hamstrings", "shoulders"],
+    "instructions": [
+      "Start standing with your feet together and your arms resting at your sides.",
+      "Jump and spread your feet wider than shoulder-width apart while simultaneously raising your arms above your head.",
+      "Your arms should be fully extended and your palms should meet or almost meet at the top.",
+      "Jump again and return to the starting position with your feet together and arms at your sides.",
+      "Land softly on the balls of your feet and bend your knees slightly to absorb impact.",
+      "Continue the motion in a fluid, rhythmic manner for the prescribed number of repetitions."
+    ],
+    "category": "cardio",
+    "images": ["Jumping_Jacks/0.webp", "Jumping_Jacks/1.webp"],
+    "id": "Jumping_Jacks"
   }
 ]
