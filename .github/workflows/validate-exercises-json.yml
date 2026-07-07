@@ -5,9 +5,11 @@ on:
   push:
     paths:
       - 'app/src/main/res/raw/exercises.json'
+      - 'app/src/main/assets/**'
   pull_request:
     paths:
       - 'app/src/main/res/raw/exercises.json'
+      - 'app/src/main/assets/**'
 
 jobs:
   validate:
@@ -16,10 +18,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup node
-        uses: actions/setup-node@v4
+      - name: Setup python
+        uses: actions/setup-python@v6
         with:
-          node-version: '20'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - run: python validate_exercises_json.py
 
-      - name: Validate JSON file
-        run: npx ajv-cli validate -s schemas/exercises-schema.json -d "app/src/main/res/raw/exercises.json"
+      - name: Upload ordered JSON
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: ordered_exercises.json
+          archive: false

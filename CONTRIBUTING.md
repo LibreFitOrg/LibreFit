@@ -55,7 +55,7 @@ We will then take care of the question as soon as possible.
 
 When contributing to this project, you must agree that you have authored 100% of the content, that
 you have the necessary rights to the content and that the content you contribute may be provided
-under the project licence.
+under the project license.
 
 ### License
 
@@ -78,7 +78,7 @@ possible.
 - To see if other users have experienced (and potentially already solved) the same issue you are
   having, check if there is not already a bug report existing for your bug or error in
   the [bug tracker](https://github.com/LibreFitOrg/LibreFit/issues?q=label%3Abug).
-- Also make sure to search the internet to see if users outside of the GitHub community have
+- Also make sure to search the internet to see if users outside the GitHub community have
   discussed the issue.
 
 #### How Do I Submit a Good Bug Report?
@@ -256,7 +256,7 @@ these guidelines when adding or modifying exercises:
 * **Format:** Images must have `webp` format, a white background and be consistent with existing
   exercise imagery.
 * **Quality**: Instructions must be clear, step-by-step, and coherent with the provided images.
-* **Asset Organization:** Images must be stored in `app/src/main/res/raw/`. Create a folder for each
+* **Asset Organization:** Images must be stored in `app/src/main/assets/`. Create a folder for each
   exercise named exactly as the `id` in your JSON. Reference these in the JSON using the relative
   path.
 * **Consistency:** Ensure the `id` is unique and follows kebab-case. Verify there are no duplicate
@@ -264,16 +264,32 @@ these guidelines when adding or modifying exercises:
 
 #### Data Validation
 
-All exercises are validated against a JSON Schema. Please ensure your contributions meet these
-standards:
+Before committing, validate your changes locally with Python:
 
-1. **Schema Location:** The data contract is defined in `schemas/exercise-schema.json`.
-2. **IDE Setup:** A schema catalog is used to enable real-time linting in Android Studio.
-3. **Validation:** Before committing, validate your changes locally with this simple command:
+1. From root directory of the project, create virtual environment:
+    ```shell
+    python -m venv .venv
+    ```
+2. Install dependencies:
+    ```shell
+    pip install -r requirements.txt
+    ```
+3. Run script:
+   ```shell
+   python validate_exercises_json.py
+   ```
 
-```shell
-npx ajv-cli validate -s schemas/exercises-schema.json -d "app/src/main/res/raw/exercises.json"
+If errors are encountered, the script will stop and print them on screen so they can be fixed.
+When JSON file is correct, validation will pass and script will output:
+
+```text
+✅ JSON file is valid.
 ```
+
+> [!IMPORTANT]
+> This check will be executed also by CI in a pull request or push to every change in JSON file or images.
+> If JSON is not ordered, the CI will upload the ordered JSON as artifact.
+> See more [here](https://github.com/LibreFitOrg/LibreFit/blob/main/.github/workflows/validate-exercises-json.yml)
 
 #### Pull Request Process
 
