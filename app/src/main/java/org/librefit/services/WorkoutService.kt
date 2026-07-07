@@ -86,14 +86,39 @@ class WorkoutService : Service() {
         private val _restTime = MutableStateFlow(0)
         val restTime: StateFlow<Int> = _restTime
 
+        /** Countdown timer for HIIT sets (counts down to 0). */
+        private val _countdownTime = MutableStateFlow(0)
+        val countdownTime: StateFlow<Int> = _countdownTime
+
+        /** Whether a HIIT countdown is actively running. */
+        private val _isCountdownActive = MutableStateFlow(false)
+        val isCountdownActive: StateFlow<Boolean> = _isCountdownActive
+
+        /** Total duration for the current countdown (used for progress calculation). */
+        private val _countdownTotal = MutableStateFlow(0)
+        val countdownTotal: StateFlow<Int> = _countdownTotal
+
+        /** Emits true once when a countdown finishes — consumed by the ViewModel to auto-start rest. */
+        private val _countdownFinished = MutableStateFlow(false)
+        val countdownFinished: StateFlow<Boolean> = _countdownFinished
+
         const val EXTRA_INITIAL_REST_TIME = "EXTRA_INITIAL_REST_TIME"
         const val EXTRA_ADD_TEN_SECONDS = "EXTRA_ADD_TEN_SECONDS"
         const val EXTRA_IS_FOCUSED = "EXTRA_IS_FOCUSED"
         const val EXTRA_SET_ELAPSED_TIME = "EXTRA_SET_ELAPSED_TIME"
+        const val EXTRA_COUNTDOWN_DURATION = "EXTRA_COUNTDOWN_DURATION"
+        /** Rest duration to auto-start after countdown finishes (0 = skip rest). */
+        const val EXTRA_COUNTDOWN_REST_DURATION = "EXTRA_COUNTDOWN_REST_DURATION"
+
+        /** Acknowledge the [countdownFinished] signal (call from ViewModel after reading it). */
+        fun clearCountdownFinished() {
+            _countdownFinished.update { false }
+        }
     }
 
     private var initialRestTime = 0
     private var isFocused = true
+    private var countdownRestDuration = 0
 
     @Inject
     lateinit var notificationHelper: NotificationHelper
@@ -145,6 +170,24 @@ class WorkoutService : Service() {
                     it + (intent?.getIntExtra(EXTRA_SET_ELAPSED_TIME, 0) ?: 0)
                 }
             }
+
+            WorkoutServiceActions.START_COUNTDOWN -> {
+                val duration = intent?.getIntExtra(EXTRA_COUNTDOWN_DURATION, 0) ?: 0
+                countdownRestDuration =
+                    intent?.getIntExtra(EXTRA_COUNTDOWN_REST_DURATION, 0) ?: 0
+                countdownJob?.cancel()
+                _countdownTotal.update { duration }
+                _countdownTime.update { duration }
+                _isCountdownActive.update { true }
+                _countdownFinished.update { false }
+                startCountdown()
+            }
+
+            WorkoutServiceActions.CANCEL_COUNTDOWN -> {
+                countdownJob?.cancel()
+                _isCountdownActive.update { false }
+                _countdownTime.update { 0 }
+            }
         }
 
         return START_STICKY
@@ -153,9 +196,15 @@ class WorkoutService : Service() {
     fun stopService() {
         stopwatchJob?.cancel()
         restTimerJob?.cancel()
+        countdownJob?.cancel()
         _timeElapsed.update { 0 }
         _restTime.update { 0 }
+        _countdownTime.update { 0 }
+        _isCountdownActive.update { false }
+        _countdownFinished.update { false }
+        _countdownTotal.update { 0 }
         initialRestTime = 0
+        countdownRestDuration = 0
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
@@ -198,6 +247,34 @@ class WorkoutService : Service() {
         _isStopwatchPaused.update { true }
         notificationHelper.notifyOngoingWorkout(timeElapsed.value, isStopwatchPaused.value)
     }
+
+
+    private var countdownJob: Job? = null
+
+    /**
+     * HIIT countdown: counts from [countdownTime] down to 0, then:
+     * 1. Signals [countdownFinished] for the ViewModel
+     * 2. Auto-starts the rest timer if [countdownRestDuration] > 0
+     */
+    private fun startCountdown() {
+        countdownJob = serviceScope.launch {
+            while (countdownTime.value > 0) {
+                delay(1000)
+                _countdownTime.update { (it - 1).coerceAtLeast(0) }
+            }
+            _isCountdownActive.update { false }
+            _countdownFinished.update { true }
+
+            // Auto-start rest if configured
+            if (countdownRestDuration > 0) {
+                restTimerJob?.cancel()
+                initialRestTime = countdownRestDuration
+                _restTime.update { countdownRestDuration }
+                startRestTimer()
+            }
+        }
+    }
+
 
 
     private var restTimerJob: Job? = null

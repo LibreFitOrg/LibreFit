@@ -13,6 +13,8 @@ import android.content.Intent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.librefit.enums.WorkoutServiceActions
 import org.librefit.services.WorkoutService.Companion.EXTRA_ADD_TEN_SECONDS
+import org.librefit.services.WorkoutService.Companion.EXTRA_COUNTDOWN_DURATION
+import org.librefit.services.WorkoutService.Companion.EXTRA_COUNTDOWN_REST_DURATION
 import org.librefit.services.WorkoutService.Companion.EXTRA_INITIAL_REST_TIME
 import org.librefit.services.WorkoutService.Companion.EXTRA_IS_FOCUSED
 import org.librefit.services.WorkoutService.Companion.EXTRA_SET_ELAPSED_TIME
@@ -69,6 +71,26 @@ class WorkoutServiceManager @Inject constructor(
         val serviceIntent = workoutServiceIntent.apply {
             action = WorkoutServiceActions.SET_ELAPSED_TIME.string
             putExtra(EXTRA_SET_ELAPSED_TIME, seconds)
+        }
+        context.startForegroundService(serviceIntent)
+    }
+
+    /**
+     * Start a HIIT countdown timer that counts down from [durationSeconds] to 0,
+     * then auto-starts rest timer for [restDurationSeconds] if > 0.
+     */
+    fun startCountdown(durationSeconds: Int, restDurationSeconds: Int) {
+        val serviceIntent = workoutServiceIntent.apply {
+            action = WorkoutServiceActions.START_COUNTDOWN.string
+            putExtra(EXTRA_COUNTDOWN_DURATION, durationSeconds)
+            putExtra(EXTRA_COUNTDOWN_REST_DURATION, restDurationSeconds)
+        }
+        context.startForegroundService(serviceIntent)
+    }
+
+    fun cancelCountdown() {
+        val serviceIntent = workoutServiceIntent.apply {
+            action = WorkoutServiceActions.CANCEL_COUNTDOWN.string
         }
         context.startForegroundService(serviceIntent)
     }

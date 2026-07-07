@@ -474,7 +474,7 @@ private fun DetailsPage(
 @Composable
 private fun InstructionsPage(
     maxHeight: Dp,
-    instructions: List<String>,
+    instructions: List<String>
 ) {
     LazyColumn(
         modifier = Modifier.height(maxHeight),
@@ -485,7 +485,6 @@ private fun InstructionsPage(
             Text(
                 text = buildString {
                     instructions.forEachIndexed { index, instruction ->
-                        // For all items except the first, add the separator BEFORE the item.
                         if (index > 0) {
                             append("\n\n")
                         }

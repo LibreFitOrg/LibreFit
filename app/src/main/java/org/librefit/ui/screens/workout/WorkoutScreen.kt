@@ -83,6 +83,8 @@ import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
+import org.librefit.ui.components.HiitCountdownCard
+import org.librefit.ui.components.HiitSettingsCard
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.DumbbellLottie
@@ -137,6 +139,11 @@ fun SharedTransitionScope.WorkoutScreen(
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
 
     val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
+
+    // HIIT countdown state
+    val hiitPhase by viewModel.hiitPhase.collectAsStateWithLifecycle()
+    val countdownTime by viewModel.countdownTime.collectAsStateWithLifecycle()
+    val countdownTotal by viewModel.countdownTotal.collectAsStateWithLifecycle()
 
 
     //It keeps the screen turned on
@@ -221,6 +228,10 @@ fun SharedTransitionScope.WorkoutScreen(
                 isHeaderSticky = isHeaderSticky,
                 useScrollWheelForInput = useScrollWheelForInput,
                 dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
+                hiitPhase = hiitPhase,
+                countdownSeconds = countdownTime,
+                countdownTotal = countdownTotal,
+                restSeconds = restTime,
                 toggleStopwatch = viewModel::toggleStopwatch,
                 updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
                 onSelectedExerciseIdChange = { id, idExerciseDC ->
@@ -245,7 +256,11 @@ fun SharedTransitionScope.WorkoutScreen(
                 },
                 moveExercise = viewModel::moveExercise,
                 showInfo = { infoMode.value = it },
-                applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance
+                applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance,
+                onStartHiitCountdown = viewModel::startHiitCountdown,
+                onCancelHiitCountdown = viewModel::cancelHiitCountdown,
+                updateExerciseTargetDuration = viewModel::updateExerciseTargetDuration,
+                updateExerciseAutoAdvanceSets = viewModel::updateExerciseAutoAdvanceSets
             )
         }
     }
@@ -283,6 +298,10 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     isHeaderSticky: Boolean,
     useScrollWheelForInput: Boolean,
     dismissScrollWheelInputAutomatically: Boolean,
+    hiitPhase: HiitPhase,
+    countdownSeconds: Int,
+    countdownTotal: Int,
+    restSeconds: Int,
     toggleStopwatch: () -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
     addSetToExercise: (Long) -> Unit,
@@ -298,7 +317,11 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     moveExercise: (Int, Int) -> Unit,
     onSelectedExerciseIdChange: (Long, String) -> Unit,
     showInfo: (InfoMode) -> Unit,
-    applyPreviousSetPerformance: (Long) -> Unit
+    applyPreviousSetPerformance: (Long) -> Unit,
+    onStartHiitCountdown: (Long, Int) -> Unit,
+    onCancelHiitCountdown: () -> Unit,
+    updateExerciseTargetDuration: (Int, Long) -> Unit,
+    updateExerciseAutoAdvanceSets: (Boolean, Long) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
     val hapticFeedback = LocalHapticFeedback.current
@@ -399,6 +422,56 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                 items = exercisesWithSets,
                 key = { _, exercise -> exercise.exercise.id }
             ) { i, exerciseWithSets ->
+                val exercise = exerciseWithSets.exercise
+                if (exercise.setMode == SetMode.DURATION) {
+                    HiitSettingsCard(
+                        autoAdvanceSets = exercise.autoAdvanceSets,
+                        targetDurationSeconds = exercise.targetDuration,
+                        onAutoAdvanceChange = { updateExerciseAutoAdvanceSets(it, exercise.id) },
+                        onTargetDurationChange = { updateExerciseTargetDuration(it, exercise.id) }
+                    )
+
+                    val isHiitForThisExercise = exercise.autoAdvanceSets
+                            && exercise.targetDuration > 0
+                            && when (val p = hiitPhase) {
+                                is HiitPhase.SetCountdown -> p.exerciseId == exercise.id
+                                is HiitPhase.RestBetweenSets -> p.exerciseId == exercise.id
+                                HiitPhase.Idle, HiitPhase.ExerciseDone -> true
+                            }
+
+                    if (isHiitForThisExercise) {
+                        val currentSetIndex = when (val p = hiitPhase) {
+                            is HiitPhase.SetCountdown -> p.setIndex
+                            is HiitPhase.RestBetweenSets -> p.nextSetIndex - 1
+                            HiitPhase.Idle, HiitPhase.ExerciseDone -> 0
+                        }.coerceAtLeast(0)
+                        HiitCountdownCard(
+                            exerciseName = exerciseWithSets.exerciseDC.name,
+                            currentSetIndex = currentSetIndex,
+                            totalSets = exerciseWithSets.sets.size,
+                            countdownSeconds = countdownSeconds,
+                            countdownTotal = countdownTotal,
+                            restSeconds = restSeconds,
+                            restTotal = exercise.restTime,
+                            phase = hiitPhase,
+                            onPlayPressed = { onStartHiitCountdown(exercise.id, currentSetIndex) },
+                            onCancelPressed = onCancelHiitCountdown,
+                            onSkipRest = {
+                                val p = hiitPhase
+                                if (p is HiitPhase.RestBetweenSets) {
+                                    onStartHiitCountdown(p.exerciseId, p.nextSetIndex)
+                                }
+                            },
+                            onInfoPressed = {
+                                onSelectedExerciseIdChange(
+                                    exercise.id,
+                                    exerciseWithSets.exerciseDC.id
+                                )
+                            }
+                        )
+                    }
+                }
+
                 ReorderableItem(reorderableLazyListState, key = exerciseWithSets.exercise.id) { isDragging ->
                     ExerciseCard(
                         modifier = Modifier.animateItem(),
@@ -622,6 +695,14 @@ private fun WorkoutScreenPreview() {
                         WorkoutScreenContent(
                             animatedVisibilityScope = this@AnimatedVisibility,
                             exercisesWithSets = e,
+                            hiitPhase = HiitPhase.Idle,
+                            countdownSeconds = 0,
+                            countdownTotal = 0,
+                            restSeconds = 0,
+                            onStartHiitCountdown = { _, _ -> },
+                            onCancelHiitCountdown = {},
+                            updateExerciseTargetDuration = { _, _ -> },
+                            updateExerciseAutoAdvanceSets = { _, _ -> },
                             previousPerformances = listOf(
                                 listOf(
                                     PreviousPerformanceSet(time = 612)

@@ -555,5 +555,17 @@
     <string name="do_not_show_again">Do not show again</string>
     <string name="undo">Undo</string>
     <string name="clear">Clear</string>
+    <string name="hiit_mode">HIIT mode</string>
+    <string name="hiit_mode_desc">Auto-advance: countdown → rest → next set</string>
+    <string name="hiit_target_duration">Target duration (seconds)</string>
+    <string name="hiit_phase_ready">READY</string>
+    <string name="hiit_phase_set">SET</string>
+    <string name="hiit_phase_rest">REST</string>
+    <string name="hiit_phase_done">DONE</string>
+    <string name="hiit_start_set">Start set</string>
+    <string name="hiit_skip_rest">Skip rest</string>
+    <string name="hiit_all_sets_complete">All sets complete! Move to next exercise.</string>
+    <string name="hiit_set_progress">Set %1$d / %2$d</string>
+    <string name="exercise_details">Exercise details</string>
 
 </resources>
