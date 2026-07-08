@@ -47,14 +47,20 @@ class SettingsScreenViewModel @Inject constructor(
     val healthConnectPermissions = healthConnectRepository.writePermissions
 
     private val _healthConnectState = MutableStateFlow(HealthConnectState())
-    val healthConnectState = _healthConnectState.asStateFlow()
+    val healthConnectState: StateFlow<HealthConnectState> = combine(
+        _healthConnectState,
+        userPreferences.healthConnectEnabled
+    ) { state, isEnabled ->
+        state.copy(isEnabled = isEnabled)
+    }
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = HealthConnectState()
+        )
 
     init {
-        viewModelScope.launch {
-            userPreferences.healthConnectEnabled.collect { isEnabled ->
-                _healthConnectState.update { it.copy(isEnabled = isEnabled) }
-            }
-        }
         refreshHealthConnectState()
     }
 
@@ -99,10 +105,29 @@ class SettingsScreenViewModel @Inject constructor(
 
             _healthConnectState.update {
                 it.copy(
-                    isAvailable = isAvailable,
-                    hasPermissions = hasPermissions,
-                    isExporting = false
+                    status = when {
+                        !isAvailable -> HealthConnectStatus.UNAVAILABLE
+                        hasPermissions -> HealthConnectStatus.READY
+                        else -> HealthConnectStatus.NEEDS_PERMISSIONS
+                    }
                 )
+            }
+        }
+    }
+
+    fun onHealthConnectClick(): HealthConnectClickAction {
+        val state = healthConnectState.value
+
+        return when {
+            !state.isAvailable || state.isExporting -> HealthConnectClickAction.NONE
+            state.isChecked -> {
+                updateHealthConnectEnabled(false)
+                HealthConnectClickAction.NONE
+            }
+            !state.hasPermissions -> HealthConnectClickAction.REQUEST_PERMISSIONS
+            else -> {
+                updateHealthConnectEnabled(true)
+                HealthConnectClickAction.NONE
             }
         }
     }
@@ -113,15 +138,17 @@ class SettingsScreenViewModel @Inject constructor(
             if (hasPermissions) {
                 userPreferences.saveHealthConnectEnabled(true)
                 _healthConnectState.update {
-                    it.copy(hasPermissions = true, isEnabled = true, exportedRecords = null)
+                    it.copy(
+                        status = HealthConnectStatus.READY,
+                        exportedRecords = null
+                    )
                 }
                 exportMeasurementsToHealthConnect()
             } else {
                 userPreferences.saveHealthConnectEnabled(false)
                 _healthConnectState.update {
                     it.copy(
-                        hasPermissions = false,
-                        isEnabled = false,
+                        status = HealthConnectStatus.NEEDS_PERMISSIONS,
                         exportedRecords = null
                     )
                 }
@@ -134,27 +161,37 @@ class SettingsScreenViewModel @Inject constructor(
             userPreferences.saveHealthConnectEnabled(isEnabled)
 
             if (isEnabled) {
-                _healthConnectState.update { it.copy(isEnabled = true, exportedRecords = null) }
+                _healthConnectState.update { it.copy(exportedRecords = null) }
                 exportMeasurementsToHealthConnect()
             } else {
                 _healthConnectState.update {
-                    it.copy(isEnabled = false, isExporting = false, exportedRecords = null)
+                    it.copy(
+                        status = if (it.hasPermissions) {
+                            HealthConnectStatus.READY
+                        } else {
+                            it.status
+                        },
+                        exportedRecords = null
+                    )
                 }
             }
         }
     }
 
     private suspend fun exportMeasurementsToHealthConnect() {
-        _healthConnectState.update { it.copy(isExporting = true, exportedRecords = null) }
+        _healthConnectState.update {
+            it.copy(
+                status = HealthConnectStatus.EXPORTING,
+                exportedRecords = null
+            )
+        }
 
         runCatching {
             healthConnectRepository.exportMeasurements(measurementRepository.measurements.first())
         }.onSuccess { exportedRecords ->
             _healthConnectState.update {
                 it.copy(
-                    isExporting = false,
-                    hasPermissions = true,
-                    isEnabled = true,
+                    status = HealthConnectStatus.READY,
                     exportedRecords = exportedRecords
                 )
             }
@@ -162,9 +199,11 @@ class SettingsScreenViewModel @Inject constructor(
             userPreferences.saveHealthConnectEnabled(false)
             _healthConnectState.update {
                 it.copy(
-                    isExporting = false,
-                    hasPermissions = false,
-                    isEnabled = false,
+                    status = if (healthConnectRepository.isAvailable()) {
+                        HealthConnectStatus.NEEDS_PERMISSIONS
+                    } else {
+                        HealthConnectStatus.UNAVAILABLE
+                    },
                     exportedRecords = null
                 )
             }
@@ -206,11 +245,3 @@ class SettingsScreenViewModel @Inject constructor(
         }
     }
 }
-
-data class HealthConnectState(
-    val isAvailable: Boolean = false,
-    val hasPermissions: Boolean = false,
-    val isEnabled: Boolean = false,
-    val isExporting: Boolean = false,
-    val exportedRecords: Int? = null
-)

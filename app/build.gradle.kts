@@ -189,6 +189,8 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    // Health connect
     implementation(libs.androidx.health.connect)
 
 

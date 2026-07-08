@@ -15,6 +15,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -330,6 +331,29 @@ class SettingsScreenViewModelTest {
             assertThat(state.isEnabled).isFalse()
             assertThat(state.exportedRecords).isNull()
         }
+    }
+
+    @Test
+    fun `health connect click does nothing when unavailable`() = runTest {
+        advanceUntilIdle()
+
+        assertThat(viewModel.healthConnectState.value.status)
+            .isEqualTo(HealthConnectStatus.UNAVAILABLE)
+        assertThat(viewModel.onHealthConnectClick()).isEqualTo(HealthConnectClickAction.NONE)
+    }
+
+    @Test
+    fun `health connect click requests permissions when available without permissions`() = runTest {
+        every { healthConnectRepository.isAvailable() } returns true
+        coEvery { healthConnectRepository.hasWritePermissions() } returns false
+
+        viewModel.refreshHealthConnectState()
+        advanceUntilIdle()
+
+        assertThat(viewModel.healthConnectState.value.status)
+            .isEqualTo(HealthConnectStatus.NEEDS_PERMISSIONS)
+        assertThat(viewModel.onHealthConnectClick())
+            .isEqualTo(HealthConnectClickAction.REQUEST_PERMISSIONS)
     }
 
     @Test

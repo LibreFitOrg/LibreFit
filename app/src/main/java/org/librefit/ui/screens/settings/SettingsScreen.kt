@@ -130,16 +130,11 @@ fun SettingsScreen(
         onIsWorkoutHeaderStickyChange = viewModel::saveIsWorkoutHeaderSticky,
         onUseScrollWheelForInputChange = viewModel::saveUseScrollWheelForInput,
         onHealthConnectClick = {
-            val isHealthConnectEnabled = healthConnectState.isEnabled &&
-                healthConnectState.hasPermissions
-
-            when {
-                !healthConnectState.isAvailable -> Unit
-                isHealthConnectEnabled -> viewModel.updateHealthConnectEnabled(false)
-                !healthConnectState.hasPermissions -> {
+            when (viewModel.onHealthConnectClick()) {
+                HealthConnectClickAction.REQUEST_PERMISSIONS -> {
                     healthConnectPermissionLauncher.launch(viewModel.healthConnectPermissions)
                 }
-                else -> viewModel.updateHealthConnectEnabled(true)
+                HealthConnectClickAction.NONE -> Unit
             }
         },
         onDismissScrollWhellInputAutomaticallyChange = viewModel::saveDismissScrollWheelInputAutomatically
@@ -248,9 +243,6 @@ private fun SettingsScreenContent(
             }
 
             item {
-                val isHealthConnectEnabled = healthConnectState.isEnabled &&
-                    healthConnectState.hasPermissions
-
                 SettingItem(
                     enabled = healthConnectState.isAvailable && !healthConnectState.isExporting,
                     onClick = onHealthConnectClick,
@@ -276,7 +268,7 @@ private fun SettingsScreenContent(
                             stringResource(id = R.string.health_connect_permissions_desc)
                         }
                     },
-                    isChecked = isHealthConnectEnabled
+                    isChecked = healthConnectState.isChecked
                 )
             }
 
@@ -407,7 +399,7 @@ fun SettingsScreenPreview() {
             restTimerSoundOn = restTimerSoundOn,
             updatePreferences = {},
             isSupporter = Random.nextBoolean(),
-            healthConnectState = HealthConnectState(isAvailable = true),
+            healthConnectState = HealthConnectState(status = HealthConnectStatus.READY),
             isWorkoutHeaderSticky = isWorkoutHeaderSticky,
             useScrollWheelForInput = useScrollWheelForInput,
             dismissScrollWheelInputAutomatically = Random.nextBoolean(),
