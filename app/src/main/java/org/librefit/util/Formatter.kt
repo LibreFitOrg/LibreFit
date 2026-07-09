@@ -1,9 +1,10 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
+ * Copyright (c) 2025-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.util
@@ -16,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import org.librefit.R
 import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.exercise.ExerciseProperty
@@ -92,6 +94,12 @@ object Formatter {
             SetMode.BODYWEIGHT_WITH_LOAD -> R.string.bodyweight_with_load
             SetMode.BODYWEIGHT -> R.string.bodyweight
             SetMode.DURATION -> R.string.duration
+        }
+    }
+
+    fun setWarmupModeToStringId(warmupMode: WarmupMode): Int {
+        return when (warmupMode) {
+            WarmupMode.DEFAULT -> R.string.warmup_40_60_70
         }
     }
 
