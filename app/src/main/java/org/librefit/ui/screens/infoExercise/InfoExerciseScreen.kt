@@ -4,6 +4,7 @@
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.screens.infoExercise
@@ -518,18 +519,20 @@ private fun SharedTransitionScope.HistoryPage(
                 decimalCount = when (exerciseChart) {
                     BodyweightChart.MOST_REPS, BodyweightChart.SESSION_REPS, LoadChart.TOTAL_REPS,
                     WeightedBodyweightChart.TOTAL_REPS -> 2
+
                     TimeChart.BEST_TIME, TimeChart.TOTAL_TIME -> 0
                     else -> 1
                 },
                 suffix = when (exerciseChart) {
                     BodyweightChart.MOST_REPS, BodyweightChart.SESSION_REPS, LoadChart.TOTAL_REPS,
                     WeightedBodyweightChart.TOTAL_REPS -> null
-                    TimeChart.BEST_TIME, TimeChart.TOTAL_TIME ->  stringResource(R.string.second_abbreviation)
+
+                    TimeChart.BEST_TIME, TimeChart.TOTAL_TIME -> stringResource(R.string.second_abbreviation)
                     else -> stringResource(R.string.kg)
                 },
                 points = points,
                 chartMode = exerciseChart,
-                chartModes = when(exerciseChart) {
+                chartModes = when (exerciseChart) {
                     is BodyweightChart -> BodyweightChart.entries
                     is LoadChart -> LoadChart.entries
                     is WeightedBodyweightChart -> WeightedBodyweightChart.entries
@@ -719,13 +722,18 @@ private fun SharedTransitionScope.HistoryPage(
                                                 )
                                                 if (setMode == SetMode.DURATION) {
                                                     Text(
-                                                        text=formatTime(set.elapsedTime).substring(3),
-                                                        color=contentColor
+                                                        text = formatTime(set.elapsedTime).substring(
+                                                            3
+                                                        ),
+                                                        color = contentColor
                                                     )
                                                 } else {
-                                                    Text(text="${set.reps}", color=contentColor)
+                                                    Text(text = "${set.reps}", color = contentColor)
                                                     if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
-                                                        Text(text = "${set.load}", color = contentColor)
+                                                        Text(
+                                                            text = "${set.load}",
+                                                            color = contentColor
+                                                        )
                                                     }
                                                 }
                                                 Checkbox(
@@ -833,9 +841,9 @@ private fun SharedTransitionScope.AlternatingImages(
         if (exercise.images.isNotEmpty()) {
             AnimatedVisibility(visible = showWarning) {
                 OutlinedCard(
-                    modifier = Modifier.padding(start= 15.dp, end= 15.dp),
+                    modifier = Modifier.padding(start = 15.dp, end = 15.dp),
                     shape = MaterialTheme.shapes.large
-                ){
+                ) {
                     Column(Modifier.padding(10.dp)) {
                         Text(
                             text = stringResource(R.string.ai_images_warning),
@@ -878,7 +886,11 @@ private fun InfoExercisePreview() {
                     animatedVisibilityScope = this,
                     workoutsWithExercises = listOf(
                         UiWorkoutWithExercisesAndSets(
-                            workout = UiWorkout(id = Random.nextLong(), title = "My first workout", notes = "Very funny"),
+                            workout = UiWorkout(
+                                id = Random.nextLong(),
+                                title = "My first workout",
+                                notes = "Very funny"
+                            ),
                             exercisesWithSets = persistentListOf(
                                 UiExerciseWithSets(
                                     exercise = UiExercise(
@@ -894,10 +906,14 @@ private fun InfoExercisePreview() {
                                     )
                                 ),
                                 UiExerciseWithSets()
-                            )
+                            ),
+                            warmupsWithSets = persistentListOf()
                         ),
                         UiWorkoutWithExercisesAndSets(
-                            workout = UiWorkout(id = Random.nextLong(), title = "My second workout"),
+                            workout = UiWorkout(
+                                id = Random.nextLong(),
+                                title = "My second workout"
+                            ),
                             exercisesWithSets = persistentListOf(
                                 UiExerciseWithSets(
                                     exercise = UiExercise(
@@ -907,7 +923,8 @@ private fun InfoExercisePreview() {
                                     ),
                                     sets = persistentListOf()
                                 )
-                            )
+                            ),
+                            warmupsWithSets = persistentListOf()
                         )
                     ),
                     points = emptyList(),

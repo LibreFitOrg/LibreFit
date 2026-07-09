@@ -1,9 +1,10 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
+ * Copyright (c) 2025-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.screens.editWorkout
@@ -48,6 +49,7 @@ import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
 import org.librefit.enums.SuccessMessage
+import org.librefit.enums.WarmupMode
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
@@ -55,14 +57,18 @@ import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
+import org.librefit.ui.components.WarmupCard
 import org.librefit.ui.components.animations.DumbbellLottie
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
+import org.librefit.ui.models.UiExerciseItem
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
+import org.librefit.ui.models.UiWarmupItem
 import org.librefit.ui.models.UiWorkout
+import org.librefit.ui.models.UiWorkoutItem
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
 import sh.calvin.reorderable.ReorderableItem
@@ -79,7 +85,7 @@ fun SharedTransitionScope.EditWorkoutScreen(
 
     val workout by viewModel.workout.collectAsStateWithLifecycle()
 
-    val exercises by viewModel.exercises.collectAsStateWithLifecycle()
+    val workoutItems by viewModel.workoutItems.collectAsStateWithLifecycle()
 
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
 
@@ -110,7 +116,7 @@ fun SharedTransitionScope.EditWorkoutScreen(
         navController = navController,
         animatedVisibilityScope = animatedVisibilityScope,
         typeOfEdit = viewModel.getTypeOfEdit(),
-        exercisesWithSets = exercises,
+        workoutItems = workoutItems,
         workout = workout,
         isTitleTooLong = viewModel.isTitleTooLong(),
         isTitleEmpty = viewModel.isTitleEmpty(),
@@ -130,8 +136,11 @@ fun SharedTransitionScope.EditWorkoutScreen(
         updateExerciseNotes = viewModel::updateExerciseNotes,
         updateExerciseRestTime = viewModel::updateExerciseRestTime,
         updateExerciseSetMode = viewModel::updateExerciseSetMode,
+        updateWarmupSetMode = viewModel::updateWarmupSetMode,
+        updateWarmupTarget = viewModel::updateWarmupTarget,
         moveExercise = viewModel::moveExercise,
         saveWorkoutWithExercisesInDB = viewModel::saveWorkoutWithExercisesInDB,
+        addWarmup = viewModel::addWarmup
     )
 
 }
@@ -142,7 +151,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     navController: NavHostController,
     animatedVisibilityScope: AnimatedVisibilityScope,
     typeOfEdit: Boolean?,
-    exercisesWithSets: List<UiExerciseWithSets>,
+    workoutItems: List<UiWorkoutItem>,
     workout: UiWorkout,
     isTitleTooLong: Boolean,
     isTitleEmpty: Boolean,
@@ -160,13 +169,16 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     updateExerciseNotes: (String, Long) -> Unit,
     updateExerciseRestTime: (Int, Long) -> Unit,
     updateExerciseSetMode: (SetMode, Long) -> Unit,
+    updateWarmupSetMode: (WarmupMode, Long) -> Unit,
+    updateWarmupTarget: (Double, Long) -> Unit,
     moveExercise: (Int, Int) -> Unit,
-    saveWorkoutWithExercisesInDB: () -> Unit
+    saveWorkoutWithExercisesInDB: () -> Unit,
+    addWarmup: (Long, Double?) -> Unit
 ) {
 
     var showConfirmDialog by remember { mutableStateOf(false) }
 
-    BackHandler(enabled = !showConfirmDialog && exercisesWithSets.isNotEmpty()) {
+    BackHandler(enabled = !showConfirmDialog && workoutItems.isNotEmpty()) {
         showConfirmDialog = true
     }
 
@@ -210,9 +222,9 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         val fromExerciseIndex = from.index - exerciseSectionStartIndex
         val toExerciseIndex = (to.index - exerciseSectionStartIndex)
-            .coerceIn(0, exercisesWithSets.lastIndex)
+            .coerceIn(0, workoutItems.lastIndex)
 
-        if (fromExerciseIndex in exercisesWithSets.indices && toExerciseIndex in exercisesWithSets.indices) {
+        if (fromExerciseIndex in workoutItems.indices && toExerciseIndex in workoutItems.indices) {
             moveExercise(fromExerciseIndex, toExerciseIndex)
 
             hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
@@ -228,7 +240,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
             }
         ),
         navigateBack = {
-            if (exercisesWithSets.isEmpty()) {
+            if (workoutItems.isEmpty()) {
                 navController.navigateUp()
             } else {
                 showConfirmDialog = true
@@ -253,7 +265,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
             if (typeOfEdit == false) stringResource(R.string.done)
             else stringResource(R.string.save)
         ),
-        actionsEnabled = persistentListOf(!isTitleEmpty && !isTitleTooLong && if (typeOfEdit != false) true else exercisesWithSets.isNotEmpty()),
+        actionsEnabled = persistentListOf(!isTitleEmpty && !isTitleTooLong && if (typeOfEdit != false) true else workoutItems.isNotEmpty()),
         fabIcon = painterResource(R.drawable.ic_add),
         fabAction = {
             navController.navigate(Route.ExercisesScreen(addExercises = true)) {
@@ -310,7 +322,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
             item {
                 HorizontalDivider()
             }
-            if (exercisesWithSets.isEmpty()) {
+            if (workoutItems.isEmpty()) {
                 item {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -326,49 +338,88 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                 }
             } else {
                 itemsIndexed(
-                    items = exercisesWithSets,
-                    key = { _, e -> e.exercise.id }
+                    items = workoutItems,
+                    key = { _, e -> e.id }
                 ) { _, exerciseWithSets ->
-                    ReorderableItem(reorderableLazyListState, key = exerciseWithSets.exercise.id) { isDragging ->
-                        ExerciseCard(
-                            modifier = Modifier.animateItem(),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            exerciseWithSets = exerciseWithSets,
-                            workout = typeOfEdit == false,
-                            addSet = addSetToExercise,
-                            isDragging = isDragging,
-                            useScrollWheelForInput = useScrollWheelForInput,
-                            dismissScrollWheelInputAutomatically = dismissInputAutomatically,
-                            onDetail = { id, idExerciseDC ->
-                                navController.navigate(
-                                    Route.InfoExerciseScreen(
-                                        id,
-                                        idExerciseDC
-                                    )
-                                ) { launchSingleTop = true }
-                            },
-                            onDelete = deleteExercise,
-                            isCollapsed = isReorderingEnabled,
-                            dragHandleModifier = Modifier.draggableHandle(
-                                onDragStarted = {
-                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                    ReorderableItem(
+                        reorderableLazyListState,
+                        key = exerciseWithSets.id
+                    ) { isDragging ->
+                        when (exerciseWithSets) {
+                            is UiWarmupItem -> WarmupCard(
+                                modifier = Modifier.animateItem(),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                warmupWithSets = exerciseWithSets.warmup,
+                                useScrollWheelForInput = useScrollWheelForInput,
+                                workout = true,
+                                addSet = addSetToExercise,
+                                onDelete = deleteExercise,
+                                isCollapsed = isReorderingEnabled,
+                                dragHandleModifier = Modifier.draggableHandle(
+                                    onDragStarted = {
+                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                                    },
+                                    onDragStopped = {
+                                        isReorderingEnabled = false
+                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
+                                    }
+                                ),
+                                isDragging = isDragging,
+                                dismissScrollWheelInputAutomatically = dismissInputAutomatically,
+                                onReorderRequest = { isReorderingEnabled = true },
+                                deleteSet = deleteSet,
+                                showInfo = onInfoModeChange,
+                                updateExerciseNotes = updateExerciseNotes,
+                                updateExerciseRestTime = updateExerciseRestTime,
+                                updateWarmupSetMode = updateWarmupSetMode,
+                                updateWarmupTarget = updateWarmupTarget,
+                                updateSetTime = updateSetTime,
+                                updateSetReps = updateSetReps,
+                                updateSetLoad = updateSetLoad,
+                                updateSetCompleted = updateSetCompleted,
+                            )
+
+                            is UiExerciseItem -> ExerciseCard(
+                                modifier = Modifier.animateItem(),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                exerciseWithSets = exerciseWithSets.exercise,
+                                workout = typeOfEdit == false,
+                                addSet = addSetToExercise,
+                                isDragging = isDragging,
+                                useScrollWheelForInput = useScrollWheelForInput,
+                                dismissScrollWheelInputAutomatically = dismissInputAutomatically,
+                                onDetail = { id, idExerciseDC ->
+                                    navController.navigate(
+                                        Route.InfoExerciseScreen(
+                                            id,
+                                            idExerciseDC
+                                        )
+                                    ) { launchSingleTop = true }
                                 },
-                                onDragStopped = {
-                                    isReorderingEnabled = false
-                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
-                                }
-                            ),
-                            onReorderRequest = { isReorderingEnabled = true },
-                            deleteSet = deleteSet,
-                            updateExerciseNotes = updateExerciseNotes,
-                            updateExerciseRestTime = updateExerciseRestTime,
-                            updateExerciseSetMode = updateExerciseSetMode,
-                            showInfo = onInfoModeChange,
-                            updateSetTime = updateSetTime,
-                            updateSetReps = updateSetReps,
-                            updateSetLoad = updateSetLoad,
-                            updateSetCompleted = updateSetCompleted
-                        )
+                                onDelete = deleteExercise,
+                                isCollapsed = isReorderingEnabled,
+                                dragHandleModifier = Modifier.draggableHandle(
+                                    onDragStarted = {
+                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                                    },
+                                    onDragStopped = {
+                                        isReorderingEnabled = false
+                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
+                                    }
+                                ),
+                                onReorderRequest = { isReorderingEnabled = true },
+                                deleteSet = deleteSet,
+                                updateExerciseNotes = updateExerciseNotes,
+                                updateExerciseRestTime = updateExerciseRestTime,
+                                updateExerciseSetMode = updateExerciseSetMode,
+                                showInfo = onInfoModeChange,
+                                updateSetTime = updateSetTime,
+                                updateSetReps = updateSetReps,
+                                updateSetLoad = updateSetLoad,
+                                updateSetCompleted = updateSetCompleted,
+                                addWarmup = addWarmup,
+                            )
+                        }
                     }
                 }
             }
@@ -393,29 +444,33 @@ private fun EditWorkoutScreenPreview() {
                     navController = rememberNavController(),
                     animatedVisibilityScope = this,
                     typeOfEdit = typeOfEdit,
-                    exercisesWithSets = persistentListOf(
-                        UiExerciseWithSets(
-                            exercise = UiExercise(setMode = SetMode.DURATION, restTime = 0),
-                            exerciseDC = UiExerciseDC(
-                                name = "Running, Treadmill",
-                                images = persistentListOf("Running_Treadmill/0.webp"),
-                                equipment = Equipment.OTHER,
-                                category = Category.CARDIO
-                            ),
-                            sets = persistentListOf(UiSet(elapsedTime = 600))
+                    workoutItems = persistentListOf(
+                        UiExerciseItem(
+                            UiExerciseWithSets(
+                                exercise = UiExercise(setMode = SetMode.DURATION, restTime = 0),
+                                exerciseDC = UiExerciseDC(
+                                    name = "Running, Treadmill",
+                                    images = persistentListOf("Running_Treadmill/0.webp"),
+                                    equipment = Equipment.OTHER,
+                                    category = Category.CARDIO
+                                ),
+                                sets = persistentListOf(UiSet(elapsedTime = 600))
+                            )
                         ),
-                        UiExerciseWithSets(
-                            exercise = UiExercise(setMode = SetMode.LOAD, restTime = 120),
-                            exerciseDC = UiExerciseDC(
-                                name = "Barbell Bench Press - Medium Grip",
-                                images = persistentListOf("Barbell_Bench_Press_-_Medium_Grip/0.webp"),
-                                equipment = Equipment.MACHINE,
-                                category = Category.STRENGTH
-                            ),
-                            sets = persistentListOf(
-                                UiSet(load = 80.0, reps = 8),
-                                UiSet(load = 80.0, reps = 8),
-                                UiSet(load = 80.0, reps = 9)
+                        UiExerciseItem(
+                            UiExerciseWithSets(
+                                exercise = UiExercise(setMode = SetMode.LOAD, restTime = 120),
+                                exerciseDC = UiExerciseDC(
+                                    name = "Barbell Bench Press - Medium Grip",
+                                    images = persistentListOf("Barbell_Bench_Press_-_Medium_Grip/0.webp"),
+                                    equipment = Equipment.MACHINE,
+                                    category = Category.STRENGTH
+                                ),
+                                sets = persistentListOf(
+                                    UiSet(load = 80.0, reps = 8),
+                                    UiSet(load = 80.0, reps = 8),
+                                    UiSet(load = 80.0, reps = 9)
+                                )
                             )
                         )
                     ),
@@ -437,7 +492,10 @@ private fun EditWorkoutScreenPreview() {
                     updateSetTime = { _, _ -> },
                     updateSetReps = { _, _ -> },
                     updateSetLoad = { _, _ -> },
-                    updateSetCompleted = { _, _ -> }
+                    updateSetCompleted = { _, _ -> },
+                    addWarmup = { _, _ -> },
+                    updateWarmupSetMode = { _, _ -> },
+                    updateWarmupTarget = { _, _ -> }
                 )
             }
         }

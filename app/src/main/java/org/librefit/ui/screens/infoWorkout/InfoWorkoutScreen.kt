@@ -1,9 +1,10 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
+ * Copyright (c) 2025-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.screens.infoWorkout
@@ -56,13 +57,17 @@ import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
+import org.librefit.ui.components.WarmupCardSmall
 import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.components.charts.Point
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.models.UiExerciseDC
+import org.librefit.ui.models.UiExerciseItem
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
+import org.librefit.ui.models.UiWarmupItem
 import org.librefit.ui.models.UiWorkout
+import org.librefit.ui.models.UiWorkoutItem
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatDetails
@@ -87,7 +92,7 @@ fun SharedTransitionScope.InfoWorkoutScreen(
 
     val routine by viewModel.routine.collectAsStateWithLifecycle()
 
-    val exercises by viewModel.exercises.collectAsStateWithLifecycle()
+    val workoutItems by viewModel.workoutItems.collectAsStateWithLifecycle()
 
     val workoutChartMode by viewModel.workoutChart.collectAsStateWithLifecycle()
 
@@ -104,7 +109,7 @@ fun SharedTransitionScope.InfoWorkoutScreen(
         workoutDate = viewModel.getDate(),
         volumeExercises = volume,
         workoutChart = workoutChartMode,
-        exercises = exercises,
+        workoutItems = workoutItems,
         points = points,
         deleteWorkout = viewModel::deleteWorkout,
         updateChartMode = viewModel::updateChartMode,
@@ -124,7 +129,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
     workoutDate: String,
     volumeExercises: String,
     workoutChart: WorkoutChart,
-    exercises: List<UiExerciseWithSets>,
+    workoutItems: List<UiWorkoutItem>,
     points: List<Point>,
     deleteWorkout: () -> Unit,
     detachWorkoutFromRoutine: () -> Unit,
@@ -239,20 +244,20 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                         Text(
                             formatDetails(
                                 stringResource(R.string.exercises),
-                                exercises.size.toString()
+                                workoutItems.size.toString()
                             )
                         )
                         Text(
                             formatDetails(
                                 stringResource(R.string.total_sets),
-                                exercises.sumOf { it.sets.size }.toString()
+                                workoutItems.sumOf { it.sets.size }.toString()
                             )
                         )
                         if (!isRoutine) {
                             Text(
                                 formatDetails(
                                     stringResource(R.string.completed_sets),
-                                    exercises.sumOf { exe ->
+                                    workoutItems.sumOf { exe ->
                                         exe.sets.filter { it.completed }.size
                                     }.toString()
                                 )
@@ -399,18 +404,26 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
 
 
             item { HeadlineText(stringResource(R.string.exercises)) }
-            items(exercises) { e ->
-                ExerciseCardSmall(
-                    exerciseWithSets = e,
-                    isRoutine = isRoutine,
-                    animatedVisibilityScope = animatedVisibilityScope
-                ) {
-                    navController.navigate(
-                        Route.InfoExerciseScreen(
-                            e.exercise.id,
-                            e.exerciseDC.id
-                        )
-                    ) { launchSingleTop = true }
+            items(workoutItems) { wi ->
+                when (wi) {
+                    is UiWarmupItem -> WarmupCardSmall(
+                        warmupWithSets = wi.warmup,
+                        isRoutine = isRoutine,
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+
+                    is UiExerciseItem -> ExerciseCardSmall(
+                        exerciseWithSets = wi.exercise,
+                        isRoutine = isRoutine,
+                        animatedVisibilityScope = animatedVisibilityScope
+                    ) {
+                        navController.navigate(
+                            Route.InfoExerciseScreen(
+                                wi.id,
+                                wi.exercise.exerciseDC.id
+                            )
+                        ) { launchSingleTop = true }
+                    }
                 }
             }
         }
@@ -435,13 +448,15 @@ private fun InfoRoutineScreenPreview() {
                     workoutDate = Formatter.getFullDateFromLocalDate(LocalDateTime.now()),
                     volumeExercises = "100",
                     workoutChart = WorkoutChart.REPS,
-                    exercises = listOf(
-                        UiExerciseWithSets(
-                            exerciseDC = UiExerciseDC(
-                                name = "Name exercise",
-                                images = persistentListOf("3_4_Sit-Up/0.jpg")
-                            ),
-                            sets = persistentListOf(UiSet(), UiSet())
+                    workoutItems = listOf(
+                        UiExerciseItem(
+                            UiExerciseWithSets(
+                                exerciseDC = UiExerciseDC(
+                                    name = "Name exercise",
+                                    images = persistentListOf("3_4_Sit-Up/0.jpg")
+                                ),
+                                sets = persistentListOf(UiSet(), UiSet())
+                            )
                         )
                     ),
                     points = (0..10).map { Point(listOf(Random.nextDouble())) },
