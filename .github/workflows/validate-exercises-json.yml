@@ -29,5 +29,5 @@ jobs:
         uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: ordered_exercises.json
+          path: ordered_exercises.json
           archive: false
