@@ -4,17 +4,36 @@
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.models
 
-fun List<UiExerciseWithSets>.withNormalizedExercisePositions(): List<UiExerciseWithSets> {
+
+fun List<UiWorkoutItem>.withNormalizedExercisePositions(): List<UiWorkoutItem> {
     return mapIndexed { index, exerciseWithSets ->
-        exerciseWithSets.copy(exercise = exerciseWithSets.exercise.copy(position = index))
+        when (exerciseWithSets) {
+            is UiExerciseItem -> UiExerciseItem(
+                exerciseWithSets.exercise.copy(
+                    exercise = exerciseWithSets.exercise.exercise.copy(
+                        position = index
+                    )
+                )
+            )
+
+            is UiWarmupItem -> UiWarmupItem(
+                exerciseWithSets.warmup.copy(
+                    warmup = exerciseWithSets.warmup.warmup.copy(
+                        position = index
+                    )
+                )
+            )
+        } as UiWorkoutItem
+
     }
 }
 
-fun List<UiExerciseWithSets>.moveExercise(fromIndex: Int, toIndex: Int): List<UiExerciseWithSets> {
+fun List<UiWorkoutItem>.moveExercise(fromIndex: Int, toIndex: Int): List<UiWorkoutItem> {
     if (fromIndex == toIndex || fromIndex !in indices || toIndex !in indices) return this
 
     return toMutableList()
