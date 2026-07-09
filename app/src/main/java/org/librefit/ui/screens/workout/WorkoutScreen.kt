@@ -409,9 +409,17 @@ private fun SharedTransitionScope.WorkoutScreenContent(
         } else {
             itemsIndexed(
                 items = workoutItems,
-                key = { _, workoutItem -> workoutItem.id }
+                key = { _, workoutItem ->
+                    when (workoutItem) {
+                        is UiWarmupItem -> "w"; is UiExerciseItem -> "e"
+                    } + workoutItem.id.toString()
+                }
             ) { i, workoutItem ->
-                ReorderableItem(reorderableLazyListState, key = workoutItem.id) { isDragging ->
+                ReorderableItem(
+                    reorderableLazyListState, key = when (workoutItem) {
+                        is UiWarmupItem -> "w"; is UiExerciseItem -> "e"
+                    } + workoutItem.id.toString()
+                ) { isDragging ->
                     when (workoutItem) {
                         is UiWarmupItem ->
                             WarmupCard(
