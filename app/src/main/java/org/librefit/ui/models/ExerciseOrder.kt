@@ -28,7 +28,7 @@ fun List<UiWorkoutItem>.withNormalizedExercisePositions(): List<UiWorkoutItem> {
                     )
                 )
             )
-        } as UiWorkoutItem
+        }
 
     }
 }
