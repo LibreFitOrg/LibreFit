@@ -23,10 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Buttons in rest timer notification by refactoring logic [#117](https://github.com/LibreFitOrg/LibreFit/pull/117)
 
-> [!TIP]
-> `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
-> For normal use, download `LibreFit.apk`
-
 ## [0.3.1] - 2026-05-31
 
 This is a hotfix for a bug in the weight value of a set: the underlying data were correctly updated, so the issue was only in the visualization.
@@ -36,9 +32,6 @@ This is a hotfix for a bug in the weight value of a set: the underlying data wer
 - Visual bug causing weight field to not show current value [#90](https://github.com/LibreFitOrg/LibreFit/issues/90)
 - Initial state of input sheet [#88](https://github.com/LibreFitOrg/LibreFit/pull/88)
 
-> [!TIP]
-> `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
-> For normal use, download `LibreFit.apk`
 
 ## [0.3.0] - 2026-05-23
 
@@ -67,10 +60,6 @@ This is a hotfix for a bug in the weight value of a set: the underlying data wer
 - Rare crash in info workout screen [#64](https://github.com/LibreFitOrg/LibreFit/issues/64)
 - Parsing logic when typing weight [#43](https://github.com/LibreFitOrg/LibreFit/issues/43)
 - Typing time logic and parsing [#66](https://github.com/LibreFitOrg/LibreFit/issues/66)
-
-> [!TIP]
-> `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
-> For normal use, download `LibreFit.apk`
 
 ## [0.2.0] - 2026-04-26
 
@@ -102,10 +91,6 @@ Thank you for your support!
 - Crash when deleting a custom exercise [#17](https://github.com/LibreFitOrg/LibreFit/issues/17)
 - Incorrect date handling in different time
   zones [#14](https://github.com/LibreFitOrg/LibreFit/issues/14)
-
-> [!TIP]
-> `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
-> For normal use, download `LibreFit.apk`
 
 ## [0.1.5] - 2026-02-23
 
