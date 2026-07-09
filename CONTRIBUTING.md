@@ -270,18 +270,23 @@ Before committing, validate your changes locally with Python:
     ```shell
     python -m venv .venv
     ```
-2. Install dependencies:
+
+2. Activate virtual environment:
+    ```bash
+   source ./.venv/bin/activate    # For MacOS/Linux
+   .\.venv\Scripts\Activate.ps1   # Windows (PowerShell)
+    ```
+3. Install dependencies:
     ```shell
     pip install -r requirements.txt
     ```
-3. Run script:
+4. Run script:
    ```shell
    python validate_exercises_json.py
    ```
 
 If errors are encountered, the script will stop and print them on screen so they can be fixed.
 When JSON file is correct, validation will pass and script will output:
-
 ```text
 ✅ JSON file is valid.
 ```
