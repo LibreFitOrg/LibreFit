@@ -20,7 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -
 
 ### Fixed
--
+
+- Buttons in rest timer notification by refactoring logic [#117](https://github.com/LibreFitOrg/LibreFit/pull/117)
 
 > [!TIP]
 > `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
