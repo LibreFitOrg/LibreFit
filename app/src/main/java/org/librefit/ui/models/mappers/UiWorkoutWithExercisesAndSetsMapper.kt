@@ -4,6 +4,7 @@
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.models.mappers
@@ -18,13 +19,16 @@ fun WorkoutWithExercisesAndSets.toUi(): UiWorkoutWithExercisesAndSets {
         exercisesWithSets = exercisesWithSets
             .sortedBy { it.exercise.position }
             .map { it.toUi() }
-            .toImmutableList()
+            .toImmutableList(),
+        warmupsWithSets = warmupsWithSets.sortedBy { it.warmup.position }.map { it.toUi() }
+            .toImmutableList(),
     )
 }
 
 fun UiWorkoutWithExercisesAndSets.toEntity(): WorkoutWithExercisesAndSets {
     return WorkoutWithExercisesAndSets(
         workout = workout.toEntity(),
-        exercisesWithSets = exercisesWithSets.map { it.toEntity() }
+        exercisesWithSets = exercisesWithSets.map { it.toEntity() },
+        warmupsWithSets = warmupsWithSets.map { it.toEntity() }
     )
 }

@@ -4,6 +4,7 @@
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.models
@@ -26,5 +27,6 @@ data class UiSet(
     val reps: Int = 0,
     val elapsedTime: Int = 0,
     val completed: Boolean = false,
-    val exerciseId: Long = 0
+    val exerciseId: Long? = null,
+    val warmupId: Long? = null
 )

@@ -4,12 +4,14 @@
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.models
 
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 /**
  * The [org.librefit.db.relations.WorkoutWithExercisesAndSets] model used only by the ui. The difference is the use
@@ -21,5 +23,12 @@ import kotlinx.collections.immutable.ImmutableList
 @Immutable
 data class UiWorkoutWithExercisesAndSets(
     val workout: UiWorkout,
-    val exercisesWithSets: ImmutableList<UiExerciseWithSets>
-)
+    val exercisesWithSets: ImmutableList<UiExerciseWithSets>,
+    val warmupsWithSets: ImmutableList<UiWarmupWithSets>,
+) {
+    val workoutItems: ImmutableList<UiWorkoutItem>
+        get() =
+            (exercisesWithSets.map { UiExerciseItem(it) } + warmupsWithSets.map { UiWarmupItem(it) }).sortedBy { it.position }
+                .toImmutableList()
+
+}
