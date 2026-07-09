@@ -1,9 +1,10 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
+ * Copyright (c) 2025-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.screens.profile
@@ -428,7 +429,7 @@ fun StreakCard(weekStreak: Int) {
         modifier = Modifier.drawWithCache {
             val strokeWidthPx = strokeWidthDp.toPx()
 
-            val currentShape = if(isPressed) pressedShape else shape
+            val currentShape = if (isPressed) pressedShape else shape
 
             val colors = listOf(
                 color1,
@@ -497,7 +498,8 @@ private fun ProfileScreenPreview() {
                 completed = LocalDateTime.now(),
                 timeElapsed = 3689
             ),
-            exercisesWithSets = persistentListOf()
+            exercisesWithSets = persistentListOf(),
+            warmupsWithSets = persistentListOf(),
         ),
         UiWorkoutWithExercisesAndSets(
             workout = UiWorkout(
@@ -506,7 +508,8 @@ private fun ProfileScreenPreview() {
                 completed = LocalDateTime.now().minusDays(2L),
                 timeElapsed = 1245
             ),
-            exercisesWithSets = persistentListOf()
+            exercisesWithSets = persistentListOf(),
+            warmupsWithSets = persistentListOf(),
         ),
         UiWorkoutWithExercisesAndSets(
             workout = UiWorkout(
@@ -515,7 +518,8 @@ private fun ProfileScreenPreview() {
                 completed = LocalDateTime.now().minusDays(4L),
                 timeElapsed = 3984
             ),
-            exercisesWithSets = persistentListOf()
+            exercisesWithSets = persistentListOf(),
+            warmupsWithSets = persistentListOf(),
         ),
         UiWorkoutWithExercisesAndSets(
             workout = UiWorkout(
@@ -524,7 +528,8 @@ private fun ProfileScreenPreview() {
                 completed = LocalDateTime.now(),
                 timeElapsed = 3689
             ),
-            exercisesWithSets = persistentListOf()
+            exercisesWithSets = persistentListOf(),
+            warmupsWithSets = persistentListOf(),
         ),
         UiWorkoutWithExercisesAndSets(
             workout = UiWorkout(
@@ -533,7 +538,8 @@ private fun ProfileScreenPreview() {
                 completed = LocalDateTime.now().minusDays(2L),
                 timeElapsed = 1245
             ),
-            exercisesWithSets = persistentListOf()
+            exercisesWithSets = persistentListOf(),
+            warmupsWithSets = persistentListOf(),
         ),
         UiWorkoutWithExercisesAndSets(
             workout = UiWorkout(
@@ -542,7 +548,8 @@ private fun ProfileScreenPreview() {
                 completed = LocalDateTime.now().minusDays(4L),
                 timeElapsed = 3984
             ),
-            exercisesWithSets = persistentListOf()
+            exercisesWithSets = persistentListOf(),
+            warmupsWithSets = persistentListOf(),
         ),
     )
 
