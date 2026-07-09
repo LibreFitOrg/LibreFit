@@ -170,6 +170,9 @@ import kotlin.time.Duration.Companion.seconds
  * @param workout A Boolean flag indicating whether a checkbox should be displayed next to each set.
  * @param applyPreviousSetPerformance Triggered when the user clicks the previous set performance
  * (on the left to the set counter) * and should update the current set with the values of the previous set.
+ * @param addWarmup A function to add a warmup set prior to this current exercise. For more details, refer to
+ * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.addWarmup] and
+ * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.addWarmup].
  */
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
@@ -202,7 +205,8 @@ fun SharedTransitionScope.ExerciseCard(
     updateSetCompleted: (Boolean, Long) -> Unit,
     showInfo: (InfoMode) -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit = {},
-    applyPreviousSetPerformance: (Long) -> Unit = {}
+    applyPreviousSetPerformance: (Long) -> Unit = {},
+    addWarmup: (Long, Double?) -> Unit
 ) {
     var showMenu by rememberSaveable { mutableStateOf(false) }
     val shape = MaterialTheme.shapes.extraLarge
@@ -294,6 +298,22 @@ fun SharedTransitionScope.ExerciseCard(
                                 DropdownMenuGroup(
                                     shapes = MenuDefaults.groupShape(0, 1) // Top-level group shape
                                 ) {
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.add_warmup)) },
+                                        leadingIcon = {
+                                            Icon(
+                                                painterResource(R.drawable.ic_add_circle),
+                                                stringResource(R.string.add_warmup)
+                                            )
+                                        },
+                                        onClick = {
+                                            addWarmup(
+                                                exerciseWithSets.exercise.id,
+                                                exerciseWithSets.sets.first().load
+                                            )
+                                            showMenu = false
+                                        }
+                                    )
                                     // MenuDefaults.Label { Text("Header") }
                                     DropdownMenuItem(
                                         text = { Text(stringResource(R.string.reorder)) },
@@ -466,12 +486,19 @@ fun SharedTransitionScope.ExerciseCard(
                                 SetMode.entries.forEachIndexed { _, mode ->
                                     DropdownMenuItem(
                                         onClick = {
-                                            updateExerciseSetMode(mode, exerciseWithSets.exercise.id)
+                                            updateExerciseSetMode(
+                                                mode,
+                                                exerciseWithSets.exercise.id
+                                            )
                                             expanded = false
                                         },
                                         text = {
                                             Text(
-                                                text = stringResource(Formatter.setModeToStringId(mode))
+                                                text = stringResource(
+                                                    Formatter.setModeToStringId(
+                                                        mode
+                                                    )
+                                                )
                                             )
                                         },
                                         trailingIcon = if (exerciseWithSets.exercise.setMode == mode) {
@@ -524,7 +551,9 @@ fun SharedTransitionScope.ExerciseCard(
                                     exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
                                 ) {
                                     Text(
-                                        text = stringResource(R.string.load) + " (" + stringResource(R.string.kg) + ")",
+                                        text = stringResource(R.string.load) + " (" + stringResource(
+                                            R.string.kg
+                                        ) + ")",
                                         color = MaterialTheme.colorScheme.secondary
                                     )
                                 }
@@ -1064,6 +1093,7 @@ private fun ExerciseCardPreview() {
                         }
                     },
                     onReorderRequest = {},
+                    addWarmup = { _, _ -> }
                 )
             }
         }
