@@ -31,6 +31,7 @@ import org.librefit.services.WorkoutService.Companion.isStopwatchPaused
 import org.librefit.services.WorkoutService.Companion.restTime
 import org.librefit.services.WorkoutService.Companion.timeElapsed
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * A service that manages the stopwatch and the rest timer during a workout session.
@@ -56,8 +57,8 @@ import javax.inject.Inject
  * - [WorkoutServiceActions.START_STOPWATCH]: Starts and resumes the stopwatch with [startStopwatch]
  * - [WorkoutServiceActions.PAUSE_STOPWATCH]: Pauses the stopwatch with [pauseStopwatch]
  * - [WorkoutServiceActions.START_REST_TIMER]: Starts the rest timer with the specified initial time with [startRestTimer]
- * - [WorkoutServiceActions.MODIFY_REST_TIMER]: Modifies the rest timer by adding or subtracting ten
- *   seconds with [modifyRestTimer].
+ * - [WorkoutServiceActions.ADD_TEN_SECONDS_TO_REST_TIMER]: Adds ten seconds to rest timer with [modifyRestTimer].
+ * - [WorkoutServiceActions.SUBTRACT_TEN_SECONDS_TO_REST_TIMER]: Subtract ten seconds to rest timer with [modifyRestTimer].
  * - [WorkoutServiceActions.WORKOUT_FOCUS]: Updates [isFocused] based on the focus state of [org.librefit.ui.screens.workout.WorkoutScreen].
  * - [WorkoutServiceActions.STOP_SERVICE]: It calls [stopService] and resets all timers.
  *
@@ -130,9 +131,12 @@ class WorkoutService : Service() {
                 startRestTimer()
             }
 
-            WorkoutServiceActions.MODIFY_REST_TIMER -> {
-                val addTenSeconds = intent?.getBooleanExtra(EXTRA_ADD_TEN_SECONDS, true) != false
-                modifyRestTimer(addTenSeconds)
+            WorkoutServiceActions.ADD_TEN_SECONDS_TO_REST_TIMER -> {
+                modifyRestTimer(true)
+            }
+
+            WorkoutServiceActions.SUBTRACT_TEN_SECONDS_TO_REST_TIMER -> {
+                modifyRestTimer(false)
             }
 
             WorkoutServiceActions.WORKOUT_FOCUS -> {
@@ -171,7 +175,7 @@ class WorkoutService : Service() {
 
         stopwatchJob = serviceScope.launch {
             while (true) {
-                delay(1000)
+                delay(1000.milliseconds)
 
                 if (!isStopwatchPaused.value) {
                     _timeElapsed.update {
@@ -205,7 +209,7 @@ class WorkoutService : Service() {
     private fun startRestTimer() {
         restTimerJob = serviceScope.launch {
             while (restTime.value > 0) {
-                delay(1000)
+                delay(1000.milliseconds)
                 _restTime.update { (it - 1).coerceAtLeast(0) }
             }
             if (!isFocused) {
