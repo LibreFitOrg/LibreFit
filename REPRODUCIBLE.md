@@ -54,7 +54,7 @@ To ensure a clean environment, `diffoscope` should be run inside an isolated Pyt
    pip install diffoscope
    ```
 
-> [TIP]
+> [!TIP]
 > More info about `diffoscope` [here](https://diffoscope.org/)
 
 #### Step 2: Reproduce the Build Locally
