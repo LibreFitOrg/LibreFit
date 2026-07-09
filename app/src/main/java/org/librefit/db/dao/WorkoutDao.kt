@@ -4,6 +4,7 @@
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.db.dao
@@ -17,8 +18,13 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import org.librefit.db.entity.Exercise
 import org.librefit.db.entity.Set
+import org.librefit.db.entity.Warmup
 import org.librefit.db.entity.Workout
+import org.librefit.db.relations.ExerciseItem
 import org.librefit.db.relations.ExerciseWithSets
+import org.librefit.db.relations.WarmupItem
+import org.librefit.db.relations.WarmupWithSets
+import org.librefit.db.relations.WorkoutItem
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.WorkoutState
 import java.time.LocalDateTime
@@ -71,6 +77,15 @@ interface WorkoutDao {
     suspend fun deleteExercise(exercise: Exercise)
 
     @Insert
+    suspend fun addWarmup(warmup: Warmup): Long
+
+    @Update
+    suspend fun updateWarmup(warmup: Warmup)
+
+    @Delete
+    suspend fun deleteWarmup(warmup: Warmup)
+
+    @Insert
     suspend fun addSet(set: Set)
 
     @Update
@@ -96,12 +111,23 @@ interface WorkoutDao {
     @Query("SELECT * FROM exercises WHERE workoutId = :workoutId ORDER BY position, id")
     suspend fun getExercisesFromWorkout(workoutId: Long): List<ExerciseWithSets>
 
+    @Transaction
+    @Query("SELECT * FROM warmups WHERE workoutId = :workoutId ORDER BY position, id")
+    suspend fun getWarmupsFromWorkout(workoutId: Long): List<WarmupWithSets>
+
+    suspend fun getWorkoutItemsFromWorkout(workoutId: Long): List<WorkoutItem> {
+        val exercises = getExercisesFromWorkout(workoutId).map { ExerciseItem(it) }
+        val warmups = getWarmupsFromWorkout(workoutId).map { WarmupItem(it) }
+
+        return (exercises + warmups).sortedBy { it.position }
+    }
+
     /**
      * Retrieves the list of [Set]s associated with a specific exercise.
-     * This function queries the database to fetch all sets that belong to the given [Set.exerciseId]
+     * This function queries the database to fetch all sets that belong to the given [Set.workoutItemId]
      */
-    @Query("SELECT * FROM sets WHERE exerciseId = :exerciseId")
-    suspend fun getSetsFromExercise(exerciseId: Long): List<Set>
+    @Query("SELECT * FROM sets WHERE exerciseId = :workoutItemId OR warmupId = :workoutItemId")
+    suspend fun getSetsFromWorkoutItem(workoutItemId: Long): List<Set>
 
     /**
      * Retrieves the list of [WorkoutWithExercisesAndSets]s associated with a specific routine.
@@ -153,30 +179,55 @@ interface WorkoutDao {
             workout.id
         }
 
-        val exercisesWithSets = workoutWithExercisesAndSets.exercisesWithSets
-        val oldExercises = getExercisesFromWorkout(workoutId)
+        val workoutItems = workoutWithExercisesAndSets.workoutItems
+        val oldWorkoutItems = getWorkoutItemsFromWorkout(workoutId)
 
         // Create maps for fast O(1) lookups by exercise ID.
-        val oldExercisesMap = oldExercises.associateBy { it.exercise.id }
-        val newExercisesMap = exercisesWithSets.associateBy { it.exercise.id }
+        val oldWorkoutItemsMap = oldWorkoutItems.associateBy { it.id }
+        val newExercisesMap = workoutItems.associateBy { it.id }
 
         // Deletes from db the exercises not found in the passed exercises
-        val idsToDelete = oldExercisesMap.keys - newExercisesMap.keys
+        val idsToDelete = oldWorkoutItemsMap.keys - newExercisesMap.keys
         idsToDelete.forEach { idToDelete ->
-            deleteExercise(oldExercisesMap.getValue(idToDelete).exercise)
+            when (val itemToDelete = oldWorkoutItemsMap.getValue(idToDelete)) {
+                is WarmupItem -> deleteWarmup(itemToDelete.warmup.warmup)
+                is ExerciseItem -> deleteExercise(itemToDelete.exercise.exercise)
+            }
         }
 
-        exercisesWithSets.forEach { exerciseWithSets ->
+        workoutItems.forEach { workoutItem ->
+            val workoutItemId: Long
             // Check if this exercise existed before.
-            val exerciseId = if (exerciseWithSets.exercise.id in oldExercisesMap) {
-                updateExercise(exerciseWithSets.exercise)
-                exerciseWithSets.exercise.id
-            } else {
-                addExercise(exerciseWithSets.exercise.copy(id = 0, workoutId = workoutId))
+            when (workoutItem) {
+                is WarmupItem -> {
+                    workoutItemId = if (workoutItem.id in oldWorkoutItemsMap) {
+                        updateWarmup(workoutItem.warmup.warmup)
+                        workoutItem.id
+                    } else {
+                        addWarmup(
+                            workoutItem.warmup.warmup.copy(id = 0, workoutId = workoutId)
+                        )
+                    }
+                }
+
+                is ExerciseItem -> {
+                    workoutItemId = if (workoutItem.id in oldWorkoutItemsMap) {
+                        updateExercise(workoutItem.exercise.exercise)
+                        workoutItem.id
+                    } else {
+                        addExercise(
+                            workoutItem.exercise.exercise.copy(
+                                id = 0,
+                                workoutId = workoutId
+                            )
+                        )
+                    }
+                }
             }
 
-            val newSets = exerciseWithSets.sets
-            val oldSets = getSetsFromExercise(exerciseId)
+
+            val newSets = workoutItem.sets
+            val oldSets = getSetsFromWorkoutItem(workoutItemId)
 
             // Create maps for fast O(1) lookups by ID.
             val oldSetsMap = oldSets.associateBy { it.id }
@@ -193,7 +244,11 @@ interface WorkoutDao {
                 if (set.id in oldSetsMap) {
                     updateSet(set)
                 } else {
-                    addSet(set.copy(id = 0, exerciseId = exerciseId))
+                    when (workoutItem) {
+                        is WarmupItem -> addSet(set.copy(id = 0, warmupId = workoutItemId))
+                        is ExerciseItem -> addSet(set.copy(id = 0, exerciseId = workoutItemId))
+                    }
+
                 }
             }
         }
