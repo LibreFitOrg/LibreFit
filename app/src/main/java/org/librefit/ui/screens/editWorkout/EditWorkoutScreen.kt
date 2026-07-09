@@ -340,16 +340,16 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                 itemsIndexed(
                     items = workoutItems,
                     key = { _, e -> e.id }
-                ) { _, exerciseWithSets ->
+                ) { _, workoutItem ->
                     ReorderableItem(
                         reorderableLazyListState,
-                        key = exerciseWithSets.id
+                        key = workoutItem.id
                     ) { isDragging ->
-                        when (exerciseWithSets) {
+                        when (workoutItem) {
                             is UiWarmupItem -> WarmupCard(
                                 modifier = Modifier.animateItem(),
                                 animatedVisibilityScope = animatedVisibilityScope,
-                                warmupWithSets = exerciseWithSets.warmup,
+                                warmupWithSets = workoutItem.warmup,
                                 useScrollWheelForInput = useScrollWheelForInput,
                                 workout = true,
                                 addSet = addSetToExercise,
@@ -382,7 +382,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                             is UiExerciseItem -> ExerciseCard(
                                 modifier = Modifier.animateItem(),
                                 animatedVisibilityScope = animatedVisibilityScope,
-                                exerciseWithSets = exerciseWithSets.exercise,
+                                exerciseWithSets = workoutItem.exercise,
                                 workout = typeOfEdit == false,
                                 addSet = addSetToExercise,
                                 isDragging = isDragging,

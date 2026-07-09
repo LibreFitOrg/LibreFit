@@ -150,109 +150,109 @@ class EditWorkoutScreenViewModel @Inject constructor(
             )
         )
 
-        _workoutItems.update { exercises ->
-            (exercises + newExercise).withNormalizedExercisePositions()
+        _workoutItems.update { workoutItems ->
+            (workoutItems + newExercise).withNormalizedExercisePositions()
         }
         syncToRepository()
     }
 
     fun addSetToExercise(exerciseId: Long) {
-        _workoutItems.update { exercises ->
-            exercises.map { exercise ->
-                if (exercise.id == exerciseId) {
-                    val newSet = exercise.sets
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.map { workoutItem ->
+                if (workoutItem.id == exerciseId) {
+                    val newSet = workoutItem.sets
                         .lastOrNull()?.copy(id = Random.nextLong())
                         ?: UiSet()
 
-                    val newSets = exercise.sets.toMutableList() + newSet
-                    exercise.updateSets(newSets.toImmutableList())
-                } else exercise
+                    val newSets = workoutItem.sets.toMutableList() + newSet
+                    workoutItem.updateSets(newSets.toImmutableList())
+                } else workoutItem
             }
         }
         syncToRepository()
     }
 
     fun updateSetTime(time: Int, id: Long) {
-        _workoutItems.update { currentExercises ->
-            currentExercises.map { exercise ->
-                if (exercise.sets.any { it.id == id }) {
-                    exercise.updateSets(
-                        exercise.sets.map {
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.map { workoutItem ->
+                if (workoutItem.sets.any { it.id == id }) {
+                    workoutItem.updateSets(
+                        workoutItem.sets.map {
                             if (it.id == id) it.copy(elapsedTime = time) else it
                         }.toImmutableList()
                     )
-                } else exercise
+                } else workoutItem
             }
         }
         syncToRepository()
     }
 
     fun updateSetReps(reps: Int, id: Long) {
-        _workoutItems.update { currentExercises ->
-            currentExercises.map { exercise ->
-                if (exercise.sets.any { it.id == id }) {
-                    exercise.updateSets(
-                        exercise.sets.map {
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.map { workoutItem ->
+                if (workoutItem.sets.any { it.id == id }) {
+                    workoutItem.updateSets(
+                        workoutItem.sets.map {
                             if (it.id == id) it.copy(reps = reps) else it
                         }.toImmutableList()
                     )
-                } else exercise
+                } else workoutItem
             }
         }
         syncToRepository()
     }
 
     fun updateSetLoad(load: Double, id: Long) {
-        _workoutItems.update { currentExercises ->
-            currentExercises.map { exercise ->
-                if (exercise.sets.any { it.id == id }) {
-                    exercise.updateSets(
-                        exercise.sets.map {
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.map { workoutItem ->
+                if (workoutItem.sets.any { it.id == id }) {
+                    workoutItem.updateSets(
+                        workoutItem.sets.map {
                             if (it.id == id) it.copy(load = load) else it
                         }.toImmutableList()
                     )
-                } else exercise
+                } else workoutItem
             }
         }
         syncToRepository()
     }
 
     fun updateSetCompleted(completed: Boolean, id: Long) {
-        _workoutItems.update { currentExercises ->
-            currentExercises.map { exercise ->
-                if (exercise.sets.any { it.id == id }) {
-                    exercise.updateSets(
-                        exercise.sets.map {
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.map { workoutItem ->
+                if (workoutItem.sets.any { it.id == id }) {
+                    workoutItem.updateSets(
+                        workoutItem.sets.map {
                             if (it.id == id) it.copy(completed = completed) else it
                         }.toImmutableList()
                     )
-                } else exercise
+                } else workoutItem
             }
         }
         syncToRepository()
     }
 
     fun deleteSet(id: Long) {
-        _workoutItems.update { currentExercises ->
-            currentExercises.map { exercise ->
-                if (exercise.sets.any { it.id == id }) {
-                    exercise.updateSets(
-                        exercise.sets.filter { it.id != id }.toImmutableList()
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.map { workoutItem ->
+                if (workoutItem.sets.any { it.id == id }) {
+                    workoutItem.updateSets(
+                        workoutItem.sets.filter { it.id != id }.toImmutableList()
                     )
-                } else exercise
+                } else workoutItem
             }
         }
         syncToRepository()
     }
 
     fun updateExerciseNotes(notes: String, id: Long) {
-        _workoutItems.update { currentExercises ->
-            currentExercises.map { eWs ->
-                if (eWs.id == id) when (eWs) {
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.map { workoutItem ->
+                if (workoutItem.id == id) when (workoutItem) {
                     is UiExerciseItem -> {
-                        eWs.copy(
-                            exercise = eWs.exercise.copy(
-                                exercise = eWs.exercise.exercise.copy(
+                        workoutItem.copy(
+                            exercise = workoutItem.exercise.copy(
+                                exercise = workoutItem.exercise.exercise.copy(
                                     notes = notes
                                 )
                             )
@@ -260,22 +260,28 @@ class EditWorkoutScreenViewModel @Inject constructor(
                     }
 
                     is UiWarmupItem -> {
-                        eWs.copy(warmup = eWs.warmup.copy(warmup = eWs.warmup.warmup.copy(notes = notes)))
+                        workoutItem.copy(
+                            warmup = workoutItem.warmup.copy(
+                                warmup = workoutItem.warmup.warmup.copy(
+                                    notes = notes
+                                )
+                            )
+                        )
                     }
-                } else eWs
+                } else workoutItem
             }
         }
         syncToRepository()
     }
 
     fun updateExerciseRestTime(restTime: Int, id: Long) {
-        _workoutItems.update { currentExercises ->
-            currentExercises.map { eWs ->
-                if (eWs.id == id) when (eWs) {
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.map { workoutItem ->
+                if (workoutItem.id == id) when (workoutItem) {
                     is UiExerciseItem -> {
-                        eWs.copy(
-                            exercise = eWs.exercise.copy(
-                                exercise = eWs.exercise.exercise.copy(
+                        workoutItem.copy(
+                            exercise = workoutItem.exercise.copy(
+                                exercise = workoutItem.exercise.exercise.copy(
                                     restTime = restTime
                                 )
                             )
@@ -283,17 +289,23 @@ class EditWorkoutScreenViewModel @Inject constructor(
                     }
 
                     is UiWarmupItem -> {
-                        eWs.copy(warmup = eWs.warmup.copy(warmup = eWs.warmup.warmup.copy(restTime = restTime)))
+                        workoutItem.copy(
+                            warmup = workoutItem.warmup.copy(
+                                warmup = workoutItem.warmup.warmup.copy(
+                                    restTime = restTime
+                                )
+                            )
+                        )
                     }
-                } else eWs
+                } else workoutItem
             }
         }
         syncToRepository()
     }
 
     fun updateExerciseSetMode(setMode: SetMode, id: Long) {
-        _workoutItems.update { currentExercises ->
-            currentExercises.map { eWs ->
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.map { eWs ->
                 if (eWs is UiExerciseItem && eWs.id == id) eWs.copy(
                     exercise = eWs.exercise.copy(
                         exercise = eWs.exercise.exercise.copy(setMode = setMode)
@@ -305,8 +317,8 @@ class EditWorkoutScreenViewModel @Inject constructor(
     }
 
     fun updateWarmupSetMode(warmupMode: WarmupMode, id: Long) {
-        _workoutItems.update { currentWarmups ->
-            currentWarmups.map { wWs ->
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.map { wWs ->
                 if (wWs is UiWarmupItem && wWs.id == id) wWs.copy(
                     warmup = wWs.warmup.copy(
                         warmup = wWs.warmup.warmup.copy(
@@ -320,8 +332,8 @@ class EditWorkoutScreenViewModel @Inject constructor(
     }
 
     fun updateWarmupTarget(target: Double, id: Long) {
-        _workoutItems.update { currentWarmups ->
-            currentWarmups.map { wWs ->
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.map { wWs ->
                 if (wWs is UiWarmupItem && wWs.id == id) wWs.copy(
                     warmup = wWs.warmup.copy(
                         warmup = wWs.warmup.warmup.copy(
@@ -352,16 +364,16 @@ class EditWorkoutScreenViewModel @Inject constructor(
             )
         )
 
-        _workoutItems.update { exercises ->
-            (exercises + newWarmup).withNormalizedExercisePositions()
+        _workoutItems.update { currentWorkoutItems ->
+            (currentWorkoutItems + newWarmup).withNormalizedExercisePositions()
         }
 
         moveExercise(_workoutItems.value.size - 1, exercise.position)
     }
 
     fun deleteExercise(exerciseId: Long) {
-        _workoutItems.update { currentExercises ->
-            currentExercises
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems
                 .filter { it.id != exerciseId }
                 .withNormalizedExercisePositions()
         }
@@ -369,8 +381,8 @@ class EditWorkoutScreenViewModel @Inject constructor(
     }
 
     fun moveExercise(fromIndex: Int, toIndex: Int) {
-        _workoutItems.update { currentExercises ->
-            currentExercises.moveExercise(fromIndex = fromIndex, toIndex = toIndex)
+        _workoutItems.update { currentWorkoutItems ->
+            currentWorkoutItems.moveExercise(fromIndex = fromIndex, toIndex = toIndex)
         }
         syncToRepository()
     }

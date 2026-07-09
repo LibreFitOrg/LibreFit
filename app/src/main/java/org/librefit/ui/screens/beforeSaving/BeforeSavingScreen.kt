@@ -510,13 +510,13 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
-                        workoutItems.forEachIndexed { index, exercise ->
+                        workoutItems.forEachIndexed { index, workoutItem ->
                             if (index != 0) {
                                 HorizontalDivider()
                             }
-                            val workoutItemName = when (exercise) {
+                            val workoutItemName = when (workoutItem) {
                                 is UiWarmupItem -> stringResource(R.string.warmup)
-                                is UiExerciseItem -> exercise.exercise.exerciseDC.name
+                                is UiExerciseItem -> workoutItem.exercise.exerciseDC.name
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -527,7 +527,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                                     text = workoutItemName,
                                     style = MaterialTheme.typography.titleMedium
                                 )
-                                Text("${exercise.sets.count { s -> s.completed }} / ${exercise.sets.count()}")
+                                Text("${workoutItem.sets.count { s -> s.completed }} / ${workoutItem.sets.count()}")
                             }
                         }
                     }

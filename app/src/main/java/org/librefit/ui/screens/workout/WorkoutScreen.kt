@@ -1,9 +1,10 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
+ * Copyright (c) 2025-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.screens.workout
@@ -78,6 +79,7 @@ import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.PreviousPerformanceSet
 import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
@@ -85,13 +87,19 @@ import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
+import org.librefit.ui.components.WarmupCard
 import org.librefit.ui.components.animations.DumbbellLottie
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
+import org.librefit.ui.models.UiExerciseItem
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
+import org.librefit.ui.models.UiWarmup
+import org.librefit.ui.models.UiWarmupItem
+import org.librefit.ui.models.UiWarmupWithSets
+import org.librefit.ui.models.UiWorkoutItem
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
@@ -116,7 +124,7 @@ fun SharedTransitionScope.WorkoutScreen(
 
     val isStopwatchPaused by viewModel.isStopwatchPaused.collectAsStateWithLifecycle()
 
-    val exercisesWithSets by viewModel.exercises.collectAsStateWithLifecycle()
+    val workoutItems by viewModel.workoutItems.collectAsStateWithLifecycle()
 
     val keepWorkoutScreenOn by viewModel.keepScreenOn.collectAsStateWithLifecycle()
 
@@ -196,7 +204,7 @@ fun SharedTransitionScope.WorkoutScreen(
                 ),
             ) { launchSingleTop = true }
         }),
-        actionsEnabled = persistentListOf(!exercisesWithSets.isEmpty()),
+        actionsEnabled = persistentListOf(!workoutItems.isEmpty()),
         actionsDescription = persistentListOf(stringResource(R.string.done)),
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
@@ -212,7 +220,7 @@ fun SharedTransitionScope.WorkoutScreen(
             )
             WorkoutScreenContent(
                 animatedVisibilityScope = animatedVisibilityScope,
-                exercisesWithSets = exercisesWithSets,
+                workoutItems = workoutItems,
                 previousPerformances = previousPerformances,
                 idSetWithRunningStopwatch = idSetWithRunningStopwatch,
                 timeElapsed = timeElapsed,
@@ -240,17 +248,18 @@ fun SharedTransitionScope.WorkoutScreen(
                 updateExerciseNotes = viewModel::updateExerciseNotes,
                 updateExerciseRestTime = viewModel::updateExerciseRestTime,
                 updateExerciseSetMode = viewModel::updateExerciseSetMode,
+                updateWarmupSetMode = viewModel::updateWarmupSetMode,
+                updateWarmupTarget = viewModel::updateWarmupTarget,
                 deleteExercise = { id ->
                     idExerciseToDelete.value = id
                 },
                 moveExercise = viewModel::moveExercise,
                 showInfo = { infoMode.value = it },
-                applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance
+                applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance,
+                addWarmup = viewModel::addWarmup,
             )
         }
     }
-
-
 
 
     // Keep track of focus to play alter sound or not
@@ -274,7 +283,7 @@ fun SharedTransitionScope.WorkoutScreen(
 @Composable
 private fun SharedTransitionScope.WorkoutScreenContent(
     animatedVisibilityScope: AnimatedVisibilityScope,
-    exercisesWithSets: List<UiExerciseWithSets>,
+    workoutItems: List<UiWorkoutItem>,
     previousPerformances: List<List<PreviousPerformanceSet>?>,
     timeElapsed: Int,
     isStopwatchPaused: Boolean,
@@ -294,11 +303,14 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     updateExerciseNotes: (String, Long) -> Unit,
     updateExerciseRestTime: (Int, Long) -> Unit,
     updateExerciseSetMode: (SetMode, Long) -> Unit,
+    updateWarmupSetMode: (WarmupMode, Long) -> Unit,
+    updateWarmupTarget: (Double, Long) -> Unit,
     deleteExercise: (Long) -> Unit,
     moveExercise: (Int, Int) -> Unit,
     onSelectedExerciseIdChange: (Long, String) -> Unit,
     showInfo: (InfoMode) -> Unit,
-    applyPreviousSetPerformance: (Long) -> Unit
+    applyPreviousSetPerformance: (Long) -> Unit,
+    addWarmup: (Long, Double?) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
     val hapticFeedback = LocalHapticFeedback.current
@@ -309,11 +321,11 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         val fromExerciseIndex = from.index - exerciseSectionStartIndex
         val toExerciseIndex = (to.index - exerciseSectionStartIndex)
-            .coerceIn(0, exercisesWithSets.lastIndex)
+            .coerceIn(0, workoutItems.lastIndex)
 
         hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
 
-        if (fromExerciseIndex in exercisesWithSets.indices && toExerciseIndex in exercisesWithSets.indices) {
+        if (fromExerciseIndex in workoutItems.indices && toExerciseIndex in workoutItems.indices) {
             moveExercise(fromExerciseIndex, toExerciseIndex)
         }
     }
@@ -380,7 +392,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
         } else {
             item { headerContent() }
         }
-        if (exercisesWithSets.isEmpty()) {
+        if (workoutItems.isEmpty()) {
             item {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -396,46 +408,84 @@ private fun SharedTransitionScope.WorkoutScreenContent(
             }
         } else {
             itemsIndexed(
-                items = exercisesWithSets,
-                key = { _, exercise -> exercise.exercise.id }
-            ) { i, exerciseWithSets ->
-                ReorderableItem(reorderableLazyListState, key = exerciseWithSets.exercise.id) { isDragging ->
-                    ExerciseCard(
-                        modifier = Modifier.animateItem(),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        exerciseWithSets = exerciseWithSets,
-                        previousPerformances = previousPerformances.getOrNull(i),
-                        idSetWithRunningStopwatch = idSetWithRunningStopwatch,
-                        useScrollWheelForInput = useScrollWheelForInput,
-                        workout = true,
-                        addSet = addSetToExercise,
-                        onDetail = onSelectedExerciseIdChange,
-                        onDelete = deleteExercise,
-                        isCollapsed = isReorderingEnabled,
-                        dragHandleModifier = Modifier.draggableHandle(
-                            onDragStarted = {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
-                            },
-                            onDragStopped = {
-                                isReorderingEnabled = false
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
-                            }
-                        ),
-                        isDragging = isDragging,
-                        dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
-                        onReorderRequest = { isReorderingEnabled = true },
-                        deleteSet = deleteSet,
-                        showInfo = showInfo,
-                        updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
-                        updateExerciseNotes = updateExerciseNotes,
-                        updateExerciseRestTime = updateExerciseRestTime,
-                        updateExerciseSetMode = updateExerciseSetMode,
-                        updateSetTime = updateSetTime,
-                        updateSetReps = updateSetReps,
-                        updateSetLoad = updateSetLoad,
-                        updateSetCompleted = updateSetCompleted,
-                        applyPreviousSetPerformance = applyPreviousSetPerformance
-                    )
+                items = workoutItems,
+                key = { _, workoutItem -> workoutItem.id }
+            ) { i, workoutItem ->
+                ReorderableItem(reorderableLazyListState, key = workoutItem.id) { isDragging ->
+                    when (workoutItem) {
+                        is UiWarmupItem ->
+                            WarmupCard(
+                                modifier = Modifier.animateItem(),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                warmupWithSets = workoutItem.warmup,
+                                useScrollWheelForInput = useScrollWheelForInput,
+                                workout = true,
+                                addSet = addSetToExercise,
+                                onDelete = deleteExercise,
+                                isCollapsed = isReorderingEnabled,
+                                dragHandleModifier = Modifier.draggableHandle(
+                                    onDragStarted = {
+                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                                    },
+                                    onDragStopped = {
+                                        isReorderingEnabled = false
+                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
+                                    }
+                                ),
+                                isDragging = isDragging,
+                                dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
+                                onReorderRequest = { isReorderingEnabled = true },
+                                deleteSet = deleteSet,
+                                showInfo = showInfo,
+                                updateExerciseNotes = updateExerciseNotes,
+                                updateExerciseRestTime = updateExerciseRestTime,
+                                updateWarmupSetMode = updateWarmupSetMode,
+                                updateWarmupTarget = updateWarmupTarget,
+                                updateSetTime = updateSetTime,
+                                updateSetReps = updateSetReps,
+                                updateSetLoad = updateSetLoad,
+                                updateSetCompleted = updateSetCompleted,
+                            )
+
+                        is UiExerciseItem ->
+                            ExerciseCard(
+                                modifier = Modifier.animateItem(),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                exerciseWithSets = workoutItem.exercise,
+                                previousPerformances = previousPerformances.getOrNull(i),
+                                idSetWithRunningStopwatch = idSetWithRunningStopwatch,
+                                useScrollWheelForInput = useScrollWheelForInput,
+                                workout = true,
+                                addSet = addSetToExercise,
+                                onDetail = onSelectedExerciseIdChange,
+                                onDelete = deleteExercise,
+                                isCollapsed = isReorderingEnabled,
+                                dragHandleModifier = Modifier.draggableHandle(
+                                    onDragStarted = {
+                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                                    },
+                                    onDragStopped = {
+                                        isReorderingEnabled = false
+                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
+                                    }
+                                ),
+                                isDragging = isDragging,
+                                dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
+                                onReorderRequest = { isReorderingEnabled = true },
+                                deleteSet = deleteSet,
+                                showInfo = showInfo,
+                                updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
+                                updateExerciseNotes = updateExerciseNotes,
+                                updateExerciseRestTime = updateExerciseRestTime,
+                                updateExerciseSetMode = updateExerciseSetMode,
+                                updateSetTime = updateSetTime,
+                                updateSetReps = updateSetReps,
+                                updateSetLoad = updateSetLoad,
+                                updateSetCompleted = updateSetCompleted,
+                                applyPreviousSetPerformance = applyPreviousSetPerformance,
+                                addWarmup = addWarmup
+                            )
+                    }
                 }
             }
         }
@@ -545,65 +595,92 @@ private fun BoxScope.FloatingWorkoutActionBar(
 @Preview(device = "id:medium_phone")
 @Composable
 private fun WorkoutScreenPreview() {
-    val e = listOf(
-        UiExerciseWithSets(
-            exercise = UiExercise(setMode = SetMode.DURATION, restTime = 0, notes="Easy pace just to warm up"),
-            exerciseDC = UiExerciseDC(
-                name = "Running, Treadmill",
-                images = persistentListOf("Running_Treadmill/0.webp"),
-                equipment = Equipment.OTHER,
-                category = Category.CARDIO
-            ),
-            sets = persistentListOf(
-                UiSet(elapsedTime = 605, completed = true))
-        ),
-        UiExerciseWithSets(
-            exercise = UiExercise(
-                setMode = SetMode.LOAD,
-                restTime = 120,
-            ),
-            exerciseDC = UiExerciseDC(
-                name = "Barbell Bench Press - Medium Grip",
-                images = persistentListOf("Barbell_Bench_Press_-_Medium_Grip/0.webp"),
-                equipment = Equipment.MACHINE,
-                category = Category.STRENGTH
-            ),
-            sets = persistentListOf(
-                UiSet(load = 80.0, reps = 8, completed = true),
-                UiSet(load = 80.0, reps = 9, completed = true),
-                UiSet(load = 80.0, reps = 9, completed = true),
+    val e: List<UiWorkoutItem> = listOf(
+        UiExerciseItem(
+            UiExerciseWithSets(
+                exercise = UiExercise(
+                    setMode = SetMode.DURATION,
+                    restTime = 0,
+                    notes = "Easy pace just to warm up"
+                ),
+                exerciseDC = UiExerciseDC(
+                    name = "Running, Treadmill",
+                    images = persistentListOf("Running_Treadmill/0.webp"),
+                    equipment = Equipment.OTHER,
+                    category = Category.CARDIO
+                ),
+                sets = persistentListOf(
+                    UiSet(elapsedTime = 605, completed = true)
+                )
             )
         ),
-        UiExerciseWithSets(
-            exercise = UiExercise(
-                setMode = SetMode.BODYWEIGHT,
-                restTime = 120,
-            ),
-            exerciseDC = UiExerciseDC(
-                name = "Pushups",
-                images = persistentListOf("Pushups/0.webp"),
-                equipment = Equipment.BODY_ONLY,
-                category = Category.STRENGTH
-            ),
-            sets = persistentListOf(
-                UiSet(reps = 9, completed = true),
-                UiSet(reps = 8, completed = true),
-                UiSet(reps = 9, completed = true),
+        UiWarmupItem(
+            UiWarmupWithSets(
+                warmup = UiWarmup(
+                    warmupMode = WarmupMode.DEFAULT,
+                    restTime = 60,
+                    target = 80.0
+                ),
+                sets = persistentListOf(
+                    UiSet(load = 32.0, reps = 10, completed = true),
+                    UiSet(load = 48.0, reps = 6, completed = true),
+                    UiSet(load = 56.0, reps = 3, completed = true),
+                )
             )
         ),
-        UiExerciseWithSets(
-            exercise = UiExercise(
-                setMode = SetMode.DURATION,
-                restTime = 120,
-            ),
-            exerciseDC = UiExerciseDC(
-                name = "Chest And Front Of Shoulder Stretch",
-                images = persistentListOf("Chest_And_Front_Of_Shoulder_Stretch/0.webp"),
-                equipment = Equipment.BODY_ONLY,
-                category = Category.STRETCHING
-            ),
-            sets = persistentListOf(
-                UiSet(elapsedTime = 127, completed = true),
+        UiExerciseItem(
+            UiExerciseWithSets(
+                exercise = UiExercise(
+                    setMode = SetMode.LOAD,
+                    restTime = 120,
+                ),
+                exerciseDC = UiExerciseDC(
+                    name = "Barbell Bench Press - Medium Grip",
+                    images = persistentListOf("Barbell_Bench_Press_-_Medium_Grip/0.webp"),
+                    equipment = Equipment.MACHINE,
+                    category = Category.STRENGTH
+                ),
+                sets = persistentListOf(
+                    UiSet(load = 80.0, reps = 8, completed = true),
+                    UiSet(load = 80.0, reps = 9, completed = true),
+                    UiSet(load = 80.0, reps = 9, completed = true),
+                )
+            )
+        ),
+        UiExerciseItem(
+            UiExerciseWithSets(
+                exercise = UiExercise(
+                    setMode = SetMode.BODYWEIGHT,
+                    restTime = 120,
+                ),
+                exerciseDC = UiExerciseDC(
+                    name = "Pushups",
+                    images = persistentListOf("Pushups/0.webp"),
+                    equipment = Equipment.BODY_ONLY,
+                    category = Category.STRENGTH
+                ),
+                sets = persistentListOf(
+                    UiSet(reps = 9, completed = true),
+                    UiSet(reps = 8, completed = true),
+                    UiSet(reps = 9, completed = true),
+                )
+            )
+        ),
+        UiExerciseItem(
+            UiExerciseWithSets(
+                exercise = UiExercise(
+                    setMode = SetMode.DURATION,
+                    restTime = 120,
+                ),
+                exerciseDC = UiExerciseDC(
+                    name = "Chest And Front Of Shoulder Stretch",
+                    images = persistentListOf("Chest_And_Front_Of_Shoulder_Stretch/0.webp"),
+                    equipment = Equipment.BODY_ONLY,
+                    category = Category.STRETCHING
+                ),
+                sets = persistentListOf(
+                    UiSet(elapsedTime = 127, completed = true),
+                )
             )
         )
     )
@@ -621,7 +698,7 @@ private fun WorkoutScreenPreview() {
                     Box(modifier = Modifier.padding(innerPadding)) {
                         WorkoutScreenContent(
                             animatedVisibilityScope = this@AnimatedVisibility,
-                            exercisesWithSets = e,
+                            workoutItems = e,
                             previousPerformances = listOf(
                                 listOf(
                                     PreviousPerformanceSet(time = 612)
@@ -658,11 +735,14 @@ private fun WorkoutScreenPreview() {
                             updateExerciseNotes = { _, _ -> },
                             updateExerciseRestTime = { _, _ -> },
                             updateExerciseSetMode = { _, _ -> },
+                            updateWarmupSetMode = { _, _ -> },
+                            updateWarmupTarget = { _, _ -> },
                             deleteExercise = {},
                             moveExercise = { _, _ -> },
                             onSelectedExerciseIdChange = { _, _ -> },
                             showInfo = {},
-                            applyPreviousSetPerformance = {}
+                            applyPreviousSetPerformance = {},
+                            addWarmup = { _, _ -> },
                         )
                         FloatingWorkoutActionBar(
                             restTimerProgress = 97f / 120,
