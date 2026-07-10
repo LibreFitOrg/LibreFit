@@ -2714,8 +2714,14 @@
     "level": "intermediate",
     "mechanic": "compound",
     "equipment": "body only",
-    "primaryMuscles": ["chest"],
-    "secondaryMuscles": ["shoulders", "triceps", "abdominals"],
+    "primaryMuscles": [
+      "chest"
+    ],
+    "secondaryMuscles": [
+      "shoulders",
+      "triceps",
+      "abdominals"
+    ],
     "instructions": [
       "Start in a standard push-up position with your hands slightly wider than shoulder-width apart.",
       "Lower your body slowly until your chest is about 2-3 inches above the ground.",
@@ -2725,7 +2731,10 @@
       "Avoid letting your hips sag or pike up during the hold."
     ],
     "category": "strength",
-    "images": ["Bottom_Pushup_Hold/0.webp", "Bottom_Pushup_Hold/1.webp"],
+    "images": [
+      "Bottom_Pushup_Hold/0.webp",
+      "Bottom_Pushup_Hold/1.webp"
+    ],
     "id": "Bottom_Pushup_Hold"
   },
   {
@@ -4835,8 +4844,14 @@
     "level": "beginner",
     "mechanic": "isolation",
     "equipment": "body only",
-    "primaryMuscles": ["abdominals"],
-    "secondaryMuscles": ["chest", "shoulders", "abdominals"],
+    "primaryMuscles": [
+      "abdominals"
+    ],
+    "secondaryMuscles": [
+      "chest",
+      "shoulders",
+      "abdominals"
+    ],
     "instructions": [
       "Lie face down on the floor with your legs extended behind you and the tops of your feet flat on the ground.",
       "Place your hands directly under your shoulders with your palms flat on the floor and elbows bent.",
@@ -4846,7 +4861,10 @@
       "Slowly lower your chest back to the starting position."
     ],
     "category": "stretching",
-    "images": ["Cobra_Stretch/0.webp", "Cobra_Stretch/1.webp"],
+    "images": [
+      "Cobra_Stretch/0.webp",
+      "Cobra_Stretch/1.webp"
+    ],
     "id": "Cobra_Stretch"
   },
   {
@@ -10045,8 +10063,15 @@
     "level": "beginner",
     "mechanic": "compound",
     "equipment": "body only",
-    "primaryMuscles": ["quadriceps"],
-    "secondaryMuscles": ["calves", "glutes", "hamstrings", "shoulders"],
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "calves",
+      "glutes",
+      "hamstrings",
+      "shoulders"
+    ],
     "instructions": [
       "Start standing with your feet together and your arms resting at your sides.",
       "Jump and spread your feet wider than shoulder-width apart while simultaneously raising your arms above your head.",
@@ -10056,7 +10081,10 @@
       "Continue the motion in a fluid, rhythmic manner for the prescribed number of repetitions."
     ],
     "category": "cardio",
-    "images": ["Jumping_Jacks/0.webp", "Jumping_Jacks/1.webp"],
+    "images": [
+      "Jumping_Jacks/0.webp",
+      "Jumping_Jacks/1.webp"
+    ],
     "id": "Jumping_Jacks"
   },
   {
@@ -14540,8 +14568,14 @@
     "level": "intermediate",
     "mechanic": "compound",
     "equipment": "body only",
-    "primaryMuscles": ["abdominals"],
-    "secondaryMuscles": ["chest", "shoulders", "triceps"],
+    "primaryMuscles": [
+      "abdominals"
+    ],
+    "secondaryMuscles": [
+      "chest",
+      "shoulders",
+      "triceps"
+    ],
     "instructions": [
       "Start in a high plank position with your hands directly under your shoulders and your body forming a straight line from head to heels.",
       "Engage your core and glutes to keep your hips stable and prevent them from rotating.",
@@ -14552,7 +14586,10 @@
       "Continue alternating taps for the prescribed number of repetitions, keeping your hips as still as possible."
     ],
     "category": "strength",
-    "images": ["Plank_Shoulder_Taps/0.webp", "Plank_Shoulder_Taps/1.webp"],
+    "images": [
+      "Plank_Shoulder_Taps/0.webp",
+      "Plank_Shoulder_Taps/1.webp"
+    ],
     "id": "Plank_Shoulder_Taps"
   },
   {
@@ -22766,8 +22803,14 @@
     "level": "beginner",
     "mechanic": "compound",
     "equipment": "body only",
-    "primaryMuscles": ["quadriceps"],
-    "secondaryMuscles": ["glutes", "hamstrings", "calves"],
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "calves"
+    ],
     "instructions": [
       "Stand with your back flat against a wall and your feet shoulder-width apart.",
       "Slide your back down the wall until your thighs are parallel to the floor, creating a 90-degree angle at your knees.",
@@ -22776,7 +22819,10 @@
       "Hold for the prescribed amount of time, keeping your breathing steady."
     ],
     "category": "strength",
-    "images": ["Wall_Sit/0.webp", "Wall_Sit/1.webp"],
+    "images": [
+      "Wall_Sit/0.webp",
+      "Wall_Sit/1.webp"
+    ],
     "id": "Wall_Sit"
   },
   {
