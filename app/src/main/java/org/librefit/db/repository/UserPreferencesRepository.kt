@@ -19,7 +19,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -40,7 +39,6 @@ private val THEME_MODE_KEY = intPreferencesKey("theme_mode")
 private val MATERIAL_MODE_KEY = booleanPreferencesKey("material_mode")
 private val KEEP_ON_WORKOUT_SCREEN_KEY = booleanPreferencesKey("workout_screen_on")
 private val REQUEST_PERMISSIONS_NEXT_TIME_KEY = booleanPreferencesKey("ask_permission_again")
-private val LANGUAGE_KEY = stringPreferencesKey("language")
 private val REST_TIMER_SOUND_KEY = booleanPreferencesKey("alert_sound")
 private val SHOW_WELCOME_SCREEN_KEY = booleanPreferencesKey("show_welcome_screen")
 private val IS_SUPPORTER_KEY = booleanPreferencesKey("is_supporter")
@@ -230,7 +228,6 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun saveLanguage(languageCode: String) {
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageCode))
-        dataStore.edit { preferences -> preferences[LANGUAGE_KEY] = languageCode }
     }
 
     suspend fun saveRestTimerSoundOn(isOn: Boolean) {
