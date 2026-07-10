@@ -11,7 +11,6 @@ package org.librefit.ui.models
 
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 
 /**
  * The [org.librefit.db.relations.WorkoutWithExercisesAndSets] model used only by the ui. The difference is the use
@@ -25,10 +24,4 @@ data class UiWorkoutWithExercisesAndSets(
     val workout: UiWorkout,
     val exercisesWithSets: ImmutableList<UiExerciseWithSets>,
     val warmupsWithSets: ImmutableList<UiWarmupWithSets>,
-) {
-    val workoutItems: ImmutableList<UiWorkoutItem>
-        get() =
-            (exercisesWithSets.map { UiExerciseItem(it) } + warmupsWithSets.map { UiWarmupItem(it) }).sortedBy { it.position }
-                .toImmutableList()
-
-}
+)

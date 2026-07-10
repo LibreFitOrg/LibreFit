@@ -80,7 +80,13 @@ class BeforeSavingScreenViewModel @Inject constructor(
             val e = runningWorkoutWithExercises.exercisesWithSets
             val w = runningWorkoutWithExercises.warmupsWithSets
 
-            _workoutItems.update { runningWorkoutWithExercises.workoutItems }
+            _workoutItems.update {
+                (runningWorkoutWithExercises.warmupsWithSets.map {
+                    UiWarmupItem(
+                        warmup = it
+                    )
+                } + runningWorkoutWithExercises.exercisesWithSets.map { UiExerciseItem(exercise = it) }).sortedBy { it.position }
+            }
 
             _workout.update {
                 runningWorkoutWithExercises.workout.copy(completed = LocalDateTime.now())

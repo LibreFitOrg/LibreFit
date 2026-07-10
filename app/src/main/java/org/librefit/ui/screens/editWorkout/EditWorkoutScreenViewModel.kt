@@ -94,7 +94,11 @@ class EditWorkoutScreenViewModel @Inject constructor(
                 }
 
                 _workoutItems.update {
-                    workoutWithExercisesAndSets.workoutItems
+                    (workoutWithExercisesAndSets.warmupsWithSets.map {
+                        UiWarmupItem(
+                            warmup = it
+                        )
+                    } + workoutWithExercisesAndSets.exercisesWithSets.map { UiExerciseItem(exercise = it) }).sortedBy { it.position }
                 }
             } else {
                 _isRoutine.update {
