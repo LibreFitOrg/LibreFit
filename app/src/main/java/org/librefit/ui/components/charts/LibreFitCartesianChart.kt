@@ -54,8 +54,8 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
-import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
+import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
@@ -169,9 +169,9 @@ fun <T : ChartMode> LibreFitCartesianChart(
         if (yValuesArePresent) {
             modelProducer.runTransaction {
                 if (useColumns) {
-                    columnSeries { yValues.forEach { series(it) } }
+                    columnModel { yValues.forEach { series(it) } }
                 } else {
-                    lineSeries { yValues.forEach { series(it) } }
+                    lineModel { yValues.forEach { series(it) } }
                 }
                 if (xValues.all { it.isNotBlank() }) {
                     extras { it[labelListKey] = xValues }
