@@ -22,7 +22,6 @@ import org.librefit.R
 import org.librefit.activities.MainActivity
 import org.librefit.enums.WorkoutServiceActions
 import org.librefit.services.WorkoutService
-import org.librefit.services.WorkoutService.Companion.EXTRA_ADD_TEN_SECONDS
 import org.librefit.util.Formatter.formatTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -162,14 +161,14 @@ class NotificationHelper @Inject constructor(
                 .addAction(
                     R.drawable.ic_play_arrow,
                     appContext.getString(R.string.resume),
-                    createWorkoutServiceIntent(WorkoutServiceActions.START_STOPWATCH.string)
+                    createWorkoutServiceIntent(action = WorkoutServiceActions.START_STOPWATCH.string)
                 )
         } else {
             builder
                 .addAction(
                     R.drawable.ic_pause,
                     appContext.getString(R.string.pause),
-                    createWorkoutServiceIntent(WorkoutServiceActions.PAUSE_STOPWATCH.string)
+                    createWorkoutServiceIntent(action = WorkoutServiceActions.PAUSE_STOPWATCH.string)
                 )
         }
 
@@ -178,7 +177,7 @@ class NotificationHelper @Inject constructor(
             builder
                 .setContentTitle(
                     appContext.getString(R.string.rest) + ": " + formatTime(restTime - 1).substring(
-                        3
+                        startIndex = 3
                     )
                 )
                 .setContentText(
@@ -190,16 +189,14 @@ class NotificationHelper @Inject constructor(
                     R.drawable.ic_replay_10,
                     appContext.getString(R.string.reduce_ten_seconds),
                     createWorkoutServiceIntent(
-                        WorkoutServiceActions.MODIFY_REST_TIMER.string,
-                        false
+                        action = WorkoutServiceActions.SUBTRACT_TEN_SECONDS_TO_REST_TIMER.string
                     )
                 )
                 .addAction(
                     R.drawable.ic_forward_10,
                     appContext.getString(R.string.add_ten_seconds),
                     createWorkoutServiceIntent(
-                        WorkoutServiceActions.MODIFY_REST_TIMER.string,
-                        true
+                        action = WorkoutServiceActions.ADD_TEN_SECONDS_TO_REST_TIMER.string
                     )
                 )
         } else {
@@ -233,14 +230,10 @@ class NotificationHelper @Inject constructor(
 
 
     private fun createWorkoutServiceIntent(
-        action: String,
-        addTenSeconds: Boolean? = null
+        action: String
     ): PendingIntent {
         val intent = Intent(appContext, WorkoutService::class.java).apply {
             this.action = action
-            if (addTenSeconds != null) {
-                putExtra(EXTRA_ADD_TEN_SECONDS, addTenSeconds)
-            }
         }
         return PendingIntent.getService(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
     }
