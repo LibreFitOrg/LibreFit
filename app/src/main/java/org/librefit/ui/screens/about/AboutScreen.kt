@@ -662,6 +662,48 @@ fun AboutScreen(navController: NavHostController) {
                     }
                 )
             }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.T_Silverspoon),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_swedish),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_T_Silverspoon)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.tomel51733),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_spanish),
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.Ahmedbd23),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_chinese_simplified),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_Ahmedbd23)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.Jent1357),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_german),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_Jent1357)
+                    }
+                )
+            }
+
         }
     }
 }

@@ -240,24 +240,25 @@ Thanks to everyone who helped the project!
 
 #### Czech 🇨🇿
 
-- Odweta
+- Odweta [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
 
 #### Dutch 🇳🇱
 
-- [mwesten](https://github.com/mwesten)
+- [mwesten](https://github.com/mwesten) [#19](https://github.com/LibreFitOrg/LibreFit/pull/19)
 
 #### French 🇫🇷
 
 - [Spartang-117](https://github.com/Spartang-117) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
-- [Semprista](https://github.com/Semprista)
-- [BigP0tato](https://github.com/B1gP0tato)
+- [Semprista](https://github.com/Semprista) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+- [BigP0tato](https://github.com/B1gP0tato) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
 
 #### German 🇩🇪
 
 - [doen1el](https://github.com/doen1el)
-- [Robin Schanbacher](https://github.com/RobinS-T470s)
-- [sprivaq](https://github.com/sprivaq)
-- [mister-bum](https://github.com/mister-bum)
+- [Robin Schanbacher](https://github.com/RobinS-T470s) [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
+- [sprivaq](https://github.com/sprivaq) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+- [mister-bum](https://github.com/mister-bum) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+- [Jent1357](https://github.com/Jent1357) [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
 
 #### Hindi 🇮🇳
 
@@ -269,21 +270,22 @@ Thanks to everyone who helped the project!
 
 #### Korean 🇰🇷
 
-- Jae Hyuk Lee
+- Jae Hyuk Lee [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
 
 #### Polish 🇵🇱
 
-- theswordsgame
+- theswordsgame [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
 
 #### Russian 🇷🇺
 
-- [джулис](https://github.com/vuichka)
+- [vuichka](https://github.com/vuichka) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
 
 #### Simplified Chinese 🇨🇳
 
-- [kid1412621](https://github.com/kid1412621)
-- [ylconion](https://github.com/ylconion)
-- [zei dan](https://github.com/bakamake)
+- [kid1412621](https://github.com/kid1412621) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- [ylconion](https://github.com/ylconion) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+- [zei dan](https://github.com/bakamake) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+- [Ahmedbd23](https://github.com/Ahmedbd23) [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
 
 #### Spanish 🇪🇸
 
@@ -293,6 +295,11 @@ Thanks to everyone who helped the project!
 - [DoubleCheddarBurger](https://github.com/DoubleCheddarBurger) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
 - [johncorea580-crypto](https://github.com/johncorea580-crypto) [#83](https://github.com/LibreFitOrg/LibreFit/pull/83)
 - [xorodev](https://github.com/xorodev) [#83](https://github.com/LibreFitOrg/LibreFit/pull/83)
+- tomel51733 [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
+
+#### Swedish 🇸🇪
+
+- [T-Silverspoon](https://github.com/T-Silverspoon) [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
 
 #### Ukrainian 🇺🇦
 
@@ -300,7 +307,7 @@ Thanks to everyone who helped the project!
 
 #### Urdu 🇵🇰
 
-- [Safi Ullah](https://github.com/Safi-Ullah-1060)
+- [Safi Ullah](https://github.com/Safi-Ullah-1060) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
 
 > [Contribute to translations](CONTRIBUTING.md#translations) to be listed here.
 

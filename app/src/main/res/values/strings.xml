@@ -114,6 +114,13 @@
     <string name="url_mister_bum" translatable="false">https://github.com/mister-bum</string>
     <string name="BigP0tato" translatable="false">BigP0tato</string>
     <string name="url_BigP0tato" translatable="false">https://github.com/B1gP0tato</string>
+    <string name="Jent1357" translatable="false">Jent1357</string>
+    <string name="url_Jent1357" translatable="false">https://github.com/Jent1357</string>
+    <string name="Ahmedbd23" translatable="false">Ahmedbd23</string>
+    <string name="url_Ahmedbd23" translatable="false">https://github.com/Ahmedbd23</string>
+    <string name="tomel51733" translatable="false">tomel51733</string>
+    <string name="T_Silverspoon" translatable="false">T-Silverspoon</string>
+    <string name="url_T_Silverspoon" translatable="false">https://github.com/T-Silverspoon</string>
 
 
     <!--Before saving screen-->
@@ -345,6 +352,8 @@
     <string name="language_russian">Russian</string>
     <string name="language_korean_nt" translatable="false">한국어</string>
     <string name="language_korean">Korean</string>
+    <string name="language_swedish_nt" translatable="false">Svenska</string>
+    <string name="language_swedish">Swedish</string>
 
     <!-- Statistics screen-->
     <string name="past">Past</string>
