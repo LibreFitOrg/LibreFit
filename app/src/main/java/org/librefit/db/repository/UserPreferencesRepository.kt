@@ -226,8 +226,8 @@ class UserPreferencesRepository @Inject constructor(
         dataStore.edit { preferences -> preferences[REQUEST_PERMISSIONS_NEXT_TIME_KEY] = shouldAsk }
     }
 
-    suspend fun saveLanguage(languageCode: String) {
-        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageCode))
+    fun saveLanguage(language: Language) {
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(language.code))
     }
 
     suspend fun saveRestTimerSoundOn(isOn: Boolean) {

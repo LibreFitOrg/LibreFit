@@ -45,7 +45,7 @@ class SettingsScreenViewModel @Inject constructor(
     }
 
     fun saveLanguage(language: Language) {
-        viewModelScope.launch { userPreferences.saveLanguage(language.code) }
+        viewModelScope.launch { userPreferences.saveLanguage(language) }
     }
 
     fun saveMaterialMode(isEnabled: Boolean) {

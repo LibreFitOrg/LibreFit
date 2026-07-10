@@ -72,8 +72,8 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.useScrollWheelForInput } returns useScrollWheelForInput
         every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
 
-        coEvery { userPreferencesRepository.saveLanguage(any()) } answers {
-            language.value = Language.entries.find { it.code == firstArg() }!!
+        every { userPreferencesRepository.saveLanguage(any()) } answers {
+            language.value = firstArg()
         }
         coEvery { userPreferencesRepository.saveThemeMode(any()) } answers {
             themeMode.value = firstArg()
