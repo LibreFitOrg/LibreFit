@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Buttons in rest timer notification by refactoring logic [#117](https://github.com/LibreFitOrg/LibreFit/pull/117)
+- Fix language handling and display [#122](https://github.com/LibreFitOrg/LibreFit/pull/122)
 
 ## [0.3.1] - 2026-05-31
 
