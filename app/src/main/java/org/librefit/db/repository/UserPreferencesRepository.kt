@@ -190,10 +190,21 @@ class UserPreferencesRepository @Inject constructor(
 
     val language: StateFlow<Language> = currentLocale
         .map { newLocale ->
-            // If newLanguage is null, follow system otherwise find the associated enum
-            newLocale?.language?.let { newLanguage ->
-                Language.entries.find { it.code == newLanguage }
-            } ?: Language.SYSTEM
+            if (newLocale == null) {
+                Language.SYSTEM
+            } else {
+                val tag = newLocale.toLanguageTag()
+                // Try full BCP-47 tag match (e.g., "pt-BR", "zh-CN")
+                Language.entries.find { it.code.equals(tag, ignoreCase = true) }
+                // Fallback to language code only (e.g., "pt", "zh", "en", "it")
+                    ?: Language.entries.find {
+                        it.code.equals(
+                            newLocale.language,
+                            ignoreCase = true
+                        )
+                    }
+                    ?: Language.SYSTEM
+            }
         }
         .stateIn(
             scope = applicationScope,
