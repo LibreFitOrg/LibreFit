@@ -13,13 +13,13 @@ package org.librefit.enums.userPreferences
  */
 enum class Language(val code: String) : DialogPreference {
     SYSTEM(""),
-    ENGLISH("en"),
-    ITALIAN("it"),
-    GERMAN("de"),
-    DUTCH("nl"),
     CZECH("cs"),
-    SIMPLIFIED_CHINESE("zh-CN"),
-    SPANISH("es"),
+    DUTCH("nl"),
+    ENGLISH("en"),
+    GERMAN("de"),
+    ITALIAN("it"),
     PORTUGUESE_BRAZIL("pt-BR"),
-    RUSSIAN("ru")
+    RUSSIAN("ru"),
+    SIMPLIFIED_CHINESE("zh-CN"),
+    SPANISH("es")
 }
