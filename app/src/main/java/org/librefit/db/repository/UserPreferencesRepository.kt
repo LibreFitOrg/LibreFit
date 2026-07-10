@@ -159,6 +159,26 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     /**
+     * Resolves the current Application Locale into our [Language] enum.
+     */
+    private fun resolveLanguage(locale: Locale?): Language {
+        if (locale == null) return Language.SYSTEM
+
+        val tag = locale.toLanguageTag()
+        return Language.entries.find { it.code.equals(tag, ignoreCase = true) }
+            ?: Language.entries.find { it.code.equals(locale.language, ignoreCase = true) }
+            ?: Language.SYSTEM
+    }
+
+    /**
+     * Helper to read the exact synchronous language state.
+     */
+    private fun getCurrentLanguage(): Language {
+        val currentLocale = AppCompatDelegate.getApplicationLocales().get(0)
+        return resolveLanguage(currentLocale)
+    }
+
+    /**
      * A Flow that emits the new Locale whenever the app's configuration changes.
      */
     private val currentLocale: Flow<Locale?> = callbackFlow {
@@ -167,10 +187,7 @@ class UserPreferencesRepository @Inject constructor(
 
         val callback = object : ComponentCallbacks {
             override fun onConfigurationChanged(newConfig: Configuration) {
-                // It's null when no app-specific locales are set so LANGUAGE.SYSTEM is chosen
-                val currentLocale = AppCompatDelegate.getApplicationLocales()[0]
-                // Offer the new locale to the channel
-                trySend(currentLocale)
+                trySend(AppCompatDelegate.getApplicationLocales()[0])
             }
 
             override fun onLowMemory() {}
@@ -185,29 +202,12 @@ class UserPreferencesRepository @Inject constructor(
         }
     }.conflate()
 
-
     val language: StateFlow<Language> = currentLocale
-        .map { newLocale ->
-            if (newLocale == null) {
-                Language.SYSTEM
-            } else {
-                val tag = newLocale.toLanguageTag()
-                // Try full BCP-47 tag match (e.g., "pt-BR", "zh-CN")
-                Language.entries.find { it.code.equals(tag, ignoreCase = true) }
-                // Fallback to language code only (e.g., "pt", "zh", "en", "it")
-                    ?: Language.entries.find {
-                        it.code.equals(
-                            newLocale.language,
-                            ignoreCase = true
-                        )
-                    }
-                    ?: Language.SYSTEM
-            }
-        }
+        .map { resolveLanguage(it) }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
-            initialValue = Language.SYSTEM
+            initialValue = getCurrentLanguage()
         )
 
     suspend fun saveThemeMode(mode: ThemeMode) {
