@@ -17,19 +17,31 @@ import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.models.Weight
 import org.librefit.nav.LocalUnitSystem
 import java.util.Locale
+import kotlin.math.floor
+import kotlin.math.pow
+
+private const val NUMBER_OF_DECIMAL_DIGITS = 2
 
 @Composable
-fun Weight.formatToText(): String {
+fun Weight.formatToText(
+    numberOfDecimalDigits: Int = NUMBER_OF_DECIMAL_DIGITS
+): String {
     val unitSystem = LocalUnitSystem.current
 
     return remember(this, unitSystem) {
         // Automatically translates "kg"/"lbs" depending on device language
         val format = MeasureFormat.getInstance(Locale.getDefault(), MeasureFormat.FormatWidth.SHORT)
 
+        val multiplier = 10.0.pow(numberOfDecimalDigits)
         if (unitSystem == UnitSystem.METRIC) {
-            format.format(Measure(inKilograms, MeasureUnit.KILOGRAM))
+            format.format(
+                Measure(
+                    floor(inKilograms * multiplier) / multiplier,
+                    MeasureUnit.KILOGRAM
+                )
+            )
         } else {
-            format.format(Measure(inPounds, MeasureUnit.POUND))
+            format.format(Measure(floor(inPounds * multiplier) / multiplier, MeasureUnit.POUND))
         }
     }
 }
@@ -41,10 +53,16 @@ fun Weight.doubleValue(): Double {
     return this.doubleValue(unitSystem)
 }
 
-fun Weight.doubleValue(unitSystem: UnitSystem): Double {
-    return if (unitSystem == UnitSystem.METRIC) {
-        inKilograms
-    } else {
-        inPounds
-    }
+fun Weight.doubleValue(
+    unitSystem: UnitSystem,
+    numberOfDecimalDigits: Int = NUMBER_OF_DECIMAL_DIGITS
+): Double {
+    val multiplier = 10.0.pow(numberOfDecimalDigits.toDouble())
+    return floor(
+        if (unitSystem == UnitSystem.METRIC) {
+            inKilograms
+        } else {
+            inPounds
+        } * multiplier
+    ) / multiplier
 }
