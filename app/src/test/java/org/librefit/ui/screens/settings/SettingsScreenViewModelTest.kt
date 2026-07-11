@@ -23,6 +23,7 @@ import org.librefit.MainDispatcherRule
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsScreenViewModelTest {
@@ -46,6 +47,7 @@ class SettingsScreenViewModelTest {
     private lateinit var isWorkoutHeaderSticky: MutableStateFlow<Boolean>
     private lateinit var useScrollWheelForInput: MutableStateFlow<Boolean>
     private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
+    private lateinit var unitSystem: MutableStateFlow<UnitSystem>
 
     @Before
     fun setUp() {
@@ -60,6 +62,7 @@ class SettingsScreenViewModelTest {
         isWorkoutHeaderSticky = MutableStateFlow(true)
         useScrollWheelForInput = MutableStateFlow(true)
         dismissScrollWheelAutomatically = MutableStateFlow(false)
+        unitSystem = MutableStateFlow(UnitSystem.METRIC)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.language } returns language
@@ -71,6 +74,7 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.isWorkoutHeaderSticky } returns isWorkoutHeaderSticky
         every { userPreferencesRepository.useScrollWheelForInput } returns useScrollWheelForInput
         every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
+        every { userPreferencesRepository.unitSystem } returns unitSystem
 
         every { userPreferencesRepository.saveLanguage(any()) } answers {
             language.value = firstArg()
