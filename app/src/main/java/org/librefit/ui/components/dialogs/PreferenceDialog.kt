@@ -33,6 +33,7 @@ import org.librefit.R
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.util.Formatter
 
 @Composable
@@ -51,6 +52,7 @@ fun PreferenceDialog(
                     when (preferences.first()) {
                         is Language -> R.string.language
                         is ThemeMode -> R.string.theme
+                        is UnitSystem -> R.string.unit_system
                     }
                 )
             )
@@ -61,6 +63,7 @@ fun PreferenceDialog(
                     when (preferences.first()) {
                         is Language -> R.drawable.ic_translate
                         is ThemeMode -> R.drawable.ic_dark_mode
+                        is UnitSystem -> R.drawable.ic_weight
                     }
                 ),
                 contentDescription = null

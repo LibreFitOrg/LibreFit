@@ -313,6 +313,10 @@
     <string name="dismiss_scroll_wheel_automatically">Dismiss scroll wheel automatically</string>
     <string name="dismiss_scroll_wheel_automatically_desc">The scroll wheel will be dismissed automatically.</string>
     <string name="dismiss_scroll_wheel_manually_desc">The scroll wheel will have to be dismissed manually.</string>
+    <string name="settings_location">Location</string>
+    <string name="unit_system">Unit system</string>
+    <string name="metric">Metric</string>
+    <string name="imperial">Imperial</string>
 
     <!--- Languages -->
     <string name="language">Language</string>
@@ -458,6 +462,7 @@
     <!--Exercise card-->
     <string name="rest_time">Rest time</string>
     <string name="kg" translatable="false">kg</string>
+    <string name="lb" translatable="false">lb</string>
     <string name="type_of_set">Type of set</string>
     <string name="previous">Previous</string>
 
