@@ -11,6 +11,9 @@ package org.librefit.db.repository
 import android.app.Application
 import android.content.ComponentCallbacks
 import android.content.res.Configuration
+import android.icu.util.LocaleData
+import android.icu.util.ULocale
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.datastore.core.DataStore
@@ -162,14 +165,40 @@ class UserPreferencesRepository @Inject constructor(
 
     val unitSystem: StateFlow<UnitSystem> = dataStore.data
         .map { preferences ->
-            val savedValue = preferences[UNIT_SYSTEM_KEY] ?: UnitSystem.METRIC.name
-            runCatching { UnitSystem.valueOf(savedValue) }.getOrDefault(UnitSystem.METRIC)
+            runCatching {
+                UnitSystem.valueOf(preferences[UNIT_SYSTEM_KEY]!!)
+            }.getOrDefault(resolveDefaultUnitSystem())
         }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
-            initialValue = UnitSystem.METRIC
+            initialValue = resolveDefaultUnitSystem()
         )
+
+    private fun resolveDefaultUnitSystem(): UnitSystem {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // Use the ICU LocaleData API to get the measurement system for this locale
+            when (LocaleData.getMeasurementSystem(ULocale.getDefault())) {
+                LocaleData.MeasurementSystem.US -> UnitSystem.IMPERIAL
+                LocaleData.MeasurementSystem.UK -> UnitSystem.IMPERIAL
+                LocaleData.MeasurementSystem.SI -> UnitSystem.METRIC
+                else -> UnitSystem.METRIC
+            }
+        } else {
+            // These countries are the primary users of the Imperial system.
+            // US: United States
+            // UK: United Kingdom
+            // MM: Myanmar
+            // LR: Liberia
+            val imperialCountries = setOf("US", "UK", "MM", "LR")
+
+            if (Locale.getDefault().country in imperialCountries) {
+                UnitSystem.IMPERIAL
+            } else {
+                UnitSystem.METRIC
+            }
+        }
+    }
 
     /**
      * Resolves the current Application Locale into our [Language] enum.
