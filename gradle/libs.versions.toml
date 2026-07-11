@@ -1,32 +1,32 @@
 [versions]
 agp = "9.2.1"
 datastore = "1.2.1"
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 junit = "4.13.2"
 espressoCore = "3.7.0"
-composeBom = "2026.05.01"
+composeBom = "2026.06.01"
 roomVersion = "2.8.4"
 appcompat = "1.7.1"
 ksp = "2.3.4"
 accompanistPermissions = "0.37.3"
 lottieCompose = "6.7.1"
 coreSplashscreen = "1.2.0"
-composeM3 = "3.1.0"
-hiltAndroid = "2.59.2"
-hiltNavigationCompose = "1.3.0"
-aboutLibraries = "14.2.0"
-aboutlibrariesComposeM3 = "14.2.0"
+composeM3 = "3.2.3"
+hiltAndroid = "2.60.1"
+hiltNavigationCompose = "1.4.0"
+aboutLibraries = "15.0.3"
+aboutlibrariesComposeM3 = "15.0.3"
 kotlinxCoroutinesTest = "1.11.0"
 truth = "1.7.0"
 turbine = "1.2.1"
-mockk = "1.14.9"
-kotlinxCollectionsImmutable = "0.4.0"
+mockk = "1.14.11"
+kotlinxCollectionsImmutable = "0.5.1"
 material = "1.14.0"
-coil = "3.4.0"
+coil = "3.5.0"
 reorderable = "3.1.0"
 
 [libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.18.0" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.19.0" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version = "2.8.4" }
@@ -34,7 +34,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version = "1.3.0" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.10.0" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.11.0" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.13.0" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom-alpha", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }

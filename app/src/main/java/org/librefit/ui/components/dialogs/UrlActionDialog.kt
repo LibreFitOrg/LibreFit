@@ -60,7 +60,7 @@ fun UrlActionDialog(
                         data = url.toUri()
                     }
                     context.startActivity(intent)
-                    onDismiss
+                    onDismiss()
                 }) {
                 Text(stringResource(R.string.open))
             }

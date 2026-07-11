@@ -47,8 +47,9 @@ android {
             useSupportLibrary = true
         }
         androidResources {
+            generateLocaleConfig = true
             localeFilters += setOf(
-                "en", "it", "de", "nl", "es", "cs", "zh-rCN", "pt-rBR"
+                "en", "it", "de", "nl", "es", "cs", "zh-rCN", "pt-rBR", "ru"
             )
         }
 

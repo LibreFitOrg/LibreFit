@@ -28,7 +28,6 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.LibreFit"
-        android:localeConfig="@xml/locale_config"
         tools:targetApi="tiramisu">
         <activity
             android:name=".activities.MainActivity"

@@ -19,7 +19,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -40,7 +39,6 @@ private val THEME_MODE_KEY = intPreferencesKey("theme_mode")
 private val MATERIAL_MODE_KEY = booleanPreferencesKey("material_mode")
 private val KEEP_ON_WORKOUT_SCREEN_KEY = booleanPreferencesKey("workout_screen_on")
 private val REQUEST_PERMISSIONS_NEXT_TIME_KEY = booleanPreferencesKey("ask_permission_again")
-private val LANGUAGE_KEY = stringPreferencesKey("language")
 private val REST_TIMER_SOUND_KEY = booleanPreferencesKey("alert_sound")
 private val SHOW_WELCOME_SCREEN_KEY = booleanPreferencesKey("show_welcome_screen")
 private val IS_SUPPORTER_KEY = booleanPreferencesKey("is_supporter")
@@ -161,6 +159,26 @@ class UserPreferencesRepository @Inject constructor(
         )
 
     /**
+     * Resolves the current Application Locale into our [Language] enum.
+     */
+    private fun resolveLanguage(locale: Locale?): Language {
+        if (locale == null) return Language.SYSTEM
+
+        val tag = locale.toLanguageTag()
+        return Language.entries.find { it.code.equals(tag, ignoreCase = true) }
+            ?: Language.entries.find { it.code.equals(locale.language, ignoreCase = true) }
+            ?: Language.SYSTEM
+    }
+
+    /**
+     * Helper to read the exact synchronous language state.
+     */
+    private fun getCurrentLanguage(): Language {
+        val currentLocale = AppCompatDelegate.getApplicationLocales().get(0)
+        return resolveLanguage(currentLocale)
+    }
+
+    /**
      * A Flow that emits the new Locale whenever the app's configuration changes.
      */
     private val currentLocale: Flow<Locale?> = callbackFlow {
@@ -169,10 +187,7 @@ class UserPreferencesRepository @Inject constructor(
 
         val callback = object : ComponentCallbacks {
             override fun onConfigurationChanged(newConfig: Configuration) {
-                // It's null when no app-specific locales are set so LANGUAGE.SYSTEM is chosen
-                val currentLocale = AppCompatDelegate.getApplicationLocales()[0]
-                // Offer the new locale to the channel
-                trySend(currentLocale)
+                trySend(AppCompatDelegate.getApplicationLocales()[0])
             }
 
             override fun onLowMemory() {}
@@ -187,18 +202,12 @@ class UserPreferencesRepository @Inject constructor(
         }
     }.conflate()
 
-
     val language: StateFlow<Language> = currentLocale
-        .map { newLocale ->
-            // If newLanguage is null, follow system otherwise find the associated enum
-            newLocale?.language?.let { newLanguage ->
-                Language.entries.find { it.code == newLanguage }
-            } ?: Language.SYSTEM
-        }
+        .map { resolveLanguage(it) }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
-            initialValue = Language.SYSTEM
+            initialValue = getCurrentLanguage()
         )
 
     suspend fun saveThemeMode(mode: ThemeMode) {
@@ -217,9 +226,8 @@ class UserPreferencesRepository @Inject constructor(
         dataStore.edit { preferences -> preferences[REQUEST_PERMISSIONS_NEXT_TIME_KEY] = shouldAsk }
     }
 
-    suspend fun saveLanguage(languageCode: String) {
-        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageCode))
-        dataStore.edit { preferences -> preferences[LANGUAGE_KEY] = languageCode }
+    fun saveLanguage(language: Language) {
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(language.code))
     }
 
     suspend fun saveRestTimerSoundOn(isOn: Boolean) {

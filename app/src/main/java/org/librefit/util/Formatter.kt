@@ -127,6 +127,7 @@ object Formatter {
             Language.SIMPLIFIED_CHINESE -> R.string.language_chinese_simplified_nt
             Language.SPANISH -> R.string.language_spanish_nt
             Language.PORTUGUESE_BRAZIL -> R.string.language_brazilian_portuguese_nt
+            Language.RUSSIAN -> R.string.language_russian_nt
             Language.SYSTEM -> R.string.follow_system
             ThemeMode.LIGHT -> R.string.theme_light
             ThemeMode.DARK -> R.string.theme_dark

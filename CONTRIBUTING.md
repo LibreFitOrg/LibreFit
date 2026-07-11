@@ -204,7 +204,7 @@ We want LibreFit to be accessible to everyone!
 - We use **Weblate** for translations. Join our project here: https://hosted.weblate.org/projects/librefit/librefit/
 - Please, **do not blindly accept machine or AI translations** as they do not understand the
   context. Always double check all translations and their use in LibreFit.
-- A language will be added once it is **completed at least 70%**.
+- A language will be added once it is **completed at least 80%**.
 
 > Thanks to [Weblate](https://weblate.org) for hosting LibreFit's translations!
 
@@ -237,6 +237,7 @@ You can contribute if your target language is on this list:
 | 🇷🇺 Russian         |
 | 🇪🇸 Spanish         |
 | 🇰🇪 Swahili         |
+| 🇸🇪 Swedish         |
 | 🇮🇳 Tamil           |
 | 🇮🇳 Telugu          |
 | 🇹🇭 Thai            |
