@@ -19,6 +19,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.stateIn
 import org.librefit.di.qualifiers.ApplicationScope
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -48,7 +50,7 @@ private val SHOW_KEEP_ANDROID_OPEN_KEY = booleanPreferencesKey("showKeepAndroidO
 private val USE_SCROLL_WHEEL_FOR_INPUT_KEY = booleanPreferencesKey("use_number_picker")
 private val DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY =
     booleanPreferencesKey("dismiss_input_modal_bottom_sheet_automatically_key")
-
+private val UNIT_SYSTEM_KEY = stringPreferencesKey("unit_system")
 /**
  * A repository to handle user preferences using [androidx.datastore.core.DataStore].
  *
@@ -158,6 +160,17 @@ class UserPreferencesRepository @Inject constructor(
             initialValue = false
         )
 
+    val unitSystem: StateFlow<UnitSystem> = dataStore.data
+        .map { preferences ->
+            val savedValue = preferences[UNIT_SYSTEM_KEY] ?: UnitSystem.METRIC.name
+            runCatching { UnitSystem.valueOf(savedValue) }.getOrDefault(UnitSystem.METRIC)
+        }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = UnitSystem.METRIC
+        )
+
     /**
      * Resolves the current Application Locale into our [Language] enum.
      */
@@ -262,5 +275,9 @@ class UserPreferencesRepository @Inject constructor(
         dataStore.edit { preferences ->
             preferences[DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY] = dismissAutomatically
         }
+    }
+
+    suspend fun saveUnitSystem(system: UnitSystem) {
+        dataStore.edit { preferences -> preferences[UNIT_SYSTEM_KEY] = system.name }
     }
 }
