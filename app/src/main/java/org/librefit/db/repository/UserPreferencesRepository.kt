@@ -55,8 +55,22 @@ private val DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY =
     booleanPreferencesKey("dismiss_input_modal_bottom_sheet_automatically_key")
 private val UNIT_SYSTEM_KEY = stringPreferencesKey("unit_system")
 /**
- * A repository to handle user preferences using [androidx.datastore.core.DataStore].
+ * Central repository managing application-level preferences, including theme, unit systems, and language.
  *
+ * It utilizes [DataStore] for persistent storage of user settings and integrates with [AppCompatDelegate]
+ * for reactive, system-compliant per-app language management. For unit systems, it leverages
+ * [android.icu.util.LocaleData.MeasurementSystem] to infer the user's preferred standard (Metric/Imperial)
+ * based on their locale.
+ *
+ * ### Language Management
+ * - **Persistence**: Language tags are managed via [AppCompatDelegate.setApplicationLocales], which
+ *   automatically syncs with Android's per-app language system settings.
+ * - **Observation**: Current language state is monitored reactively through the [currentLocale]
+ *   [Flow], triggered by configuration changes.
+ *
+ * @see <a href="https://developer.android.com/reference/android/icu/util/LocaleData.MeasurementSystem">LocaleData.MeasurementSystem</a>
+ * @see <a href="https://developer.android.com/guide/topics/resources/app-languages">Per-app languages in system settings</a>
+ * @see <a href="https://developer.android.com/reference/androidx/appcompat/app/AppCompatDelegate">AppCompatDelegate</a>
  */
 @Singleton
 class UserPreferencesRepository @Inject constructor(
