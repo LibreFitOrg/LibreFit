@@ -15,12 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.models.Weight
+import org.librefit.models.Weight.Companion.NUMBER_OF_DECIMAL_DIGITS
 import org.librefit.nav.LocalUnitSystem
 import java.util.Locale
 import kotlin.math.floor
 import kotlin.math.pow
 
-private const val NUMBER_OF_DECIMAL_DIGITS = 2
 
 @Composable
 fun Weight.formatToText(

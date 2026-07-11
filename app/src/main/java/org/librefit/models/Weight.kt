@@ -75,6 +75,9 @@ value class Weight private constructor(
         /** Standard conversion factor for kilograms to pounds (1 kg ≈ 2.20462262 lbs). */
         const val KILOGRAMS_TO_POUNDS = 2.2046226218487757
 
+        /** Self-explanatory **/
+        const val NUMBER_OF_DECIMAL_DIGITS = 2
+
         /**
          * Factory method to create a [Weight] instance from a kilogram value.
          * 
