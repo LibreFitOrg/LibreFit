@@ -24,9 +24,12 @@ import org.librefit.MainDispatcherRule
 import org.librefit.db.entity.Measurement
 import org.librefit.db.repository.MeasurementRepository
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.enums.healthConnect.HealthConnectClickAction
+import org.librefit.enums.healthConnect.HealthConnectStatus
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.health.HealthConnectRepository
+import org.librefit.ui.models.HealthConnectState
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsScreenViewModelTest {

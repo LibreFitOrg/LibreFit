@@ -6,7 +6,9 @@
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
  */
 
-package org.librefit.ui.screens.settings
+package org.librefit.ui.models
+
+import org.librefit.enums.healthConnect.HealthConnectStatus
 
 data class HealthConnectState(
     val status: HealthConnectStatus = HealthConnectStatus.UNAVAILABLE,
@@ -25,16 +27,4 @@ data class HealthConnectState(
 
     val isChecked: Boolean
         get() = isEnabled && hasPermissions
-}
-
-enum class HealthConnectStatus {
-    UNAVAILABLE,
-    NEEDS_PERMISSIONS,
-    READY,
-    EXPORTING
-}
-
-enum class HealthConnectClickAction {
-    NONE,
-    REQUEST_PERMISSIONS
 }

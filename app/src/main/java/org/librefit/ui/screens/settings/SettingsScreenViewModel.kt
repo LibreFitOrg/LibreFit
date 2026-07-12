@@ -23,10 +23,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.repository.MeasurementRepository
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.enums.healthConnect.HealthConnectClickAction
+import org.librefit.enums.healthConnect.HealthConnectStatus
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.health.HealthConnectRepository
+import org.librefit.ui.models.HealthConnectState
 import javax.inject.Inject
 
 @HiltViewModel
