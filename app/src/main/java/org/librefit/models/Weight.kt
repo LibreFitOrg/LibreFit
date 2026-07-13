@@ -9,6 +9,7 @@
 package org.librefit.models
 
 import androidx.annotation.FloatRange
+import kotlinx.serialization.Serializable
 import org.librefit.models.Weight.Companion.MAX_WEIGHT_IN_KILOGRAMS
 import org.librefit.models.Weight.Companion.MIN_WEIGHT_IN_KILOGRAMS
 
@@ -22,6 +23,7 @@ import org.librefit.models.Weight.Companion.MIN_WEIGHT_IN_KILOGRAMS
  * @see <a href="https://kotlinlang.org/docs/inline-classes.html">Kotlin Inline Value Classes Documentation</a>
  * @property inKilograms The underlying weight value in kilograms.
  */
+@Serializable
 @JvmInline
 value class Weight private constructor(
     @param:FloatRange(
