@@ -15,6 +15,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.MeasurementRepository
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
 import org.librefit.enums.chart.BodyweightChart
@@ -25,6 +26,7 @@ import org.librefit.enums.chart.TimeChart
 import org.librefit.enums.chart.WeightedBodyweightChart
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.ui.components.charts.Point
+import org.librefit.ui.models.doubleValue
 import org.librefit.util.Formatter
 import org.librefit.util.OneRepMaxCalculator
 import java.time.LocalDateTime
@@ -37,12 +39,15 @@ import javax.inject.Singleton
 @Singleton
 class DataHelper @Inject constructor(
     private val measurementRepository: MeasurementRepository,
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
+    userPreferencesRepository: UserPreferencesRepository
 ) {
     val shortFormatter: DateTimeFormatter? =
         DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(
             Locale.getDefault()
         )
+
+    val unitSystem = userPreferencesRepository.unitSystem
 
     /**
      * It returns a list of [Point] corresponding to the given [workoutChart] type
@@ -72,7 +77,7 @@ class DataHelper @Inject constructor(
                 async {
                     val bodyWeight = measurementRepository.getLastMeasurementByCutoff(
                         it.workout.completed
-                    )?.bodyWeight ?: 0.0
+                    )?.bodyWeight?.doubleValue(unitSystem.value) ?: 0.0
 
                     Point(
                         yValues = listOf(
@@ -108,7 +113,7 @@ class DataHelper @Inject constructor(
 
         val bodyWeight = measurementRepository.getLastMeasurementByCutoff(
             if (isRoutine) workout.workout.created else workout.workout.completed
-        )?.bodyWeight ?: 0.0
+        )?.bodyWeight?.doubleValue(unitSystem.value) ?: 0.0
 
         return workout.exercisesWithSets.sumOf { exe ->
             exe.sets.sumOf { set ->
@@ -193,7 +198,7 @@ class DataHelper @Inject constructor(
 
                             val bodyWeight = measurementRepository.getLastMeasurementByCutoff(
                                 w.workout.completed
-                            )?.bodyWeight ?: 0.0
+                            )?.bodyWeight?.doubleValue(unitSystem.value) ?: 0.0
 
                             val value = when (muscleDistributionStatisticsChart) {
                                 StatisticsChart.LOAD -> sets.sumOf {
@@ -336,7 +341,7 @@ class DataHelper @Inject constructor(
 
                             val bodyWeight = measurementRepository.getLastMeasurementByCutoff(
                                 w.workout.completed
-                            )?.bodyWeight ?: 0.0
+                            )?.bodyWeight?.doubleValue(unitSystem.value) ?: 0.0
 
                             val value = when (exerciseDistributionStatisticsChart) {
                                 StatisticsChart.LOAD -> sets.sumOf {
@@ -424,7 +429,8 @@ class DataHelper @Inject constructor(
                             eWs.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
 
                     val bodyWeight = if (includeBodyweight && workout != null) measurementRepository
-                        .getLastMeasurementByCutoff(workout.completed)?.bodyWeight ?: 0.0 else 0.0
+                        .getLastMeasurementByCutoff(workout.completed)
+                        ?.bodyWeight?.doubleValue(unitSystem.value) ?: 0.0 else 0.0
 
                     val sets = eWs.sets.filter { it.completed }
 

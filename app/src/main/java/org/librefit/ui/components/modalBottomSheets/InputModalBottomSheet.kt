@@ -42,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.librefit.R
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
+import org.librefit.nav.LocalUnitSystem
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.NumberPicker
 import org.librefit.ui.models.InputModalBottomSheetState
@@ -55,6 +57,8 @@ fun InputModalBottomSheet(
     onValueChange: (InputModalBottomSheetState) -> Unit,
     dismissAutomatically: Boolean
 ) {
+    val unitSystem = LocalUnitSystem.current
+
     // Save initial state so user can restore it
     val initialState = remember { state }
 
@@ -267,7 +271,12 @@ fun InputModalBottomSheet(
 
                                 Spacer(Modifier.width(10.dp))
                                 Text(
-                                    text = stringResource(R.string.kg),
+                                    text = stringResource(
+                                        when (unitSystem) {
+                                            UnitSystem.METRIC -> R.string.kg
+                                            UnitSystem.IMPERIAL -> R.string.lb
+                                        }
+                                    ),
                                     style = textStyle
                                 )
                             }
