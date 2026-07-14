@@ -25,6 +25,7 @@ import org.librefit.enums.chart.StatisticsChart
 import org.librefit.enums.chart.TimeChart
 import org.librefit.enums.chart.WeightedBodyweightChart
 import org.librefit.enums.chart.WorkoutChart
+import org.librefit.models.Weight
 import org.librefit.ui.components.charts.Point
 import org.librefit.ui.models.doubleValue
 import org.librefit.util.Formatter
@@ -108,14 +109,14 @@ class DataHelper @Inject constructor(
 
     suspend fun fetchVolumeFromWorkout(
         workout: WorkoutWithExercisesAndSets
-    ): Double {
+    ): Weight {
         val isRoutine = workout.workout.state == WorkoutState.ROUTINE
 
         val bodyWeight = measurementRepository.getLastMeasurementByCutoff(
             if (isRoutine) workout.workout.created else workout.workout.completed
         )?.bodyWeight?.doubleValue(unitSystem.value) ?: 0.0
 
-        return workout.exercisesWithSets.sumOf { exe ->
+        val volume = workout.exercisesWithSets.sumOf { exe ->
             exe.sets.sumOf { set ->
                 val volumeForEachRep = when (exe.exercise.setMode) {
                     SetMode.LOAD -> if (isRoutine || set.completed) set.load.doubleValue(unitSystem.value) else 0.0
@@ -129,6 +130,8 @@ class DataHelper @Inject constructor(
                 (volumeForEachRep * set.reps)
             }
         }
+
+        return Weight.auto(volume, unitSystem.value)
     }
 
 

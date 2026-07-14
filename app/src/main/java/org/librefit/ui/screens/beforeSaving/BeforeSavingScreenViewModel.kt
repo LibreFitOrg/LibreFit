@@ -37,7 +37,6 @@ import org.librefit.ui.models.mappers.toUi
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import java.util.Locale
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
@@ -62,7 +61,7 @@ class BeforeSavingScreenViewModel @Inject constructor(
     private val _exercises = MutableStateFlow<List<UiExerciseWithSets>>(emptyList())
     val exercises = _exercises.asStateFlow()
 
-    private val _volume = MutableStateFlow("0.00")
+    private val _volume = MutableStateFlow(Weight.zero())
     val volume = _volume.asStateFlow()
 
     private val _workout = MutableStateFlow(UiWorkout())
@@ -87,7 +86,7 @@ class BeforeSavingScreenViewModel @Inject constructor(
             )
 
             _volume.update {
-                String.format(Locale.getDefault(), "%.2f", volume)
+                volume
             }
         }
     }

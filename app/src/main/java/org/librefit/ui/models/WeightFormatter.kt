@@ -13,6 +13,8 @@ import android.icu.util.Measure
 import android.icu.util.MeasureUnit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.stringResource
+import org.librefit.R
 import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.models.Weight
 import org.librefit.models.Weight.Companion.NUMBER_OF_DECIMAL_DIGITS
@@ -47,13 +49,21 @@ fun Weight.formatToText(
 }
 
 /**
- * It returns value of [Weight] instance in current [UnitSystem]
+ * It returns value of [Weight] instance in current [UnitSystem] without any suffix or unit
  */
 @Composable
 fun Weight.doubleValue(): Double {
     val unitSystem = LocalUnitSystem.current
 
     return this.doubleValue(unitSystem)
+}
+
+/**
+ * It returns value of [Weight] instance in current [UnitSystem] as string without any suffix or unit
+ */
+@Composable
+fun Weight.doubleValueAsString(): String {
+    return this.doubleValue().toString()
 }
 
 /**
@@ -71,4 +81,34 @@ fun Weight.doubleValue(
             inPounds
         } * multiplier
     ) / multiplier
+}
+
+fun Double.toWeight(unitSystem: UnitSystem): Weight {
+    return Weight.auto(this, unitSystem)
+}
+
+@Composable
+fun Double.toWeight(): Weight {
+    val unitSystem = LocalUnitSystem.current
+    return this.toWeight(unitSystem)
+}
+
+/**
+ * Returns the correct string resource unit suffix based on current [UnitSystem]
+ */
+fun autoUnitSuffix(unitSystem: UnitSystem): Int {
+    return when (unitSystem) {
+        UnitSystem.METRIC -> R.string.kg
+        UnitSystem.IMPERIAL -> R.string.lb
+    }
+}
+
+/**
+ * Returns the correct unit suffix based on current [UnitSystem]
+ */
+@Composable
+fun autoUnitSuffix(): String {
+    val unitSystem = LocalUnitSystem.current
+
+    return stringResource(autoUnitSuffix(unitSystem))
 }

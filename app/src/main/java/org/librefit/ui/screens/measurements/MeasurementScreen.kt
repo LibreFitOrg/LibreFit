@@ -71,7 +71,6 @@ import org.librefit.db.entity.Measurement
 import org.librefit.enums.MeasurementCardState
 import org.librefit.enums.chart.MeasurementChart
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.models.Weight
 import org.librefit.nav.LocalUnitSystem
 import org.librefit.ui.components.HeadlineText
@@ -84,6 +83,7 @@ import org.librefit.ui.components.charts.Point
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.InputModalBottomSheet
 import org.librefit.ui.models.InputModalBottomSheetState
+import org.librefit.ui.models.autoUnitSuffix
 import org.librefit.ui.models.doubleValue
 import org.librefit.ui.models.formatToText
 import org.librefit.ui.theme.LibreFitTheme
@@ -284,10 +284,7 @@ private fun MeasurementScreenContent(
                         else -> 2
                     },
                     suffix = when (measurementChart) {
-                        MeasurementChart.BODY_WEIGHT -> when (unitSystem) {
-                            UnitSystem.METRIC -> stringResource(R.string.kg)
-                            UnitSystem.IMPERIAL -> stringResource(R.string.lb)
-                        }
+                        MeasurementChart.BODY_WEIGHT -> autoUnitSuffix()
                         MeasurementChart.FAT_MASS -> "%"
                         MeasurementChart.LEAN_MASS ->  "%"
                     },
@@ -342,12 +339,7 @@ private fun MeasurementScreenContent(
                                     label = { Text(text = stringResource(R.string.body_weight)) },
                                     suffix = {
                                         Text(
-                                            stringResource(
-                                                when (unitSystem) {
-                                                    UnitSystem.METRIC -> R.string.kg
-                                                    UnitSystem.IMPERIAL -> R.string.lb
-                                                }
-                                            )
+                                            autoUnitSuffix()
                                         )
                                     },
                                     isError = bodyweightValue.isBlank(),

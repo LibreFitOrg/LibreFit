@@ -50,6 +50,7 @@ import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.models.Weight
 import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCardSmall
 import org.librefit.ui.components.HeadlineText
@@ -63,6 +64,8 @@ import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.UiWorkout
+import org.librefit.ui.models.autoUnitSuffix
+import org.librefit.ui.models.formatToText
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatDetails
@@ -122,7 +125,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
     routine: UiWorkout,
     isRoutine: Boolean,
     workoutDate: String,
-    volumeExercises: String,
+    volumeExercises: Weight,
     workoutChart: WorkoutChart,
     exercises: List<UiExerciseWithSets>,
     points: List<Point>,
@@ -261,7 +264,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                         Text(
                             formatDetails(
                                 stringResource(R.string.volume),
-                                volumeExercises + " " + stringResource(R.string.kg)
+                                volumeExercises.formatToText()
                             )
                         )
                     }
@@ -309,7 +312,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                         },
                         suffix = when (workoutChart) {
                             WorkoutChart.DURATION -> stringResource(R.string.min)
-                            WorkoutChart.VOLUME -> stringResource(R.string.kg)
+                            WorkoutChart.VOLUME -> autoUnitSuffix()
                             WorkoutChart.REPS -> null
                         },
                         points = points,
@@ -433,7 +436,7 @@ private fun InfoRoutineScreenPreview() {
                     routine = routine,
                     isRoutine = false,
                     workoutDate = Formatter.getFullDateFromLocalDate(LocalDateTime.now()),
-                    volumeExercises = "100",
+                    volumeExercises = Weight.kilograms(100.0),
                     workoutChart = WorkoutChart.REPS,
                     exercises = listOf(
                         UiExerciseWithSets(

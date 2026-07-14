@@ -109,6 +109,7 @@ import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
+import org.librefit.ui.models.autoUnitSuffix
 import org.librefit.ui.models.doubleValue
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
@@ -207,6 +208,8 @@ fun SharedTransitionScope.ExerciseCard(
     updateIdSetWithRunningStopwatch: (Long?) -> Unit = {},
     applyPreviousSetPerformance: (Long) -> Unit = {}
 ) {
+    val unit = autoUnitSuffix()
+
     var showMenu by rememberSaveable { mutableStateOf(false) }
     val shape = MaterialTheme.shapes.extraLarge
     ElevatedCard(
@@ -527,7 +530,7 @@ fun SharedTransitionScope.ExerciseCard(
                                     exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
                                 ) {
                                     Text(
-                                        text = stringResource(R.string.load) + " (" + stringResource(R.string.kg) + ")",
+                                        text = stringResource(R.string.load) + " (" + unit + ")",
                                         color = MaterialTheme.colorScheme.secondary
                                     )
                                 }
@@ -559,6 +562,7 @@ fun SharedTransitionScope.ExerciseCard(
                                         workout = workout,
                                         useScrollWheelForInput = useScrollWheelForInput,
                                         dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
+                                        unit = unit,
                                         deleteSet = deleteSet,
                                         updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
                                         updateSetTime = updateSetTime,
@@ -598,6 +602,7 @@ private fun Set(
     workout: Boolean,
     useScrollWheelForInput: Boolean,
     dismissScrollWheelInputAutomatically: Boolean,
+    unit: String,
     deleteSet: (Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
@@ -779,9 +784,9 @@ private fun Set(
                 ) {
                     val (previousReps, previousLoad, previousTime) = values
                     val text = when (setMode) {
-                        SetMode.LOAD -> "$previousLoad" + stringResource(R.string.kg) + "\n* $previousReps"
+                        SetMode.LOAD -> "$previousLoad$unit\n* $previousReps"
                         SetMode.BODYWEIGHT -> "$previousReps"
-                        SetMode.BODYWEIGHT_WITH_LOAD -> "$previousLoad" + stringResource(R.string.kg) + "\n* $previousReps"
+                        SetMode.BODYWEIGHT_WITH_LOAD -> "$previousLoad$unit\n* $previousReps"
                         SetMode.DURATION -> Formatter.formateSecondsInMinutesAndSeconds(previousTime)
                     }
                     Text(
