@@ -46,6 +46,9 @@ fun Weight.formatToText(
     }
 }
 
+/**
+ * It returns value of [Weight] instance in current [UnitSystem]
+ */
 @Composable
 fun Weight.doubleValue(): Double {
     val unitSystem = LocalUnitSystem.current
@@ -53,6 +56,9 @@ fun Weight.doubleValue(): Double {
     return this.doubleValue(unitSystem)
 }
 
+/**
+ * It returns value of [Weight] instance based on passed [unitSystem]
+ */
 fun Weight.doubleValue(
     unitSystem: UnitSystem,
     numberOfDecimalDigits: Int = NUMBER_OF_DECIMAL_DIGITS

@@ -201,7 +201,7 @@ class MeasurementScreenViewModel @Inject constructor(
                 Measurement(
                     id = if (measurementCardState.value == MeasurementCardState.EDIT)
                         idMeasurement.value else 0L,
-                    bodyWeight = bodyWeight.value ?: Weight.kilograms(0.0),
+                    bodyWeight = bodyWeight.value ?: Weight.zero(),
                     notes = notes.value,
                     muscleMassPercentage = leanMass.value ?: 0,
                     bodyFatPercentage = fatMass.value ?: 0,

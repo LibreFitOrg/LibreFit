@@ -89,7 +89,7 @@ class DataHelper @Inject constructor(
                                                 exe.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
 
                                     exe.sets.filter { it.completed }.sumOf {
-                                        (it.load + if (includeBodyweight) bodyWeight else 0.0) * it.reps
+                                        (it.load.doubleValue(unitSystem.value) + if (includeBodyweight) bodyWeight else 0.0) * it.reps
                                     }
                                 }
                                 WorkoutChart.REPS -> it.exercisesWithSets.sumOf { exe ->
@@ -118,9 +118,11 @@ class DataHelper @Inject constructor(
         return workout.exercisesWithSets.sumOf { exe ->
             exe.sets.sumOf { set ->
                 val volumeForEachRep = when (exe.exercise.setMode) {
-                    SetMode.LOAD -> if (isRoutine || set.completed) set.load else 0.0
+                    SetMode.LOAD -> if (isRoutine || set.completed) set.load.doubleValue(unitSystem.value) else 0.0
                     SetMode.BODYWEIGHT -> if (isRoutine || set.completed) bodyWeight else 0.0
-                    SetMode.BODYWEIGHT_WITH_LOAD -> if (isRoutine || set.completed) set.load + bodyWeight else 0.0
+                    SetMode.BODYWEIGHT_WITH_LOAD -> if (isRoutine || set.completed) set.load.doubleValue(
+                        unitSystem.value
+                    ) + bodyWeight else 0.0
                     SetMode.DURATION -> 0.0
                 }
 
@@ -203,18 +205,22 @@ class DataHelper @Inject constructor(
                             val value = when (muscleDistributionStatisticsChart) {
                                 StatisticsChart.LOAD -> sets.sumOf {
                                     when (exercise.setMode) {
-                                        SetMode.LOAD -> it.load
+                                        SetMode.LOAD -> it.load.doubleValue(unitSystem.value)
                                         SetMode.BODYWEIGHT -> bodyWeight
-                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load + bodyWeight
+                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load.doubleValue(
+                                            unitSystem.value
+                                        ) + bodyWeight
                                         SetMode.DURATION -> 0
                                     }.toDouble()
                                 }
                                 StatisticsChart.REPS -> sets.sumOf { it.reps }
                                 StatisticsChart.VOLUME -> sets.sumOf {
                                     when (exercise.setMode) {
-                                        SetMode.LOAD -> it.load
+                                        SetMode.LOAD -> it.load.doubleValue(unitSystem.value)
                                         SetMode.BODYWEIGHT -> bodyWeight
-                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load + bodyWeight
+                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load.doubleValue(
+                                            unitSystem.value
+                                        ) + bodyWeight
                                         SetMode.DURATION -> 0
                                     }.toDouble() * it.reps
                                 }
@@ -346,9 +352,11 @@ class DataHelper @Inject constructor(
                             val value = when (exerciseDistributionStatisticsChart) {
                                 StatisticsChart.LOAD -> sets.sumOf {
                                     when (exercise.setMode) {
-                                        SetMode.LOAD -> it.load
+                                        SetMode.LOAD -> it.load.doubleValue(unitSystem.value)
                                         SetMode.BODYWEIGHT -> bodyWeight
-                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load + bodyWeight
+                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load.doubleValue(
+                                            unitSystem.value
+                                        ) + bodyWeight
                                         SetMode.DURATION -> 0
                                     }.toDouble()
                                 }
@@ -356,9 +364,11 @@ class DataHelper @Inject constructor(
                                 StatisticsChart.REPS -> sets.sumOf { it.reps }
                                 StatisticsChart.VOLUME -> sets.sumOf {
                                     when (exercise.setMode) {
-                                        SetMode.LOAD -> it.load
+                                        SetMode.LOAD -> it.load.doubleValue(unitSystem.value)
                                         SetMode.BODYWEIGHT -> bodyWeight
-                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load + bodyWeight
+                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load.doubleValue(
+                                            unitSystem.value
+                                        ) + bodyWeight
                                         SetMode.DURATION -> 0
                                     }.toDouble() * it.reps
                                 }
@@ -445,34 +455,38 @@ class DataHelper @Inject constructor(
                                     set.reps
                                 }
                                 WeightedBodyweightChart.TOTAL_VOLUME -> sets.sumOf { set ->
-                                    (set.load + bodyWeight) * set.reps.toDouble()
+                                    (set.load.doubleValue(unitSystem.value) + bodyWeight) * set.reps.toDouble()
                                 }
                                 WeightedBodyweightChart.BEST_SET_VOLUME -> sets.maxOfOrNull { set ->
-                                    (set.load + bodyWeight) * set.reps
+                                    (set.load.doubleValue(unitSystem.value) + bodyWeight) * set.reps
                                 } ?: 0
 
                                 WeightedBodyweightChart.HEAVIEST_WEIGHT -> sets.maxOfOrNull { set ->
-                                    set.load + bodyWeight
+                                    set.load.doubleValue(unitSystem.value) + bodyWeight
                                 } ?: 0
 
                                 BodyweightChart.MOST_REPS -> sets.maxOfOrNull { set -> set.reps }
                                     ?: 0
                                 BodyweightChart.SESSION_REPS -> sets.sumOf { set -> set.reps }
-                                LoadChart.HEAVIEST_WEIGHT -> sets.maxOfOrNull { set -> set.load }
-                                    ?: 0
+                                LoadChart.HEAVIEST_WEIGHT -> sets.maxOfOrNull { set ->
+                                    set.load.doubleValue(unitSystem.value)
+                                } ?: 0
 
                                 LoadChart.BEST_SET_VOLUME -> sets.maxOfOrNull { set ->
-                                    set.load * set.reps
+                                    set.load.doubleValue(unitSystem.value) * set.reps
                                 } ?: 0
 
                                 LoadChart.ONE_REP_MAX -> sets.maxOfOrNull { set ->
-                                    OneRepMaxCalculator.calculate(set.load, set.reps)
+                                    OneRepMaxCalculator.calculate(
+                                        set.load.doubleValue(unitSystem.value),
+                                        set.reps
+                                    )
                                 } ?: 0
                                 LoadChart.TOTAL_REPS -> sets.sumOf { set ->
                                     set.reps
                                 }
                                 LoadChart.SESSION_VOLUME -> sets.sumOf { set ->
-                                    set.load * set.reps.toDouble()
+                                    set.load.doubleValue(unitSystem.value) * set.reps.toDouble()
                                 }
                             }.toDouble()
                         ),

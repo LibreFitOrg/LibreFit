@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 @Entity(tableName = "measurements")
 data class Measurement(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
-    val bodyWeight: Weight = Weight.kilograms(0.0),
+    val bodyWeight: Weight = Weight.zero(),
     @get:IntRange(0, 100) val bodyFatPercentage: Int = 0,
     @get:IntRange(0, 100) val muscleMassPercentage: Int = 0,
     val date: LocalDateTime = LocalDateTime.now(),

@@ -81,6 +81,7 @@ import org.librefit.enums.SetMode
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.models.Weight
 import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.LibreFitLazyColumn
@@ -288,7 +289,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     addSetToExercise: (Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
-    updateSetLoad: (Double, Long) -> Unit,
+    updateSetLoad: (Weight, Long) -> Unit,
     updateSetCompleted: (Boolean, Long) -> Unit,
     deleteSet: (Long) -> Unit,
     updateExerciseNotes: (String, Long) -> Unit,
@@ -569,9 +570,9 @@ private fun WorkoutScreenPreview() {
                 category = Category.STRENGTH
             ),
             sets = persistentListOf(
-                UiSet(load = 80.0, reps = 8, completed = true),
-                UiSet(load = 80.0, reps = 9, completed = true),
-                UiSet(load = 80.0, reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(80.0), reps = 8, completed = true),
+                UiSet(load = Weight.kilograms(80.0), reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(80.0), reps = 9, completed = true),
             )
         ),
         UiExerciseWithSets(
@@ -627,9 +628,9 @@ private fun WorkoutScreenPreview() {
                                     PreviousPerformanceSet(time = 612)
                                 ),
                                 listOf(
-                                    PreviousPerformanceSet(load = 80.0, reps = 7),
-                                    PreviousPerformanceSet(load = 80.0, reps = 8),
-                                    PreviousPerformanceSet(load = 80.0, reps = 8)
+                                    PreviousPerformanceSet(load = Weight.kilograms(80.0), reps = 7),
+                                    PreviousPerformanceSet(load = Weight.kilograms(80.0), reps = 8),
+                                    PreviousPerformanceSet(load = Weight.kilograms(80.0), reps = 8)
                                 ),
                                 listOf(
                                     PreviousPerformanceSet(reps = 7),
