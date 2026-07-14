@@ -13,6 +13,7 @@ import android.icu.util.Measure
 import android.icu.util.MeasureUnit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import org.librefit.R
 import org.librefit.enums.userPreferences.UnitSystem
@@ -55,7 +56,9 @@ fun Weight.formatToText(
 fun Weight.doubleValue(): Double {
     val unitSystem = LocalUnitSystem.current
 
-    return this.doubleValue(unitSystem)
+    return remember(this, unitSystem) {
+        this.doubleValue(unitSystem)
+    }
 }
 
 /**
@@ -90,7 +93,9 @@ fun Double.toWeight(unitSystem: UnitSystem): Weight {
 @Composable
 fun Double.toWeight(): Weight {
     val unitSystem = LocalUnitSystem.current
-    return this.toWeight(unitSystem)
+    return remember(this, unitSystem) {
+        this.toWeight(unitSystem)
+    }
 }
 
 /**
@@ -110,5 +115,7 @@ fun autoUnitSuffix(unitSystem: UnitSystem): Int {
 fun autoUnitSuffix(): String {
     val unitSystem = LocalUnitSystem.current
 
-    return stringResource(autoUnitSuffix(unitSystem))
+    val id = rememberSaveable(unitSystem) { autoUnitSuffix(unitSystem) }
+
+    return stringResource(id)
 }
