@@ -165,8 +165,6 @@ the latest Android toolkit:
 - [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) for user
   preferences storage.
 - [Coil](https://github.com/coil-kt/coil) for asynchronous loading of images.
-- [Accompanist](https://github.com/google/accompanist) for the handling of user permissions in
-  Jetpack Compose.
 - [Vico](https://github.com/patrykandpatrick/vico) for charts.
 - [Lottie Compose](https://github.com/airbnb/lottie-android) for animations.
 
