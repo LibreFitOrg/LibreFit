@@ -9,8 +9,11 @@
 package org.librefit.ui.screens.shared
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -42,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -54,6 +58,7 @@ import org.librefit.nav.Route
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.PreferencesLottie
+import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.theme.LibreFitTheme
 import kotlin.random.Random
 
@@ -79,10 +84,45 @@ fun RequestPermissionScreen(
         )
     }
 
+    var showSettingsDialog by remember { mutableStateOf(false) }
+
+    if (showSettingsDialog) {
+        ConfirmDialog(
+            title = stringResource(R.string.notifications_permission),
+            text = stringResource(R.string.notifications_permission_permanently_denied_desc),
+            confirmText = stringResource(R.string.open_settings),
+            onConfirm = {
+                showSettingsDialog = false
+                val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    // This is the standard way to target app settings
+                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                }
+                context.startActivity(intent)
+            },
+            onDismiss = {
+                showSettingsDialog = false
+            }
+        )
+    }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         hasNotificationPermission = isGranted
+        if (!isGranted) {
+            val activity = context as? Activity
+            if (activity != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val showRationale = ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity,
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+                if (!showRationale) {
+                    // If it's denied and shouldShowRequestPermissionRationale is false,
+                    // it means the user checked "Don't ask again" or it is permanently blocked.
+                    showSettingsDialog = true
+                }
+            }
+        }
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -103,15 +143,34 @@ fun RequestPermissionScreen(
         }
     }
 
+    val handleNotificationPermissionRequest = {
+        val activity = context as? Activity
+        if (activity != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val showRationale = ActivityCompat.shouldShowRequestPermissionRationale(
+                activity,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+            val checkPermission = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+
+            if (checkPermission == PackageManager.PERMISSION_DENIED && !showRationale) {
+                // We are in a permanently denied state (or pre-request state)
+                // To be safe, we attempt to launch the launcher. If the launcher returns
+                // immediately with false, we then trigger the Settings Redirect Dialog.
+                launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
     RequestPermissionsScreenContent(
         navController = navController,
         requestPermissionNextTime = requestPermissionNextTime,
         hasNotificationPermission = hasNotificationPermission,
-        launchNotificationPermissionRequest = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        },
+        handleNotificationPermissionRequest = handleNotificationPermissionRequest,
         saveRequestPermissionAgainPreference = saveRequestPermissionAgainPreference,
         navigateToWorkoutScreen = {
             navController.navigate(Route.WorkoutScreen(workoutId = workoutId)) {
@@ -128,7 +187,7 @@ private fun RequestPermissionsScreenContent(
     navController: NavHostController,
     requestPermissionNextTime: Boolean,
     hasNotificationPermission: Boolean,
-    launchNotificationPermissionRequest: () -> Unit,
+    handleNotificationPermissionRequest: () -> Unit,
     saveRequestPermissionAgainPreference: (Boolean) -> Unit,
     navigateToWorkoutScreen: () -> Unit
 ) {
@@ -187,7 +246,7 @@ private fun RequestPermissionsScreenContent(
                                 modifier = Modifier
                                     .padding(start = 10.dp),
                                 checked = hasNotificationPermission,
-                                onCheckedChange = { launchNotificationPermissionRequest() }
+                                onCheckedChange = { handleNotificationPermissionRequest() }
                             )
                         }
                     }
@@ -284,7 +343,7 @@ private fun RequestPermissionsScreenPreview() {
             navController = rememberNavController(),
             requestPermissionNextTime = Random.nextBoolean(),
             hasNotificationPermission = hasNotificationPermission.value,
-            launchNotificationPermissionRequest = {
+            handleNotificationPermissionRequest = {
                 hasNotificationPermission.value = !hasNotificationPermission.value
             },
             saveRequestPermissionAgainPreference = {},

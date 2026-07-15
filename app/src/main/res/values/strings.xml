@@ -254,6 +254,8 @@
     <string name="dont_ask_again">Don\'t ask again</string>
     <string name="skip_for_now">Skip for now</string>
     <string name="label_continue">Continue</string>
+    <string name="notifications_permission_permanently_denied_desc">Notifications are blocked. Please enable them in system settings to receive workout updates.</string>
+    <string name="open_settings">Open Settings</string>
 
 
     <!--Profile screen-->
