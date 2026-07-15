@@ -93,8 +93,8 @@ class SettingsScreenViewModelTest {
         coEvery { healthConnectRepository.hasWritePermissions() } returns false
         coEvery { healthConnectRepository.exportMeasurements(any()) } returns 0
 
-        coEvery { userPreferencesRepository.saveLanguage(any()) } answers {
-            language.value = Language.entries.find { it.code == firstArg() }!!
+        every { userPreferencesRepository.saveLanguage(any()) } answers {
+            language.value = firstArg()
         }
         coEvery { userPreferencesRepository.saveThemeMode(any()) } answers {
             themeMode.value = firstArg()

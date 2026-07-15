@@ -147,4 +147,9 @@
     <string name="title_cannot_be_empty">Le titre ne peut pas être vide.</string>
     <string name="edit_routine">Modifier la routine</string>
     <string name="edit_workout">Modifier l’entrainement</string>
+    <string name="reps">Répétitions</string>
+    <string name="reorder">Réorganiser</string>
+    <string name="restart_app">Redémarrer</string>
+    <string name="load">Charge</string>
+    <string name="bodyweight_with_load">Poids du corps avec charge</string>
 </resources>

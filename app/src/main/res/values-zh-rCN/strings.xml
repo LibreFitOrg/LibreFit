@@ -80,4 +80,22 @@
     <string name="most_reps">最多次数</string>
     <string name="view_online_version">查看在线版本</string>
     <string name="open">打开</string>
+    <string name="equipment_dumbbell">哑铃</string>
+    <string name="equipment_kettlebells">壶铃</string>
+    <string name="app_works_without_permission">在未授权该权限的情况下，本应用仍能正常工作。</string>
+    <string name="app_name">LibrFit</string>
+    <string name="donators">捐赠者</string>
+    <string name="volume">训练量</string>
+    <string name="total_sets">总组数</string>
+    <string name="completed_sets">完成组数</string>
+    <string name="exercises">训练动作</string>
+    <string name="routine">训练计划</string>
+    <string name="creation_date">创建日期</string>
+    <string name="select_date">选择日期</string>
+    <string name="create_exercise">创建训练动作</string>
+    <string name="title">标题</string>
+    <string name="lets_build_it_together">共同构建社区</string>
+    <string name="tutorial_desc">了解如何使用训练计划并追踪训练。</string>
+    <string name="fat_mass">脂肪重量</string>
+    <string name="contributed_to">贡献到:</string>
 </resources>

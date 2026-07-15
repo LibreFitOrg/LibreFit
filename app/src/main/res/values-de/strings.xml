@@ -14,7 +14,7 @@
     <string name="add_exercise">Übung hinzufügen</string>
     <string name="more_options">Weitere Optionen</string>
     <string name="library">Sammlung</string>
-    <string name="open">Offen</string>
+    <string name="open">Öffnen</string>
     <string name="copy">Kopieren</string>
     <string name="support_project">Unterstütze das Projekt</string>
     <string name="donate">Spenden</string>
@@ -36,7 +36,7 @@
     <string name="lets_build_it_together">Lasst uns gemeinsam bauen</string>
     <string name="tutorial_desc">Erfahre, wie du Trainingspläne erstellst und dein Training nachverfolgst.</string>
     <string name="overview">Übersicht</string>
-    <string name="statistics">Statistik</string>
+    <string name="statistics">Statistiken</string>
     <string name="volume">Gesamtgewicht</string>
     <string name="total_sets">Satzanzahl</string>
     <string name="completed_sets">Vollständige Sätze</string>
@@ -88,7 +88,7 @@
     <string name="start_completing_workout">Beginne damit, ein Training abzuschließen</string>
     <string name="delete_routine_question">Trainingsplan löschen?</string>
     <string name="quit_routine_creation_question">Traininsplanerstellung abbrechen?</string>
-    <string name="discard_running_workout_and_select_routine_text">Um diesen Trainingsplan zu starten, muss das aktuelle, noch nicht gespeicherte und laufende Training beendet werden. Möchten Sie es wirklich verwerfen? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="discard_running_workout_and_select_routine_text">Um diesen Trainingsplan zu starten, muss das aktuelle, noch nicht gespeicherte und laufende Training beendet werden. Möchtest Du es wirklich beenden? Diese Aktion kann nicht rückgängig gemacht werden.</string>
     <string name="delete_routine_text">Möchtest du diesen Trainingsplan wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden</string>
     <string name="do_not_show_again">Nicht erneut anzeigen</string>
     <string name="tut_complete_workout_6">Herzlichen Glückwunsch, du hast dein erstes Training absolviert! In deinem Profil kannst du alle deine bisherigen Trainingseinheiten einsehen.</string>
@@ -224,7 +224,7 @@
     <string name="appearance">Darstellung</string>
     <string name="follow_system">System</string>
     <string name="theme_dark">Dunkel</string>
-    <string name="theme">Aussehen</string>
+    <string name="theme">Design</string>
     <string name="theme_light">Hell</string>
     <string name="material_you">Material You</string>
     <string name="dynamic_color_disabled">Dynamische Farben deaktiviert</string>
@@ -332,16 +332,16 @@
     <string name="session_reps">Einheitswiederholungen</string>
     <string name="most_reps">Meisten Wiederholungen</string>
     <string name="session_volume">Einheitsvolumen</string>
-    <string name="one_rep_max">Maximale Wiederholungen</string>
+    <string name="one_rep_max">Maximalkraft</string>
     <string name="language_german">Deutsch</string>
     <string name="language_dutch">Niederländisch</string>
-    <string name="companion_app_desc">Einfach die Begleit-App installieren und auf die Schaltfläche unten klicken.</string>
-    <string name="verify_companion_app">Begleit-App verifizieren</string>
+    <string name="companion_app_desc">Installieren Sie einfach die Begleit-App und klicken Sie auf die Schaltfläche unten.</string>
+    <string name="verify_companion_app">Verifizieren Sie die Begleit-App</string>
     <string name="valid_companion_app_signature">Gültige Begleit-App</string>
     <string name="invalid_companion_app_signature">Ungültige Begleit-App</string>
     <string name="companion_app_not_found">Begleit-App nicht gefunden</string>
     <string name="companion_signature_error">Signaturfehler der Begleitet–App</string>
-    <string name="lets_build">Lass uns</string>
+    <string name="lets_build">Lass uns bauen</string>
     <string name="donators">Spender</string>
     <string name="language_czech">Tschechisch</string>
     <string name="language_spanish">Spanisch</string>
@@ -361,4 +361,13 @@
     <string name="language_catalan">Katalanisch</string>
     <string name="language_hindi">Hindi</string>
     <string name="language_chinese_simplified">Chinesisch (vereinfacht)</string>
+    <string name="reorder">Reihenfolge ändern</string>
+    <string name="use_scroll_wheel_for_input_desc">Nutzen Sie das Auswahlrad, um Werte und Zeit auszuwählen.</string>
+    <string name="verify_companion_or_code">Überprüfen Sie die Begleit-App oder den Code.</string>
+    <string name="dismiss_scroll_wheel_automatically">Auswahlrad automatisch ausblenden</string>
+    <string name="dismiss_scroll_wheel_automatically_desc">Das Auswahlrad wird automatisch ausgeblendet.</string>
+    <string name="language_polish">Polnisch</string>
+    <string name="language_urdu">Urdu</string>
+    <string name="language_russian">Russisch</string>
+    <string name="language_korean">Koreanisch</string>
 </resources>

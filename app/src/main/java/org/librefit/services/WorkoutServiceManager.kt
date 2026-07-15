@@ -12,7 +12,6 @@ import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.librefit.enums.WorkoutServiceActions
-import org.librefit.services.WorkoutService.Companion.EXTRA_ADD_TEN_SECONDS
 import org.librefit.services.WorkoutService.Companion.EXTRA_INITIAL_REST_TIME
 import org.librefit.services.WorkoutService.Companion.EXTRA_IS_FOCUSED
 import org.librefit.services.WorkoutService.Companion.EXTRA_SET_ELAPSED_TIME
@@ -59,8 +58,11 @@ class WorkoutServiceManager @Inject constructor(
 
     fun modifyRestTime(addTenSeconds: Boolean) {
         val serviceIntent = workoutServiceIntent.apply {
-            action = WorkoutServiceActions.MODIFY_REST_TIMER.string
-            putExtra(EXTRA_ADD_TEN_SECONDS, addTenSeconds)
+            action = if (addTenSeconds) {
+                WorkoutServiceActions.ADD_TEN_SECONDS_TO_REST_TIMER
+            } else {
+                WorkoutServiceActions.SUBTRACT_TEN_SECONDS_TO_REST_TIMER
+            }.string
         }
         context.startForegroundService(serviceIntent)
     }
