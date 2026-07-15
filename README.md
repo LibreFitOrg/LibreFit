@@ -224,10 +224,13 @@ Thanks to everyone who helped the project!
 ### 🏋 Dataset contributors
 
 - [b3nj5m1n](https://github.com/b3nj5m1n) : [#28](https://github.com/LibreFitOrg/LibreFit/pull/28)
+- [ByYeah](https://github.com/ByYeah) : [#111](https://github.com/LibreFitOrg/LibreFit/pull/111)
 
 > [Contribute to dataset](CONTRIBUTING.md#improving-exercises-dataset) to be listed here.
 
 ### 🌐 Translators
+
+> [Contribute to translations](CONTRIBUTING.md#translations) to be listed here.
 
 #### Arabic 🇸🇦
 
@@ -308,8 +311,6 @@ Thanks to everyone who helped the project!
 #### Urdu 🇵🇰
 
 - [Safi Ullah](https://github.com/Safi-Ullah-1060) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
-
-> [Contribute to translations](CONTRIBUTING.md#translations) to be listed here.
 
 ---
 
