@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Russian 🇷🇺 [#124](https://github.com/LibreFitOrg/LibreFit/pull/124)
+- Add 5 new exercises [#111](https://github.com/LibreFitOrg/LibreFit/pull/111):
+  - Wall Sit (Isometric squat against the wall)
+  - Plank Shoulder Taps
+  - Bottom Push-Up Hold
+  - Cobra Stretch
+  - Jumping Jacks
 
 ### Changed
 -
