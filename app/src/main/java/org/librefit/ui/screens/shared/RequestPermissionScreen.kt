@@ -9,7 +9,10 @@
 package org.librefit.ui.screens.shared
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,19 +30,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import org.librefit.R
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.nav.Route
@@ -49,8 +57,6 @@ import org.librefit.ui.components.animations.PreferencesLottie
 import org.librefit.ui.theme.LibreFitTheme
 import kotlin.random.Random
 
-
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RequestPermissionScreen(
     navController: NavHostController,
@@ -58,20 +64,54 @@ fun RequestPermissionScreen(
     requestPermissionNextTime: Boolean,
     saveRequestPermissionAgainPreference: (Boolean) -> Unit
 ) {
-    val notificationPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        rememberPermissionState(
-            Manifest.permission.POST_NOTIFICATIONS
+    val context = LocalContext.current
+
+    var hasNotificationPermission by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            } else {
+                true
+            }
         )
-    } else {
-        //Permission granted by default below Tiramisu
-        null
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasNotificationPermission = isGranted
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    hasNotificationPermission = ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
     RequestPermissionsScreenContent(
         navController = navController,
         requestPermissionNextTime = requestPermissionNextTime,
-        hasNotificationPermission = notificationPermissionState?.status?.isGranted != false,
-        launchNotificationPermissionRequest = { notificationPermissionState?.launchPermissionRequest() },
+        hasNotificationPermission = hasNotificationPermission,
+        launchNotificationPermissionRequest = {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        },
         saveRequestPermissionAgainPreference = saveRequestPermissionAgainPreference,
         navigateToWorkoutScreen = {
             navController.navigate(Route.WorkoutScreen(workoutId = workoutId)) {
@@ -82,7 +122,7 @@ fun RequestPermissionScreen(
     )
 }
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun RequestPermissionsScreenContent(
     navController: NavHostController,
@@ -235,7 +275,6 @@ private fun RequestPermissionsScreenContent(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Composable
 private fun RequestPermissionsScreenPreview() {
