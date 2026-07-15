@@ -9,15 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Support for imperial system (pounds) [#18](https://github.com/LibreFitOrg/LibreFit/issues/18)
 - Russian 🇷🇺 [#124](https://github.com/LibreFitOrg/LibreFit/pull/124)
 
 ### Changed
+
 -
 
 ### Deprecated
+
 -
 
 ### Removed
+
 -
 
 ### Fixed
