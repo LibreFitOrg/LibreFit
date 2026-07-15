@@ -8,7 +8,6 @@ composeBom = "2026.06.01"
 roomVersion = "2.8.4"
 appcompat = "1.7.1"
 ksp = "2.3.4"
-accompanistPermissions = "0.37.3"
 lottieCompose = "6.7.1"
 coreSplashscreen = "1.2.0"
 composeM3 = "3.2.3"
@@ -48,7 +47,6 @@ navigation-compose = { module = "androidx.navigation:navigation-compose", versio
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.11.0" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "composeM3" }
