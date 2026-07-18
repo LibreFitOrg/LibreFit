@@ -255,11 +255,15 @@ these guidelines when adding or modifying exercises:
 * **Format:** Images must have `webp` format, a white background and be consistent with existing
   exercise imagery.
 * **Quality**: Instructions must be clear, step-by-step, and coherent with the provided images.
-* **Asset Organization:** Images must be stored in `app/src/main/assets/`. Create a folder for each
-  exercise named exactly as the `id` in your JSON. Reference these in the JSON using the relative
-  path.
-* **Consistency:** Ensure the `id` is unique and follows kebab-case. Verify there are no duplicate
-  entries in the JSON array and that all JSON syntax is valid (no trailing commas).
+* **Asset Organization:**
+    - Images must be stored in `app/src/main/assets/`. Create a folder for each exercise named exactly as the `id` in your JSON. Reference these in
+      the JSON using the relative path.
+    - The JSON file is located at `app/src/main/res/raw`
+* **Consistency:**
+    - Ensure the `id` is unique and follows `Pascal_Snake_Case`.
+    - The exercises must be ordered alphabetically by ID. The Python script (`validate_exercises_json.py`) provides the correct JSON as
+      `ordered_exercises.json`
+    - Verify there are no duplicate entries in the JSON array and that all JSON syntax is valid (no trailing commas).
 
 #### Data Validation
 
