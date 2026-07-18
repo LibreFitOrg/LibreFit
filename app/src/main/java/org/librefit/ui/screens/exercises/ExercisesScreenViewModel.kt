@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,12 +28,15 @@ import org.librefit.enums.exercise.FilterValue
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.util.fuzzySearch.FuzzySearch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class ExercisesScreenViewModel @Inject constructor(
     datasetRepository: DatasetRepository,
     userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+    val showExercisesImages = userPreferencesRepository.showExercisesImages
+
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()
 
@@ -41,14 +45,9 @@ class ExercisesScreenViewModel @Inject constructor(
     }
 
     @OptIn(FlowPreview::class)
-    val debouncedQuery: StateFlow<String> = _query
-        .debounce(300L)
+    val debouncedQuery: Flow<String> = _query
+        .debounce(300.milliseconds)
         .distinctUntilChanged()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ""
-        )
 
 
 
@@ -73,7 +72,6 @@ class ExercisesScreenViewModel @Inject constructor(
                 .sortedByDescending { it.second }
                 .map { it.first }
         }
-            .distinctUntilChanged()
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -112,7 +110,6 @@ class ExercisesScreenViewModel @Inject constructor(
         selectedExerciseIds,
         dataset
     ) { ids, list -> list.filter { it.id in ids } }
-        .distinctUntilChanged()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

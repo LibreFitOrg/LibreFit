@@ -48,7 +48,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
-
+    val showExercisesImages = userPreferencesRepository.showExercisesImages
     val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
 
     val dismissScrollWheelInputAutomatically =

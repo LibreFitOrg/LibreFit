@@ -137,6 +137,7 @@ import kotlin.time.Duration.Companion.seconds
  * @param isDragging when `true`, it applies a shadow to further emphasize with a shadow that the card is dragged.
  * @param useScrollWheelForInput If `true`, [InputModalBottomSheet] appears instead of keyboard
  * @param dismissScrollWheelInputAutomatically If both this and [useScrollWheelForInput] are `true`, the [InputModalBottomSheet] will be dismissed automatically after first edit.
+ * @param showExercisesImages If `true`, it shows image of exercise
  * @param updateExerciseNotes A function to update notes based on [UiExercise.id]. For more details, refer to
  * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExerciseNotes] and
  * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateExerciseNotes].
@@ -191,6 +192,7 @@ fun SharedTransitionScope.ExerciseCard(
     isDragging: Boolean,
     useScrollWheelForInput: Boolean,
     dismissScrollWheelInputAutomatically: Boolean,
+    showExercisesImages: Boolean?,
     onReorderRequest: () -> Unit,
     deleteSet: (Long) -> Unit,
     updateExerciseNotes: (String, Long) -> Unit,
@@ -238,23 +240,25 @@ fun SharedTransitionScope.ExerciseCard(
                 ) {
                     val model =
                         remember(exerciseWithSets.exerciseDC.images) { exerciseWithSets.exerciseDC.images.firstOrNull() }
-                    AsyncImage(
-                        model = model?.let { "file:///android_asset/${it}" },
-                        fallback = painterResource(R.drawable.no_image),
-                        contentDescription = exerciseWithSets.exerciseDC.name,
-                        contentScale = ContentScale.Crop,
-                        colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .sharedElement(
-                                sharedContentState = rememberSharedContentState(
-                                    key = exerciseWithSets.exercise.id.toString() + exerciseWithSets.exerciseDC.id
-                                ),
-                                animatedVisibilityScope = animatedVisibilityScope
-                            )
-                            .size(50.dp)
-                            .clip(MaterialTheme.shapes.medium)
-                    )
+                    if (showExercisesImages == true) {
+                        AsyncImage(
+                            model = model?.let { "file:///android_asset/${it}" },
+                            fallback = painterResource(R.drawable.no_image),
+                            contentDescription = exerciseWithSets.exerciseDC.name,
+                            contentScale = ContentScale.Crop,
+                            colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
+                            modifier = Modifier
+                                .padding(end = 10.dp)
+                                .sharedElement(
+                                    sharedContentState = rememberSharedContentState(
+                                        key = exerciseWithSets.exercise.id.toString() + exerciseWithSets.exerciseDC.id
+                                    ),
+                                    animatedVisibilityScope = animatedVisibilityScope
+                                )
+                                .size(50.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                        )
+                    }
                     Text(
                         text = exerciseWithSets.exerciseDC.name,
                         style = MaterialTheme.typography.headlineSmall,
@@ -1005,6 +1009,7 @@ private fun ExerciseCardPreview() {
                     isDragging = false,
                     useScrollWheelForInput = false,
                     dismissScrollWheelInputAutomatically = false,
+                    showExercisesImages = false,
                     updateExerciseNotes = { notes, _ ->
                         e.value = e.value.copy(exercise = e.value.exercise.copy(notes = notes))
                     },

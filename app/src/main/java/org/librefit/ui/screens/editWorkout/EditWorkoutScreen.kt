@@ -83,6 +83,8 @@ fun SharedTransitionScope.EditWorkoutScreen(
 
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
 
+    val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
+
     val dismissInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -116,6 +118,7 @@ fun SharedTransitionScope.EditWorkoutScreen(
         isTitleEmpty = viewModel.isTitleEmpty(),
         dismissInputAutomatically = dismissInputAutomatically,
         useScrollWheelForInput = useScrollWheelForInput,
+        showExercisesImages = showExercisesImages,
         updateTitle = viewModel::updateTitle,
         updateNotes = viewModel::updateNotes,
         updateSetTime = viewModel::updateSetTime,
@@ -148,6 +151,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     isTitleEmpty: Boolean,
     dismissInputAutomatically: Boolean,
     useScrollWheelForInput: Boolean,
+    showExercisesImages: Boolean?,
     updateTitle: (String) -> Unit,
     updateNotes: (String) -> Unit,
     deleteSet: (Long) -> Unit,
@@ -338,6 +342,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                             addSet = addSetToExercise,
                             isDragging = isDragging,
                             useScrollWheelForInput = useScrollWheelForInput,
+                            showExercisesImages = showExercisesImages,
                             dismissScrollWheelInputAutomatically = dismissInputAutomatically,
                             onDetail = { id, idExerciseDC ->
                                 navController.navigate(
@@ -424,6 +429,7 @@ private fun EditWorkoutScreenPreview() {
                     isTitleEmpty = false,
                     useScrollWheelForInput = false,
                     dismissInputAutomatically = false,
+                    showExercisesImages = null,
                     updateTitle = { _ -> },
                     updateNotes = { _ -> },
                     addSetToExercise = { _ -> },

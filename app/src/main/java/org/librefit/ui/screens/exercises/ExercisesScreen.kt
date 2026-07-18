@@ -99,7 +99,7 @@ fun SharedTransitionScope.ExercisesScreen(
 
     val isSupporter by viewModel.isSupporter.collectAsStateWithLifecycle()
 
-
+    val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
 
     var showConfirmDialog by remember { mutableStateOf(false) }
 
@@ -134,6 +134,7 @@ fun SharedTransitionScope.ExercisesScreen(
         filteredExerciseList = filteredExerciseList,
         query = query,
         filterValue = filterValue,
+        showExercisesImages = showExercisesImages,
         animatedVisibilityScope = animatedVisibilityScope,
         toggleSelectedExercise = viewModel::toggleSelectedExercise,
         updateQuery = viewModel::updateQuery,
@@ -160,6 +161,7 @@ private fun SharedTransitionScope.ExercisesScreenContent(
     filteredExerciseList: List<UiExerciseDC>,
     query: String,
     filterValue: FilterValue,
+    showExercisesImages: Boolean?,
     animatedVisibilityScope: AnimatedVisibilityScope,
     toggleSelectedExercise: (String) -> Unit,
     updateQuery: (String) -> Unit,
@@ -261,6 +263,7 @@ private fun SharedTransitionScope.ExercisesScreenContent(
                     modifier = Modifier.animateItem(),
                     addExercises = addExercises,
                     exercise = exercise,
+                    showExercisesImages = showExercisesImages,
                     animatedVisibilityScope = animatedVisibilityScope,
                     onAddToggle = { toggleSelectedExercise(exercise.id) },
                     isSelected = exercise.id in selectedExercisesIdList,
@@ -278,6 +281,7 @@ private fun SharedTransitionScope.ItemExerciseDC(
     addExercises: Boolean,
     exercise: UiExerciseDC,
     isSelected: Boolean,
+    showExercisesImages: Boolean?,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onAddToggle: () -> Unit,
     onInfo: () -> Unit,
@@ -303,23 +307,27 @@ private fun SharedTransitionScope.ItemExerciseDC(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val model = remember { exercise.images.firstOrNull() }
-            AsyncImage(
-                model = model?.let { "file:///android_asset/${it}" },
-                fallback = painterResource(R.drawable.no_image),
-                contentDescription = exercise.name,
-                contentScale = ContentScale.Crop,
-                colorFilter = if (model == null) ColorFilter.tint(LocalContentColor.current) else null,
-                filterQuality = FilterQuality.High,
-                modifier = Modifier
-                    .sharedElement(
-                        sharedContentState = rememberSharedContentState(exercise.id),
-                        animatedVisibilityScope = animatedVisibilityScope
-                    )
-                    .size(100.dp)
-                    .clip(MaterialTheme.shapes.large)
-            )
+            if (showExercisesImages == true) {
+                AsyncImage(
+                    model = model?.let { "file:///android_asset/${it}" },
+                    fallback = painterResource(R.drawable.no_image),
+                    contentDescription = exercise.name,
+                    contentScale = ContentScale.Crop,
+                    colorFilter = if (model == null) ColorFilter.tint(LocalContentColor.current) else null,
+                    filterQuality = FilterQuality.High,
+                    modifier = Modifier
+                        .sharedElement(
+                            sharedContentState = rememberSharedContentState(exercise.id),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                        .size(100.dp)
+                        .clip(MaterialTheme.shapes.large)
+                )
+            }
             Column(
-                modifier = Modifier.padding(start = 20.dp),
+                modifier = Modifier.padding(
+                    start = (if (showExercisesImages == true) 20 else 10).dp
+                ),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -417,6 +425,7 @@ private fun ExercisesScreenPreview() {
                     query = query,
                     filterValue = filterValue,
                     toggleSelectedExercise = {},
+                    showExercisesImages = false,
                     updateQuery = { query = it },
                     updateFilter = { filterValue = it },
                     actions = persistentListOf({}),

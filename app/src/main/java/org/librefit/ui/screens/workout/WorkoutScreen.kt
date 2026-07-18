@@ -136,6 +136,8 @@ fun SharedTransitionScope.WorkoutScreen(
 
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
 
+    val showExercisesImages by viewModel.displayExercisesImages.collectAsStateWithLifecycle()
+
     val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
 
 
@@ -221,6 +223,7 @@ fun SharedTransitionScope.WorkoutScreen(
                 isHeaderSticky = isHeaderSticky,
                 useScrollWheelForInput = useScrollWheelForInput,
                 dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
+                showExercisesImages = showExercisesImages,
                 toggleStopwatch = viewModel::toggleStopwatch,
                 updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
                 onSelectedExerciseIdChange = { id, idExerciseDC ->
@@ -282,6 +285,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     idSetWithRunningStopwatch: Long?,
     isHeaderSticky: Boolean,
     useScrollWheelForInput: Boolean,
+    showExercisesImages: Boolean?,
     dismissScrollWheelInputAutomatically: Boolean,
     toggleStopwatch: () -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
@@ -411,6 +415,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                         addSet = addSetToExercise,
                         onDetail = onSelectedExerciseIdChange,
                         onDelete = deleteExercise,
+                        showExercisesImages = showExercisesImages,
                         isCollapsed = isReorderingEnabled,
                         dragHandleModifier = Modifier.draggableHandle(
                             onDragStarted = {
@@ -647,6 +652,7 @@ private fun WorkoutScreenPreview() {
                             workoutProgress = workoutProgress,
                             isHeaderSticky = true,
                             useScrollWheelForInput = true,
+                            showExercisesImages = null,
                             dismissScrollWheelInputAutomatically = false,
                             toggleStopwatch = {},
                             addSetToExercise = {},

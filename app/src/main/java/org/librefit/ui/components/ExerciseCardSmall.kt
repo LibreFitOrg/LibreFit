@@ -77,6 +77,7 @@ import org.librefit.util.Formatter.formatTime
 fun SharedTransitionScope.ExerciseCardSmall(
     exerciseWithSets: UiExerciseWithSets,
     isRoutine: Boolean = false,
+    showExercisesImages: Boolean?,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onDetail: () -> Unit
 ) {
@@ -101,23 +102,25 @@ fun SharedTransitionScope.ExerciseCardSmall(
             ) {
                 val model =
                     remember(exerciseWithSets.exerciseDC.images) { exerciseWithSets.exerciseDC.images.firstOrNull() }
-                AsyncImage(
-                    model = model?.let { "file:///android_asset/${it}" },
-                    fallback = painterResource(R.drawable.no_image),
-                    contentDescription = exerciseWithSets.exerciseDC.name,
-                    contentScale = ContentScale.Crop,
-                    colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState(
-                                key = exerciseWithSets.exercise.id.toString() + exerciseWithSets.exerciseDC.id
-                            ),
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                        .size(50.dp)
-                        .clip(MaterialTheme.shapes.medium)
-                )
+                if (showExercisesImages == true) {
+                    AsyncImage(
+                        model = model?.let { "file:///android_asset/${it}" },
+                        fallback = painterResource(R.drawable.no_image),
+                        contentDescription = exerciseWithSets.exerciseDC.name,
+                        contentScale = ContentScale.Crop,
+                        colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .sharedElement(
+                                sharedContentState = rememberSharedContentState(
+                                    key = exerciseWithSets.exercise.id.toString() + exerciseWithSets.exerciseDC.id
+                                ),
+                                animatedVisibilityScope = animatedVisibilityScope
+                            )
+                            .size(50.dp)
+                            .clip(MaterialTheme.shapes.medium)
+                    )
+                }
                 Text(
                     modifier = Modifier.weight(1f),
                     text = exerciseWithSets.exerciseDC.name,
@@ -289,6 +292,7 @@ private fun ExerciseCardSmallPreview() {
                         ),
                         sets = persistentListOf(UiSet(completed = true), UiSet(reps = 10), UiSet())
                     ),
+                    showExercisesImages = null,
                     animatedVisibilityScope = this
                 ) { }
             }

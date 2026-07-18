@@ -57,6 +57,7 @@ import org.librefit.ui.models.moveExercise
 import org.librefit.ui.models.withNormalizedExercisePositions
 import javax.inject.Inject
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -101,7 +102,7 @@ class WorkoutScreenViewModel @Inject constructor(
 
             updateSetTime(newElapsedTime.toInt(), set.id)
 
-            delay(1000)
+            delay(1000.milliseconds)
         }
     }
 
@@ -548,7 +549,7 @@ class WorkoutScreenViewModel @Inject constructor(
         viewModelScope.launch(ioDispatcher) {
             // Observe workout and exercises only, ignoring timeElapsed to avoid frequent resets
             combine(workout, exercises) { w, e -> w to e }
-                .debounce(2000L)
+                .debounce(2000.milliseconds)
                 .collect { (w, e) ->
                     // Do not save when user navigates away
                     if (isFocused) {
@@ -584,4 +585,6 @@ class WorkoutScreenViewModel @Inject constructor(
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
 
     val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
+
+    val displayExercisesImages = userPreferences.showExercisesImages
 }

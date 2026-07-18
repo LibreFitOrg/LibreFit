@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.repository.DatasetRepository
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.exercise.ExerciseProperty
@@ -38,8 +39,11 @@ import kotlin.uuid.Uuid
 @HiltViewModel
 class EditExerciseScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val datasetRepository: DatasetRepository
+    private val datasetRepository: DatasetRepository,
+    userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+
+    val showExercisesImages = userPreferencesRepository.showExercisesImages
 
     val exerciseDCid = savedStateHandle.toRoute<Route.EditExerciseScreen>().exerciseDCid
 

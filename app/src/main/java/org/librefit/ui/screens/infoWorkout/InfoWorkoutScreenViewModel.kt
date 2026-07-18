@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.WorkoutState
@@ -45,8 +46,11 @@ class InfoWorkoutScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val workoutRepository: WorkoutRepository,
     dataHelper: DataHelper,
-    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+
+    val showExercisesImages = userPreferencesRepository.showExercisesImages
 
     private val workoutId = savedStateHandle.toRoute<Route.InfoWorkoutScreen>().workoutId
 

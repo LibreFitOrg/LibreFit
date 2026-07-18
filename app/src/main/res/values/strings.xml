@@ -232,6 +232,8 @@
     <string name="delete_exercise_from_dataset">Delete exercise from dataset?</string>
     <string name="delete_exercise_from_dataset_desc">Warning: all associated exercises will be deleted! This action cannot be reversed.</string>
     <string name="ai_images_warning">⚠️ AI generated images are continuously reviewed but may contain inaccuracies and/or artifacts. For a more accurate exercise description, see the relative instructions.</string>
+    <string name="hide">Hide</string>
+    <string name="show">Show</string>
 
 
     <!--Measurement screen-->
