@@ -18,7 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Jumping Jacks
 
 ### Changed
--
+
+- A new toggle to show images was introduced (off by default). [#29](https://github.com/LibreFitOrg/LibreFit/issues/29)
 
 ### Deprecated
 -
