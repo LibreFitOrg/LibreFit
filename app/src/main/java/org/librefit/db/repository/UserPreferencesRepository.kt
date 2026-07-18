@@ -48,7 +48,7 @@ private val SHOW_KEEP_ANDROID_OPEN_KEY = booleanPreferencesKey("showKeepAndroidO
 private val USE_SCROLL_WHEEL_FOR_INPUT_KEY = booleanPreferencesKey("use_number_picker")
 private val DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY =
     booleanPreferencesKey("dismiss_input_modal_bottom_sheet_automatically_key")
-
+private val SHOW_EXERCISES_IMAGES_KEY = booleanPreferencesKey("show_exercises_images_key")
 /**
  * A repository to handle user preferences using [androidx.datastore.core.DataStore].
  *
@@ -148,6 +148,14 @@ class UserPreferencesRepository @Inject constructor(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
             initialValue = true
+        )
+
+    val showExercisesImages: StateFlow<Boolean?> = dataStore.data
+        .map { preferences -> preferences[SHOW_EXERCISES_IMAGES_KEY] }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
         )
 
     val dismissScrollWheelInputAutomatically: StateFlow<Boolean> = dataStore.data
@@ -256,6 +264,12 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun saveUseScrollWheelForInput(useScroll: Boolean) {
         dataStore.edit { preferences -> preferences[USE_SCROLL_WHEEL_FOR_INPUT_KEY] = useScroll }
+    }
+
+    suspend fun saveShowExercisesImages(show: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[SHOW_EXERCISES_IMAGES_KEY] = show
+        }
     }
 
     suspend fun saveDismissScrollWheelInputAutomatically(dismissAutomatically: Boolean) {
