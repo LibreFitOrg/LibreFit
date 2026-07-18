@@ -38,6 +38,7 @@ class SettingsScreenViewModel @Inject constructor(
     val isSupporter = userPreferences.isSupporter
     val isWorkoutHeaderSticky = userPreferences.isWorkoutHeaderSticky
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
+    val showExercisesImages = userPreferences.showExercisesImages
     val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
 
     fun saveThemeMode(mode: ThemeMode) {
@@ -71,6 +72,12 @@ class SettingsScreenViewModel @Inject constructor(
     fun saveDismissScrollWheelInputAutomatically(dismissAutomatically: Boolean) {
         viewModelScope.launch {
             userPreferences.saveDismissScrollWheelInputAutomatically(dismissAutomatically)
+        }
+    }
+
+    fun saveShowExercisesImages(display: Boolean) {
+        viewModelScope.launch {
+            userPreferences.saveShowExercisesImages(display)
         }
     }
 

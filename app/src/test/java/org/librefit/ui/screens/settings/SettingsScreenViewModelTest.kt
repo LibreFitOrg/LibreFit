@@ -46,6 +46,7 @@ class SettingsScreenViewModelTest {
     private lateinit var isWorkoutHeaderSticky: MutableStateFlow<Boolean>
     private lateinit var useScrollWheelForInput: MutableStateFlow<Boolean>
     private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
+    private lateinit var showExercisesImages: MutableStateFlow<Boolean?>
 
     @Before
     fun setUp() {
@@ -60,6 +61,7 @@ class SettingsScreenViewModelTest {
         isWorkoutHeaderSticky = MutableStateFlow(true)
         useScrollWheelForInput = MutableStateFlow(true)
         dismissScrollWheelAutomatically = MutableStateFlow(false)
+        showExercisesImages = MutableStateFlow(null)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.language } returns language
@@ -71,6 +73,7 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.isWorkoutHeaderSticky } returns isWorkoutHeaderSticky
         every { userPreferencesRepository.useScrollWheelForInput } returns useScrollWheelForInput
         every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
+        every { userPreferencesRepository.showExercisesImages } returns showExercisesImages
 
         every { userPreferencesRepository.saveLanguage(any()) } answers {
             language.value = firstArg()
@@ -98,6 +101,9 @@ class SettingsScreenViewModelTest {
         }
         coEvery { userPreferencesRepository.saveDismissScrollWheelInputAutomatically(any()) } answers {
             dismissScrollWheelAutomatically.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveShowExercisesImages(any()) } answers {
+            showExercisesImages.value = firstArg()
         }
 
         // Arrange: Create the ViewModel instance with the mock repository
@@ -137,6 +143,22 @@ class SettingsScreenViewModelTest {
     @Test
     fun `initial state - dismiss scroll wheel automatically is off`() = runTest {
         assertThat(viewModel.dismissScrollWheelInputAutomatically.value).isFalse()
+    }
+
+    @Test
+    fun `initial state - show images is null`() = runTest {
+        assertThat(viewModel.showExercisesImages.value).isNull()
+    }
+
+    @Test
+    fun `show exercises images updates correctly`() = runTest {
+        val expected = true
+
+        viewModel.showExercisesImages.test {
+            assertThat(awaitItem()).isNull()
+            viewModel.saveShowExercisesImages(expected)
+            assertThat(awaitItem()).isEqualTo(expected)
+        }
     }
 
     @Test

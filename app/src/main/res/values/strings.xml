@@ -317,6 +317,9 @@
     <string name="dismiss_scroll_wheel_automatically">Dismiss scroll wheel automatically</string>
     <string name="dismiss_scroll_wheel_automatically_desc">The scroll wheel will be dismissed automatically.</string>
     <string name="dismiss_scroll_wheel_manually_desc">The scroll wheel will have to be dismissed manually.</string>
+    <string name="show_images">Show images</string>
+    <string name="hide_images_desc">Images of exercises will be hidden</string>
+    <string name="show_images_desc">Images of exercises will be shown</string>
 
     <!--- Languages -->
     <string name="language">Language</string>
