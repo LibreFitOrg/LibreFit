@@ -157,4 +157,5 @@
     <string name="warning_delete_exercise_from_routine">Attention ! Supprimer des exercices de tes routines existantes dissociera tous les exercices des séances dérivées.</string>
     <string name="set">Série</string>
     <string name="notes">Remarques</string>
+    <string name="quit_routine_creation_question">Arrêter la création de routines ?</string>
 </resources>
