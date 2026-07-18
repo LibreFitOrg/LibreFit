@@ -158,4 +158,7 @@
     <string name="set">Série</string>
     <string name="notes">Remarques</string>
     <string name="quit_routine_creation_question">Arrêter la création de routines ?</string>
+    <string name="application_encountered_error">Une erreur inattendue est survenue</string>
+    <string name="stack_trace_not_available">Trace d\'exécution non disponible</string>
+    <string name="quit_adding_exercises_question">Arrêter l\'ajout d\'exercices ?</string>
 </resources>
