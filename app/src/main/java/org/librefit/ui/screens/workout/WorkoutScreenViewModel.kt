@@ -78,6 +78,8 @@ class WorkoutScreenViewModel @Inject constructor(
     private val _idSetWithRunningStopwatch = MutableStateFlow<Long?>(null)
     val idSetWithRunningStopwatch = _idSetWithRunningStopwatch.asStateFlow()
 
+    private val setStopwatchTargets = mutableMapOf<Long, Int>()
+
     fun updateIdSetWithRunningStopwatch(setId: Long?) {
         _idSetWithRunningStopwatch.update { setId }
     }
@@ -85,6 +87,7 @@ class WorkoutScreenViewModel @Inject constructor(
     private suspend fun startSetStopwatch(set: UiSet) {
         val startTime = System.currentTimeMillis()
         val id = set.id
+        val targetElapsedTime = setStopwatchTargets.getOrPut(id) { set.elapsedTime }
         val initialElapsedTime = if (id in idsOfSetsWithStopwatchNotStartedAtLeastOnce.value) {
             _idsOfSetsWithStopwatchNotStartedAtLeastOnce.update { set ->
                 set.filter { it != id }.toSet()
@@ -95,11 +98,20 @@ class WorkoutScreenViewModel @Inject constructor(
         }
 
         // The loop is infinite, but the coroutine will be stopped when its Job is canceled
+        // or the configured set duration is reached.
         while (true) {
             val currentTime = System.currentTimeMillis()
             val newElapsedTime = initialElapsedTime + ((currentTime - startTime) / 1000)
 
             updateSetTime(newElapsedTime.toInt(), set.id)
+
+            if (targetElapsedTime > 0 && newElapsedTime >= targetElapsedTime) {
+                if (userPreferences.restTimerSoundOn.value) {
+                    soundPlayer.playAlert()
+                }
+                updateIdSetWithRunningStopwatch(null)
+                return
+            }
 
             delay(1000)
         }
@@ -375,6 +387,7 @@ class WorkoutScreenViewModel @Inject constructor(
         if (idSetWithRunningStopwatch.value == id) {
             _idSetWithRunningStopwatch.update { null }
         }
+        setStopwatchTargets.remove(id)
 
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
