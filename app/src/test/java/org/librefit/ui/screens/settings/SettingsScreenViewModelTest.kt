@@ -8,6 +8,7 @@
 
 package org.librefit.ui.screens.settings
 
+import android.content.Context
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -20,6 +21,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.librefit.MainDispatcherRule
+import org.librefit.db.repository.ImportExportRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
@@ -31,7 +33,9 @@ class SettingsScreenViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     // The mock repository
+    private lateinit var context: Context
     private lateinit var userPreferencesRepository: UserPreferencesRepository
+    private lateinit var importExportRepository: ImportExportRepository
 
     // The class under test
     private lateinit var viewModel: SettingsScreenViewModel
@@ -50,7 +54,9 @@ class SettingsScreenViewModelTest {
     @Before
     fun setUp() {
         // Arrange: Create a mock for the repository
+        context = mockk(relaxed = true)
         userPreferencesRepository = mockk()
+        importExportRepository = mockk()
         language = MutableStateFlow(Language.SYSTEM)
         themeMode = MutableStateFlow(ThemeMode.SYSTEM)
         keepScreenOn = MutableStateFlow(true)
@@ -101,7 +107,7 @@ class SettingsScreenViewModelTest {
         }
 
         // Arrange: Create the ViewModel instance with the mock repository
-        viewModel = SettingsScreenViewModel(userPreferencesRepository)
+        viewModel = SettingsScreenViewModel(context = context, userPreferences = userPreferencesRepository, importExportRepository = importExportRepository)
     }
 
     @Test

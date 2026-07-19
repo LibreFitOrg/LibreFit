@@ -8,18 +8,27 @@
 
 package org.librefit.ui.screens.settings
 
+import android.content.Context
+import android.net.Uri
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.librefit.R
+import org.librefit.db.repository.ImportExportRepository
+import org.librefit.db.repository.ImportResult
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
@@ -28,7 +37,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
-    private val userPreferences: UserPreferencesRepository
+    @param:ApplicationContext private val context: Context,
+    private val userPreferences: UserPreferencesRepository,
+    private val importExportRepository: ImportExportRepository
 ) : ViewModel() {
     val themeMode = userPreferences.themeMode
     val materialMode = userPreferences.materialMode
@@ -39,6 +50,34 @@ class SettingsScreenViewModel @Inject constructor(
     val isWorkoutHeaderSticky = userPreferences.isWorkoutHeaderSticky
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
     val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
+
+    private val _isImporting = MutableStateFlow(false)
+    val isImporting = _isImporting.asStateFlow()
+
+    fun <T> savePreference(key: Preferences.Key<T>, value: T) {
+        viewModelScope.launch {
+            userPreferences.savePreference(
+                key = key,
+                value = value
+            )
+        }
+    }
+
+    val importSuccessToast = context.getString(R.string.import_data_success)
+    val importFailedToast = context.getString(R.string.import_data_failed)
+    val exportSuccessToast = context.getString(R.string.export_data_success)
+    val exportFailedToast = context.getString(R.string.export_data_failed)
+
+    private val _dialogMessage = MutableStateFlow<String?>(null)
+    val dialogMessage = _dialogMessage.asStateFlow()
+
+    fun showDialog(message: String) {
+        _dialogMessage.value = message
+    }
+
+    fun dismissDialog() {
+        _dialogMessage.value = null
+    }
 
     fun saveThemeMode(mode: ThemeMode) {
         viewModelScope.launch { userPreferences.saveThemeMode(mode) }
@@ -106,6 +145,34 @@ class SettingsScreenViewModel @Inject constructor(
         when (newPreference) {
             is Language -> saveLanguage(newPreference)
             is ThemeMode -> saveThemeMode(newPreference)
+        }
+    }
+
+    private val _events = MutableSharedFlow<SettingsEvent>()
+    val events = _events.asSharedFlow()
+
+    fun backupExport(uri: Uri) {
+        viewModelScope.launch {
+            try {
+                importExportRepository.exportTo(uri)
+                _events.emit(SettingsEvent.ExportSuccess)
+            } catch (e: Exception) {
+                _events.emit(SettingsEvent.ExportFailed)
+            }
+        }
+    }
+
+    fun backupImport(uri: Uri) {
+        viewModelScope.launch {
+            _isImporting.value = true
+
+            val result = importExportRepository.importFrom(uri)
+            when (result) {
+                is ImportResult.Success -> _events.emit(SettingsEvent.ImportSuccess)
+                is ImportResult.Error -> _events.emit(SettingsEvent.ImportFailed)
+            }
+
+            _isImporting.value = false
         }
     }
 }

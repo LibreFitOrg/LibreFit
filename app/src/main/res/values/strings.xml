@@ -317,6 +317,14 @@
     <string name="dismiss_scroll_wheel_automatically">Dismiss scroll wheel automatically</string>
     <string name="dismiss_scroll_wheel_automatically_desc">The scroll wheel will be dismissed automatically.</string>
     <string name="dismiss_scroll_wheel_manually_desc">The scroll wheel will have to be dismissed manually.</string>
+    <string name="export_data">Export data</string>
+    <string name="export_data_desc">Export the current database</string>
+    <string name="export_data_success">Data exported successfully</string>
+    <string name="export_data_failed">Data export failed</string>
+    <string name="import_data">Import data</string>
+    <string name="import_data_desc">Import backed up data</string>
+    <string name="import_data_success">Data imported successfully</string>
+    <string name="import_data_failed">Data import failed</string>
 
     <!--- Languages -->
     <string name="language">Language</string>
@@ -568,5 +576,6 @@
     <string name="do_not_show_again">Do not show again</string>
     <string name="undo">Undo</string>
     <string name="clear">Clear</string>
+    <string name="unsupported_schema_version">Unsupported schema version</string>
 
 </resources>
