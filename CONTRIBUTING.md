@@ -264,6 +264,7 @@ these guidelines when adding or modifying exercises:
     - The exercises must be ordered alphabetically by ID. The Python script (`validate_exercises_json.py`) provides the correct JSON as
       `ordered_exercises.json`
     - Verify there are no duplicate entries in the JSON array and that all JSON syntax is valid (no trailing commas).
+  - Ensure values are allowed by `schemas/exercises-schema.json`
 
 #### Data Validation
 
