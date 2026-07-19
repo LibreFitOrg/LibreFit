@@ -1,9 +1,10 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
+ * Copyright (c) 2025-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.screens.beforeSaving
@@ -25,12 +26,15 @@ import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
 import org.librefit.enums.WorkoutState
 import org.librefit.helpers.DataHelper
 import org.librefit.nav.Route
 import org.librefit.services.WorkoutServiceManager
-import org.librefit.ui.models.UiExerciseWithSets
+import org.librefit.ui.models.UiExerciseItem
+import org.librefit.ui.models.UiWarmupItem
 import org.librefit.ui.models.UiWorkout
+import org.librefit.ui.models.UiWorkoutItem
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import java.time.Instant
@@ -54,11 +58,12 @@ class BeforeSavingScreenViewModel @Inject constructor(
     val dismissScrollWheelInputAutomatically =
         userPreferencesRepository.dismissScrollWheelInputAutomatically
 
-    private val runningWorkoutId = savedStateHandle.toRoute<Route.BeforeSavingScreen>().runningWorkoutId
+    private val runningWorkoutId =
+        savedStateHandle.toRoute<Route.BeforeSavingScreen>().runningWorkoutId
 
 
-    private val _exercises = MutableStateFlow<List<UiExerciseWithSets>>(emptyList())
-    val exercises = _exercises.asStateFlow()
+    private val _workoutItems = MutableStateFlow<List<UiWorkoutItem>>(emptyList())
+    val workoutItems = _workoutItems.asStateFlow()
 
     private val _volume = MutableStateFlow("0.00")
     val volume = _volume.asStateFlow()
@@ -73,15 +78,25 @@ class BeforeSavingScreenViewModel @Inject constructor(
                 pendingWorkout ?: workoutRepository.getWorkoutWithExercisesAndSets(runningWorkoutId)
 
             val e = runningWorkoutWithExercises.exercisesWithSets
+            val w = runningWorkoutWithExercises.warmupsWithSets
 
-            _exercises.update { e }
+            _workoutItems.update {
+                (runningWorkoutWithExercises.warmupsWithSets.map {
+                    UiWarmupItem(
+                        warmup = it
+                    )
+                } + runningWorkoutWithExercises.exercisesWithSets.map { UiExerciseItem(exercise = it) }).sortedBy { it.position }
+            }
 
             _workout.update {
                 runningWorkoutWithExercises.workout.copy(completed = LocalDateTime.now())
             }
 
             val volume = dataHelper.fetchVolumeFromWorkout(
-                WorkoutWithExercisesAndSets(Workout(), e.map { it.toEntity() })
+                WorkoutWithExercisesAndSets(
+                    Workout(),
+                    e.map { it.toEntity() },
+                    w.map { it.toEntity() })
             )
 
             _volume.update {
@@ -89,9 +104,6 @@ class BeforeSavingScreenViewModel @Inject constructor(
             }
         }
     }
-
-
-
 
 
     fun setTimeElapsed(timeElapsed: Int) {
@@ -158,7 +170,6 @@ class BeforeSavingScreenViewModel @Inject constructor(
     }
 
 
-
     fun saveExercisesWithWorkout() {
         workoutServiceManager.stopService()
 
@@ -170,19 +181,30 @@ class BeforeSavingScreenViewModel @Inject constructor(
                         id = runningWorkoutId,
                         state = WorkoutState.COMPLETED
                     ).toEntity(),
-                    exercisesWithSets = exercises.value.map { exercise ->
-                        exercise.toEntity().copy(
-                            sets = exercise.toEntity().sets.map {
-                                // This keeps only relevant data on the actual type of set
-                                when (exercise.exercise.setMode) {
-                                    SetMode.DURATION -> it.copy(reps = 0, load = 0.0)
-                                    SetMode.BODYWEIGHT -> it.copy(elapsedTime = 0, load = 0.0)
-                                    SetMode.BODYWEIGHT_WITH_LOAD -> it.copy(elapsedTime = 0)
-                                    SetMode.LOAD -> it.copy(elapsedTime = 0)
+                    exercisesWithSets = workoutItems.value.filterIsInstance<UiExerciseItem>()
+                        .map { exercise ->
+                            exercise.exercise.toEntity().copy(
+                                sets = exercise.exercise.toEntity().sets.map {
+                                    // This keeps only relevant data on the actual type of set
+                                    when (exercise.exercise.exercise.setMode) {
+                                        SetMode.DURATION -> it.copy(reps = 0, load = 0.0)
+                                        SetMode.BODYWEIGHT -> it.copy(elapsedTime = 0, load = 0.0)
+                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.copy(elapsedTime = 0)
+                                        SetMode.LOAD -> it.copy(elapsedTime = 0)
+                                    }
                                 }
-                            }
-                        )
-                    }
+                            )
+                        },
+                    warmupsWithSets = workoutItems.value.filterIsInstance<UiWarmupItem>()
+                        .map { warmup ->
+                            warmup.warmup.toEntity().copy(
+                                sets = warmup.warmup.toEntity().sets.map {
+                                    when (warmup.warmup.warmup.warmupMode) {
+                                        WarmupMode.DEFAULT -> it.copy(elapsedTime = 0)
+                                    }
+                                }
+                            )
+                        }
                 )
             )
         }

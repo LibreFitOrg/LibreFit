@@ -1,9 +1,11 @@
 /*
- * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
  *
- * LibreFit is subject to additional terms covering author attribution and trademark usage;
- * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *  * SPDX-License-Identifier: GPL-3.0-or-later
+ *  * Copyright (c) 2025-2026. The LibreFit Contributors
+ *  *
+ *  * LibreFit is subject to additional terms covering author attribution and trademark usage;
+ *  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.components
@@ -27,15 +29,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuGroup
@@ -50,7 +47,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
@@ -60,7 +56,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,7 +66,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,56 +73,44 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.collectLatest
 import org.librefit.R
 import org.librefit.enums.InfoMode
-import org.librefit.enums.PreviousPerformanceSet
-import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.ui.components.modalBottomSheets.InputModalBottomSheet
 import org.librefit.ui.models.InputModalBottomSheetState
 import org.librefit.ui.models.UiExercise
-import org.librefit.ui.models.UiExerciseDC
-import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
+import org.librefit.ui.models.UiWarmup
+import org.librefit.ui.models.UiWarmupWithSets
+import org.librefit.ui.models.recalcWarmupSets
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.getDecimalDigitsAsInteger
-import org.librefit.util.textFieldTransformations.TimeInputTransformation
-import org.librefit.util.textFieldTransformations.TimeOutputTransformation
 import kotlin.math.roundToInt
-import kotlin.time.Duration.Companion.seconds
 
 /**
- * A custom [ElevatedCard] designed to display an [UiExerciseWithSets] with a uniform appearance across
+ * A custom [ElevatedCard] designed to display an [UiWarmupWithSets] with a uniform appearance across
  * the app.
  *
  * @param modifier A [Modifier] that should be passed as `Modifier.animateItem` to enable
  * animation for the card within the list.
  * @param animatedVisibilityScope Used for image's animation transition
- * @param exerciseWithSets An instance of [UiExerciseWithSets] containing all the relevant information
+ * @param warmupWithSets An instance of [UiWarmupWithSets] containing all the relevant information
  * required for the card display.
- * @param previousPerformances When not null and not empty, it displays the performances of previous set next
- * to the associated set. The strings should be already formatted and ready to be displayed.
  * @param addSet A lambda function invoked when the "Add set" button is clicked.
- * @param onDetail A lambda function triggered when the exercise's name or image is clicked, which should open
- * the [org.librefit.ui.screens.infoExercise.InfoExerciseScreen].
  * @param onDelete A lambda function executed when the *Delete* icon is clicked, it should result in
  * the removal of the card.
  * @param isCollapsed When `true`, the card collapses its editable body to provide clearer reorder feedback. So it's true only when reordering one of exercises in the list.
@@ -143,9 +125,12 @@ import kotlin.time.Duration.Companion.seconds
  * @param updateExerciseRestTime A function to update rest time based on [UiExercise.id]. For more details, refer to
  * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExerciseRestTime] and
  * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateExerciseRestTime].
- * @param updateExerciseSetMode A function to update the set mode based on.
- * For more details, refer to [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExerciseSetMode]
- * and [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateExerciseSetMode].
+ * @param updateWarmupSetMode A function to update the set mode based on.
+ * For more details, refer to [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateWarmupSetMode]
+ * and [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateWarmupSetMode].
+ * @param updateWarmupTarget A function to update the target load of the warmup sets.
+ * For more details, refer to [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateWarmupTarget]
+ * and [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateWarmupTarget].
  * @param updateSetLoad A function to update load based on [UiSet.id]. For more details, refer to
  * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateSetLoad] and
  * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateSetLoad].
@@ -161,33 +146,19 @@ import kotlin.time.Duration.Companion.seconds
  * @param deleteSet A function called when the user swipes the set to remove it.
  * @param showInfo A lambda function executed when info icon next to "type of set" or "rest time" text
  * is clicked. The passed parameter is used by [org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet] to show the relevant information.
- * @param idSetWithRunningStopwatch The ID of the set whose stopwatch is currently active. This ensures
- * only one timer runs at a time. The composable will display a running stopwatch for the
- * set matching this ID. Pass null if no timer is active. This parameter is only used when [workout] is `true`.
- * @param updateIdSetWithRunningStopwatch A callback invoked when the user interacts with a set with a
- * running stopwatch. It provides the ID of the set that should become active, or null to stop the current timer.
- * This parameter is only used when [workout] is `true`.
  * @param workout A Boolean flag indicating whether a checkbox should be displayed next to each set.
- * @param applyPreviousSetPerformance Triggered when the user clicks the previous set performance
- * (on the left to the set counter) * and should update the current set with the values of the previous set.
- * @param addWarmup A function to add a warmup set prior to this current exercise. For more details, refer to
- * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.addWarmup] and
- * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.addWarmup].
  */
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
     ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
-fun SharedTransitionScope.ExerciseCard(
+fun SharedTransitionScope.WarmupCard(
     modifier: Modifier = Modifier,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    exerciseWithSets: UiExerciseWithSets,
-    previousPerformances: List<PreviousPerformanceSet>? = null,
+    warmupWithSets: UiWarmupWithSets,
     workout: Boolean = false,
-    idSetWithRunningStopwatch: Long? = null,
     addSet: (Long) -> Unit,
-    onDetail: (Long, String) -> Unit,
     onDelete: (Long) -> Unit,
     isCollapsed: Boolean = false,
     dragHandleModifier: Modifier = Modifier,
@@ -198,18 +169,46 @@ fun SharedTransitionScope.ExerciseCard(
     deleteSet: (Long) -> Unit,
     updateExerciseNotes: (String, Long) -> Unit,
     updateExerciseRestTime: (Int, Long) -> Unit,
-    updateExerciseSetMode: (SetMode, Long) -> Unit,
+    updateWarmupSetMode: (WarmupMode, Long) -> Unit,
+    updateWarmupTarget: (Double, Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
     updateSetLoad: (Double, Long) -> Unit,
     updateSetCompleted: (Boolean, Long) -> Unit,
     showInfo: (InfoMode) -> Unit,
-    updateIdSetWithRunningStopwatch: (Long?) -> Unit = {},
-    applyPreviousSetPerformance: (Long) -> Unit = {},
-    addWarmup: (Long, Double?) -> Unit
 ) {
     var showMenu by rememberSaveable { mutableStateOf(false) }
     val shape = MaterialTheme.shapes.extraLarge
+
+    var inputModalBottomSheetState by remember { mutableStateOf<InputModalBottomSheetState?>(null) }
+    var inputSetId by rememberSaveable { mutableStateOf<Long?>(null) }
+
+    inputModalBottomSheetState?.let {
+        InputModalBottomSheet(
+            state = it,
+            onValueChange = { newState ->
+                inputModalBottomSheetState = newState
+                inputSetId?.let { id ->
+                    when (newState) {
+                        is InputModalBottomSheetState.Weight -> {
+                            updateWarmupTarget(
+                                newState.totalWeight,
+                                id
+                            )
+                        }
+
+                        else -> error("newState in WarmupCard should not have this value: $newState")
+                    }
+                }
+            },
+            onDismiss = {
+                inputModalBottomSheetState = null
+                inputSetId = null
+            },
+            dismissAutomatically = dismissScrollWheelInputAutomatically
+        )
+    }
+
     ElevatedCard(
         modifier = modifier.then(
             if (isDragging) Modifier.shadow(
@@ -234,33 +233,11 @@ fun SharedTransitionScope.ExerciseCard(
                 Row(
                     modifier = Modifier
                         .weight(1f)
-                        .clip(MaterialTheme.shapes.medium)
-                        .clickable(enabled = !isCollapsed) {
-                            onDetail(exerciseWithSets.exercise.id, exerciseWithSets.exerciseDC.id)
-                        },
+                        .clip(MaterialTheme.shapes.medium),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val model =
-                        remember(exerciseWithSets.exerciseDC.images) { exerciseWithSets.exerciseDC.images.firstOrNull() }
-                    AsyncImage(
-                        model = model?.let { "file:///android_asset/${it}" },
-                        fallback = painterResource(R.drawable.no_image),
-                        contentDescription = exerciseWithSets.exerciseDC.name,
-                        contentScale = ContentScale.Crop,
-                        colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .sharedElement(
-                                sharedContentState = rememberSharedContentState(
-                                    key = exerciseWithSets.exercise.id.toString() + exerciseWithSets.exerciseDC.id
-                                ),
-                                animatedVisibilityScope = animatedVisibilityScope
-                            )
-                            .size(50.dp)
-                            .clip(MaterialTheme.shapes.medium)
-                    )
                     Text(
-                        text = exerciseWithSets.exerciseDC.name,
+                        text = stringResource(R.string.warmup),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
@@ -298,22 +275,6 @@ fun SharedTransitionScope.ExerciseCard(
                                 DropdownMenuGroup(
                                     shapes = MenuDefaults.groupShape(0, 1) // Top-level group shape
                                 ) {
-                                    DropdownMenuItem(
-                                        text = { Text(stringResource(R.string.add_warmup)) },
-                                        leadingIcon = {
-                                            Icon(
-                                                painterResource(R.drawable.ic_add_circle),
-                                                stringResource(R.string.add_warmup)
-                                            )
-                                        },
-                                        onClick = {
-                                            addWarmup(
-                                                exerciseWithSets.exercise.id,
-                                                exerciseWithSets.sets.first().load
-                                            )
-                                            showMenu = false
-                                        }
-                                    )
                                     // MenuDefaults.Label { Text("Header") }
                                     DropdownMenuItem(
                                         text = { Text(stringResource(R.string.reorder)) },
@@ -337,7 +298,7 @@ fun SharedTransitionScope.ExerciseCard(
                                             )
                                         },
                                         onClick = {
-                                            onDelete(exerciseWithSets.exercise.id)
+                                            onDelete(warmupWithSets.warmup.id)
                                             showMenu = false
                                         }
                                     )
@@ -358,22 +319,22 @@ fun SharedTransitionScope.ExerciseCard(
                         shape = MaterialTheme.shapes.large,
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(text = stringResource(id = R.string.notes)) },
-                        value = exerciseWithSets.exercise.notes,
-                        onValueChange = { updateExerciseNotes(it, exerciseWithSets.exercise.id) }
+                        value = warmupWithSets.warmup.notes,
+                        onValueChange = { updateExerciseNotes(it, warmupWithSets.warmup.id) }
                     )
 
                     //Rest timer slider
                     Column {
                         var showSlider by rememberSaveable { mutableStateOf(false) }
-                        var restTime by remember { mutableIntStateOf(exerciseWithSets.exercise.restTime) }
+                        var restTime by remember { mutableIntStateOf(warmupWithSets.warmup.restTime) }
                         val haptic = LocalHapticFeedback.current
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceAround,
+                            horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Row(
-                                horizontalArrangement = Arrangement.Center,
+                                horizontalArrangement = Arrangement.Start,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 IconButton(
@@ -389,17 +350,23 @@ fun SharedTransitionScope.ExerciseCard(
                                     stringResource(R.string.rest_time) + ": " + restTime
                                             + " " + stringResource(R.string.seconds).replaceFirstChar { it.lowercase() })
                             }
-                            IconToggleButton(
-                                checked = showSlider,
-                                onCheckedChange = {
-                                    showSlider = it
-                                    haptic.performHapticFeedback(if (it) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff)
-                                }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    painter = painterResource(if (showSlider) R.drawable.ic_check else R.drawable.ic_edit),
-                                    contentDescription = stringResource(if (showSlider) R.string.save else R.string.edit)
-                                )
+                                IconToggleButton(
+                                    checked = showSlider,
+                                    onCheckedChange = {
+                                        showSlider = it
+                                        haptic.performHapticFeedback(if (it) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff)
+                                    }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(if (showSlider) R.drawable.ic_check else R.drawable.ic_edit),
+                                        contentDescription = stringResource(if (showSlider) R.string.save else R.string.edit)
+                                    )
+                                }
                             }
                         }
                         AnimatedVisibility(visible = showSlider) {
@@ -413,7 +380,7 @@ fun SharedTransitionScope.ExerciseCard(
                                 onValueChangeFinished = {
                                     updateExerciseRestTime(
                                         restTime,
-                                        exerciseWithSets.exercise.id
+                                        warmupWithSets.warmup.id
                                     )
                                 },
                                 valueRange = 0f..300f,
@@ -424,6 +391,76 @@ fun SharedTransitionScope.ExerciseCard(
                     }
 
                     HorizontalDivider()
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            modifier = Modifier.weight(0.5f),
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(
+                                onClick = { showInfo(InfoMode.WARMUP_TARGET) }
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_info),
+                                    contentDescription = stringResource(R.string.info) + ":"
+                                )
+                            }
+                            Text(stringResource(R.string.target) + " (" + stringResource(R.string.kg) + ")")
+                        }
+                        val focusRequester = remember { FocusRequester() }
+                        var weightValue by rememberSaveable(warmupWithSets.warmup.target) {
+                            mutableStateOf(
+                                warmupWithSets.warmup.target.toString()
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.weight(0.5f),
+                        ) {
+                            Box {
+                                OutlinedTextField(
+                                    shape = MaterialTheme.shapes.large,
+                                    modifier = Modifier
+                                        .padding(start = 10.dp, end = 10.dp)
+                                        .clickable {
+                                            focusRequester.requestFocus()
+                                        }
+                                        .focusRequester(focusRequester)
+                                        .focusable(),
+                                    value = weightValue,
+                                    onValueChange = { string ->
+                                        weightValue = Formatter.normalizeNumericString(string)
+                                        updateWarmupTarget(
+                                            Formatter.parseDoubleFromString(weightValue) ?: 0.0,
+                                            warmupWithSets.warmup.id
+                                        )
+                                    },
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                    readOnly = useScrollWheelForInput
+                                )
+                                if (useScrollWheelForInput) {
+                                    Box(
+                                        modifier = Modifier
+                                            .matchParentSize()
+                                            .clip(MaterialTheme.shapes.extraLarge)
+                                            .clickable {
+                                                inputModalBottomSheetState =
+                                                    InputModalBottomSheetState.Weight(
+                                                        integerWeight = warmupWithSets.warmup.target.toInt(),
+                                                        decimalWeight = warmupWithSets.warmup.target.getDecimalDigitsAsInteger()
+                                                    )
+                                                inputSetId = warmupWithSets.warmup.id
+                                            }
+                                    ) { }
+                                }
+                            }
+                        }
+                    }
+
 
                     // Set mode selection
                     Row(
@@ -434,19 +471,19 @@ fun SharedTransitionScope.ExerciseCard(
                         Row(
                             modifier = Modifier.weight(0.5f),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
+                            horizontalArrangement = Arrangement.Start
                         ) {
                             IconButton(
                                 // Refer to InfoModalBottomSheet to know the reason behind this value.
                                 // Do NOT change it.
-                                onClick = { showInfo(InfoMode.TYPE_OF_SET) }
+                                onClick = { showInfo(InfoMode.TYPE_OF_WARMUP) }
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_info),
                                     contentDescription = stringResource(R.string.info) + ":"
                                 )
                             }
-                            Text(stringResource(R.string.type_of_set))
+                            Text(stringResource(R.string.type_of_warmup))
                         }
 
                         var expanded by remember { mutableStateOf(false) }
@@ -470,7 +507,11 @@ fun SharedTransitionScope.ExerciseCard(
                             OutlinedTextField(
                                 shape = MaterialTheme.shapes.large,
                                 readOnly = true,
-                                value = stringResource(Formatter.setModeToStringId(exerciseWithSets.exercise.setMode)),
+                                value = stringResource(
+                                    Formatter.setWarmupModeToStringId(
+                                        warmupWithSets.warmup.warmupMode
+                                    )
+                                ),
                                 onValueChange = {},
                                 singleLine = true,
                                 trailingIcon = {
@@ -483,25 +524,22 @@ fun SharedTransitionScope.ExerciseCard(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }
                             ) {
-                                SetMode.entries.forEachIndexed { _, mode ->
+                                WarmupMode.entries.forEachIndexed { _, mode ->
                                     DropdownMenuItem(
                                         onClick = {
-                                            updateExerciseSetMode(
-                                                mode,
-                                                exerciseWithSets.exercise.id
-                                            )
+                                            updateWarmupSetMode(mode, warmupWithSets.warmup.id)
                                             expanded = false
                                         },
                                         text = {
                                             Text(
                                                 text = stringResource(
-                                                    Formatter.setModeToStringId(
+                                                    Formatter.setWarmupModeToStringId(
                                                         mode
                                                     )
                                                 )
                                             )
                                         },
-                                        trailingIcon = if (exerciseWithSets.exercise.setMode == mode) {
+                                        trailingIcon = if (warmupWithSets.warmup.warmupMode == mode) {
                                             {
                                                 Icon(
                                                     painter = painterResource(R.drawable.ic_check),
@@ -510,7 +548,7 @@ fun SharedTransitionScope.ExerciseCard(
                                             }
                                         } else null,
                                         modifier = Modifier.background(
-                                            if (exerciseWithSets.exercise.setMode == mode) MaterialTheme.colorScheme.inversePrimary.copy(
+                                            if (warmupWithSets.warmup.warmupMode == mode) MaterialTheme.colorScheme.inversePrimary.copy(
                                                 0.3f
                                             ) else Color.Unspecified
                                         )
@@ -535,33 +573,17 @@ fun SharedTransitionScope.ExerciseCard(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Spacer(Modifier)
-                            if (previousPerformances != null) {
-                                Text(
-                                    text = stringResource(R.string.previous),
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            }
-                            if (exerciseWithSets.exercise.setMode == SetMode.DURATION) {
-                                Text(
-                                    text = stringResource(R.string.time),
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            } else {
-                                if (exerciseWithSets.exercise.setMode == SetMode.LOAD ||
-                                    exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.load) + " (" + stringResource(
-                                            R.string.kg
-                                        ) + ")",
-                                        color = MaterialTheme.colorScheme.secondary
-                                    )
-                                }
-                                Text(
-                                    text = stringResource(id = R.string.reps),
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            }
+
+                            Text(
+                                text = stringResource(R.string.load) + " (" + stringResource(R.string.kg) + ")",
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+
+                            Text(
+                                text = stringResource(id = R.string.reps),
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+
                             if (workout) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_check),
@@ -572,26 +594,20 @@ fun SharedTransitionScope.ExerciseCard(
 
                         //Sets
                         Column(modifier = Modifier.animateContentSize()) {
-                            exerciseWithSets.sets.forEachIndexed { i, set ->
+                            warmupWithSets.sets.forEachIndexed { i, set ->
                                 key(set.id) {
-                                    Set(
+                                    WarmupSet(
                                         i = i,
                                         set = set,
-                                        previousSet = previousPerformances?.getOrNull(i),
-                                        lastIndex = exerciseWithSets.sets.lastIndex,
-                                        setMode = exerciseWithSets.exercise.setMode,
-                                        isStopwatchRunning = idSetWithRunningStopwatch == null,
-                                        isThisSetStopwatchRunning = idSetWithRunningStopwatch == set.id,
+                                        lastIndex = warmupWithSets.sets.lastIndex,
                                         workout = workout,
                                         useScrollWheelForInput = useScrollWheelForInput,
                                         dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                                         deleteSet = deleteSet,
-                                        updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
                                         updateSetTime = updateSetTime,
                                         updateSetReps = updateSetReps,
                                         updateSetLoad = updateSetLoad,
                                         updateSetCompleted = updateSetCompleted,
-                                        applyPreviousSet = applyPreviousSetPerformance
                                     )
                                 }
                             }
@@ -602,7 +618,7 @@ fun SharedTransitionScope.ExerciseCard(
                     LibreFitButton(
                         text = stringResource(id = R.string.add_set),
                         icon = painterResource(R.drawable.ic_add_circle),
-                        onClick = { addSet(exerciseWithSets.exercise.id) },
+                        onClick = { addSet(warmupWithSets.warmup.id) },
                         elevated = false
                     )
                 }
@@ -613,14 +629,10 @@ fun SharedTransitionScope.ExerciseCard(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun Set(
+private fun WarmupSet(
     i: Int,
     set: UiSet,
-    previousSet: PreviousPerformanceSet? = null,
     lastIndex: Int,
-    setMode: SetMode,
-    isStopwatchRunning: Boolean,
-    isThisSetStopwatchRunning: Boolean,
     workout: Boolean,
     useScrollWheelForInput: Boolean,
     dismissScrollWheelInputAutomatically: Boolean,
@@ -629,38 +641,14 @@ private fun Set(
     updateSetReps: (Int, Long) -> Unit,
     updateSetLoad: (Double, Long) -> Unit,
     updateSetCompleted: (Boolean, Long) -> Unit,
-    updateIdSetWithRunningStopwatch: (Long?) -> Unit,
-    applyPreviousSet: (Long) -> Unit
 ) {
-    val timeTextFieldState = rememberTextFieldState(
-        initialText = Formatter.formateSecondsInMinutesAndSeconds(set.elapsedTime)
-            .filter { it != ':' }
-    )
     var repValue by rememberSaveable(set.reps) { mutableStateOf(set.reps.toString()) }
-    var weightValue by rememberSaveable(set.load) { mutableStateOf(set.load.toString()) }
-
-    // Sync elapsed time with time text field
-    LaunchedEffect(set.elapsedTime) {
-        val formatted =
-            Formatter.formateSecondsInMinutesAndSeconds(set.elapsedTime).filter { it != ':' }
-        if (timeTextFieldState.text.toString() != formatted) {
-            timeTextFieldState.setTextAndPlaceCursorAtEnd(formatted)
-        }
-    }
-
-    // Sync time text field with elapsed time
-    LaunchedEffect(timeTextFieldState) {
-        snapshotFlow { timeTextFieldState.text.toString() }.collectLatest { rawText ->
-            val padded = rawText.padStart(4, '0')
-            val seconds = padded.takeLast(2)
-            val minutes = padded.dropLast(2).takeLast(2)
-            val newValue = Formatter.parseTimeInputToSeconds(
-                input = "$minutes:$seconds"
+    var weightValue by rememberSaveable(set.load) {
+        mutableStateOf(
+            Formatter.normalizeNumericString(
+                set.load.toString()
             )
-            if (newValue != set.elapsedTime) {
-                updateSetTime(newValue, set.id)
-            }
-        }
+        )
     }
 
     val swipeToDismissBoxState = rememberSwipeToDismissBoxState()
@@ -792,184 +780,96 @@ private fun Set(
                 modifier = Modifier.padding(start = 20.dp)
             )
 
-            previousSet?.let { values ->
-                TextButton(
-                    onClick = { applyPreviousSet(set.id) },
-                    modifier = Modifier.wrapContentWidth()
-                ) {
-                    val (previousReps, previousLoad, previousTime) = values
-                    val text = when (setMode) {
-                        SetMode.LOAD -> "$previousLoad" + stringResource(R.string.kg) + "\n* $previousReps"
-                        SetMode.BODYWEIGHT -> "$previousReps"
-                        SetMode.BODYWEIGHT_WITH_LOAD -> "$previousLoad" + stringResource(R.string.kg) + "\n* $previousReps"
-                        SetMode.DURATION -> Formatter.formateSecondsInMinutesAndSeconds(previousTime)
-                    }
-                    Text(
-                        text = text,
-                        color = contentColor,
-                        textAlign = TextAlign.Center,
-                    )
+            //Weight
+            Box {
+                OutlinedTextField(
+                    shape = MaterialTheme.shapes.large,
+                    modifier = Modifier.width(80.dp),
+                    value = weightValue,
+                    onValueChange = { string ->
+                        weightValue = Formatter.normalizeNumericString(string, maxDecimalDigits = 2)
+
+                        updateSetLoad(
+                            Formatter.parseDoubleFromString(weightValue) ?: 0.0,
+                            set.id
+                        )
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent,
+                        disabledBorderColor = Color.Transparent,
+                        focusedTextColor = contentColor,
+                        unfocusedTextColor = contentColor,
+                    ),
+                    readOnly = useScrollWheelForInput
+                )
+                if (useScrollWheelForInput) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .clip(MaterialTheme.shapes.extraLarge)
+                            .clickable {
+                                inputModalBottomSheetState =
+                                    InputModalBottomSheetState.Weight(
+                                        integerWeight = set.load.toInt(),
+                                        decimalWeight = set.load.getDecimalDigitsAsInteger()
+                                    )
+                                inputSetId = set.id
+                            }
+                    ) { }
                 }
             }
 
-            if (setMode == SetMode.DURATION) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (workout) {
-
-                        IconButton(
-                            enabled = (isStopwatchRunning || isThisSetStopwatchRunning)
-                                    && !set.completed,
-                            colors = IconButtonDefaults.iconButtonColors(
-                                contentColor = contentColor
-                            ),
-                            onClick = {
-                                val newId = if (isThisSetStopwatchRunning) null else set.id
-                                updateIdSetWithRunningStopwatch(newId)
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(
-                                    if (isThisSetStopwatchRunning)
-                                        R.drawable.ic_pause else R.drawable.ic_play_arrow
-                                ),
-                                contentDescription = if (isThisSetStopwatchRunning)
-                                    stringResource(R.string.resume) else
-                                    stringResource(R.string.pause)
-                            )
+            //Reps
+            Box {
+                OutlinedTextField(
+                    shape = MaterialTheme.shapes.large,
+                    modifier = Modifier.width(80.dp),
+                    value = repValue,
+                    onValueChange = { string ->
+                        repValue = Formatter.normalizeNumericString(string)
+                        Formatter.parseIntegerFromString(repValue)?.let {
+                            updateSetReps(it, set.id)
                         }
-                    }
-                    //Time
-                    Box {
-                        OutlinedTextField(
-                            shape = MaterialTheme.shapes.large,
-                            modifier = Modifier.width(80.dp),
-                            state = timeTextFieldState,
-                            lineLimits = TextFieldLineLimits.SingleLine,
-                            inputTransformation = TimeInputTransformation(),
-                            outputTransformation = TimeOutputTransformation(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = Color.Transparent,
-                                focusedBorderColor = Color.Transparent,
-                                disabledBorderColor = Color.Transparent,
-                                focusedTextColor = contentColor,
-                                unfocusedTextColor = contentColor,
-                            ),
-                            readOnly = useScrollWheelForInput
-                        )
-                        if (useScrollWheelForInput) {
-                            Box(
-                                modifier = Modifier
-                                    .matchParentSize()
-                                    .clip(MaterialTheme.shapes.extraLarge)
-                                    .clickable {
-                                        set.elapsedTime.seconds.toComponents { _, minutes, seconds, _ ->
-                                            inputModalBottomSheetState =
-                                                InputModalBottomSheetState.MinutesSeconds(
-                                                    minutes = minutes,
-                                                    seconds = seconds
-                                                )
-                                        }
-                                        inputSetId = set.id
-                                    }
-                            ) { }
-                        }
-                    }
-                }
-            } else {
-                if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
-                    //Weight
-                    Box {
-                        OutlinedTextField(
-                            shape = MaterialTheme.shapes.large,
-                            modifier = Modifier.width(80.dp),
-                            value = weightValue,
-                            onValueChange = { string ->
-                                weightValue = Formatter.normalizeNumericString(string)
-
-                                updateSetLoad(
-                                    Formatter.parseDoubleFromString(weightValue) ?: 0.0,
-                                    set.id
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent,
+                        disabledBorderColor = Color.Transparent,
+                        focusedTextColor = contentColor,
+                        unfocusedTextColor = contentColor,
+                    ),
+                    readOnly = useScrollWheelForInput
+                )
+                if (useScrollWheelForInput) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .clip(MaterialTheme.shapes.extraLarge)
+                            .clickable {
+                                inputModalBottomSheetState = InputModalBottomSheetState.Reps(
+                                    reps = repValue.toInt()
                                 )
-                            },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = Color.Transparent,
-                                focusedBorderColor = Color.Transparent,
-                                disabledBorderColor = Color.Transparent,
-                                focusedTextColor = contentColor,
-                                unfocusedTextColor = contentColor,
-                            ),
-                            readOnly = useScrollWheelForInput
-                        )
-                        if (useScrollWheelForInput) {
-                            Box(
-                                modifier = Modifier
-                                    .matchParentSize()
-                                    .clip(MaterialTheme.shapes.extraLarge)
-                                    .clickable {
-                                        inputModalBottomSheetState =
-                                            InputModalBottomSheetState.Weight(
-                                                integerWeight = set.load.toInt(),
-                                                decimalWeight = set.load.getDecimalDigitsAsInteger()
-                                            )
-                                        inputSetId = set.id
-                                    }
-                            ) { }
-                        }
-                    }
-                }
-                //Reps
-                Box {
-                    OutlinedTextField(
-                        shape = MaterialTheme.shapes.large,
-                        modifier = Modifier.width(80.dp),
-                        value = repValue,
-                        onValueChange = { string ->
-                            repValue = Formatter.normalizeNumericString(string)
-                            Formatter.parseIntegerFromString(repValue)?.let {
-                                updateSetReps(it, set.id)
+                                inputSetId = set.id
                             }
-                        },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedBorderColor = Color.Transparent,
-                            disabledBorderColor = Color.Transparent,
-                            focusedTextColor = contentColor,
-                            unfocusedTextColor = contentColor,
-                        ),
-                        readOnly = useScrollWheelForInput
-                    )
-                    if (useScrollWheelForInput) {
-                        Box(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .clip(MaterialTheme.shapes.extraLarge)
-                                .clickable {
-                                    inputModalBottomSheetState = InputModalBottomSheetState.Reps(
-                                        reps = repValue.toInt()
-                                    )
-                                    inputSetId = set.id
-                                }
-                        ) { }
-                    }
+                    ) { }
                 }
+
             }
 
             if (workout) {
                 Checkbox(
                     checked = set.completed,
                     onCheckedChange = { checked ->
-                        if (isThisSetStopwatchRunning) {
-                            updateIdSetWithRunningStopwatch(null)
-                        }
                         updateSetCompleted(checked, set.id)
                     }
                 )
             }
+
         }
     }
 
@@ -979,47 +879,33 @@ private fun Set(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)
 @Composable
-private fun ExerciseCardPreview() {
+private fun WarmupCardPreview() {
     val currentIdSetWithRunningSet = remember { mutableStateOf<Long?>(null) }
 
     val e = remember {
         mutableStateOf(
-            UiExerciseWithSets(
-                exercise = UiExercise(
+            UiWarmupWithSets(
+                warmup = UiWarmup(
                     notes = "This is a note!",
-                    restTime = 90,
-                    setMode = SetMode.DURATION
+                    restTime = 60,
+                    warmupMode = WarmupMode.DEFAULT,
+                    target = 100.98992346329347,
                 ),
-                sets = persistentListOf(UiSet(completed = true), UiSet(elapsedTime = 100)),
-                exerciseDC = UiExerciseDC(
-                    name = "Exercise name",
-                    images = persistentListOf("3_4_Sit-Up/0.jpg")
-                )
+                sets = persistentListOf(UiSet(completed = true), UiSet(load = 100.0)),
             )
         )
-    }
-
-    val previousPerformances = e.value.sets.map { _ ->
-        when (e.value.exercise.setMode) {
-            SetMode.BODYWEIGHT -> PreviousPerformanceSet(reps = 10)
-            SetMode.DURATION -> PreviousPerformanceSet(time = 124)
-            SetMode.BODYWEIGHT_WITH_LOAD -> PreviousPerformanceSet(reps = 10, load = 12.0)
-            SetMode.LOAD -> PreviousPerformanceSet(reps = 10, load = 12.0)
-        }
     }
 
     LibreFitTheme(dynamicColor = true, themeMode = ThemeMode.DARK) {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
-                ExerciseCard(
+                WarmupCard(
                     animatedVisibilityScope = this,
-                    exerciseWithSets = e.value,
-                    previousPerformances = previousPerformances,
+                    warmupWithSets = e.value,
                     addSet = {
                         val newSets = e.value.sets.toMutableList() + UiSet()
                         e.value = e.value.copy(sets = newSets.toImmutableList())
                     },
-                    onDetail = { _, _ -> },
                     onDelete = {},
                     deleteSet = { id ->
                         e.value = e.value.copy(sets = e.value.sets.filter { it.id != id }
@@ -1028,21 +914,34 @@ private fun ExerciseCardPreview() {
                             null
                     },
                     showInfo = {},
-                    idSetWithRunningStopwatch = currentIdSetWithRunningSet.value,
-                    updateIdSetWithRunningStopwatch = { currentIdSetWithRunningSet.value = it },
                     workout = true,
                     isDragging = false,
                     useScrollWheelForInput = false,
                     dismissScrollWheelInputAutomatically = false,
                     updateExerciseNotes = { notes, _ ->
-                        e.value = e.value.copy(exercise = e.value.exercise.copy(notes = notes))
+                        e.value = e.value.copy(warmup = e.value.warmup.copy(notes = notes))
                     },
                     updateExerciseRestTime = { restTime, _ ->
                         e.value =
-                            e.value.copy(exercise = e.value.exercise.copy(restTime = restTime))
+                            e.value.copy(warmup = e.value.warmup.copy(restTime = restTime))
                     },
-                    updateExerciseSetMode = { setMode, _ ->
-                        e.value = e.value.copy(exercise = e.value.exercise.copy(setMode = setMode))
+                    updateWarmupSetMode = { warmupMode, _ ->
+                        e.value = e.value.copy(
+                            warmup = e.value.warmup.copy(warmupMode = warmupMode),
+                            sets = recalcWarmupSets(
+                                e.value.warmup.target,
+                                e.value.warmup.warmupMode
+                            )
+                        )
+                    },
+                    updateWarmupTarget = { warmupTarget, _ ->
+                        e.value = e.value.copy(
+                            warmup = e.value.warmup.copy(target = warmupTarget),
+                            sets = recalcWarmupSets(
+                                e.value.warmup.target,
+                                e.value.warmup.warmupMode
+                            )
+                        )
                     },
                     updateSetTime = { time, id ->
                         e.value = e.value.copy(
@@ -1072,28 +971,7 @@ private fun ExerciseCardPreview() {
                             }.toImmutableList()
                         )
                     },
-                    applyPreviousSetPerformance = { id ->
-                        val index = e.value.sets.indexOfFirst { it.id == id }
-                        previousPerformances.getOrNull(index)?.let { p ->
-                            e.value = e.value.copy(
-                                sets = e.value.sets.map { set ->
-                                    if (set.id == id) {
-                                        when (e.value.exercise.setMode) {
-                                            SetMode.BODYWEIGHT -> set.copy(reps = p.reps)
-                                            SetMode.LOAD -> set.copy(load = p.load)
-                                            SetMode.DURATION -> set.copy(elapsedTime = p.time)
-                                            SetMode.BODYWEIGHT_WITH_LOAD -> set.copy(
-                                                load = p.load,
-                                                reps = p.reps
-                                            )
-                                        }
-                                    } else set
-                                }.toImmutableList()
-                            )
-                        }
-                    },
                     onReorderRequest = {},
-                    addWarmup = { _, _ -> }
                 )
             }
         }

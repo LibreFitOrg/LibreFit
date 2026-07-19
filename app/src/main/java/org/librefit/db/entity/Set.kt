@@ -1,9 +1,11 @@
 /*
- * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2025-2026. The LibreFit Contributors
  *
- * LibreFit is subject to additional terms covering author attribution and trademark usage;
- * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *  * SPDX-License-Identifier: GPL-3.0-or-later
+ *  * Copyright (c) 2025-2026. The LibreFit Contributors
+ *  *
+ *  * LibreFit is subject to additional terms covering author attribution and trademark usage;
+ *  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.db.entity
@@ -18,7 +20,7 @@ import kotlin.random.Random
 /**
  * Entity representing a set record in the "sets" table.
  *
- * This entity is linked to a [Exercise] entity via a foreign key defined by the [exerciseId] property.
+ * This entity is linked to a [Exercise] entity via a foreign key defined by the [workoutItemId] property.
  * The foreign key constraint ensures that when a [Exercise] is deleted, all related sets are also deleted (CASCADE deletion).
  *
  * ### Note
@@ -35,6 +37,7 @@ import kotlin.random.Random
  * @property elapsedTime The time taken to complete the set, in seconds.
  * @property completed Indicates whether the set has been completed.
  * @property exerciseId This is a foreign key reference to the [Exercise] entity.
+ * @property warmupId This is a foreign key reference to the [Warmup] entity.
  *
  */
 @Entity(
@@ -45,9 +48,15 @@ import kotlin.random.Random
             parentColumns = ["id"],
             childColumns = ["exerciseId"],
             onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = Warmup::class,
+            parentColumns = ["id"],
+            childColumns = ["warmupId"],
+            onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["exerciseId"])]
+    indices = [Index(value = ["exerciseId"]), Index(value = ["warmupId"])]
 )
 @Serializable
 data class Set(
@@ -56,5 +65,6 @@ data class Set(
     val reps: Int = 0,
     val elapsedTime: Int = 0,
     val completed: Boolean = false,
-    val exerciseId: Long = 0// Foreign key reference to Exercise
+    val exerciseId: Long? = null,// Foreign key reference to Exercise
+    val warmupId: Long? = null
 )

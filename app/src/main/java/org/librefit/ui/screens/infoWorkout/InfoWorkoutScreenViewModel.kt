@@ -1,9 +1,10 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
+ * Copyright (c) 2025-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.screens.infoWorkout
@@ -31,8 +32,10 @@ import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
 import org.librefit.nav.Route
 import org.librefit.ui.components.charts.Point
-import org.librefit.ui.models.UiExerciseWithSets
+import org.librefit.ui.models.UiExerciseItem
+import org.librefit.ui.models.UiWarmupItem
 import org.librefit.ui.models.UiWorkout
+import org.librefit.ui.models.UiWorkoutItem
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import org.librefit.util.Formatter
@@ -69,8 +72,12 @@ class InfoWorkoutScreenViewModel @Inject constructor(
                 workout
             }
 
-            _exercises.update {
-                workoutWithExercisesAndSets.exercisesWithSets
+            _workoutItems.update {
+                (workoutWithExercisesAndSets.warmupsWithSets.map {
+                    UiWarmupItem(
+                        warmup = it
+                    )
+                } + workoutWithExercisesAndSets.exercisesWithSets.map { UiExerciseItem(exercise = it) }).sortedBy { it.position }
             }
 
             if (isRoutine()) {
@@ -94,7 +101,10 @@ class InfoWorkoutScreenViewModel @Inject constructor(
             val volumeValue = dataHelper.fetchVolumeFromWorkout(
                 WorkoutWithExercisesAndSets(
                     workout.toEntity(),
-                    exercises.value.map { it.toEntity() })
+                    workoutItems.value.filterIsInstance<UiExerciseItem>()
+                        .map { it.exercise.toEntity() },
+                    workoutItems.value.filterIsInstance<UiWarmupItem>()
+                        .map { it.warmup.toEntity() })
             )
 
             _volume.update {
@@ -139,10 +149,8 @@ class InfoWorkoutScreenViewModel @Inject constructor(
     val routine = _routine.asStateFlow()
 
 
-    private val _exercises = MutableStateFlow<List<UiExerciseWithSets>>(emptyList())
-    val exercises = _exercises.asStateFlow()
-
-
+    private val _workoutItems = MutableStateFlow<List<UiWorkoutItem>>(emptyList())
+    val workoutItems = _workoutItems.asStateFlow()
 
     private val _completedWorkoutsWithExercises =
         MutableStateFlow<List<WorkoutWithExercisesAndSets>>(emptyList())

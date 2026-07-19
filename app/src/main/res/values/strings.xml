@@ -1,9 +1,10 @@
 <!--
   ~ SPDX-License-Identifier: GPL-3.0-or-later
-  ~ Copyright (c) 2024-2026. The LibreFit Contributors
+  ~ Copyright (c) 2025-2026. The LibreFit Contributors
   ~
   ~ LibreFit is subject to additional terms covering author attribution and trademark usage;
   ~ see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+  ~
   -->
 
 <resources>
@@ -18,7 +19,6 @@
     <string name="more_options">More options</string>
     <string name="navigate_back">Back to the previous screen</string>
     <string name="library">Library</string>
-
 
 
     <!--About screen-->
@@ -163,6 +163,10 @@
     <string name="quit_routine_creation_question">Quit routine creation?</string>
     <string name="warning_delete_exercise_from_routine">Warning! Deleting exercises from existing routines will unlink all exercises of derivative workouts.</string>
     <string name="reorder">Reorder</string>
+    <string name="add_warmup">Add warmup</string>
+
+    <!--Edit warmup screen-->
+    <string name="warmup_40_60_70">40/60/70</string>
 
 
     <!-- Error screen-->
@@ -453,10 +457,14 @@
     <string name="exercises_distribution_desc">- This chart shows the **average performance of each exercise over specific time periods**, based on the chosen parameter.\n- The legend identifies the time period represented by each column.\n- The **Historical** column includes all workouts completed before every time period shown.\n- The parameter can be changed by selecting a new one above the chart.</string>
     <string name="librefit_is_under_threat">LibreFit is under threat</string>
     <string name="librefit_is_under_threat_desc">- Starting in September 2026, Google plans to lock down Android by **blocking you from installing any app** unless its developer has paid a fee, registered, and handed over personal ID to Google.\n- This policy destroys Android\'s open ecosystem and **takes away your basic right to choose what software you can run on the device you own**.\n- Please visit [keepandroidopen.org](https://keepandroidopen.org) to learn more about this threat to your digital freedom and how you can help stop it.</string>
+    <string name="warmup_target">Warmup Target</string>
+    <string name="warmup_target_desc">The target load to warm up to as the working set.</string>
+    <string name="type_of_warmup">Type of warmup</string>
+    <string name="type_of_warmup_desc">Which warmup calculations to use.</string>
+
 
     <!-- Input modal bottom sheet -->
     <string name="weight">Weight</string>
-
 
 
     <!--Exercise card-->
@@ -464,6 +472,10 @@
     <string name="kg" translatable="false">kg</string>
     <string name="type_of_set">Type of set</string>
     <string name="previous">Previous</string>
+
+    <!--Warmup card-->
+    <string name="warmup">Warmup</string>
+    <string name="target">Target</string>
 
 
     <!--Chart-->
@@ -568,5 +580,6 @@
     <string name="do_not_show_again">Do not show again</string>
     <string name="undo">Undo</string>
     <string name="clear">Clear</string>
+
 
 </resources>

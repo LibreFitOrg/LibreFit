@@ -1,9 +1,10 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
+ * Copyright (c) 2025-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.db
@@ -23,14 +24,16 @@ import org.librefit.db.entity.Exercise
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.entity.Measurement
 import org.librefit.db.entity.Set
+import org.librefit.db.entity.Warmup
 import org.librefit.db.entity.Workout
 
+
 @Database(
-    entities = [Workout::class, Exercise::class, Set::class, Measurement::class, ExerciseDC::class],
-    version = 3,
+    entities = [Workout::class, Exercise::class, Warmup::class, Set::class, Measurement::class, ExerciseDC::class],
+    version = 4,
     exportSchema = true,
     autoMigrations = [
-        AutoMigration(from = 1, to = 2)
+        AutoMigration(from = 1, to = 2), AutoMigration(from = 3, to = 4)
     ]
 )
 @TypeConverters(LocalDateTimeConverter::class, ExerciseDCConverter::class)

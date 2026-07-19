@@ -9,15 +9,7 @@
 
 package org.librefit.enums
 
-enum class InfoMode {
-    DISMISS,
-    REST_TIMER,
-    TYPE_OF_SET,
+enum class WarmupMode {
+    DEFAULT, // 40/60/70
 
-    WARMUP_TARGET,
-    TYPE_OF_WARMUP,
-    BEFORE_SAVING_STATS,
-    MUSCLE_DISTRIBUTION,
-    EXERCISES_DISTRIBUTION,
-    KEEP_ANDROID_OPEN
 }

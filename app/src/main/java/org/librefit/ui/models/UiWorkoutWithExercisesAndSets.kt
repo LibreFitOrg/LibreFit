@@ -4,6 +4,7 @@
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.models
@@ -21,5 +22,6 @@ import kotlinx.collections.immutable.ImmutableList
 @Immutable
 data class UiWorkoutWithExercisesAndSets(
     val workout: UiWorkout,
-    val exercisesWithSets: ImmutableList<UiExerciseWithSets>
+    val exercisesWithSets: ImmutableList<UiExerciseWithSets>,
+    val warmupsWithSets: ImmutableList<UiWarmupWithSets>,
 )

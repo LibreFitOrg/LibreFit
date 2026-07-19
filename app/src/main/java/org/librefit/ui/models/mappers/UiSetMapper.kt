@@ -4,6 +4,7 @@
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.models.mappers
@@ -18,7 +19,8 @@ fun Set.toUi(): UiSet {
         reps = this.reps,
         elapsedTime = this.elapsedTime,
         completed = this.completed,
-        exerciseId = this.exerciseId
+        exerciseId = this.exerciseId,
+        warmupId = this.warmupId
     )
 }
 
@@ -29,6 +31,7 @@ fun UiSet.toEntity(): Set {
         reps = this.reps,
         elapsedTime = this.elapsedTime,
         completed = this.completed,
-        exerciseId = this.exerciseId
+        exerciseId = this.exerciseId,
+        warmupId = this.warmupId
     )
 }

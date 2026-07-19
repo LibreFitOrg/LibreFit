@@ -1,9 +1,10 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
+ * Copyright (c) 2025-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.components.modalBottomSheets
@@ -60,6 +61,8 @@ fun InfoModalBottomSheet(
             InfoMode.MUSCLE_DISTRIBUTION -> stringResource(R.string.muscles_distribution)
             InfoMode.EXERCISES_DISTRIBUTION -> stringResource(R.string.exercises_distribution)
             InfoMode.KEEP_ANDROID_OPEN -> stringResource(R.string.librefit_is_under_threat)
+            InfoMode.WARMUP_TARGET -> stringResource(R.string.warmup_target)
+            InfoMode.TYPE_OF_WARMUP -> stringResource(R.string.type_of_warmup)
         }
 
         val text = when (infoMode) {
@@ -69,6 +72,8 @@ fun InfoModalBottomSheet(
             InfoMode.MUSCLE_DISTRIBUTION -> stringResource(R.string.muscle_distribution_desc)
             InfoMode.EXERCISES_DISTRIBUTION -> stringResource(R.string.exercises_distribution_desc)
             InfoMode.KEEP_ANDROID_OPEN -> stringResource(R.string.librefit_is_under_threat_desc)
+            InfoMode.WARMUP_TARGET -> stringResource(R.string.warmup_target_desc)
+            InfoMode.TYPE_OF_WARMUP -> stringResource(R.string.type_of_warmup_desc)
         }
 
         ModalBottomSheet(
@@ -123,6 +128,9 @@ fun InfoModalBottomSheet(
                             painter = painterResource(R.drawable.altered_deal),
                             contentDescription = null
                         )
+
+                        InfoMode.WARMUP_TARGET -> StatsLottie()
+                        InfoMode.TYPE_OF_WARMUP -> TrainingLottie()
                     }
                 }
             }
