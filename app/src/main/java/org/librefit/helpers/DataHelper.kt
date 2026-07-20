@@ -15,6 +15,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.MeasurementRepository
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
 import org.librefit.enums.chart.BodyweightChart
@@ -24,7 +25,9 @@ import org.librefit.enums.chart.StatisticsChart
 import org.librefit.enums.chart.TimeChart
 import org.librefit.enums.chart.WeightedBodyweightChart
 import org.librefit.enums.chart.WorkoutChart
+import org.librefit.models.Weight
 import org.librefit.ui.components.charts.Point
+import org.librefit.ui.models.doubleValue
 import org.librefit.util.Formatter
 import org.librefit.util.OneRepMaxCalculator
 import java.time.LocalDateTime
@@ -37,12 +40,15 @@ import javax.inject.Singleton
 @Singleton
 class DataHelper @Inject constructor(
     private val measurementRepository: MeasurementRepository,
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
+    userPreferencesRepository: UserPreferencesRepository
 ) {
     val shortFormatter: DateTimeFormatter? =
         DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(
             Locale.getDefault()
         )
+
+    val unitSystem = userPreferencesRepository.unitSystem
 
     /**
      * It returns a list of [Point] corresponding to the given [workoutChart] type
@@ -72,7 +78,7 @@ class DataHelper @Inject constructor(
                 async {
                     val bodyWeight = measurementRepository.getLastMeasurementByCutoff(
                         it.workout.completed
-                    )?.bodyWeight ?: 0.0
+                    )?.bodyWeight?.doubleValue(unitSystem.value) ?: 0.0
 
                     Point(
                         yValues = listOf(
@@ -84,7 +90,7 @@ class DataHelper @Inject constructor(
                                                 exe.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
 
                                     exe.sets.filter { it.completed }.sumOf {
-                                        (it.load + if (includeBodyweight) bodyWeight else 0.0) * it.reps
+                                        (it.load.doubleValue(unitSystem.value) + if (includeBodyweight) bodyWeight else 0.0) * it.reps
                                     }
                                 }
                                 WorkoutChart.REPS -> it.exercisesWithSets.sumOf { exe ->
@@ -103,25 +109,29 @@ class DataHelper @Inject constructor(
 
     suspend fun fetchVolumeFromWorkout(
         workout: WorkoutWithExercisesAndSets
-    ): Double {
+    ): Weight {
         val isRoutine = workout.workout.state == WorkoutState.ROUTINE
 
         val bodyWeight = measurementRepository.getLastMeasurementByCutoff(
             if (isRoutine) workout.workout.created else workout.workout.completed
-        )?.bodyWeight ?: 0.0
+        )?.bodyWeight?.doubleValue(unitSystem.value) ?: 0.0
 
-        return workout.exercisesWithSets.sumOf { exe ->
+        val volume = workout.exercisesWithSets.sumOf { exe ->
             exe.sets.sumOf { set ->
                 val volumeForEachRep = when (exe.exercise.setMode) {
-                    SetMode.LOAD -> if (isRoutine || set.completed) set.load else 0.0
+                    SetMode.LOAD -> if (isRoutine || set.completed) set.load.doubleValue(unitSystem.value) else 0.0
                     SetMode.BODYWEIGHT -> if (isRoutine || set.completed) bodyWeight else 0.0
-                    SetMode.BODYWEIGHT_WITH_LOAD -> if (isRoutine || set.completed) set.load + bodyWeight else 0.0
+                    SetMode.BODYWEIGHT_WITH_LOAD -> if (isRoutine || set.completed) set.load.doubleValue(
+                        unitSystem.value
+                    ) + bodyWeight else 0.0
                     SetMode.DURATION -> 0.0
                 }
 
                 (volumeForEachRep * set.reps)
             }
         }
+
+        return Weight.auto(volume, unitSystem.value)
     }
 
 
@@ -193,23 +203,27 @@ class DataHelper @Inject constructor(
 
                             val bodyWeight = measurementRepository.getLastMeasurementByCutoff(
                                 w.workout.completed
-                            )?.bodyWeight ?: 0.0
+                            )?.bodyWeight?.doubleValue(unitSystem.value) ?: 0.0
 
                             val value = when (muscleDistributionStatisticsChart) {
                                 StatisticsChart.LOAD -> sets.sumOf {
                                     when (exercise.setMode) {
-                                        SetMode.LOAD -> it.load
+                                        SetMode.LOAD -> it.load.doubleValue(unitSystem.value)
                                         SetMode.BODYWEIGHT -> bodyWeight
-                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load + bodyWeight
+                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load.doubleValue(
+                                            unitSystem.value
+                                        ) + bodyWeight
                                         SetMode.DURATION -> 0
                                     }.toDouble()
                                 }
                                 StatisticsChart.REPS -> sets.sumOf { it.reps }
                                 StatisticsChart.VOLUME -> sets.sumOf {
                                     when (exercise.setMode) {
-                                        SetMode.LOAD -> it.load
+                                        SetMode.LOAD -> it.load.doubleValue(unitSystem.value)
                                         SetMode.BODYWEIGHT -> bodyWeight
-                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load + bodyWeight
+                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load.doubleValue(
+                                            unitSystem.value
+                                        ) + bodyWeight
                                         SetMode.DURATION -> 0
                                     }.toDouble() * it.reps
                                 }
@@ -336,14 +350,16 @@ class DataHelper @Inject constructor(
 
                             val bodyWeight = measurementRepository.getLastMeasurementByCutoff(
                                 w.workout.completed
-                            )?.bodyWeight ?: 0.0
+                            )?.bodyWeight?.doubleValue(unitSystem.value) ?: 0.0
 
                             val value = when (exerciseDistributionStatisticsChart) {
                                 StatisticsChart.LOAD -> sets.sumOf {
                                     when (exercise.setMode) {
-                                        SetMode.LOAD -> it.load
+                                        SetMode.LOAD -> it.load.doubleValue(unitSystem.value)
                                         SetMode.BODYWEIGHT -> bodyWeight
-                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load + bodyWeight
+                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load.doubleValue(
+                                            unitSystem.value
+                                        ) + bodyWeight
                                         SetMode.DURATION -> 0
                                     }.toDouble()
                                 }
@@ -351,9 +367,11 @@ class DataHelper @Inject constructor(
                                 StatisticsChart.REPS -> sets.sumOf { it.reps }
                                 StatisticsChart.VOLUME -> sets.sumOf {
                                     when (exercise.setMode) {
-                                        SetMode.LOAD -> it.load
+                                        SetMode.LOAD -> it.load.doubleValue(unitSystem.value)
                                         SetMode.BODYWEIGHT -> bodyWeight
-                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load + bodyWeight
+                                        SetMode.BODYWEIGHT_WITH_LOAD -> it.load.doubleValue(
+                                            unitSystem.value
+                                        ) + bodyWeight
                                         SetMode.DURATION -> 0
                                     }.toDouble() * it.reps
                                 }
@@ -424,7 +442,8 @@ class DataHelper @Inject constructor(
                             eWs.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
 
                     val bodyWeight = if (includeBodyweight && workout != null) measurementRepository
-                        .getLastMeasurementByCutoff(workout.completed)?.bodyWeight ?: 0.0 else 0.0
+                        .getLastMeasurementByCutoff(workout.completed)
+                        ?.bodyWeight?.doubleValue(unitSystem.value) ?: 0.0 else 0.0
 
                     val sets = eWs.sets.filter { it.completed }
 
@@ -439,34 +458,38 @@ class DataHelper @Inject constructor(
                                     set.reps
                                 }
                                 WeightedBodyweightChart.TOTAL_VOLUME -> sets.sumOf { set ->
-                                    (set.load + bodyWeight) * set.reps.toDouble()
+                                    (set.load.doubleValue(unitSystem.value) + bodyWeight) * set.reps.toDouble()
                                 }
                                 WeightedBodyweightChart.BEST_SET_VOLUME -> sets.maxOfOrNull { set ->
-                                    (set.load + bodyWeight) * set.reps
+                                    (set.load.doubleValue(unitSystem.value) + bodyWeight) * set.reps
                                 } ?: 0
 
                                 WeightedBodyweightChart.HEAVIEST_WEIGHT -> sets.maxOfOrNull { set ->
-                                    set.load + bodyWeight
+                                    set.load.doubleValue(unitSystem.value) + bodyWeight
                                 } ?: 0
 
                                 BodyweightChart.MOST_REPS -> sets.maxOfOrNull { set -> set.reps }
                                     ?: 0
                                 BodyweightChart.SESSION_REPS -> sets.sumOf { set -> set.reps }
-                                LoadChart.HEAVIEST_WEIGHT -> sets.maxOfOrNull { set -> set.load }
-                                    ?: 0
+                                LoadChart.HEAVIEST_WEIGHT -> sets.maxOfOrNull { set ->
+                                    set.load.doubleValue(unitSystem.value)
+                                } ?: 0
 
                                 LoadChart.BEST_SET_VOLUME -> sets.maxOfOrNull { set ->
-                                    set.load * set.reps
+                                    set.load.doubleValue(unitSystem.value) * set.reps
                                 } ?: 0
 
                                 LoadChart.ONE_REP_MAX -> sets.maxOfOrNull { set ->
-                                    OneRepMaxCalculator.calculate(set.load, set.reps)
+                                    OneRepMaxCalculator.calculate(
+                                        set.load.doubleValue(unitSystem.value),
+                                        set.reps
+                                    )
                                 } ?: 0
                                 LoadChart.TOTAL_REPS -> sets.sumOf { set ->
                                     set.reps
                                 }
                                 LoadChart.SESSION_VOLUME -> sets.sumOf { set ->
-                                    set.load * set.reps.toDouble()
+                                    set.load.doubleValue(unitSystem.value) * set.reps.toDouble()
                                 }
                             }.toDouble()
                         ),

@@ -24,6 +24,7 @@ import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,6 +41,7 @@ class SettingsScreenViewModel @Inject constructor(
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
     val showExercisesImages = userPreferences.showExercisesImages
     val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
+    val unitSystem = userPreferences.unitSystem
 
     fun saveThemeMode(mode: ThemeMode) {
         viewModelScope.launch { userPreferences.saveThemeMode(mode) }
@@ -79,6 +81,8 @@ class SettingsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             userPreferences.saveShowExercisesImages(display)
         }
+    fun saveUnitSystem(unitSystem: UnitSystem) {
+        viewModelScope.launch { userPreferences.saveUnitSystem(unitSystem) }
     }
 
     private val _preferences = MutableStateFlow<List<DialogPreference>?>(null)
@@ -93,12 +97,14 @@ class SettingsScreenViewModel @Inject constructor(
     val currentPreference: StateFlow<DialogPreference?> = combine(
         preferences,
         language,
-        themeMode
-    ) { p, l, t ->
+        themeMode,
+        unitSystem
+    ) { p, l, t, u ->
         p?.let {
             when (p.first()) {
                 is Language -> l
                 is ThemeMode -> t
+                is UnitSystem -> u
             }
         }
     }
@@ -113,6 +119,7 @@ class SettingsScreenViewModel @Inject constructor(
         when (newPreference) {
             is Language -> saveLanguage(newPreference)
             is ThemeMode -> saveThemeMode(newPreference)
+            is UnitSystem -> saveUnitSystem(newPreference)
         }
     }
 }

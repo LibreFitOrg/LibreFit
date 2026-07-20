@@ -57,6 +57,8 @@ import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
+import org.librefit.ui.models.autoUnitSuffix
+import org.librefit.ui.models.doubleValue
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatDetails
@@ -184,9 +186,7 @@ fun SharedTransitionScope.ExerciseCardSmall(
                         } else {
                             if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                                 Text(
-                                    stringResource(R.string.load) + " (" + stringResource(
-                                        R.string.kg
-                                    ) + ")"
+                                    stringResource(R.string.load) + " (" + autoUnitSuffix() + ")"
                                 )
                             }
                             Text(stringResource(R.string.reps))
@@ -248,7 +248,7 @@ fun SharedTransitionScope.ExerciseCardSmall(
                                 } else {
                                     if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                                         Text(
-                                            text = "${set.load}",
+                                            text = set.load.doubleValue().toString(),
                                             color = contentColor
                                         )
                                     }

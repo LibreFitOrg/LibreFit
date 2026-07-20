@@ -16,6 +16,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.librefit.db.converters.ExerciseDCConverter
 import org.librefit.db.converters.LocalDateTimeConverter
+import org.librefit.db.converters.WeightConverter
 import org.librefit.db.dao.DatasetDao
 import org.librefit.db.dao.MeasurementDao
 import org.librefit.db.dao.WorkoutDao
@@ -27,13 +28,14 @@ import org.librefit.db.entity.Workout
 
 @Database(
     entities = [Workout::class, Exercise::class, Set::class, Measurement::class, ExerciseDC::class],
-    version = 3,
+    version = 4,
     exportSchema = true,
     autoMigrations = [
-        AutoMigration(from = 1, to = 2)
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 3, to = 4)
     ]
 )
-@TypeConverters(LocalDateTimeConverter::class, ExerciseDCConverter::class)
+@TypeConverters(LocalDateTimeConverter::class, ExerciseDCConverter::class, WeightConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         const val NAME = "librefit_database"

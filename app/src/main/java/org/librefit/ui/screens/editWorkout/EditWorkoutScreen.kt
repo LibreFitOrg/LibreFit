@@ -51,6 +51,7 @@ import org.librefit.enums.SuccessMessage
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.models.Weight
 import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.LibreFitLazyColumn
@@ -157,7 +158,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     deleteSet: (Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
-    updateSetLoad: (Double, Long) -> Unit,
+    updateSetLoad: (Weight, Long) -> Unit,
     updateSetCompleted: (Boolean, Long) -> Unit,
     addSetToExercise: (Long) -> Unit,
     deleteExercise: (Long) -> Unit,
@@ -418,9 +419,9 @@ private fun EditWorkoutScreenPreview() {
                                 category = Category.STRENGTH
                             ),
                             sets = persistentListOf(
-                                UiSet(load = 80.0, reps = 8),
-                                UiSet(load = 80.0, reps = 8),
-                                UiSet(load = 80.0, reps = 9)
+                                UiSet(load = Weight.kilograms(80.0), reps = 8),
+                                UiSet(load = Weight.kilograms(80.0), reps = 8),
+                                UiSet(load = Weight.kilograms(80.0), reps = 9)
                             )
                         )
                     ),

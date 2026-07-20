@@ -26,6 +26,7 @@ import org.librefit.enums.exercise.Muscle
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -132,6 +133,8 @@ object Formatter {
             ThemeMode.LIGHT -> R.string.theme_light
             ThemeMode.DARK -> R.string.theme_dark
             ThemeMode.SYSTEM -> R.string.follow_system
+            UnitSystem.METRIC -> R.string.metric
+            UnitSystem.IMPERIAL -> R.string.imperial
         }
     }
 

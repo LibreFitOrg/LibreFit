@@ -43,6 +43,7 @@ import org.librefit.enums.WorkoutState
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.helpers.SoundPlayer
+import org.librefit.models.Weight
 import org.librefit.nav.Route
 import org.librefit.services.WorkoutService
 import org.librefit.services.WorkoutServiceManager
@@ -133,7 +134,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 List(eWs.sets.size) { index ->
                     val previousSet = previousEWS?.sets?.getOrNull(index)
                     val reps = previousSet?.reps ?: 0
-                    val load = previousSet?.load ?: 0.0
+                    val load = previousSet?.load ?: Weight.zero()
                     val time = previousSet?.elapsedTime ?: 0
 
 
@@ -337,7 +338,7 @@ class WorkoutScreenViewModel @Inject constructor(
         syncToRepository()
     }
 
-    fun updateSetLoad(load: Double, id: Long) {
+    fun updateSetLoad(load: Weight, id: Long) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
                 if (exercise.sets.any { it.id == id }) {

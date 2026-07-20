@@ -322,6 +322,10 @@
     <string name="show_images">Show images</string>
     <string name="hide_images_desc">Images of exercises will be hidden</string>
     <string name="show_images_desc">Images of exercises will be shown</string>
+    <string name="settings_location">Location</string>
+    <string name="unit_system">Unit system</string>
+    <string name="metric">Metric</string>
+    <string name="imperial">Imperial</string>
 
     <!--- Languages -->
     <string name="language">Language</string>
@@ -467,6 +471,7 @@
     <!--Exercise card-->
     <string name="rest_time">Rest time</string>
     <string name="kg" translatable="false">kg</string>
+    <string name="lb" translatable="false">lb</string>
     <string name="type_of_set">Type of set</string>
     <string name="previous">Previous</string>
 

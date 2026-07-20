@@ -28,7 +28,10 @@ import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.di.qualifiers.DefaultDispatcher
 import org.librefit.enums.MeasurementCardState
 import org.librefit.enums.chart.MeasurementChart
+import org.librefit.enums.userPreferences.UnitSystem
+import org.librefit.models.Weight
 import org.librefit.ui.components.charts.Point
+import org.librefit.ui.models.doubleValue
 import org.librefit.util.Formatter
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -70,7 +73,7 @@ class MeasurementScreenViewModel @Inject constructor(
             measurements
                 .filter {
                     when (measurementChart) {
-                        MeasurementChart.BODY_WEIGHT -> it.bodyWeight != 0.0
+                        MeasurementChart.BODY_WEIGHT -> it.bodyWeight.doubleValue(unitSystem.value) != 0.0
                         MeasurementChart.FAT_MASS -> it.bodyFatPercentage != 0
                         MeasurementChart.LEAN_MASS -> it.muscleMassPercentage != 0
                     }
@@ -79,7 +82,7 @@ class MeasurementScreenViewModel @Inject constructor(
                     Point(
                         yValues = listOf(
                             when (measurementChart) {
-                                MeasurementChart.BODY_WEIGHT -> it.bodyWeight
+                                MeasurementChart.BODY_WEIGHT -> it.bodyWeight.doubleValue(unitSystem.value)
                                 MeasurementChart.FAT_MASS -> it.bodyFatPercentage
                                 MeasurementChart.LEAN_MASS -> it.muscleMassPercentage
                             }.toDouble()
@@ -104,13 +107,19 @@ class MeasurementScreenViewModel @Inject constructor(
         _idMeasurement.update { newValue }
     }
 
+    val unitSystem = userPreferencesRepository.unitSystem
 
-    private val _bodyweight = MutableStateFlow<Double?>(null)
+    private val _bodyweight = MutableStateFlow<Weight?>(null)
     val bodyWeight = _bodyweight.asStateFlow()
 
     fun updateBodyweight(newValue: String) {
         _bodyweight.update {
-            Formatter.parseDoubleFromString(newValue)
+            Formatter.parseDoubleFromString(newValue)?.let { value ->
+                when (unitSystem.value) {
+                    UnitSystem.METRIC -> Weight.kilograms(value)
+                    UnitSystem.IMPERIAL -> Weight.pounds(value)
+                }
+            }
         }
     }
 
@@ -192,7 +201,7 @@ class MeasurementScreenViewModel @Inject constructor(
                 Measurement(
                     id = if (measurementCardState.value == MeasurementCardState.EDIT)
                         idMeasurement.value else 0L,
-                    bodyWeight = bodyWeight.value ?: 0.0,
+                    bodyWeight = bodyWeight.value ?: Weight.zero(),
                     notes = notes.value,
                     muscleMassPercentage = leanMass.value ?: 0,
                     bodyFatPercentage = fatMass.value ?: 0,

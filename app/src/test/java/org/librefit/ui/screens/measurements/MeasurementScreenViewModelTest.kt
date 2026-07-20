@@ -26,6 +26,8 @@ import org.librefit.db.repository.MeasurementRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.MeasurementCardState
 import org.librefit.enums.chart.MeasurementChart
+import org.librefit.enums.userPreferences.UnitSystem
+import org.librefit.models.Weight
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -47,6 +49,7 @@ class MeasurementScreenViewModelTest {
 
     private lateinit var useScrollWheelForInput: MutableStateFlow<Boolean>
     private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
+    private lateinit var unitSystem: MutableStateFlow<UnitSystem>
 
     // Captured objects
     private val upsertedMeasurementSlot = slot<Measurement>()
@@ -56,9 +59,19 @@ class MeasurementScreenViewModelTest {
     private val now: LocalDateTime = LocalDateTime.now()
 
     private val allMeasurements = listOf(
-        Measurement(id = 1, bodyWeight = 90.0, bodyFatPercentage = 10),
-        Measurement(id = 2, bodyWeight = 88.0, muscleMassPercentage = 20, date = now.minusDays(7)),
-        Measurement(id = 3, bodyWeight = 93.0, notes = "notes", date = now.minusDays(14))
+        Measurement(id = 1, bodyWeight = Weight.kilograms(90.0), bodyFatPercentage = 10),
+        Measurement(
+            id = 2,
+            bodyWeight = Weight.kilograms(88.0),
+            muscleMassPercentage = 20,
+            date = now.minusDays(7)
+        ),
+        Measurement(
+            id = 3,
+            bodyWeight = Weight.kilograms(93.0),
+            notes = "notes",
+            date = now.minusDays(14)
+        )
     )
 
     @Before
@@ -68,6 +81,7 @@ class MeasurementScreenViewModelTest {
         measurementsFlow = MutableStateFlow(emptyList())
         useScrollWheelForInput = MutableStateFlow(true)
         dismissScrollWheelAutomatically = MutableStateFlow(false)
+        unitSystem = MutableStateFlow(UnitSystem.METRIC)
 
         userPreferencesRepository = mockk()
 
@@ -96,6 +110,7 @@ class MeasurementScreenViewModelTest {
 
         every { userPreferencesRepository.useScrollWheelForInput } returns useScrollWheelForInput
         every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
+        every { userPreferencesRepository.unitSystem } returns unitSystem
 
 
         viewModel = MeasurementScreenViewModel(
@@ -123,11 +138,6 @@ class MeasurementScreenViewModelTest {
     @Test
     fun `initial state - id measurement is 0 `() = runTest {
         assertThat(viewModel.idMeasurement.value).isEqualTo(0L)
-    }
-
-    @Test
-    fun `initial state - body weight is 0,0 `() = runTest {
-        assertThat(viewModel.bodyWeight.value).isEqualTo(0.0)
     }
 
     @Test
@@ -160,7 +170,7 @@ class MeasurementScreenViewModelTest {
 
                 // Assert: The flow should emit list of `ChartData` having yValue equal to the respective bodyweight
                 val actual = awaitItem().map { it.yValues.first() }
-                val expected = allMeasurements.map { it.bodyWeight }
+                val expected = allMeasurements.map { it.bodyWeight.inKilograms }
 
                 assertThat(actual).isEqualTo(expected)
             }
@@ -176,18 +186,19 @@ class MeasurementScreenViewModelTest {
 
                 // Assert: The flow should emit list of `ChartData` having yValue equal to the respective bodyweight
                 var actual = awaitItem().map { it.yValues.first() }
-                var expected = allMeasurements.map { it.bodyWeight }
+                var expected = allMeasurements.map { it.bodyWeight.inKilograms }
 
                 assertThat(actual).isEqualTo(expected)
 
 
                 // Act: update measurements
-                val newMeasurements = allMeasurements + Measurement(id = 4, bodyWeight = 90.0)
+                val newMeasurements =
+                    allMeasurements + Measurement(id = 4, bodyWeight = Weight.kilograms(90.0))
                 measurementsFlow.value = newMeasurements
 
                 // Assert: Check list of `ChartData` again
                 actual = awaitItem().map { it.yValues.first() }
-                expected = newMeasurements.map { it.bodyWeight }
+                expected = newMeasurements.map { it.bodyWeight.inKilograms }
 
                 assertThat(actual).isEqualTo(expected)
             }
@@ -218,7 +229,8 @@ class MeasurementScreenViewModelTest {
         runTest {
             // Arrange: Define the initial and expected states
             val newNotes = "This is a new measurement"
-            val insertedMeasurement = Measurement(notes = newNotes, bodyWeight = 90.3)
+            val insertedMeasurement =
+                Measurement(notes = newNotes, bodyWeight = Weight.kilograms(90.3))
             val updatedMeasurements = allMeasurements + insertedMeasurement
 
             // Arrange: Set the initial value for the flow.
@@ -232,7 +244,7 @@ class MeasurementScreenViewModelTest {
                 // Act: Simulate the user entering data and saving a new measurement.
                 viewModel.updateNotes(insertedMeasurement.notes)
                 viewModel.updateDate(insertedMeasurement.date)
-                viewModel.updateBodyweight(insertedMeasurement.bodyWeight.toString())
+                viewModel.updateBodyweight(insertedMeasurement.bodyWeight.inKilograms.toString())
                 viewModel.upsertMeasurementToDB()
 
                 // Assert: Await the new emission and verify its contents are correct
@@ -264,7 +276,7 @@ class MeasurementScreenViewModelTest {
             // Act: Simulate the user entering data and save the measurement
             viewModel.updateMeasurementCardState(MeasurementCardState.EDIT)
             viewModel.updateIdMeasurement(updatedMeasurement.id)
-            viewModel.updateBodyweight(updatedMeasurement.bodyWeight.toString())
+            viewModel.updateBodyweight(updatedMeasurement.bodyWeight.inKilograms.toString())
             viewModel.updateFatMass(updatedMeasurement.bodyFatPercentage.toString())
             viewModel.updateLeanMass(updatedMeasurement.muscleMassPercentage.toString())
             viewModel.updateDate(updatedMeasurement.date)
@@ -301,7 +313,7 @@ class MeasurementScreenViewModelTest {
                 // Act: Simulate the user entering data and saving a new measurement (instead of updating it).
                 viewModel.updateMeasurementCardState(MeasurementCardState.NEW)
                 viewModel.updateIdMeasurement(updatedMeasurement.id)
-                viewModel.updateBodyweight(updatedMeasurement.bodyWeight.toString())
+                viewModel.updateBodyweight(updatedMeasurement.bodyWeight.inKilograms.toString())
                 viewModel.updateFatMass(updatedMeasurement.bodyFatPercentage.toString())
                 viewModel.updateLeanMass(updatedMeasurement.muscleMassPercentage.toString())
                 viewModel.updateDate(updatedMeasurement.date)

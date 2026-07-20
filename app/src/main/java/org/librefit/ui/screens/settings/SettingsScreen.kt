@@ -52,6 +52,7 @@ import org.librefit.R
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitLazyColumn
@@ -68,7 +69,7 @@ fun SettingsScreen(
     navController: NavHostController,
     viewModel: SettingsScreenViewModel = hiltViewModel()
 ) {
-
+    val unitSystem by viewModel.unitSystem.collectAsStateWithLifecycle()
 
     val selectedLanguage by viewModel.language.collectAsStateWithLifecycle()
 
@@ -137,6 +138,7 @@ fun SettingsScreen(
         showExercisesImages = showExercisesImages,
         isWorkoutHeaderSticky = isWorkoutHeaderSticky,
         dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
+        unitSystem = unitSystem,
         updatePreferences = viewModel::updatePreferences,
         onMaterialModeChange = viewModel::saveMaterialMode,
         onKeepWorkoutScreenOnChange = viewModel::saveWorkoutScreenOn,
@@ -165,6 +167,7 @@ private fun SettingsScreenContent(
     useScrollWheelForInput: Boolean,
     showExercisesImages: Boolean?,
     dismissScrollWheelInputAutomatically: Boolean,
+    unitSystem: UnitSystem,
     updatePreferences: (List<DialogPreference>) -> Unit,
     onMaterialModeChange: (Boolean) -> Unit,
     onKeepWorkoutScreenOnChange: (Boolean) -> Unit,
@@ -216,7 +219,7 @@ private fun SettingsScreenContent(
             }
 
 
-            item { HeadlineText(text = stringResource(id = R.string.settings_general)) }
+            item { HeadlineText(text = stringResource(id = R.string.settings_location)) }
 
             item {
                 SettingItem(
@@ -228,6 +231,19 @@ private fun SettingsScreenContent(
                     )
                 )
             }
+
+            item {
+                SettingItem(
+                    onClick = { updatePreferences(UnitSystem.entries) },
+                    icon = painterResource(R.drawable.ic_weight),
+                    settingName = stringResource(id = R.string.unit_system),
+                    settingDesc = stringResource(
+                        id = Formatter.preferenceToStringId(unitSystem)
+                    )
+                )
+            }
+
+            item { HeadlineText(text = stringResource(id = R.string.settings_general)) }
 
             item {
                 SettingItem(
@@ -399,6 +415,7 @@ fun SettingsScreenPreview() {
             useScrollWheelForInput = useScrollWheelForInput,
             showExercisesImages = displayExercisesImages,
             dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
+            unitSystem = UnitSystem.entries.random(),
             onMaterialModeChange = { materialModeOn = it },
             onKeepWorkoutScreenOnChange = { keepWorkoutScreenOn = it },
             onRestTimerSoundOnChange = { restTimerSoundOn = it },

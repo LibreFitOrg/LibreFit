@@ -122,6 +122,7 @@ import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
+import org.librefit.ui.models.autoUnitSuffix
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatDetails
@@ -553,7 +554,7 @@ private fun SharedTransitionScope.HistoryPage(
                     BodyweightChart.MOST_REPS, BodyweightChart.SESSION_REPS, LoadChart.TOTAL_REPS,
                     WeightedBodyweightChart.TOTAL_REPS -> null
                     TimeChart.BEST_TIME, TimeChart.TOTAL_TIME ->  stringResource(R.string.second_abbreviation)
-                    else -> stringResource(R.string.kg)
+                    else -> autoUnitSuffix()
                 },
                 points = points,
                 chartMode = exerciseChart,
@@ -690,9 +691,7 @@ private fun SharedTransitionScope.HistoryPage(
                                             Text(stringResource(R.string.reps))
                                             if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                                                 Text(
-                                                    stringResource(R.string.load) + " (" + stringResource(
-                                                        R.string.kg
-                                                    ) + ")"
+                                                    stringResource(R.string.load) + " (" + autoUnitSuffix() + ")"
                                                 )
                                             }
                                         }

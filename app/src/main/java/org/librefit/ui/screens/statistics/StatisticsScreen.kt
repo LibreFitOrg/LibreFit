@@ -31,6 +31,7 @@ import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.components.charts.Point
+import org.librefit.ui.models.autoUnitSuffix
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import kotlin.random.Random
@@ -96,9 +97,9 @@ private fun StatisticsScreenContent(
                         else -> 2
                     },
                     suffix = when (exercisesDistributionStatisticsChart) {
-                        StatisticsChart.LOAD -> stringResource(R.string.kg)
+                        StatisticsChart.LOAD -> autoUnitSuffix()
                         StatisticsChart.REPS -> null
-                        StatisticsChart.VOLUME -> stringResource(R.string.kg)
+                        StatisticsChart.VOLUME -> autoUnitSuffix()
                         StatisticsChart.DURATION -> stringResource(R.string.min)
                     },
                     points = muscleDistributionPoints,
@@ -127,9 +128,9 @@ private fun StatisticsScreenContent(
                         else -> 2
                     },
                     suffix = when (exercisesDistributionStatisticsChart) {
-                        StatisticsChart.LOAD -> stringResource(R.string.kg)
+                        StatisticsChart.LOAD -> autoUnitSuffix()
                         StatisticsChart.REPS -> null
-                        StatisticsChart.VOLUME -> stringResource(R.string.kg)
+                        StatisticsChart.VOLUME -> autoUnitSuffix()
                         StatisticsChart.DURATION -> stringResource(R.string.min)
                     },
                     points = exercisesDistributionPoints,
