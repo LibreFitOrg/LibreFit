@@ -127,7 +127,7 @@ You can also follow the development on [Codeberg mirror](https://codeberg.org/Li
 
 See [Contributing to translations](CONTRIBUTING.md#translations) to discover how to contribute.
 
-[![Translation status](https://hosted.weblate.org/widget/librefit/librefit/matrix-auto.svg)(https://hosted.weblate.org/engage/librefit/)
+[![Translation status](https://hosted.weblate.org/widget/librefit/librefit/matrix-auto.svg)(https://hosted.weblate.org/engage/librefit/)]
 
 > Thanks to [Weblate](https://weblate.org) for hosting the LibreFit's translations!
 
