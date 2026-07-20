@@ -81,6 +81,8 @@ class SettingsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             userPreferences.saveShowExercisesImages(display)
         }
+    }
+
     fun saveUnitSystem(unitSystem: UnitSystem) {
         viewModelScope.launch { userPreferences.saveUnitSystem(unitSystem) }
     }
