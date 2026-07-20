@@ -6,7 +6,7 @@
 
 [![GitHub Downloads](https://img.shields.io/github/downloads/LibreFitOrg/LibreFit/total?style=for-the-badge&logo=github&labelColor=20232A&color=82D3E3)](https://tooomm.github.io/github-release-stats/?username=LibreFitOrg&repository=LibreFit)
 [![F-droid Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Forg.librefit.app.json&query=%24.total_downloads&style=for-the-badge&label=Downloads&logo=fdroid&labelColor=20232A&color=82D3E3)](https://f-droid.org/packages/org.librefit.app)
-[![GitHub Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/stargazers)
+![GitHub Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)
 [![GitHub Release](https://img.shields.io/github/v/release/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
 [![Codeberg Mirror](https://img.shields.io/badge/Codeberg-Mirror-black?style=for-the-badge&logo=codeberg&labelColor=20232A&color=82D3E3)](https://codeberg.org/LibreFitOrg/LibreFit)
 [![Codeberg Stars](https://img.shields.io/gitea/stars/LibreFitOrg/LibreFit?gitea_url=https%3A%2F%2Fcodeberg.org%2F&style=for-the-badge&logo=codeberg&labelColor=20232A&color=82D3E3)](https://codeberg.org/LibreFitOrg/LibreFit/stars)
@@ -127,7 +127,7 @@ You can also follow the development on [Codeberg mirror](https://codeberg.org/Li
 
 See [Contributing to translations](CONTRIBUTING.md#translations) to discover how to contribute.
 
-[![Translation status](https://hosted.weblate.org/widget/librefit/librefit/horizontal-auto.svg)](https://hosted.weblate.org/engage/librefit/)
+[![Translation status](https://hosted.weblate.org/widget/librefit/librefit/matrix-auto.svg)(https://hosted.weblate.org/engage/librefit/)
 
 > Thanks to [Weblate](https://weblate.org) for hosting the LibreFit's translations!
 
