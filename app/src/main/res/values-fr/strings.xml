@@ -31,7 +31,7 @@
     <string name="lets_build_it_together">Construisons-le ensemble</string>
     <string name="tutorial_desc">Apprenez à créer des routines et à suivre vos entraînements.</string>
     <string name="donators">Donateurs</string>
-    <string name="unlink_routine_question">routines dissociées ?</string>
+    <string name="unlink_routine_question">Dissocier la routine ?</string>
     <string name="unlink_routine_text">Lier des séances d\'\'entraînement permet de suivre la progression de vos séances au fil du temps. Si vous dissociez cette séance d\'\'entraînement d\'\'une séance, cette dernière ne sera pas supprimée et les séances qui y sont liées resteront inchangées. La dissociation n\'\'affectera que la séance d\'\'entraînement en cours.</string>
     <string name="overview">Panorama</string>
     <string name="statistics">Statistiques</string>
@@ -161,4 +161,5 @@
     <string name="application_encountered_error">Une erreur inattendue est survenue</string>
     <string name="stack_trace_not_available">Trace d\'exécution non disponible</string>
     <string name="quit_adding_exercises_question">Arrêter l\'ajout d\'exercices ?</string>
+    <string name="exit_create_routine">Êtes-vous sûrs de vouloir quitter ? Votre routine ne sera pas sauvegardée</string>
 </resources>
