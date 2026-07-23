@@ -19,6 +19,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -26,11 +27,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.librefit.di.qualifiers.ApplicationScope
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -49,6 +53,11 @@ private val USE_SCROLL_WHEEL_FOR_INPUT_KEY = booleanPreferencesKey("use_number_p
 private val DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY =
     booleanPreferencesKey("dismiss_input_modal_bottom_sheet_automatically_key")
 private val HEALTH_CONNECT_ENABLED_KEY = booleanPreferencesKey("health_connect_enabled")
+private val IGNORED_HEALTH_CONNECT_RECORD_IDS_KEY =
+    stringSetPreferencesKey("ignored_health_connect_record_ids")
+private fun healthConnectSyncKey(id: String) = booleanPreferencesKey("health_connect_sync_$id")
+private const val IGNORED_RECORD_SEPARATOR = "|"
+private const val IGNORED_RECORD_DAYS = 30L
 
 /**
  * A repository to handle user preferences using [androidx.datastore.core.DataStore].
@@ -60,6 +69,7 @@ class UserPreferencesRepository @Inject constructor(
     @param:ApplicationScope private val applicationScope: CoroutineScope,
     private val application: Application
 ) {
+    private val healthConnectSyncStates = mutableMapOf<String, StateFlow<Boolean>>()
 
     val themeMode: StateFlow<ThemeMode> = dataStore.data
         .map { preferences ->
@@ -166,6 +176,39 @@ class UserPreferencesRepository @Inject constructor(
             started = SharingStarted.Eagerly,
             initialValue = false
         )
+
+    fun healthConnectSyncEnabled(id: String): StateFlow<Boolean> =
+        synchronized(healthConnectSyncStates) {
+            healthConnectSyncStates.getOrPut(id) {
+                dataStore.data
+                    .map { preferences -> preferences[healthConnectSyncKey(id)] == true }
+                    .stateIn(
+                        scope = applicationScope,
+                        started = SharingStarted.Eagerly,
+                        initialValue = false
+                    )
+            }
+        }
+
+    suspend fun isHealthConnectSyncEnabled(id: String): Boolean =
+        dataStore.data.first()[healthConnectSyncKey(id)] == true
+
+    suspend fun isHealthConnectEnabled(): Boolean =
+        dataStore.data.first()[HEALTH_CONNECT_ENABLED_KEY] == true
+
+    suspend fun getIgnoredHealthConnectRecordIds(): Set<String> {
+        val entries = dataStore.data.first()[IGNORED_HEALTH_CONNECT_RECORD_IDS_KEY].orEmpty()
+        val cutoff = Instant.now().minus(IGNORED_RECORD_DAYS, ChronoUnit.DAYS).toEpochMilli()
+        val activeEntries = entries.filterTo(mutableSetOf()) { it.isActiveIgnoredRecord(cutoff) }
+
+        if (activeEntries.size != entries.size) {
+            dataStore.edit { preferences ->
+                preferences[IGNORED_HEALTH_CONNECT_RECORD_IDS_KEY] = activeEntries
+            }
+        }
+
+        return activeEntries.mapTo(mutableSetOf()) { it.substringAfter(IGNORED_RECORD_SEPARATOR) }
+    }
 
     /**
      * Resolves the current Application Locale into our [Language] enum.
@@ -275,5 +318,32 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun saveHealthConnectEnabled(isEnabled: Boolean) {
         dataStore.edit { preferences -> preferences[HEALTH_CONNECT_ENABLED_KEY] = isEnabled }
+    }
+
+    suspend fun saveHealthConnectSyncEnabled(id: String, isEnabled: Boolean) {
+        dataStore.edit { preferences -> preferences[healthConnectSyncKey(id)] = isEnabled }
+    }
+
+    suspend fun ignoreHealthConnectRecordIds(ids: Set<String>) {
+        if (ids.isEmpty()) return
+        val now = Instant.now()
+        val cutoff = now.minus(IGNORED_RECORD_DAYS, ChronoUnit.DAYS).toEpochMilli()
+        dataStore.edit { preferences ->
+            val activeEntries = preferences[IGNORED_HEALTH_CONNECT_RECORD_IDS_KEY]
+                .orEmpty()
+                .filterTo(mutableSetOf()) { entry ->
+                    entry.isActiveIgnoredRecord(cutoff) &&
+                        entry.substringAfter(IGNORED_RECORD_SEPARATOR) !in ids
+                }
+            // The sync only covers thirty days, so older ignored IDs are no longer needed.
+            preferences[IGNORED_HEALTH_CONNECT_RECORD_IDS_KEY] =
+                activeEntries + ids.map { "${now.toEpochMilli()}$IGNORED_RECORD_SEPARATOR$it" }
+        }
+    }
+
+    private fun String.isActiveIgnoredRecord(cutoff: Long): Boolean {
+        val ignoredAt = substringBefore(IGNORED_RECORD_SEPARATOR).toLongOrNull() ?: return false
+        val recordId = substringAfter(IGNORED_RECORD_SEPARATOR, missingDelimiterValue = "")
+        return ignoredAt >= cutoff && recordId.isNotEmpty()
     }
 }

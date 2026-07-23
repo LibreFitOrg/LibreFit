@@ -8,23 +8,11 @@
 
 package org.librefit.ui.models
 
-import org.librefit.enums.healthConnect.HealthConnectStatus
+import org.librefit.enums.healthConnect.HealthConnectSyncOption
 
 data class HealthConnectState(
-    val status: HealthConnectStatus = HealthConnectStatus.UNAVAILABLE,
+    val isAvailable: Boolean = false,
     val isEnabled: Boolean = false,
-    val exportedRecords: Int? = null
-) {
-    val isAvailable: Boolean
-        get() = status != HealthConnectStatus.UNAVAILABLE
-
-    val hasPermissions: Boolean
-        get() = status == HealthConnectStatus.READY ||
-            status == HealthConnectStatus.EXPORTING
-
-    val isExporting: Boolean
-        get() = status == HealthConnectStatus.EXPORTING
-
-    val isChecked: Boolean
-        get() = isEnabled && hasPermissions
-}
+    val grantedPermissions: Set<String> = emptySet(),
+    val enabledOptions: Set<HealthConnectSyncOption> = emptySet()
+)

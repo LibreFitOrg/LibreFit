@@ -17,6 +17,7 @@ import org.librefit.enums.exercise.Force
 import org.librefit.enums.exercise.Level
 import org.librefit.enums.exercise.Mechanic
 import org.librefit.enums.exercise.Muscle
+import org.librefit.enums.healthConnect.HealthConnectSegmentType
 
 /**
  * The [org.librefit.db.entity.ExerciseDC] model used only by the ui. The difference is the use
@@ -38,5 +39,6 @@ data class UiExerciseDC(
     val instructions: ImmutableList<String> = persistentListOf(),
     val category: Category = Category.POWERLIFTING,
     val images: ImmutableList<String> = persistentListOf(),
+    val healthConnectSegmentType: HealthConnectSegmentType = HealthConnectSegmentType.OTHER_WORKOUT,
     val isCustomExercise: Boolean = false
 )

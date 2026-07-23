@@ -10,6 +10,7 @@ package org.librefit.ui.models
 
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 /**
@@ -25,6 +26,8 @@ data class UiSet(
     val load: Double = 0.0,
     val reps: Int = 0,
     val elapsedTime: Int = 0,
+    val startedAt: LocalDateTime? = null,
+    val completedAt: LocalDateTime? = null,
     val completed: Boolean = false,
     val exerciseId: Long = 0
 )

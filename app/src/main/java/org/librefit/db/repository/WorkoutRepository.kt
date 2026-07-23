@@ -16,8 +16,11 @@ import org.librefit.db.dao.WorkoutDao
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.WorkoutState
+import org.librefit.enums.healthConnect.HealthConnectSyncOption
+import org.librefit.health.HealthConnectRepository
 import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
 import org.librefit.ui.models.mappers.toUi
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,7 +38,9 @@ import javax.inject.Singleton
  */
 @Singleton
 class WorkoutRepository @Inject constructor(
-    private val workoutDao: WorkoutDao
+    private val workoutDao: WorkoutDao,
+    private val userPreferences: UserPreferencesRepository,
+    private val healthConnectRepository: HealthConnectRepository
 ) {
     private val mutex = Mutex()
 
@@ -83,11 +88,34 @@ class WorkoutRepository @Inject constructor(
     }
 
     suspend fun updateWorkout(workout: Workout) {
-        workoutDao.updateWorkout(workout)
+        val updatedWorkout = workout.withNextHealthConnectVersion()
+        workoutDao.updateWorkout(updatedWorkout)
+        if (
+            updatedWorkout.state == WorkoutState.COMPLETED &&
+            userPreferences.isHealthConnectEnabled() &&
+            userPreferences.isHealthConnectSyncEnabled(
+                HealthConnectSyncOption.WORKOUT_WRITE.preferenceId
+            )
+        ) {
+            runCatching {
+                // Export the full relation because Health Connect also needs the exercise segments.
+                healthConnectRepository.exportWorkout(
+                    workoutDao.getWorkoutWithExercisesAndSets(updatedWorkout.id)
+                )
+            }
+        }
     }
 
     suspend fun deleteWorkout(workout: Workout) {
         workoutDao.deleteWorkout(workout)
+        if (
+            userPreferences.isHealthConnectEnabled() &&
+            userPreferences.isHealthConnectSyncEnabled(
+                HealthConnectSyncOption.WORKOUT_WRITE.preferenceId
+            )
+        ) {
+            runCatching { healthConnectRepository.deleteWorkout(workout) }
+        }
     }
 
 
@@ -110,7 +138,49 @@ class WorkoutRepository @Inject constructor(
     suspend fun addWorkoutWithExercisesAndSets(
         workoutWithExercisesAndSets: WorkoutWithExercisesAndSets
     ): Long {
-        return workoutDao.addWorkoutWithExercisesAndSets(workoutWithExercisesAndSets)
+        val versionedWorkout = workoutWithExercisesAndSets.copy(
+            workout = workoutWithExercisesAndSets.workout.withNextHealthConnectVersion()
+        )
+        val workoutId = workoutDao.addWorkoutWithExercisesAndSets(versionedWorkout)
+
+        if (
+            versionedWorkout.workout.state == WorkoutState.COMPLETED &&
+            userPreferences.isHealthConnectEnabled() &&
+            userPreferences.isHealthConnectSyncEnabled(
+                HealthConnectSyncOption.WORKOUT_WRITE.preferenceId
+            )
+        ) {
+            runCatching {
+                healthConnectRepository.exportWorkout(
+                    versionedWorkout.copy(workout = versionedWorkout.workout.copy(id = workoutId))
+                )
+            }.onFailure {
+                if (!healthConnectRepository.hasPermissions(
+                        setOf(HealthConnectSyncOption.WORKOUT_WRITE)
+                    )
+                ) {
+                    userPreferences.saveHealthConnectSyncEnabled(
+                        HealthConnectSyncOption.WORKOUT_WRITE.preferenceId,
+                        false
+                    )
+                }
+            }
+        }
+
+        return workoutId
+    }
+
+    private suspend fun Workout.withNextHealthConnectVersion(): Workout {
+        val previousVersion = id.takeIf { it != 0L }
+            ?.let { workoutDao.getWorkout(it).healthConnectRecordVersion }
+            ?: healthConnectRecordVersion
+        return copy(
+            // A later edit must win over the record already stored in Health Connect.
+            healthConnectRecordVersion = maxOf(
+                Instant.now().toEpochMilli(),
+                previousVersion + 1
+            )
+        )
     }
 
 
