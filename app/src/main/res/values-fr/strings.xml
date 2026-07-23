@@ -32,7 +32,7 @@
     <string name="tutorial_desc">Apprenez à créer des routines et à suivre vos entraînements.</string>
     <string name="donators">Donateurs</string>
     <string name="unlink_routine_question">Dissocier la routine ?</string>
-    <string name="unlink_routine_text">Lier des séances d\'\'entraînement permet de suivre la progression de vos séances au fil du temps. Si vous dissociez cette séance d\'\'entraînement d\'\'une séance, cette dernière ne sera pas supprimée et les séances qui y sont liées resteront inchangées. La dissociation n\'\'affectera que la séance d\'\'entraînement en cours.</string>
+    <string name="unlink_routine_text">Lier des séances d\'entraînement permet de suivre la progression de vos séances au fil du temps. Si vous dissociez cette séance d\'entraînement d\'une séance, cette dernière ne sera pas supprimée et les séances qui y sont liées resteront inchangées. La dissociation n\'affectera que la séance d\'entraînement en cours.</string>
     <string name="overview">Panorama</string>
     <string name="statistics">Statistiques</string>
     <string name="volume">Volume</string>
