@@ -44,7 +44,7 @@
     <string name="label_when">Quand</string>
     <string name="select_date">Sélectionnez une date</string>
     <string name="create_exercise">Créer un exercice</string>
-    <string name="edit_exercise">Exercice de modification</string>
+    <string name="edit_exercise">Modifier l\'exercice</string>
     <string name="any">Tous</string>
     <string name="checkbox">case à cocher</string>
     <string name="show_only_custom_exercises">Afficher uniquement les exercices personnalisés</string>
