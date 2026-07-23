@@ -45,6 +45,7 @@ import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.NumberPicker
 import org.librefit.ui.models.InputModalBottomSheetState
+import org.librefit.ui.models.autoUnitSuffix
 import org.librefit.ui.theme.LibreFitTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -55,6 +56,7 @@ fun InputModalBottomSheet(
     onValueChange: (InputModalBottomSheetState) -> Unit,
     dismissAutomatically: Boolean
 ) {
+
     // Save initial state so user can restore it
     val initialState = remember { state }
 
@@ -267,7 +269,7 @@ fun InputModalBottomSheet(
 
                                 Spacer(Modifier.width(10.dp))
                                 Text(
-                                    text = stringResource(R.string.kg),
+                                    text = autoUnitSuffix(),
                                     style = textStyle
                                 )
                             }

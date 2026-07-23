@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Support for imperial system (pounds) [#18](https://github.com/LibreFitOrg/LibreFit/issues/18)
 - Russian 🇷🇺 [#124](https://github.com/LibreFitOrg/LibreFit/pull/124)
 - Add 5 new exercises [#111](https://github.com/LibreFitOrg/LibreFit/pull/111):
   - Wall Sit (Isometric squat against the wall)
@@ -18,12 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Jumping Jacks
 
 ### Changed
--
+
+- A new toggle to show images was introduced (off by default). [#29](https://github.com/LibreFitOrg/LibreFit/issues/29)
 
 ### Deprecated
+
 -
 
 ### Removed
+
 -
 
 ### Fixed

@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.repository.DatasetRepository
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.chart.BodyweightChart
 import org.librefit.enums.chart.ExerciseChart
@@ -49,8 +50,26 @@ class InfoExerciseScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     workoutRepository: WorkoutRepository,
     dataHelper: DataHelper,
-    private val datasetRepository: DatasetRepository
+    private val datasetRepository: DatasetRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+
+    val showExercisesImages = userPreferencesRepository.showExercisesImages
+
+    fun setTrueShowExercisesImages() {
+        onShowExercisesImagesChange(true)
+    }
+
+    fun setFalseShowExercisesImages() {
+        onShowExercisesImagesChange(false)
+    }
+
+    fun onShowExercisesImagesChange(value: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveShowExercisesImages(value)
+        }
+    }
+
 
     private val idExerciseDC = savedStateHandle.toRoute<Route.InfoExerciseScreen>().idExerciseDC
 

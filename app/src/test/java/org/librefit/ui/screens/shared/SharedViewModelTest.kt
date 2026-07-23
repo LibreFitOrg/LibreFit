@@ -19,6 +19,7 @@ import org.junit.Before
 import org.junit.Test
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.enums.userPreferences.UnitSystem
 
 class SharedViewModelTest {
     // The mock repository
@@ -31,6 +32,7 @@ class SharedViewModelTest {
     private lateinit var showWelcomeScreen: MutableStateFlow<Boolean>
     private lateinit var requestPermissionNextTime: MutableStateFlow<Boolean>
     private lateinit var isSupporter: MutableStateFlow<Boolean>
+    private lateinit var unitSystem: MutableStateFlow<UnitSystem>
 
     @Before
     fun setUp() {
@@ -39,11 +41,13 @@ class SharedViewModelTest {
         showWelcomeScreen = MutableStateFlow(true)
         requestPermissionNextTime = MutableStateFlow(true)
         isSupporter = MutableStateFlow(false)
+        unitSystem = MutableStateFlow(UnitSystem.METRIC)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.showWelcomeScreen } returns showWelcomeScreen
         every { userPreferencesRepository.requestPermissionsNextTime } returns requestPermissionNextTime
         every { userPreferencesRepository.isSupporter } returns isSupporter
+        every { userPreferencesRepository.unitSystem } returns unitSystem
 
         coEvery { userPreferencesRepository.saveShowWelcomeScreen(any()) } answers {
             showWelcomeScreen.value = firstArg()

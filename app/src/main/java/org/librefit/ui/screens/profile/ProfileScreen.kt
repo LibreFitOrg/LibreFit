@@ -87,6 +87,7 @@ import org.librefit.ui.components.charts.LibreFitCartesianChart
 import org.librefit.ui.components.charts.Point
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
+import org.librefit.ui.models.autoUnitSuffix
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatTime
@@ -94,6 +95,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -238,7 +240,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                 },
                 suffix = when (workoutChart) {
                     WorkoutChart.DURATION -> stringResource(R.string.min)
-                    WorkoutChart.VOLUME -> stringResource(R.string.kg)
+                    WorkoutChart.VOLUME -> autoUnitSuffix()
                     WorkoutChart.REPS -> null
                 },
                 points = points,
@@ -377,7 +379,7 @@ fun StreakCard(weekStreak: Int) {
 
     LaunchedEffect(Unit) {
         while (true) {
-            delay(1000)
+            delay(1000.milliseconds)
             clicks = clicks.dec().coerceIn(0, 40)
         }
     }

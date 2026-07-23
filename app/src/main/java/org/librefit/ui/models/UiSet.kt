@@ -11,6 +11,7 @@ package org.librefit.ui.models
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import java.time.LocalDateTime
+import org.librefit.models.Weight
 import kotlin.random.Random
 
 /**
@@ -23,7 +24,7 @@ import kotlin.random.Random
 @Immutable
 data class UiSet(
     val id: Long = Random.nextLong(),
-    val load: Double = 0.0,
+    val load: Weight = Weight.zero(),
     val reps: Int = 0,
     val elapsedTime: Int = 0,
     val startedAt: LocalDateTime? = null,

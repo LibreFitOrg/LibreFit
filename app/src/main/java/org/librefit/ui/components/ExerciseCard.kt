@@ -101,12 +101,16 @@ import org.librefit.enums.InfoMode
 import org.librefit.enums.PreviousPerformanceSet
 import org.librefit.enums.SetMode
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.models.Weight
+import org.librefit.nav.LocalUnitSystem
 import org.librefit.ui.components.modalBottomSheets.InputModalBottomSheet
 import org.librefit.ui.models.InputModalBottomSheetState
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
+import org.librefit.ui.models.autoUnitSuffix
+import org.librefit.ui.models.doubleValue
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.getDecimalDigitsAsInteger
@@ -137,6 +141,7 @@ import kotlin.time.Duration.Companion.seconds
  * @param isDragging when `true`, it applies a shadow to further emphasize with a shadow that the card is dragged.
  * @param useScrollWheelForInput If `true`, [InputModalBottomSheet] appears instead of keyboard
  * @param dismissScrollWheelInputAutomatically If both this and [useScrollWheelForInput] are `true`, the [InputModalBottomSheet] will be dismissed automatically after first edit.
+ * @param showExercisesImages If `true`, it shows image of exercise
  * @param updateExerciseNotes A function to update notes based on [UiExercise.id]. For more details, refer to
  * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExerciseNotes] and
  * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateExerciseNotes].
@@ -191,6 +196,7 @@ fun SharedTransitionScope.ExerciseCard(
     isDragging: Boolean,
     useScrollWheelForInput: Boolean,
     dismissScrollWheelInputAutomatically: Boolean,
+    showExercisesImages: Boolean?,
     onReorderRequest: () -> Unit,
     deleteSet: (Long) -> Unit,
     updateExerciseNotes: (String, Long) -> Unit,
@@ -198,12 +204,14 @@ fun SharedTransitionScope.ExerciseCard(
     updateExerciseSetMode: (SetMode, Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
-    updateSetLoad: (Double, Long) -> Unit,
+    updateSetLoad: (Weight, Long) -> Unit,
     updateSetCompleted: (Boolean, Long) -> Unit,
     showInfo: (InfoMode) -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit = {},
     applyPreviousSetPerformance: (Long) -> Unit = {}
 ) {
+    val unit = autoUnitSuffix()
+
     var showMenu by rememberSaveable { mutableStateOf(false) }
     val shape = MaterialTheme.shapes.extraLarge
     ElevatedCard(
@@ -238,23 +246,25 @@ fun SharedTransitionScope.ExerciseCard(
                 ) {
                     val model =
                         remember(exerciseWithSets.exerciseDC.images) { exerciseWithSets.exerciseDC.images.firstOrNull() }
-                    AsyncImage(
-                        model = model?.let { "file:///android_asset/${it}" },
-                        fallback = painterResource(R.drawable.no_image),
-                        contentDescription = exerciseWithSets.exerciseDC.name,
-                        contentScale = ContentScale.Crop,
-                        colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .sharedElement(
-                                sharedContentState = rememberSharedContentState(
-                                    key = exerciseWithSets.exercise.id.toString() + exerciseWithSets.exerciseDC.id
-                                ),
-                                animatedVisibilityScope = animatedVisibilityScope
-                            )
-                            .size(50.dp)
-                            .clip(MaterialTheme.shapes.medium)
-                    )
+                    if (showExercisesImages == true) {
+                        AsyncImage(
+                            model = model?.let { "file:///android_asset/${it}" },
+                            fallback = painterResource(R.drawable.no_image),
+                            contentDescription = exerciseWithSets.exerciseDC.name,
+                            contentScale = ContentScale.Crop,
+                            colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
+                            modifier = Modifier
+                                .padding(end = 10.dp)
+                                .sharedElement(
+                                    sharedContentState = rememberSharedContentState(
+                                        key = exerciseWithSets.exercise.id.toString() + exerciseWithSets.exerciseDC.id
+                                    ),
+                                    animatedVisibilityScope = animatedVisibilityScope
+                                )
+                                .size(50.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                        )
+                    }
                     Text(
                         text = exerciseWithSets.exerciseDC.name,
                         style = MaterialTheme.typography.headlineSmall,
@@ -524,7 +534,7 @@ fun SharedTransitionScope.ExerciseCard(
                                     exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
                                 ) {
                                     Text(
-                                        text = stringResource(R.string.load) + " (" + stringResource(R.string.kg) + ")",
+                                        text = stringResource(R.string.load) + " (" + unit + ")",
                                         color = MaterialTheme.colorScheme.secondary
                                     )
                                 }
@@ -556,6 +566,7 @@ fun SharedTransitionScope.ExerciseCard(
                                         workout = workout,
                                         useScrollWheelForInput = useScrollWheelForInput,
                                         dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
+                                        unit = unit,
                                         deleteSet = deleteSet,
                                         updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
                                         updateSetTime = updateSetTime,
@@ -595,20 +606,27 @@ private fun Set(
     workout: Boolean,
     useScrollWheelForInput: Boolean,
     dismissScrollWheelInputAutomatically: Boolean,
+    unit: String,
     deleteSet: (Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
-    updateSetLoad: (Double, Long) -> Unit,
+    updateSetLoad: (Weight, Long) -> Unit,
     updateSetCompleted: (Boolean, Long) -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
     applyPreviousSet: (Long) -> Unit
 ) {
+    val unitSystem = LocalUnitSystem.current
+
     val timeTextFieldState = rememberTextFieldState(
         initialText = Formatter.formateSecondsInMinutesAndSeconds(set.elapsedTime)
             .filter { it != ':' }
     )
     var repValue by rememberSaveable(set.reps) { mutableStateOf(set.reps.toString()) }
-    var weightValue by rememberSaveable(set.load) { mutableStateOf(set.load.toString()) }
+    var weightValue by rememberSaveable(set.load) {
+        mutableStateOf(
+            set.load.doubleValue(unitSystem).toString()
+        )
+    }
 
     // Sync elapsed time with time text field
     LaunchedEffect(set.elapsedTime) {
@@ -648,7 +666,7 @@ private fun Set(
                     when (newState) {
                         is InputModalBottomSheetState.Weight -> {
                             updateSetLoad(
-                                newState.totalWeight,
+                                Weight.auto(newState.totalWeight, unitSystem),
                                 id
                             )
                         }
@@ -770,9 +788,9 @@ private fun Set(
                 ) {
                     val (previousReps, previousLoad, previousTime) = values
                     val text = when (setMode) {
-                        SetMode.LOAD -> "$previousLoad" + stringResource(R.string.kg) + "\n* $previousReps"
+                        SetMode.LOAD -> "$previousLoad$unit\n* $previousReps"
                         SetMode.BODYWEIGHT -> "$previousReps"
-                        SetMode.BODYWEIGHT_WITH_LOAD -> "$previousLoad" + stringResource(R.string.kg) + "\n* $previousReps"
+                        SetMode.BODYWEIGHT_WITH_LOAD -> "$previousLoad$unit\n* $previousReps"
                         SetMode.DURATION -> Formatter.formateSecondsInMinutesAndSeconds(previousTime)
                     }
                     Text(
@@ -859,7 +877,10 @@ private fun Set(
                                 weightValue = Formatter.normalizeNumericString(string)
 
                                 updateSetLoad(
-                                    Formatter.parseDoubleFromString(weightValue) ?: 0.0,
+                                    Weight.auto(
+                                        Formatter.parseDoubleFromString(weightValue) ?: 0.0,
+                                        unitSystem
+                                    ),
                                     set.id
                                 )
                             },
@@ -880,10 +901,11 @@ private fun Set(
                                     .matchParentSize()
                                     .clip(MaterialTheme.shapes.extraLarge)
                                     .clickable {
+                                        val value = set.load.doubleValue(unitSystem)
                                         inputModalBottomSheetState =
                                             InputModalBottomSheetState.Weight(
-                                                integerWeight = set.load.toInt(),
-                                                decimalWeight = set.load.getDecimalDigitsAsInteger()
+                                                integerWeight = value.toInt(),
+                                                decimalWeight = value.getDecimalDigitsAsInteger()
                                             )
                                         inputSetId = set.id
                                     }
@@ -974,8 +996,12 @@ private fun ExerciseCardPreview() {
         when (e.value.exercise.setMode) {
             SetMode.BODYWEIGHT -> PreviousPerformanceSet(reps = 10)
             SetMode.DURATION -> PreviousPerformanceSet(time = 124)
-            SetMode.BODYWEIGHT_WITH_LOAD -> PreviousPerformanceSet(reps = 10, load = 12.0)
-            SetMode.LOAD -> PreviousPerformanceSet(reps = 10, load = 12.0)
+            SetMode.BODYWEIGHT_WITH_LOAD -> PreviousPerformanceSet(
+                reps = 10,
+                load = Weight.kilograms(12.0)
+            )
+
+            SetMode.LOAD -> PreviousPerformanceSet(reps = 10, load = Weight.kilograms(12.0))
         }
     }
 
@@ -1005,6 +1031,7 @@ private fun ExerciseCardPreview() {
                     isDragging = false,
                     useScrollWheelForInput = false,
                     dismissScrollWheelInputAutomatically = false,
+                    showExercisesImages = false,
                     updateExerciseNotes = { notes, _ ->
                         e.value = e.value.copy(exercise = e.value.exercise.copy(notes = notes))
                     },

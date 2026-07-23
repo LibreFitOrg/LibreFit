@@ -25,6 +25,7 @@ import org.librefit.enums.healthConnect.HealthConnectSyncOption
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.health.HealthConnectRepository
 import org.librefit.health.HealthConnectSyncManager
 import org.librefit.ui.models.HealthConnectState
@@ -44,6 +45,7 @@ class SettingsScreenViewModel @Inject constructor(
     val isSupporter = userPreferences.isSupporter
     val isWorkoutHeaderSticky = userPreferences.isWorkoutHeaderSticky
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
+    val showExercisesImages = userPreferences.showExercisesImages
     val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
     val allHealthConnectPermissions = healthConnectRepository.allPermissions
     private val _healthConnectState = MutableStateFlow(HealthConnectState())
@@ -72,6 +74,8 @@ class SettingsScreenViewModel @Inject constructor(
     init {
         refreshHealthConnectState()
     }
+
+    val unitSystem = userPreferences.unitSystem
 
     fun saveThemeMode(mode: ThemeMode) {
         viewModelScope.launch { userPreferences.saveThemeMode(mode) }
@@ -193,6 +197,16 @@ class SettingsScreenViewModel @Inject constructor(
         runCatching { healthConnectSyncManager.syncEnabledData(options) }
     }
 
+    fun saveShowExercisesImages(display: Boolean) {
+        viewModelScope.launch {
+            userPreferences.saveShowExercisesImages(display)
+        }
+    }
+
+    fun saveUnitSystem(unitSystem: UnitSystem) {
+        viewModelScope.launch { userPreferences.saveUnitSystem(unitSystem) }
+    }
+
     private val _preferences = MutableStateFlow<List<DialogPreference>?>(null)
     val preferences = _preferences.asStateFlow()
 
@@ -205,12 +219,14 @@ class SettingsScreenViewModel @Inject constructor(
     val currentPreference: StateFlow<DialogPreference?> = combine(
         preferences,
         language,
-        themeMode
-    ) { p, l, t ->
+        themeMode,
+        unitSystem
+    ) { p, l, t, u ->
         p?.let {
             when (p.first()) {
                 is Language -> l
                 is ThemeMode -> t
+                is UnitSystem -> u
             }
         }
     }
@@ -225,6 +241,7 @@ class SettingsScreenViewModel @Inject constructor(
         when (newPreference) {
             is Language -> saveLanguage(newPreference)
             is ThemeMode -> saveThemeMode(newPreference)
+            is UnitSystem -> saveUnitSystem(newPreference)
         }
     }
 }

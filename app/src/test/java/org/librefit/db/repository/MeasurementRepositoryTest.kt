@@ -22,6 +22,7 @@ import org.librefit.db.dao.MeasurementDao
 import org.librefit.db.entity.Measurement
 import org.librefit.enums.healthConnect.HealthConnectSyncOption
 import org.librefit.health.HealthConnectRepository
+import org.librefit.models.Weight
 
 class MeasurementRepositoryTest {
     private lateinit var measurementDao: MeasurementDao
@@ -55,7 +56,9 @@ class MeasurementRepositoryTest {
         val savedMeasurement = slot<Measurement>()
         coEvery { measurementDao.upsertMeasurement(capture(savedMeasurement)) } returns 42L
 
-        val savedId = repository.upsertMeasurement(Measurement(bodyWeight = 80.0))
+        val savedId = repository.upsertMeasurement(
+            Measurement(bodyWeight = Weight.kilograms(80.0))
+        )
 
         assertThat(savedId).isEqualTo(42L)
         assertThat(savedMeasurement.captured.healthConnectRecordVersion).isGreaterThan(0L)
@@ -76,14 +79,14 @@ class MeasurementRepositoryTest {
         val previousVersion = System.currentTimeMillis() + 10_000
         val existing = Measurement(
             id = 5,
-            bodyWeight = 80.0,
+            bodyWeight = Weight.kilograms(80.0),
             healthConnectRecordVersion = previousVersion
         )
         val savedMeasurement = slot<Measurement>()
         coEvery { measurementDao.getMeasurement(5) } returns existing
         coEvery { measurementDao.upsertMeasurement(capture(savedMeasurement)) } returns -1L
 
-        repository.upsertMeasurement(existing.copy(bodyWeight = 81.0))
+        repository.upsertMeasurement(existing.copy(bodyWeight = Weight.kilograms(81.0)))
 
         assertThat(savedMeasurement.captured.healthConnectRecordVersion)
             .isEqualTo(previousVersion + 1)

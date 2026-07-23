@@ -25,6 +25,7 @@ import org.librefit.db.repository.MeasurementRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.healthConnect.HealthConnectSyncOption
+import org.librefit.models.Weight
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -92,7 +93,11 @@ class HealthConnectSyncManagerTest {
     @Test
     fun `body fat is merged with nearby local weight without changing its origin`() = runTest {
         val measuredAt = LocalDateTime.now()
-        val localWeight = Measurement(id = 1, bodyWeight = 80.0, date = measuredAt)
+        val localWeight = Measurement(
+            id = 1,
+            bodyWeight = Weight.kilograms(80.0),
+            date = measuredAt
+        )
         val importedBodyFat = Measurement(
             bodyFatPercentage = 22,
             date = measuredAt.plusSeconds(30),
@@ -109,7 +114,7 @@ class HealthConnectSyncManagerTest {
         coVerify(exactly = 1) {
             measurementRepository.upsertMeasurement(
                 match {
-                    it.id == 1L && it.bodyWeight == 80.0 &&
+                    it.id == 1L && it.bodyWeight == Weight.kilograms(80.0) &&
                         it.bodyFatPercentage == 22 &&
                         it.healthConnectWeightRecordId == null &&
                         it.healthConnectBodyFatRecordId == "body-fat-id"
@@ -130,7 +135,7 @@ class HealthConnectSyncManagerTest {
             healthConnectRepository.readMeasurements(setOf(HealthConnectSyncOption.WEIGHT_READ))
         } returns listOf(
             Measurement(
-                bodyWeight = 80.0,
+                bodyWeight = Weight.kilograms(80.0),
                 date = measuredAt,
                 healthConnectWeightRecordId = "weight-id"
             )
@@ -141,7 +146,7 @@ class HealthConnectSyncManagerTest {
         coVerify(exactly = 1) {
             measurementRepository.upsertMeasurement(
                 match {
-                    it.id == 0L && it.bodyWeight == 80.0 &&
+                    it.id == 0L && it.bodyWeight == Weight.kilograms(80.0) &&
                         it.muscleMassPercentage == 0 &&
                         it.healthConnectWeightRecordId == "weight-id"
                 },
@@ -189,10 +194,14 @@ class HealthConnectSyncManagerTest {
 
     @Test
     fun `bulk write contains only the last thirty days`() = runTest {
-        val recent = Measurement(id = 1, bodyWeight = 80.0, date = LocalDateTime.now())
+        val recent = Measurement(
+            id = 1,
+            bodyWeight = Weight.kilograms(80.0),
+            date = LocalDateTime.now()
+        )
         val old = Measurement(
             id = 2,
-            bodyWeight = 81.0,
+            bodyWeight = Weight.kilograms(81.0),
             date = LocalDateTime.now().minusDays(31)
         )
         measurements.value = listOf(recent, old)

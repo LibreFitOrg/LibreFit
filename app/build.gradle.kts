@@ -174,9 +174,6 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.androidx.datastore.preferences)
 
-    // Google accompanist to handle permissions in jetpack compose
-    implementation(libs.accompanist.permissions)
-
     // Lottie animations for jetpack compose
     implementation(libs.lottie.compose)
 

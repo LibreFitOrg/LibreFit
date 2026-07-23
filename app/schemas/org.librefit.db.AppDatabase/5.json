@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 4,
-    "identityHash": "8e973c578ef7f482bf8261f8db8abc6d",
+    "version": 5,
+    "identityHash": "72169cdf07ee4d34f1b1c5fbfc80a182",
     "entities": [
       {
         "tableName": "workouts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `routineId` INTEGER NOT NULL, `notes` TEXT NOT NULL, `title` TEXT NOT NULL, `state` TEXT NOT NULL, `timeElapsed` INTEGER NOT NULL, `created` TEXT NOT NULL, `completed` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `routineId` INTEGER NOT NULL, `notes` TEXT NOT NULL, `title` TEXT NOT NULL, `state` TEXT NOT NULL, `timeElapsed` INTEGER NOT NULL, `created` TEXT NOT NULL, `completed` TEXT NOT NULL, `healthConnectRecordVersion` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -54,6 +54,12 @@
             "fieldPath": "completed",
             "columnName": "completed",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "healthConnectRecordVersion",
+            "columnName": "healthConnectRecordVersion",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -174,7 +180,7 @@
       },
       {
         "tableName": "sets",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `load` REAL NOT NULL, `reps` INTEGER NOT NULL, `elapsedTime` INTEGER NOT NULL, `completed` INTEGER NOT NULL, `exerciseId` INTEGER NOT NULL, FOREIGN KEY(`exerciseId`) REFERENCES `exercises`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `load` REAL NOT NULL, `reps` INTEGER NOT NULL, `elapsedTime` INTEGER NOT NULL, `startedAt` TEXT, `completedAt` TEXT, `completed` INTEGER NOT NULL, `exerciseId` INTEGER NOT NULL, FOREIGN KEY(`exerciseId`) REFERENCES `exercises`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -199,6 +205,16 @@
             "columnName": "elapsedTime",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "startedAt",
+            "columnName": "startedAt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "completedAt",
+            "columnName": "completedAt",
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "completed",
@@ -246,7 +262,7 @@
       },
       {
         "tableName": "measurements",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bodyWeight` REAL NOT NULL, `bodyFatPercentage` INTEGER NOT NULL, `muscleMassPercentage` INTEGER NOT NULL, `date` TEXT NOT NULL, `notes` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bodyWeight` REAL NOT NULL, `bodyFatPercentage` INTEGER NOT NULL, `muscleMassPercentage` INTEGER NOT NULL, `date` TEXT NOT NULL, `notes` TEXT NOT NULL, `healthConnectWeightRecordId` TEXT, `healthConnectBodyFatRecordId` TEXT, `healthConnectRecordVersion` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -283,6 +299,22 @@
             "columnName": "notes",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "healthConnectWeightRecordId",
+            "columnName": "healthConnectWeightRecordId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "healthConnectBodyFatRecordId",
+            "columnName": "healthConnectBodyFatRecordId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "healthConnectRecordVersion",
+            "columnName": "healthConnectRecordVersion",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -294,7 +326,7 @@
       },
       {
         "tableName": "dataset",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `force` TEXT, `level` TEXT NOT NULL, `mechanic` TEXT, `equipment` TEXT, `primaryMuscles` TEXT NOT NULL, `secondaryMuscles` TEXT NOT NULL, `instructions` TEXT NOT NULL, `category` TEXT NOT NULL, `images` TEXT NOT NULL, `isCustomExercise` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `force` TEXT, `level` TEXT NOT NULL, `mechanic` TEXT, `equipment` TEXT, `primaryMuscles` TEXT NOT NULL, `secondaryMuscles` TEXT NOT NULL, `instructions` TEXT NOT NULL, `category` TEXT NOT NULL, `images` TEXT NOT NULL, `healthConnectSegmentType` TEXT NOT NULL, `isCustomExercise` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -360,6 +392,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "healthConnectSegmentType",
+            "columnName": "healthConnectSegmentType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "isCustomExercise",
             "columnName": "isCustomExercise",
             "affinity": "INTEGER",
@@ -376,7 +414,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8e973c578ef7f482bf8261f8db8abc6d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '72169cdf07ee4d34f1b1c5fbfc80a182')"
     ]
   }
 }

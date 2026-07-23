@@ -71,6 +71,8 @@ import org.librefit.db.entity.Measurement
 import org.librefit.enums.MeasurementCardState
 import org.librefit.enums.chart.MeasurementChart
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.models.Weight
+import org.librefit.nav.LocalUnitSystem
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
@@ -81,6 +83,9 @@ import org.librefit.ui.components.charts.Point
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.InputModalBottomSheet
 import org.librefit.ui.models.InputModalBottomSheetState
+import org.librefit.ui.models.autoUnitSuffix
+import org.librefit.ui.models.doubleValue
+import org.librefit.ui.models.formatToText
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatDetails
@@ -101,6 +106,7 @@ fun MeasurementScreen(
     viewModel: MeasurementScreenViewModel = hiltViewModel(),
     navigateBack: () -> Unit
 ) {
+    val unitSystem = LocalUnitSystem.current
 
     val measurements by viewModel.measurements.collectAsStateWithLifecycle()
 
@@ -108,7 +114,7 @@ fun MeasurementScreen(
 
     val measurementChart by viewModel.measurementChart.collectAsStateWithLifecycle()
 
-    val bodyweight by viewModel.bodyWeight.collectAsStateWithLifecycle()
+    val bodyWeight by viewModel.bodyWeight.collectAsStateWithLifecycle()
 
     val leanMass by viewModel.leanMass.collectAsStateWithLifecycle()
 
@@ -198,7 +204,7 @@ fun MeasurementScreen(
         listChartData = points,
         date = date,
         measurementCardState = measurementCardState,
-        bodyweight = bodyweight,
+        bodyWeight = bodyWeight,
         fatMass = fatMass?.toString() ?: "",
         leanMass = leanMass?.toString() ?: "",
         notes = notes,
@@ -218,9 +224,11 @@ fun MeasurementScreen(
         updateMeasurementCardState = viewModel::updateMeasurementCardState,
         navigateBack = navigateBack,
         onInputModalBottomSheetRequest = {
+            val value = bodyWeight?.doubleValue(unitSystem) ?: 0.0
+
             infoModalBottomSheetState = InputModalBottomSheetState.Weight(
-                integerWeight = bodyweight?.toInt() ?: 0,
-                decimalWeight = bodyweight?.getDecimalDigitsAsInteger() ?: 0
+                integerWeight = value.toInt(),
+                decimalWeight = value.getDecimalDigitsAsInteger()
             )
         }
     )
@@ -231,7 +239,7 @@ fun MeasurementScreen(
 private fun MeasurementScreenContent(
     measurements: List<Measurement>,
     listChartData: List<Point>,
-    bodyweight: Double?,
+    bodyWeight: Weight?,
     fatMass: String,
     leanMass: String,
     notes: String,
@@ -252,6 +260,7 @@ private fun MeasurementScreenContent(
     navigateBack: () -> Unit,
     onInputModalBottomSheetRequest: () -> Unit
 ) {
+    val unitSystem = LocalUnitSystem.current
 
     val focusManager = LocalFocusManager.current
 
@@ -259,7 +268,9 @@ private fun MeasurementScreenContent(
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    var bodyweightValue by remember(bodyweight) { mutableStateOf(bodyweight?.toString() ?: "") }
+    var bodyweightValue by remember(bodyWeight) {
+        mutableStateOf(bodyWeight?.doubleValue(unitSystem)?.toString() ?: "")
+    }
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.measurements)),
@@ -273,7 +284,7 @@ private fun MeasurementScreenContent(
                         else -> 2
                     },
                     suffix = when (measurementChart) {
-                        MeasurementChart.BODY_WEIGHT -> stringResource(R.string.kg)
+                        MeasurementChart.BODY_WEIGHT -> autoUnitSuffix()
                         MeasurementChart.FAT_MASS -> "%"
                         MeasurementChart.LEAN_MASS ->  "%"
                     },
@@ -326,7 +337,11 @@ private fun MeasurementScreenContent(
                                     modifier = Modifier.focusRequester(focusRequester),
                                     value = bodyweightValue,
                                     label = { Text(text = stringResource(R.string.body_weight)) },
-                                    suffix = { Text(stringResource(R.string.kg)) },
+                                    suffix = {
+                                        Text(
+                                            autoUnitSuffix()
+                                        )
+                                    },
                                     isError = bodyweightValue.isBlank(),
                                     singleLine = true,
                                     keyboardOptions = KeyboardOptions(
@@ -512,7 +527,7 @@ private fun MeasurementScreenContent(
                                     style = MaterialTheme.typography.labelMedium
                                 )
                                 Text(
-                                    text = "${m.bodyWeight} " + stringResource(R.string.kg),
+                                    text = m.bodyWeight.formatToText(),
                                     style = MaterialTheme.typography.displaySmall,
                                     color = MaterialTheme.colorScheme.secondary,
                                     fontWeight = FontWeight.Bold
@@ -623,7 +638,7 @@ private fun MeasurementScreenPreview() {
             Measurement(
                 id = it.toLong(),
                 notes = if (Random.nextBoolean()) "This is the note of the ${it + 1}° measurement" else "",
-                bodyWeight = round(Random.nextDouble(60.0, 80.0) * 100) / 100,
+                bodyWeight = Weight.kilograms(round(Random.nextDouble(60.0, 80.0) * 100) / 100),
                 bodyFatPercentage = if (Random.nextBoolean()) Random.nextInt(10, 80) else 0,
                 muscleMassPercentage = if (Random.nextBoolean()) Random.nextInt(20, 80) else 0,
                 date = LocalDateTime.ofEpochSecond(
@@ -646,7 +661,7 @@ private fun MeasurementScreenPreview() {
                 Point(
                     yValues = listOf(
                         when (measurementChart) {
-                            MeasurementChart.BODY_WEIGHT -> it.bodyWeight
+                            MeasurementChart.BODY_WEIGHT -> it.bodyWeight.inKilograms
                             MeasurementChart.FAT_MASS -> it.bodyFatPercentage
                             MeasurementChart.LEAN_MASS -> it.muscleMassPercentage
                         }.toDouble()
@@ -662,7 +677,7 @@ private fun MeasurementScreenPreview() {
             updateIdMeasurement = { idMeasurement.longValue = it },
             upsertMeasurement = {},
             updateChartMode = {},
-            bodyweight = 72.0,
+            bodyWeight = Weight.kilograms(72.0),
             fatMass = "12",
             leanMass = "22",
             notes = "This is a note",

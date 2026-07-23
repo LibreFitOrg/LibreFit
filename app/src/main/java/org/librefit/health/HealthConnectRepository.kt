@@ -26,6 +26,7 @@ import org.librefit.db.entity.Measurement
 import org.librefit.db.entity.Workout
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.healthConnect.HealthConnectSyncOption
+import org.librefit.models.Weight
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -151,7 +152,9 @@ class HealthConnectRepository @Inject constructor(
             weights.forEach { weight ->
                 add(
                     Measurement(
-                        bodyWeight = weight.weight.inKilograms.roundToTwoDecimals(),
+                        bodyWeight = Weight.kilograms(
+                            weight.weight.inKilograms.roundToTwoDecimals()
+                        ),
                         date = LocalDateTime.ofInstant(weight.time, ZoneId.systemDefault()),
                         // The source ID lets us update or remove exactly this imported value.
                         healthConnectWeightRecordId = weight.metadata.id
@@ -252,7 +255,7 @@ class HealthConnectRepository @Inject constructor(
 
         return buildList {
             if (
-                bodyWeight > 0.0 && healthConnectWeightRecordId == null &&
+                bodyWeight > Weight.zero() && healthConnectWeightRecordId == null &&
                 HealthConnectSyncOption.WEIGHT_WRITE in options
             ) {
                 add(
@@ -263,7 +266,7 @@ class HealthConnectRepository @Inject constructor(
                         ),
                         time = instant,
                         zoneOffset = zoneOffset,
-                        weight = Mass.kilograms(bodyWeight)
+                        weight = Mass.kilograms(bodyWeight.inKilograms)
                     )
                 )
             }

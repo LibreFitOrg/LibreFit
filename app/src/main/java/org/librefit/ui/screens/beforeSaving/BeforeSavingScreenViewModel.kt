@@ -27,6 +27,7 @@ import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
 import org.librefit.helpers.DataHelper
+import org.librefit.models.Weight
 import org.librefit.nav.Route
 import org.librefit.services.WorkoutServiceManager
 import org.librefit.ui.models.UiExerciseWithSets
@@ -36,9 +37,9 @@ import org.librefit.ui.models.mappers.toUi
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import java.util.Locale
 import javax.inject.Inject
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class BeforeSavingScreenViewModel @Inject constructor(
@@ -60,7 +61,7 @@ class BeforeSavingScreenViewModel @Inject constructor(
     private val _exercises = MutableStateFlow<List<UiExerciseWithSets>>(emptyList())
     val exercises = _exercises.asStateFlow()
 
-    private val _volume = MutableStateFlow("0.00")
+    private val _volume = MutableStateFlow(Weight.zero())
     val volume = _volume.asStateFlow()
 
     private val _workout = MutableStateFlow(UiWorkout())
@@ -85,7 +86,7 @@ class BeforeSavingScreenViewModel @Inject constructor(
             )
 
             _volume.update {
-                String.format(Locale.getDefault(), "%.2f", volume)
+                volume
             }
         }
     }
@@ -152,7 +153,7 @@ class BeforeSavingScreenViewModel @Inject constructor(
                 _routine.update {
                     workoutRepository.getRoutineFromRoutineID(workout.value.routineId).toUi()
                 }
-                delay(200)
+                delay(200.milliseconds)
             }
         }
     }
@@ -175,8 +176,11 @@ class BeforeSavingScreenViewModel @Inject constructor(
                             sets = exercise.toEntity().sets.map {
                                 // This keeps only relevant data on the actual type of set
                                 when (exercise.exercise.setMode) {
-                                    SetMode.DURATION -> it.copy(reps = 0, load = 0.0)
-                                    SetMode.BODYWEIGHT -> it.copy(elapsedTime = 0, load = 0.0)
+                                    SetMode.DURATION -> it.copy(reps = 0, load = Weight.zero())
+                                    SetMode.BODYWEIGHT -> it.copy(
+                                        elapsedTime = 0,
+                                        load = Weight.zero()
+                                    )
                                     SetMode.BODYWEIGHT_WITH_LOAD -> it.copy(elapsedTime = 0)
                                     SetMode.LOAD -> it.copy(elapsedTime = 0)
                                 }

@@ -17,6 +17,7 @@ import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.healthConnect.HealthConnectAccessMode
 import org.librefit.enums.healthConnect.HealthConnectSyncOption
+import org.librefit.models.Weight
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicLong
@@ -135,7 +136,7 @@ class HealthConnectSyncManager @Inject constructor(
                 bodyWeight = if (
                     weightRecordIds != null && existing.healthConnectWeightRecordId != null &&
                     existing.healthConnectWeightRecordId !in weightRecordIds
-                ) 0.0 else existing.bodyWeight,
+                ) Weight.zero() else existing.bodyWeight,
                 bodyFatPercentage = if (
                     bodyFatRecordIds != null && existing.healthConnectBodyFatRecordId != null &&
                     existing.healthConnectBodyFatRecordId !in bodyFatRecordIds
@@ -151,7 +152,7 @@ class HealthConnectSyncManager @Inject constructor(
 
             // Keep local values that Health Connect does not synchronize.
             if (
-                updated.bodyWeight == 0.0 && updated.bodyFatPercentage == 0 &&
+                updated.bodyWeight == Weight.zero() && updated.bodyFatPercentage == 0 &&
                 updated.muscleMassPercentage == 0 && updated.notes.isBlank()
             ) {
                 measurementRepository.deleteById(updated.id, syncToHealthConnect = false)
@@ -181,7 +182,7 @@ class HealthConnectSyncManager @Inject constructor(
 
         val existing = measurements[targetIndex]
         val updated = existing.copy(
-            bodyWeight = imported.bodyWeight.takeIf { it > 0.0 } ?: existing.bodyWeight,
+            bodyWeight = imported.bodyWeight.takeIf { it > Weight.zero() } ?: existing.bodyWeight,
             bodyFatPercentage = imported.bodyFatPercentage.takeIf { it > 0 }
                 ?: existing.bodyFatPercentage,
             healthConnectWeightRecordId = imported.healthConnectWeightRecordId
@@ -212,11 +213,11 @@ class HealthConnectSyncManager @Inject constructor(
             .filter { index ->
                 val existing = measurements[index]
                 val acceptsWeight = imported.healthConnectWeightRecordId != null &&
-                    existing.bodyWeight == 0.0 &&
+                    existing.bodyWeight == Weight.zero() &&
                     existing.bodyFatPercentage > 0
                 val acceptsBodyFat = imported.healthConnectBodyFatRecordId != null &&
                     existing.bodyFatPercentage == 0 &&
-                    existing.bodyWeight > 0.0
+                    existing.bodyWeight > Weight.zero()
                 (acceptsWeight || acceptsBodyFat) &&
                     abs(Duration.between(existing.date, imported.date).seconds) <=
                     BODY_COMPOSITION_MATCH_SECONDS

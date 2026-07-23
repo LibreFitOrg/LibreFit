@@ -87,6 +87,8 @@ fun SharedTransitionScope.EditExerciseScreen(
 
     val exerciseDC by viewModel.exerciseDC.collectAsStateWithLifecycle()
 
+    val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
+
     val isCreateMode = exerciseDC.id.isBlank()
 
     EditExerciseScreenContent(
@@ -103,6 +105,7 @@ fun SharedTransitionScope.EditExerciseScreen(
         instructions = exerciseDC.instructions,
         category = exerciseDC.category,
         images = exerciseDC.images,
+        showExercisesImages = showExercisesImages,
         navigateBack = navController::navigateUp,
         animatedVisibilityScope = animatedVisibilityScope,
         updateValue = viewModel::updateValue,
@@ -141,6 +144,7 @@ private fun SharedTransitionScope.EditExerciseScreenContent(
     instructions: List<String>,
     images: List<String>,
     category: Category,
+    showExercisesImages: Boolean?,
     animatedVisibilityScope: AnimatedVisibilityScope,
     navigateBack: () -> Unit,
     updateValue: (ExerciseProperty) -> Unit,
@@ -191,26 +195,28 @@ private fun SharedTransitionScope.EditExerciseScreenContent(
             item {
                 // TODO: implement display all images (like in a horizontal pager)
                 val model = remember(images) { images.firstOrNull() }
-                AsyncImage(
-                    model = model?.let { "file:///android_asset/${it}" },
-                    fallback = painterResource(R.drawable.no_image),
-                    contentDescription = name,
-                    contentScale = ContentScale.Crop,
-                    filterQuality = FilterQuality.High,
-                    colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState(stringId + exerciseDcId),
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.extraLarge)
-                        .border(
-                            0.5.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant,
-                            shape = MaterialTheme.shapes.extraLarge
-                        ),
-                )
+                if (showExercisesImages == true) {
+                    AsyncImage(
+                        model = model?.let { "file:///android_asset/${it}" },
+                        fallback = painterResource(R.drawable.no_image),
+                        contentDescription = name,
+                        contentScale = ContentScale.Crop,
+                        filterQuality = FilterQuality.High,
+                        colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedContentState = rememberSharedContentState(stringId + exerciseDcId),
+                                animatedVisibilityScope = animatedVisibilityScope
+                            )
+                            .fillMaxWidth()
+                            .clip(MaterialTheme.shapes.extraLarge)
+                            .border(
+                                0.5.dp,
+                                color = MaterialTheme.colorScheme.outlineVariant,
+                                shape = MaterialTheme.shapes.extraLarge
+                            ),
+                    )
+                }
             }
             item {
             }
@@ -420,6 +426,7 @@ private fun EditExerciseScreenContentPreview() {
                     instructions = e.instructions,
                     category = e.category,
                     images = e.images,
+                    showExercisesImages = null,
                     animatedVisibilityScope = this,
                     saveExercise = {},
                     updatePrimaryMuscles = {},

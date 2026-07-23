@@ -16,6 +16,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.librefit.db.converters.ExerciseDCConverter
 import org.librefit.db.converters.LocalDateTimeConverter
+import org.librefit.db.converters.WeightConverter
 import org.librefit.db.dao.DatasetDao
 import org.librefit.db.dao.MeasurementDao
 import org.librefit.db.dao.WorkoutDao
@@ -27,13 +28,14 @@ import org.librefit.db.entity.Workout
 
 @Database(
     entities = [Workout::class, Exercise::class, Set::class, Measurement::class, ExerciseDC::class],
-    version = 4,
+    version = 5,
     exportSchema = true,
     autoMigrations = [
-        AutoMigration(from = 1, to = 2)
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 3, to = 4)
     ]
 )
-@TypeConverters(LocalDateTimeConverter::class, ExerciseDCConverter::class)
+@TypeConverters(LocalDateTimeConverter::class, ExerciseDCConverter::class, WeightConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         const val NAME = "librefit_database"
@@ -72,7 +74,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        val MIGRATION_3_4 = object : Migration(3, 4) {
+        val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // Existing custom exercises have no curated mapping, so they use the safe fallback.
                 db.execSQL(

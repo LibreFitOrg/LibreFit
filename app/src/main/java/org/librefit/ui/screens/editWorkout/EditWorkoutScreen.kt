@@ -51,6 +51,7 @@ import org.librefit.enums.SuccessMessage
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.models.Weight
 import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.LibreFitLazyColumn
@@ -82,6 +83,8 @@ fun SharedTransitionScope.EditWorkoutScreen(
     val exercises by viewModel.exercises.collectAsStateWithLifecycle()
 
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
+
+    val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
 
     val dismissInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
 
@@ -116,6 +119,7 @@ fun SharedTransitionScope.EditWorkoutScreen(
         isTitleEmpty = viewModel.isTitleEmpty(),
         dismissInputAutomatically = dismissInputAutomatically,
         useScrollWheelForInput = useScrollWheelForInput,
+        showExercisesImages = showExercisesImages,
         updateTitle = viewModel::updateTitle,
         updateNotes = viewModel::updateNotes,
         updateSetTime = viewModel::updateSetTime,
@@ -148,12 +152,13 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     isTitleEmpty: Boolean,
     dismissInputAutomatically: Boolean,
     useScrollWheelForInput: Boolean,
+    showExercisesImages: Boolean?,
     updateTitle: (String) -> Unit,
     updateNotes: (String) -> Unit,
     deleteSet: (Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
-    updateSetLoad: (Double, Long) -> Unit,
+    updateSetLoad: (Weight, Long) -> Unit,
     updateSetCompleted: (Boolean, Long) -> Unit,
     addSetToExercise: (Long) -> Unit,
     deleteExercise: (Long) -> Unit,
@@ -338,6 +343,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                             addSet = addSetToExercise,
                             isDragging = isDragging,
                             useScrollWheelForInput = useScrollWheelForInput,
+                            showExercisesImages = showExercisesImages,
                             dismissScrollWheelInputAutomatically = dismissInputAutomatically,
                             onDetail = { id, idExerciseDC ->
                                 navController.navigate(
@@ -413,9 +419,9 @@ private fun EditWorkoutScreenPreview() {
                                 category = Category.STRENGTH
                             ),
                             sets = persistentListOf(
-                                UiSet(load = 80.0, reps = 8),
-                                UiSet(load = 80.0, reps = 8),
-                                UiSet(load = 80.0, reps = 9)
+                                UiSet(load = Weight.kilograms(80.0), reps = 8),
+                                UiSet(load = Weight.kilograms(80.0), reps = 8),
+                                UiSet(load = Weight.kilograms(80.0), reps = 9)
                             )
                         )
                     ),
@@ -424,6 +430,7 @@ private fun EditWorkoutScreenPreview() {
                     isTitleEmpty = false,
                     useScrollWheelForInput = false,
                     dismissInputAutomatically = false,
+                    showExercisesImages = null,
                     updateTitle = { _ -> },
                     updateNotes = { _ -> },
                     addSetToExercise = { _ -> },

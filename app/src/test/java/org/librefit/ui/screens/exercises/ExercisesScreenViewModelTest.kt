@@ -42,6 +42,8 @@ class ExercisesScreenViewModelTest {
 
     private lateinit var isSupporterFlow: MutableStateFlow<Boolean>
 
+    private lateinit var showExercisesImages: MutableStateFlow<Boolean?>
+
     // Test dataset
     private val dataset = listOf(
         UiExerciseDC(name = "Pull exercise", force = Force.PULL),
@@ -59,10 +61,12 @@ class ExercisesScreenViewModelTest {
 
         userPreferencesRepository = mockk()
         isSupporterFlow = MutableStateFlow(false)
+        showExercisesImages = MutableStateFlow(null)
 
         // Arrange: Tell the mock what to return when a variable is accessed
         every { datasetRepository.dataset } returns datasetFlow
         every { userPreferencesRepository.isSupporter } returns isSupporterFlow
+        every { userPreferencesRepository.showExercisesImages } returns showExercisesImages
 
         // Instantiate the ViewModel directly, passing in test data
         viewModel = ExercisesScreenViewModel(
@@ -78,7 +82,9 @@ class ExercisesScreenViewModelTest {
 
     @Test
     fun `initial state - debounced query is empty`() = runTest {
-        assertThat(viewModel.debouncedQuery.value).isEmpty()
+        viewModel.debouncedQuery.test {
+            assertThat(awaitItem()).isEmpty()
+        }
     }
 
     @Test

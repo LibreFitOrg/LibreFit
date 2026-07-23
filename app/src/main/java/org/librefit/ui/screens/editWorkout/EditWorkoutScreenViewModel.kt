@@ -28,6 +28,7 @@ import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
+import org.librefit.models.Weight
 import org.librefit.nav.Route
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseWithSets
@@ -48,7 +49,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
-
+    val showExercisesImages = userPreferencesRepository.showExercisesImages
     val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
 
     val dismissScrollWheelInputAutomatically =
@@ -189,7 +190,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
         syncToRepository()
     }
 
-    fun updateSetLoad(load: Double, id: Long) {
+    fun updateSetLoad(load: Weight, id: Long) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
                 if (exercise.sets.any { it.id == id }) {

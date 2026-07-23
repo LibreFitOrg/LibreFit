@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.repository.UserPreferencesRepository
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class SharedViewModel @Inject constructor(
@@ -63,8 +64,11 @@ class SharedViewModel @Inject constructor(
     fun updateIsSupporter(value: Boolean) {
         viewModelScope.launch {
             // A delay to le the user visualize the successful result
-            delay(1000)
+            delay(1000.milliseconds)
             userPreferencesRepository.saveIsSupporter(value)
         }
     }
+
+
+    val unitSystem = userPreferencesRepository.unitSystem
 }

@@ -25,6 +25,7 @@ import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.healthConnect.HealthConnectSyncOption
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.health.HealthConnectRepository
 import org.librefit.health.HealthConnectSyncManager
 
@@ -54,6 +55,8 @@ class SettingsScreenViewModelTest {
     private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
     private lateinit var healthConnectEnabled: MutableStateFlow<Boolean>
     private lateinit var healthConnectOptions: Map<HealthConnectSyncOption, MutableStateFlow<Boolean>>
+    private lateinit var showExercisesImages: MutableStateFlow<Boolean?>
+    private lateinit var unitSystem: MutableStateFlow<UnitSystem>
 
     @Before
     fun setUp() {
@@ -74,6 +77,8 @@ class SettingsScreenViewModelTest {
         healthConnectOptions = HealthConnectSyncOption.entries.associateWith {
             MutableStateFlow(false)
         }
+        showExercisesImages = MutableStateFlow(null)
+        unitSystem = MutableStateFlow(UnitSystem.METRIC)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.language } returns language
@@ -102,6 +107,8 @@ class SettingsScreenViewModelTest {
         coEvery { healthConnectRepository.grantedPermissions() } returns emptySet()
         every { healthConnectSyncManager.invalidatePendingSyncs() } returns Unit
         coEvery { healthConnectSyncManager.syncEnabledData(any()) } returns 0
+        every { userPreferencesRepository.showExercisesImages } returns showExercisesImages
+        every { userPreferencesRepository.unitSystem } returns unitSystem
 
         every { userPreferencesRepository.saveLanguage(any()) } answers {
             language.value = firstArg()
@@ -136,6 +143,9 @@ class SettingsScreenViewModelTest {
         coEvery { userPreferencesRepository.saveHealthConnectSyncEnabled(any(), any()) } answers {
             val option = HealthConnectSyncOption.entries.first { it.preferenceId == firstArg() }
             healthConnectOptions.getValue(option).value = secondArg()
+        }
+        coEvery { userPreferencesRepository.saveShowExercisesImages(any()) } answers {
+            showExercisesImages.value = firstArg()
         }
 
         // Arrange: Create the ViewModel instance with the mock repository
@@ -179,6 +189,22 @@ class SettingsScreenViewModelTest {
     @Test
     fun `initial state - dismiss scroll wheel automatically is off`() = runTest {
         assertThat(viewModel.dismissScrollWheelInputAutomatically.value).isFalse()
+    }
+
+    @Test
+    fun `initial state - show images is null`() = runTest {
+        assertThat(viewModel.showExercisesImages.value).isNull()
+    }
+
+    @Test
+    fun `show exercises images updates correctly`() = runTest {
+        val expected = true
+
+        viewModel.showExercisesImages.test {
+            assertThat(awaitItem()).isNull()
+            viewModel.saveShowExercisesImages(expected)
+            assertThat(awaitItem()).isEqualTo(expected)
+        }
     }
 
     @Test
