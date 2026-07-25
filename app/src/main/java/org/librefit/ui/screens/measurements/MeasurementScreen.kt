@@ -226,7 +226,7 @@ fun MeasurementScreen(
         onInputModalBottomSheetRequest = {
             val value = bodyWeight?.doubleValue(unitSystem) ?: 0.0
 
-            infoModalBottomSheetState = InputModalBottomSheetState.Weight(
+            infoModalBottomSheetState = InputModalBottomSheetState.Weight.create(
                 integerWeight = value.toInt(),
                 decimalWeight = value.getDecimalDigitsAsInteger()
             )
