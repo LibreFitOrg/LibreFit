@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - A new toggle to show images was introduced (off by default). [#29](https://github.com/LibreFitOrg/LibreFit/issues/29)
+- Quicker input for weights with scroll wheel [#74](https://github.com/LibreFitOrg/LibreFit/issues/74)
 
 ### Deprecated
 
