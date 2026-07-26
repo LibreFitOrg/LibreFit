@@ -70,7 +70,7 @@ value class Weight private constructor(
         const val MIN_WEIGHT_IN_KILOGRAMS = 0.0
 
         /** Maximum allowable weight in kilograms. */
-        const val MAX_WEIGHT_IN_KILOGRAMS = 999.0
+        const val MAX_WEIGHT_IN_KILOGRAMS = 999999.0
 
         /** Standard conversion factor for pounds to kilograms (1 lb ≈ 0.45359237 kg). */
         const val POUNDS_TO_KILOGRAMS = 0.45359237
