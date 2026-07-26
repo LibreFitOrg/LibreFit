@@ -19516,7 +19516,7 @@
   },
   {
     "name": "Snap Down",
-    "force": "pull",
+    "force": "push",
     "level": "beginner",
     "mechanic": "compound",
     "equipment": null,
