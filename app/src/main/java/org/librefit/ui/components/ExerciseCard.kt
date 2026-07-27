@@ -111,6 +111,7 @@ import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.autoUnitSuffix
 import org.librefit.ui.models.doubleValue
+import org.librefit.ui.models.formatToText
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.getDecimalDigitsAsInteger
@@ -566,7 +567,6 @@ fun SharedTransitionScope.ExerciseCard(
                                         workout = workout,
                                         useScrollWheelForInput = useScrollWheelForInput,
                                         dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
-                                        unit = unit,
                                         deleteSet = deleteSet,
                                         updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
                                         updateSetTime = updateSetTime,
@@ -606,7 +606,6 @@ private fun Set(
     workout: Boolean,
     useScrollWheelForInput: Boolean,
     dismissScrollWheelInputAutomatically: Boolean,
-    unit: String,
     deleteSet: (Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
@@ -788,9 +787,9 @@ private fun Set(
                 ) {
                     val (previousReps, previousLoad, previousTime) = values
                     val text = when (setMode) {
-                        SetMode.LOAD -> "$previousLoad$unit\n* $previousReps"
+                        SetMode.LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
                         SetMode.BODYWEIGHT -> "$previousReps"
-                        SetMode.BODYWEIGHT_WITH_LOAD -> "$previousLoad$unit\n* $previousReps"
+                        SetMode.BODYWEIGHT_WITH_LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
                         SetMode.DURATION -> Formatter.formateSecondsInMinutesAndSeconds(previousTime)
                     }
                     Text(
@@ -981,7 +980,7 @@ private fun ExerciseCardPreview() {
                 exercise = UiExercise(
                     notes = "This is a note!",
                     restTime = 90,
-                    setMode = SetMode.DURATION
+                    setMode = SetMode.LOAD
                 ),
                 sets = persistentListOf(UiSet(completed = true), UiSet(elapsedTime = 100)),
                 exerciseDC = UiExerciseDC(

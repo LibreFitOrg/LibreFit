@@ -9,8 +9,10 @@
 package org.librefit.ui.screens.about
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,13 +28,13 @@ import org.librefit.ui.theme.LibreFitTheme
 
 @Composable
 fun DependenciesScreen(navigateBack: () -> Unit) {
-    val url = remember { mutableStateOf<String?>(null) }
+    var url by remember { mutableStateOf<String?>(null) }
 
-    url.value?.let {
-        UrlActionDialog(it) { url.value = null }
+    url?.let {
+        UrlActionDialog(it) { url = null }
     }
 
-    val libs = produceLibraries(R.raw.aboutlibraries)
+    val libs by produceLibraries(R.raw.aboutlibraries)
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.dependencies)),
@@ -40,10 +42,15 @@ fun DependenciesScreen(navigateBack: () -> Unit) {
     ) { innerPadding ->
         Libraries(
             contentPadding = innerPadding,
-            libraries = libs.value?.libraries ?: emptyList(),
-            onLibraryClick = {
-                url.value = it.website
-                url.value == it.website
+            libraries = libs?.libraries ?: emptyList(),
+            onLibraryClick = { library ->
+                val website = library.website
+                if (!website.isNullOrBlank()) {
+                    url = website
+                    true
+                } else {
+                    false
+                }
             },
             style = LibraryDefaults.m3LibrariesStyle()
         )
