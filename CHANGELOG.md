@@ -25,6 +25,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+-
+
+## [0.4.1] - 2026-07-28
+
+This release contains fix for a bug noticed shortly after release v0.4.0. The bug was only visual so no data was affected.
+
+### Fixed
+
 - Visual bug in previous set of workout screen [#140](https://github.com/LibreFitOrg/LibreFit/pull/140)
 
 ## [0.4.0] - 2026-07-26
@@ -123,7 +131,9 @@ Thank you for your support!
 
 First public release. Bugs are expected! Report them so they can be fixed.
 
-[Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.4.1...HEAD
+
+[0.4.1]: https://github.com/LibreFitOrg/LibreFit/compare/v0.4.0...v0.4.1
 
 [0.4.0]: https://github.com/LibreFitOrg/LibreFit/compare/v0.3.1...v0.4.0
 

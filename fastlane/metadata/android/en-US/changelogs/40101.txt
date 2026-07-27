@@ -1,0 +1,2 @@
+🐛 Fixed
+- Visual bug in previous set of workout screen
