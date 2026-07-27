@@ -13,6 +13,7 @@ coreSplashscreen = "1.2.0"
 composeM3 = "3.2.3"
 hiltAndroid = "2.60.1"
 hiltNavigationCompose = "1.4.0"
+healthConnect = "1.1.0"
 aboutLibraries = "15.0.3"
 aboutlibrariesComposeM3 = "15.0.3"
 kotlinxCoroutinesTest = "1.11.0"
@@ -53,6 +54,7 @@ compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltAndroid" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-health-connect = { group = "androidx.health.connect", name = "connect-client", version.ref = "healthConnect" }
 aboutlibraries-compose-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibrariesComposeM3" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 androidx-truth = { group = "androidx.test.ext", name = "truth", version.ref = "truth" }

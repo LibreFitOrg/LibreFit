@@ -28,7 +28,7 @@ import org.librefit.db.entity.Workout
 
 @Database(
     entities = [Workout::class, Exercise::class, Set::class, Measurement::class, ExerciseDC::class],
-    version = 4,
+    version = 5,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
@@ -69,6 +69,44 @@ abstract class AppDatabase : RoomDatabase() {
                     """
                     CREATE INDEX IF NOT EXISTS index_exercises_idExerciseDC
                     ON exercises(idExerciseDC)
+                    """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Existing custom exercises have no curated mapping, so they use the safe fallback.
+                db.execSQL(
+                    """
+                    ALTER TABLE dataset
+                    ADD COLUMN healthConnectSegmentType TEXT NOT NULL DEFAULT 'OTHER_WORKOUT'
+                    """.trimIndent()
+                )
+                db.execSQL("ALTER TABLE sets ADD COLUMN startedAt TEXT")
+                db.execSQL("ALTER TABLE sets ADD COLUMN completedAt TEXT")
+                db.execSQL(
+                    """
+                    ALTER TABLE measurements
+                    ADD COLUMN healthConnectWeightRecordId TEXT
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    """
+                    ALTER TABLE measurements
+                    ADD COLUMN healthConnectBodyFatRecordId TEXT
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    """
+                    ALTER TABLE measurements
+                    ADD COLUMN healthConnectRecordVersion INTEGER NOT NULL DEFAULT 0
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    """
+                    ALTER TABLE workouts
+                    ADD COLUMN healthConnectRecordVersion INTEGER NOT NULL DEFAULT 0
                     """.trimIndent()
                 )
             }

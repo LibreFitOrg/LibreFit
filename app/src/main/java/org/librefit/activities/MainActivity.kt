@@ -15,8 +15,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.health.HealthConnectSyncManager
 import org.librefit.nav.NavigationHost
 import org.librefit.services.WorkoutServiceManager
 import org.librefit.ui.theme.LibreFitTheme
@@ -29,6 +32,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var workoutServiceManager: WorkoutServiceManager
+
+    @Inject
+    lateinit var healthConnectSyncManager: HealthConnectSyncManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -49,6 +55,12 @@ class MainActivity : AppCompatActivity() {
                 NavigationHost()
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Health Connect does not notify LibreFit when another app adds new data.
+        lifecycleScope.launch { healthConnectSyncManager.syncEnabledData() }
     }
 
     override fun onDestroy() {

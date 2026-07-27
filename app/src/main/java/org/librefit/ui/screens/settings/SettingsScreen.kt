@@ -8,7 +8,9 @@
 
 package org.librefit.ui.screens.settings
 
+import android.content.Intent
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
@@ -16,16 +18,20 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,11 +50,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.PermissionController
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.librefit.R
+import org.librefit.enums.healthConnect.HealthConnectSyncOption
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
@@ -59,6 +70,7 @@ import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.dialogs.PreferenceDialog
+import org.librefit.ui.models.HealthConnectState
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import kotlin.random.Random
@@ -95,6 +107,21 @@ fun SettingsScreen(
 
     val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
 
+    val healthConnectState by viewModel.healthConnectState.collectAsStateWithLifecycle()
+    var pendingHealthConnectOption by remember { mutableStateOf<HealthConnectSyncOption?>(null) }
+    var pendingHealthConnectPermissions by remember { mutableStateOf<Set<String>?>(null) }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.refreshHealthConnectState()
+    }
+
+    val healthConnectPermissionLauncher = rememberLauncherForActivityResult(
+        contract = PermissionController.createRequestPermissionResultContract()
+    ) { grantedPermissions ->
+        viewModel.updateHealthConnectPermissions(pendingHealthConnectOption, grantedPermissions)
+        pendingHealthConnectOption = null
+    }
+
     preferences?.let {
         PreferenceDialog(
             currentPreference = currentPreference,
@@ -106,9 +133,29 @@ fun SettingsScreen(
 
     }
 
+    pendingHealthConnectPermissions?.let { permissions ->
+        ConfirmDialog(
+            title = stringResource(R.string.health_connect_permission_title),
+            text = stringResource(
+                if (pendingHealthConnectOption == null) {
+                    R.string.health_connect_all_permissions_rationale
+                } else {
+                    R.string.health_connect_permission_rationale
+                }
+            ),
+            confirmText = stringResource(R.string.health_connect_continue),
+            onConfirm = {
+                pendingHealthConnectPermissions = null
+                healthConnectPermissionLauncher.launch(permissions)
+            },
+            onDismiss = {
+                pendingHealthConnectPermissions = null
+                pendingHealthConnectOption = null
+            }
+        )
+    }
 
     var showConfirmDialogDisplayExerciseImages by rememberSaveable { mutableStateOf(false) }
-
 
     if (showConfirmDialogDisplayExerciseImages) {
         ConfirmDialog(
@@ -134,6 +181,7 @@ fun SettingsScreen(
         keepWorkoutScreenOn = keepWorkoutScreenOn,
         restTimerSoundOn = restTimerSoundOn,
         isSupporter = isSupporter,
+        healthConnectState = healthConnectState,
         useScrollWheelForInput = useScrollWheelForInput,
         showExercisesImages = showExercisesImages,
         isWorkoutHeaderSticky = isWorkoutHeaderSticky,
@@ -145,6 +193,38 @@ fun SettingsScreen(
         onRestTimerSoundOnChange = viewModel::saveRestTimerSoundOn,
         onIsWorkoutHeaderStickyChange = viewModel::saveIsWorkoutHeaderSticky,
         onUseScrollWheelForInputChange = viewModel::saveUseScrollWheelForInput,
+        onHealthConnectClick = {
+            if (healthConnectState.isEnabled) {
+                viewModel.updateHealthConnectEnabled(false)
+            } else if (
+                healthConnectState.grantedPermissions.containsAll(
+                    viewModel.allHealthConnectPermissions
+                )
+            ) {
+                viewModel.updateHealthConnectEnabled(true)
+            } else {
+                pendingHealthConnectOption = null
+                pendingHealthConnectPermissions = viewModel.allHealthConnectPermissions
+            }
+        },
+        onHealthConnectOptionClick = { option ->
+            if (option in healthConnectState.enabledOptions) {
+                viewModel.updateHealthConnectSyncOption(option, false)
+            } else {
+                val permissions = viewModel.permissionsFor(option)
+                if (healthConnectState.grantedPermissions.containsAll(permissions)) {
+                    viewModel.updateHealthConnectSyncOption(option, true)
+                } else {
+                    pendingHealthConnectOption = option
+                    pendingHealthConnectPermissions = permissions
+                }
+            }
+        },
+        onManageHealthConnectPermissions = {
+            navController.context.startActivity(
+                Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS)
+            )
+        },
         onShowExercisesImagesChange = viewModel::saveShowExercisesImages,
         showConfirmDialogShowExerciseImages = {
             showConfirmDialogDisplayExerciseImages = true
@@ -163,6 +243,7 @@ private fun SettingsScreenContent(
     keepWorkoutScreenOn: Boolean,
     restTimerSoundOn: Boolean,
     isSupporter: Boolean,
+    healthConnectState: HealthConnectState,
     isWorkoutHeaderSticky: Boolean,
     useScrollWheelForInput: Boolean,
     showExercisesImages: Boolean?,
@@ -174,6 +255,9 @@ private fun SettingsScreenContent(
     onRestTimerSoundOnChange: (Boolean) -> Unit,
     onIsWorkoutHeaderStickyChange: (Boolean) -> Unit,
     onUseScrollWheelForInputChange: (Boolean) -> Unit,
+    onHealthConnectClick: () -> Unit,
+    onHealthConnectOptionClick: (HealthConnectSyncOption) -> Unit,
+    onManageHealthConnectPermissions: () -> Unit,
     onShowExercisesImagesChange: (Boolean) -> Unit,
     showConfirmDialogShowExerciseImages: () -> Unit,
     onDismissScrollWhellInputAutomaticallyChange: (Boolean) -> Unit,
@@ -321,6 +405,144 @@ private fun SettingsScreenContent(
                     )
                 }
             }
+
+            item { HeadlineText(text = stringResource(id = R.string.health_connect)) }
+
+            item {
+                SettingItem(
+                    enabled = healthConnectState.isAvailable,
+                    onClick = onHealthConnectClick,
+                    icon = painterResource(R.drawable.ic_monitor_weight),
+                    showIconInOriginalColors = true,
+                    settingName = stringResource(id = R.string.health_connect),
+                    settingDesc = when {
+                        !healthConnectState.isAvailable -> stringResource(R.string.health_connect_unavailable_desc)
+                        else -> stringResource(R.string.health_connect_permissions_desc)
+                    },
+                    isChecked = healthConnectState.isEnabled
+                )
+            }
+
+            item {
+                AnimatedVisibility(
+                    visible = healthConnectState.isEnabled && healthConnectState.isAvailable,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        HealthConnectDataTypeCard(
+                            name = stringResource(R.string.body_weight),
+                            icon = painterResource(R.drawable.ic_monitor_weight),
+                            readOption = HealthConnectSyncOption.WEIGHT_READ,
+                            writeOption = HealthConnectSyncOption.WEIGHT_WRITE,
+                            state = healthConnectState,
+                            onToggle = onHealthConnectOptionClick
+                        )
+                        HealthConnectDataTypeCard(
+                            name = stringResource(R.string.fat_mass),
+                            icon = painterResource(R.drawable.ic_monitor_weight),
+                            readOption = HealthConnectSyncOption.FAT_READ,
+                            writeOption = HealthConnectSyncOption.FAT_WRITE,
+                            state = healthConnectState,
+                            onToggle = onHealthConnectOptionClick
+                        )
+                        HealthConnectDataTypeCard(
+                            name = stringResource(R.string.health_connect_workouts),
+                            icon = painterResource(R.drawable.ic_timer),
+                            readOption = null,
+                            writeOption = HealthConnectSyncOption.WORKOUT_WRITE,
+                            state = healthConnectState,
+                            onToggle = onHealthConnectOptionClick
+                        )
+                    }
+                }
+            }
+
+            if (healthConnectState.isAvailable) {
+                item {
+                    SettingItem(
+                        onClick = onManageHealthConnectPermissions,
+                        icon = painterResource(R.drawable.ic_settings),
+                        settingName = stringResource(R.string.health_connect_manage_access),
+                        settingDesc = stringResource(R.string.health_connect_manage_access_desc)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HealthConnectDataTypeCard(
+    name: String,
+    icon: Painter,
+    readOption: HealthConnectSyncOption?,
+    writeOption: HealthConnectSyncOption,
+    state: HealthConnectState,
+    onToggle: (HealthConnectSyncOption) -> Unit
+) {
+    Surface(
+        shape = ButtonDefaults.shape,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        contentColor = MaterialTheme.colorScheme.onSurface
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(ButtonDefaults.ContentPadding)
+                .padding(end = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = icon,
+                contentDescription = null,
+                modifier = Modifier.padding(start = 5.dp, end = 20.dp)
+            )
+            Text(
+                text = name,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.titleMedium
+            )
+            HealthConnectAccessSwitch(
+                label = stringResource(R.string.health_connect_read_short),
+                option = readOption,
+                state = state,
+                onToggle = onToggle
+            )
+            HealthConnectAccessSwitch(
+                label = stringResource(R.string.health_connect_write_short),
+                option = writeOption,
+                state = state,
+                onToggle = onToggle
+            )
+        }
+    }
+}
+
+@Composable
+private fun HealthConnectAccessSwitch(
+    label: String,
+    option: HealthConnectSyncOption?,
+    state: HealthConnectState,
+    onToggle: (HealthConnectSyncOption) -> Unit
+) {
+    val haptic = LocalHapticFeedback.current
+
+    Column(
+        modifier = Modifier.width(72.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (option != null) {
+            Text(text = label, style = MaterialTheme.typography.labelMedium)
+            Switch(
+                checked = option in state.enabledOptions,
+                onCheckedChange = { isChecked ->
+                    haptic.performHapticFeedback(
+                        if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                    )
+                    onToggle(option)
+                }
+            )
         }
     }
 }
@@ -332,12 +554,15 @@ private fun SettingItem(
     icon: Painter,
     settingName: String,
     settingDesc: String,
+    enabled: Boolean = true,
+    showIconInOriginalColors: Boolean = false,
     isChecked: Boolean? = null
 ) {
     val haptic = LocalHapticFeedback.current
 
     Button(
         modifier = Modifier.animateContentSize(),
+        enabled = enabled,
         onClick = {
             haptic.performHapticFeedback(
                 hapticFeedbackType = isChecked?.let {
@@ -361,11 +586,19 @@ private fun SettingItem(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painter = icon,
-                contentDescription = stringResource(R.string.theme),
-                modifier = Modifier.padding(start = 5.dp, end = 20.dp)
-            )
+            if (showIconInOriginalColors) {
+                Image(
+                    painter = painterResource(R.drawable.health_connect_logo),
+                    contentDescription = settingName,
+                    modifier = Modifier.padding(start = 5.dp, end = 20.dp).size(28.dp)
+                )
+            } else {
+                Icon(
+                    painter = icon,
+                    contentDescription = settingName,
+                    modifier = Modifier.padding(start = 5.dp, end = 20.dp)
+                )
+            }
             Column {
                 Text(
                     text = settingName,
@@ -380,6 +613,7 @@ private fun SettingItem(
         isChecked?.let {
             Switch(
                 checked = it,
+                enabled = enabled,
                 onCheckedChange = null
             )
         }
@@ -411,6 +645,7 @@ fun SettingsScreenPreview() {
             restTimerSoundOn = restTimerSoundOn,
             updatePreferences = {},
             isSupporter = Random.nextBoolean(),
+            healthConnectState = HealthConnectState(isAvailable = true),
             isWorkoutHeaderSticky = isWorkoutHeaderSticky,
             useScrollWheelForInput = useScrollWheelForInput,
             showExercisesImages = displayExercisesImages,
@@ -421,6 +656,9 @@ fun SettingsScreenPreview() {
             onRestTimerSoundOnChange = { restTimerSoundOn = it },
             onIsWorkoutHeaderStickyChange = { isWorkoutHeaderSticky = it },
             onUseScrollWheelForInputChange = { useScrollWheelForInput = it },
+            onHealthConnectClick = {},
+            onHealthConnectOptionClick = {},
+            onManageHealthConnectPermissions = {},
             onShowExercisesImagesChange = { displayExercisesImages = it },
             showConfirmDialogShowExerciseImages = {},
             onDismissScrollWhellInputAutomaticallyChange = {

@@ -15,15 +15,19 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.librefit.MainDispatcherRule
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.enums.healthConnect.HealthConnectSyncOption
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
+import org.librefit.health.HealthConnectRepository
+import org.librefit.health.HealthConnectSyncManager
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsScreenViewModelTest {
@@ -33,6 +37,8 @@ class SettingsScreenViewModelTest {
 
     // The mock repository
     private lateinit var userPreferencesRepository: UserPreferencesRepository
+    private lateinit var healthConnectRepository: HealthConnectRepository
+    private lateinit var healthConnectSyncManager: HealthConnectSyncManager
 
     // The class under test
     private lateinit var viewModel: SettingsScreenViewModel
@@ -47,6 +53,8 @@ class SettingsScreenViewModelTest {
     private lateinit var isWorkoutHeaderSticky: MutableStateFlow<Boolean>
     private lateinit var useScrollWheelForInput: MutableStateFlow<Boolean>
     private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
+    private lateinit var healthConnectEnabled: MutableStateFlow<Boolean>
+    private lateinit var healthConnectOptions: Map<HealthConnectSyncOption, MutableStateFlow<Boolean>>
     private lateinit var showExercisesImages: MutableStateFlow<Boolean?>
     private lateinit var unitSystem: MutableStateFlow<UnitSystem>
 
@@ -54,6 +62,8 @@ class SettingsScreenViewModelTest {
     fun setUp() {
         // Arrange: Create a mock for the repository
         userPreferencesRepository = mockk()
+        healthConnectRepository = mockk()
+        healthConnectSyncManager = mockk()
         language = MutableStateFlow(Language.SYSTEM)
         themeMode = MutableStateFlow(ThemeMode.SYSTEM)
         keepScreenOn = MutableStateFlow(true)
@@ -63,6 +73,10 @@ class SettingsScreenViewModelTest {
         isWorkoutHeaderSticky = MutableStateFlow(true)
         useScrollWheelForInput = MutableStateFlow(true)
         dismissScrollWheelAutomatically = MutableStateFlow(false)
+        healthConnectEnabled = MutableStateFlow(false)
+        healthConnectOptions = HealthConnectSyncOption.entries.associateWith {
+            MutableStateFlow(false)
+        }
         showExercisesImages = MutableStateFlow(null)
         unitSystem = MutableStateFlow(UnitSystem.METRIC)
 
@@ -76,6 +90,23 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.isWorkoutHeaderSticky } returns isWorkoutHeaderSticky
         every { userPreferencesRepository.useScrollWheelForInput } returns useScrollWheelForInput
         every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
+        every { userPreferencesRepository.healthConnectEnabled } returns healthConnectEnabled
+        every { userPreferencesRepository.healthConnectSyncEnabled(any()) } answers {
+            healthConnectOptions.getValue(
+                HealthConnectSyncOption.entries.first { it.preferenceId == firstArg() }
+            )
+        }
+        coEvery { userPreferencesRepository.isHealthConnectSyncEnabled(any()) } answers {
+            healthConnectOptions.getValue(
+                HealthConnectSyncOption.entries.first { it.preferenceId == firstArg() }
+            ).value
+        }
+        every { healthConnectRepository.allPermissions } returns emptySet()
+        every { healthConnectRepository.permissionsFor(any()) } returns emptySet()
+        every { healthConnectRepository.isAvailable() } returns false
+        coEvery { healthConnectRepository.grantedPermissions() } returns emptySet()
+        every { healthConnectSyncManager.invalidatePendingSyncs() } returns Unit
+        coEvery { healthConnectSyncManager.syncEnabledData(any()) } returns 0
         every { userPreferencesRepository.showExercisesImages } returns showExercisesImages
         every { userPreferencesRepository.unitSystem } returns unitSystem
 
@@ -106,12 +137,23 @@ class SettingsScreenViewModelTest {
         coEvery { userPreferencesRepository.saveDismissScrollWheelInputAutomatically(any()) } answers {
             dismissScrollWheelAutomatically.value = firstArg()
         }
+        coEvery { userPreferencesRepository.saveHealthConnectEnabled(any()) } answers {
+            healthConnectEnabled.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveHealthConnectSyncEnabled(any(), any()) } answers {
+            val option = HealthConnectSyncOption.entries.first { it.preferenceId == firstArg() }
+            healthConnectOptions.getValue(option).value = secondArg()
+        }
         coEvery { userPreferencesRepository.saveShowExercisesImages(any()) } answers {
             showExercisesImages.value = firstArg()
         }
 
         // Arrange: Create the ViewModel instance with the mock repository
-        viewModel = SettingsScreenViewModel(userPreferencesRepository)
+        viewModel = SettingsScreenViewModel(
+            userPreferencesRepository,
+            healthConnectRepository,
+            healthConnectSyncManager
+        )
     }
 
     @Test
@@ -319,6 +361,81 @@ class SettingsScreenViewModelTest {
             viewModel.saveDismissScrollWheelInputAutomatically(expected)
             assertThat(awaitItem()).isEqualTo(expected)
         }
+    }
+
+    @Test
+    fun `health connect switch can be disabled locally`() = runTest {
+        healthConnectEnabled.value = true
+
+        viewModel.updateHealthConnectEnabled(false)
+
+        viewModel.healthConnectState.test {
+            val state = awaitItem()
+            assertThat(state.isEnabled).isFalse()
+        }
+    }
+
+    @Test
+    fun `health connect reports unavailable`() = runTest {
+        advanceUntilIdle()
+
+        assertThat(viewModel.healthConnectState.value.isAvailable).isFalse()
+    }
+
+    @Test
+    fun `health connect refreshes granted permissions`() = runTest {
+        val permission = "android.permission.health.READ_WEIGHT"
+        every { healthConnectRepository.isAvailable() } returns true
+        coEvery { healthConnectRepository.grantedPermissions() } returns setOf(permission)
+
+        viewModel.healthConnectState.test {
+            viewModel.refreshHealthConnectState()
+            advanceUntilIdle()
+
+            var state = awaitItem()
+            while (!state.isAvailable) {
+                state = awaitItem()
+            }
+            assertThat(state.grantedPermissions).containsExactly(permission)
+        }
+    }
+
+    @Test
+    fun `granting a health connect permission enables only its option`() = runTest {
+        val option = HealthConnectSyncOption.WEIGHT_READ
+        val permission = "android.permission.health.READ_WEIGHT"
+        every { healthConnectRepository.isAvailable() } returns true
+        every { healthConnectRepository.permissionsFor(option) } returns setOf(permission)
+        coEvery { healthConnectRepository.grantedPermissions() } returns setOf(permission)
+
+        viewModel.healthConnectState.test {
+            viewModel.updateHealthConnectPermissions(option, setOf(permission))
+            advanceUntilIdle()
+
+            var state = awaitItem()
+            while (option !in state.enabledOptions) {
+                state = awaitItem()
+            }
+            assertThat(state.isEnabled).isTrue()
+            assertThat(state.enabledOptions).containsExactly(option)
+        }
+    }
+
+    @Test
+    fun `initial permission request enables health connect without enabling data types`() = runTest {
+        val permission = "android.permission.health.READ_WEIGHT"
+        every { healthConnectRepository.allPermissions } returns setOf(permission)
+        viewModel = SettingsScreenViewModel(
+            userPreferencesRepository,
+            healthConnectRepository,
+            healthConnectSyncManager
+        )
+
+        viewModel.updateHealthConnectPermissions(null, setOf(permission))
+        advanceUntilIdle()
+
+        assertThat(healthConnectEnabled.value).isTrue()
+        assertThat(healthConnectOptions.values.any { it.value }).isFalse()
     }
 
     @Test

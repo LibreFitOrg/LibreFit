@@ -21,15 +21,21 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.enums.healthConnect.HealthConnectSyncOption
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
+import org.librefit.health.HealthConnectRepository
+import org.librefit.health.HealthConnectSyncManager
+import org.librefit.ui.models.HealthConnectState
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
-    private val userPreferences: UserPreferencesRepository
+    private val userPreferences: UserPreferencesRepository,
+    private val healthConnectRepository: HealthConnectRepository,
+    private val healthConnectSyncManager: HealthConnectSyncManager
 ) : ViewModel() {
     val themeMode = userPreferences.themeMode
     val materialMode = userPreferences.materialMode
@@ -41,6 +47,34 @@ class SettingsScreenViewModel @Inject constructor(
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
     val showExercisesImages = userPreferences.showExercisesImages
     val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
+    val allHealthConnectPermissions = healthConnectRepository.allPermissions
+    private val _healthConnectState = MutableStateFlow(HealthConnectState())
+    private val enabledHealthConnectOptions = combine(
+        HealthConnectSyncOption.entries.map { option ->
+            userPreferences.healthConnectSyncEnabled(option.preferenceId)
+        }
+    ) { enabled ->
+        HealthConnectSyncOption.entries
+            .filterIndexedTo(mutableSetOf()) { index, _ -> enabled[index] }
+    }
+    val healthConnectState: StateFlow<HealthConnectState> = combine(
+        _healthConnectState,
+        userPreferences.healthConnectEnabled,
+        enabledHealthConnectOptions
+    ) { state, isEnabled, enabledOptions ->
+        state.copy(isEnabled = isEnabled, enabledOptions = enabledOptions)
+    }
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = HealthConnectState()
+        )
+
+    init {
+        refreshHealthConnectState()
+    }
+
     val unitSystem = userPreferences.unitSystem
 
     fun saveThemeMode(mode: ThemeMode) {
@@ -75,6 +109,92 @@ class SettingsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             userPreferences.saveDismissScrollWheelInputAutomatically(dismissAutomatically)
         }
+    }
+
+    fun refreshHealthConnectState() {
+        viewModelScope.launch {
+            val isAvailable = healthConnectRepository.isAvailable()
+            val grantedPermissions = if (isAvailable) {
+                healthConnectRepository.grantedPermissions()
+            } else {
+                emptySet()
+            }
+
+            _healthConnectState.update {
+                it.copy(
+                    isAvailable = isAvailable,
+                    grantedPermissions = grantedPermissions
+                )
+            }
+
+            configuredHealthConnectOptions().forEach { option ->
+                if (!grantedPermissions.containsAll(permissionsFor(option))) {
+                    userPreferences.saveHealthConnectSyncEnabled(option.preferenceId, false)
+                }
+            }
+        }
+    }
+
+    fun updateHealthConnectPermissions(
+        option: HealthConnectSyncOption?,
+        grantedPermissions: Set<String>
+    ) {
+        viewModelScope.launch {
+            healthConnectSyncManager.invalidatePendingSyncs()
+            val updatedGrantedPermissions =
+                _healthConnectState.value.grantedPermissions + grantedPermissions
+            _healthConnectState.update {
+                it.copy(grantedPermissions = updatedGrantedPermissions)
+            }
+            if (option == null) {
+                val hasAnyPermission =
+                    updatedGrantedPermissions.any { it in allHealthConnectPermissions }
+                userPreferences.saveHealthConnectEnabled(hasAnyPermission)
+            } else if (updatedGrantedPermissions.containsAll(permissionsFor(option))) {
+                userPreferences.saveHealthConnectEnabled(true)
+                userPreferences.saveHealthConnectSyncEnabled(option.preferenceId, true)
+                syncEnabledData(configuredHealthConnectOptions() + option)
+            }
+        }
+    }
+
+    fun permissionsFor(option: HealthConnectSyncOption): Set<String> =
+        healthConnectRepository.permissionsFor(option)
+
+    fun updateHealthConnectEnabled(isEnabled: Boolean) {
+        viewModelScope.launch {
+            healthConnectSyncManager.invalidatePendingSyncs()
+            userPreferences.saveHealthConnectEnabled(isEnabled)
+
+            if (isEnabled) {
+                val enabledOptions = configuredHealthConnectOptions()
+                if (enabledOptions.isNotEmpty()) {
+                    syncEnabledData(enabledOptions)
+                }
+            }
+        }
+    }
+
+    fun updateHealthConnectSyncOption(option: HealthConnectSyncOption, isEnabled: Boolean) {
+        viewModelScope.launch {
+            healthConnectSyncManager.invalidatePendingSyncs()
+            userPreferences.saveHealthConnectSyncEnabled(option.preferenceId, isEnabled)
+            if (isEnabled) {
+                userPreferences.saveHealthConnectEnabled(true)
+                syncEnabledData(configuredHealthConnectOptions() + option)
+            }
+        }
+    }
+
+    private suspend fun configuredHealthConnectOptions(): Set<HealthConnectSyncOption> = buildSet {
+        for (option in HealthConnectSyncOption.entries) {
+            if (userPreferences.isHealthConnectSyncEnabled(option.preferenceId)) add(option)
+        }
+    }
+
+    private suspend fun syncEnabledData(options: Set<HealthConnectSyncOption>) {
+        if (options.isEmpty()) return
+        runCatching { healthConnectSyncManager.syncEnabledData(options) }
     }
 
     fun saveShowExercisesImages(display: Boolean) {

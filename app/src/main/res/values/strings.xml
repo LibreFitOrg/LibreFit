@@ -279,6 +279,7 @@
     <string name="privacy_notice_summary">LibreFit provides **maximum privacy** as it **cannot access the Internet**. In addition, all permissions are **optional** and do not allow data collection.</string>
     <string name="privacy_notice_optional_perm">Optional permissions</string>
     <string name="privacy_notice_notification_perm">**Notifications**: This permission allows the app to send notifications about your ongoing workout sessions and alerts when rest periods are over.</string>
+    <string name="privacy_notice_health_connect_perm">**Health Connect**: This optional permission lets LibreFit read and write only the health data types you enable in settings. Synchronization can be paused at any time.</string>
     <string name="privacy_notice_default_perm">Permission granted by default</string>
     <string name="privacy_notice_foreground_perm">**Foreground Service**: This permission is automatically granted when LibreFit is installed and this allows it to run in the foreground during a workout.</string>
 
@@ -307,6 +308,18 @@
     <string name="screen_on_desc">Screen stays on during workout</string>
     <string name="screen_off_desc">Screen does not stay on during workout</string>
     <string name="settings_general">General</string>
+    <string name="health_connect">Health Connect</string>
+    <string name="health_connect_permissions_desc">Choose which data LibreFit can read and write.</string>
+    <string name="health_connect_unavailable_desc">Health Connect is not available on this device.</string>
+    <string name="health_connect_workouts">Workouts</string>
+    <string name="health_connect_read_short">Read</string>
+    <string name="health_connect_write_short">Write</string>
+    <string name="health_connect_manage_access">Manage access in Health Connect</string>
+    <string name="health_connect_manage_access_desc">Review or revoke LibreFit permissions</string>
+    <string name="health_connect_permission_title">Allow Health Connect access?</string>
+    <string name="health_connect_permission_rationale">LibreFit needs this permission only to sync the data type you selected. Your health data stays on your device and is never sent to LibreFit or another server.</string>
+    <string name="health_connect_all_permissions_rationale">LibreFit asks for all supported Health Connect permissions once so you are not interrupted again for every data type. Each read and write option remains disabled until you enable its individual switch.</string>
+    <string name="health_connect_continue">Continue</string>
     <string name="rest_timer_sound">Rest timer sound</string>
     <string name="rest_timer_sound_on_desc">Play a sound when rest timer ends</string>
     <string name="rest_timer_sound_off_desc">Rest timer alerts will be silent</string>

@@ -188,6 +188,9 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    // Health connect
+    implementation(libs.androidx.health.connect)
+
 
     // AboutLibraries to show used dependencies in jetpack compose
     implementation(libs.aboutlibraries.compose.m3)
