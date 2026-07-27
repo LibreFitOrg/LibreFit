@@ -903,7 +903,7 @@ private fun Set(
                                     .clickable {
                                         val value = set.load.doubleValue(unitSystem)
                                         inputModalBottomSheetState =
-                                            InputModalBottomSheetState.Weight(
+                                            InputModalBottomSheetState.Weight.create(
                                                 integerWeight = value.toInt(),
                                                 decimalWeight = value.getDecimalDigitsAsInteger()
                                             )

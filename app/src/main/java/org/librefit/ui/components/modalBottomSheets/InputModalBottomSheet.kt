@@ -45,6 +45,7 @@ import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.NumberPicker
 import org.librefit.ui.models.InputModalBottomSheetState
+import org.librefit.ui.models.InputModalBottomSheetState.Weight.Companion.safeCopy
 import org.librefit.ui.models.autoUnitSuffix
 import org.librefit.ui.theme.LibreFitTheme
 
@@ -236,7 +237,7 @@ fun InputModalBottomSheet(
                                     options = state.integerWeightRange,
                                     onValueChange = {
                                         onValueChange(
-                                            state.copy(
+                                            state.safeCopy(
                                                 integerWeight = it
                                             )
                                         )
@@ -256,7 +257,7 @@ fun InputModalBottomSheet(
                                     label = { it.toString().padStart(2, '0') },
                                     onValueChange = {
                                         onValueChange(
-                                            state.copy(
+                                            state.safeCopy(
                                                 decimalWeight = it
                                             )
                                         )
@@ -328,7 +329,7 @@ fun InputModalBottomSheet(
                                                 reps = state.repsRange.first()
                                             )
 
-                                            is InputModalBottomSheetState.Weight -> state.copy(
+                                            is InputModalBottomSheetState.Weight -> state.safeCopy(
                                                 integerWeight = state.integerWeightRange.first(),
                                                 decimalWeight = state.decimalWeightRange.first()
                                             )
@@ -351,7 +352,7 @@ private fun InputModelBottomSheetPreview() {
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
         var state by remember {
             mutableStateOf<InputModalBottomSheetState>(
-                InputModalBottomSheetState.Weight()
+                InputModalBottomSheetState.Weight.create()
             )
         }
         InputModalBottomSheet(

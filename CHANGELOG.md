@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+-
+
+### Changed
+
+-
+
+### Deprecated
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+## [0.4.0] - 2026-07-26
+
+### Added
+
 - Support for imperial system (pounds) [#18](https://github.com/LibreFitOrg/LibreFit/issues/18)
 - Russian 🇷🇺 [#124](https://github.com/LibreFitOrg/LibreFit/pull/124)
 - Add 5 new exercises [#111](https://github.com/LibreFitOrg/LibreFit/pull/111):
@@ -21,14 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - A new toggle to show images was introduced (off by default). [#29](https://github.com/LibreFitOrg/LibreFit/issues/29)
-
-### Deprecated
-
--
-
-### Removed
-
--
+- Quicker input for weights with scroll wheel [#74](https://github.com/LibreFitOrg/LibreFit/issues/74)
 
 ### Fixed
 
@@ -108,7 +123,9 @@ Thank you for your support!
 
 First public release. Bugs are expected! Report them so they can be fixed.
 
-[Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.4.0...HEAD
+
+[0.4.0]: https://github.com/LibreFitOrg/LibreFit/compare/v0.3.1...v0.4.0
 
 [0.3.1]: https://github.com/LibreFitOrg/LibreFit/compare/v0.3.0...v0.3.1
 
