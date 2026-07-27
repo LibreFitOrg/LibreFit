@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--
+- Visual bug in previous set of workout screen [#140](https://github.com/LibreFitOrg/LibreFit/pull/140)
 
 ## [0.4.0] - 2026-07-26
 
