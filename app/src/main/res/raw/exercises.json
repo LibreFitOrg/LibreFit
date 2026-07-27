@@ -2471,6 +2471,35 @@
     "id": "Bicycling_Stationary"
   },
   {
+    "name": "Bird Dog",
+    "force": "static",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": null,
+    "primaryMuscles": [
+      "abdominals",
+      "lower back"
+    ],
+    "secondaryMuscles": [
+      "glutes",
+      "shoulders"
+    ],
+    "instructions": [
+      "Start on your hands and knees with your hands directly under your shoulders and your knees under your hips.",
+      "Brace your core and keep your spine in a neutral position.",
+      "Simultaneously extend one arm forward and the opposite leg backward until both are parallel to the floor.",
+      "Keep your hips level and avoid arching or rotating your lower back.",
+      "Pause briefly while maintaining balance and full-body tension.",
+      "Return to the starting position under control and repeat on the opposite side."
+    ],
+    "category": "strength",
+    "images": [
+      "Bird_Dog/0.webp",
+      "Bird_Dog/1.webp"
+    ],
+    "id": "Bird_Dog"
+  },
+  {
     "name": "Board Press",
     "force": "push",
     "level": "intermediate",
@@ -2978,6 +3007,35 @@
       "Bradford_Rocky_Presses/1.webp"
     ],
     "id": "Bradford_Rocky_Presses"
+  },
+  {
+    "name": "Broad Jump",
+    "force": "push",
+    "level": "intermediate",
+    "mechanic": "compound",
+    "equipment": null,
+    "primaryMuscles": [
+      "glutes",
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "hamstrings",
+      "calves",
+      "abdominals"
+    ],
+    "instructions": [
+      "Stand with your feet about shoulder-width apart.",
+      "Lower into a quarter squat while swinging your arms behind you.",
+      "Explosively swing your arms forward and extend your hips, knees, and ankles to jump as far forward as possible.",
+      "Land softly with your knees and hips bent to absorb the impact.",
+      "Maintain balance in an athletic position before resetting for the next repetition."
+    ],
+    "category": "plyometrics",
+    "images": [
+      "Broad_Jump/0.webp",
+      "Broad_Jump/1.webp"
+    ],
+    "id": "Broad_Jump"
   },
   {
     "name": "Butt-Ups",
@@ -4942,6 +5000,67 @@
       "Concentration_Curls/1.webp"
     ],
     "id": "Concentration_Curls"
+  },
+  {
+    "name": "Copenhagen Side Plank",
+    "force": "static",
+    "level": "intermediate",
+    "mechanic": "compound",
+    "equipment": "other",
+    "primaryMuscles": [
+      "adductors"
+    ],
+    "secondaryMuscles": [
+      "abdominals",
+      "glutes",
+      "shoulders"
+    ],
+    "instructions": [
+      "Lie on your side next to a bench or sturdy elevated surface.",
+      "Place your top leg on the bench so that your ankle or knee is supported, depending on your strength and experience.",
+      "Position your lower forearm directly beneath your shoulder.",
+      "Lift your hips off the ground, forming a straight line from your head to your supporting foot.",
+      "Allow your bottom leg to hang beneath the bench or press it lightly against the underside of the top leg for additional support.",
+      "Hold the position while keeping your core engaged and your hips level.",
+      "Lower under control and repeat on the opposite side."
+    ],
+    "category": "strength",
+    "images": [
+      "Copenhagen_Side_Plank/0.webp",
+      "Copenhagen_Side_Plank/1.webp"
+    ],
+    "id": "Copenhagen_Side_Plank"
+  },
+  {
+    "name": "Cossack Squat",
+    "force": "push",
+    "level": "intermediate",
+    "mechanic": "compound",
+    "equipment": null,
+    "primaryMuscles": [
+      "quadriceps",
+      "adductors"
+    ],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "calves",
+      "abdominals"
+    ],
+    "instructions": [
+      "Stand with your feet wider than shoulder-width apart and your toes pointed slightly outward.",
+      "Shift your weight onto one leg as you bend that knee and lower your hips toward the ground.",
+      "Keep your opposite leg straight with the heel on the floor and the toes pointing upward if your mobility allows.",
+      "Lower until you feel a comfortable stretch in the inner thigh of the straight leg while keeping your chest upright.",
+      "Push through the foot of the bent leg to return to the starting position.",
+      "Repeat on the opposite side, alternating for the desired number of repetitions."
+    ],
+    "category": "strength",
+    "images": [
+      "Cossack_Squat/0.webp",
+      "Cossack_Squat/1.webp"
+    ],
+    "id": "Cossack_Squat"
   },
   {
     "name": "Cross-Body Crunch",
@@ -8877,6 +8996,30 @@
       "Hip_Lift_with_Band/1.webp"
     ],
     "id": "Hip_Lift_with_Band"
+  },
+  {
+    "name": "Hollow Hold",
+    "force": "static",
+    "level": "intermediate",
+    "mechanic": "isolation",
+    "equipment": null,
+    "primaryMuscles": [
+      "abdominals"
+    ],
+    "secondaryMuscles": [],
+    "instructions": [
+      "Lie on your back with your arms extended overhead and your legs straight.",
+      "Press your lower back firmly into the floor by bracing your core and tilting your pelvis slightly backward.",
+      "Lift your shoulders, arms, and legs a few inches off the ground while maintaining the lower back contact with the floor.",
+      "Keep your body in a shallow 'banana' shape without allowing your lower back to arch.",
+      "Hold the position for the desired duration while breathing steadily.",
+      "Lower your arms and legs under control to finish the exercise."
+    ],
+    "category": "strength",
+    "images": [
+      "Hollow_Hold/0.webp"
+    ],
+    "id": "Hollow_Hold"
   },
   {
     "name": "Horizontal Row",
@@ -14747,6 +14890,36 @@
     "id": "Plyo_Push-up"
   },
   {
+    "name": "Pogos",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": null,
+    "primaryMuscles": [
+      "calves"
+    ],
+    "secondaryMuscles": [
+      "quadriceps",
+      "glutes",
+      "hamstrings",
+      "abdominals"
+    ],
+    "instructions": [
+      "Stand upright with your feet about hip-width apart.",
+      "Keep your knees only slightly bent and your torso tall throughout the movement.",
+      "Bounce vertically by pushing through the balls of your feet, using your ankles to generate the movement.",
+      "Spend as little time on the ground as possible, aiming for quick, springy contacts.",
+      "Land softly on the balls of your feet and immediately rebound into the next jump while maintaining a consistent rhythm.",
+      "A common progression or alternative is Forward Pogos (Pogo Jumping Forward)"
+    ],
+    "category": "plyometrics",
+    "images": [
+      "Pogos/0.webp",
+      "Pogos/1.webp"
+    ],
+    "id": "Pogos"
+  },
+  {
     "name": "Posterior Tibialis Stretch",
     "force": "static",
     "level": "intermediate",
@@ -19342,6 +19515,35 @@
     "id": "Smith_Single-Leg_Split_Squat"
   },
   {
+    "name": "Snap Down",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": null,
+    "primaryMuscles": [
+      "quadriceps",
+      "glutes"
+    ],
+    "secondaryMuscles": [
+      "hamstrings",
+      "calves",
+      "abdominals"
+    ],
+    "instructions": [
+      "Stand tall with your feet about hip-width apart and your arms overhead.",
+      "Quickly drive your arms down while simultaneously dropping into a quarter squat.",
+      "Land softly on the balls of your feet before settling your heels to the ground.",
+      "Absorb the landing by bending your hips and knees while keeping your chest up and your knees aligned over your toes.",
+      "Pause briefly in the athletic position, then stand back up and repeat."
+    ],
+    "category": "plyometrics",
+    "images": [
+      "Snap_Down/0.webp",
+      "Snap_Down/1.webp"
+    ],
+    "id": "Snap_Down"
+  },
+  {
     "name": "Snatch",
     "force": "pull",
     "level": "intermediate",
@@ -21540,6 +21742,34 @@
     "id": "Stride_Jump_Crossover"
   },
   {
+    "name": "Suitcase Carry",
+    "force": "static",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "dumbbell",
+    "primaryMuscles": [
+      "abdominals"
+    ],
+    "secondaryMuscles": [
+      "forearms",
+      "traps",
+      "shoulders",
+      "glutes"
+    ],
+    "instructions": [
+      "Stand upright while holding a dumbbell or kettlebell in one hand at your side.",
+      "Brace your core and keep your shoulders level, resisting the urge to lean toward the weight.",
+      "Walk forward with controlled, steady steps while maintaining an upright posture.",
+      "Keep the weight close to your body and avoid shrugging your shoulder.",
+      "Continue for the desired distance or time, then switch hands and repeat."
+    ],
+    "category": "strongman",
+    "images": [
+      "Suitcase_Carry/0.webp"
+    ],
+    "id": "Suitcase_Carry"
+  },
+  {
     "name": "Sumo Deadlift",
     "force": "pull",
     "level": "intermediate",
@@ -22026,6 +22256,30 @@
       "Thigh_Adductor/1.webp"
     ],
     "id": "Thigh_Adductor"
+  },
+  {
+    "name": "Tibialis Raise",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "isolation",
+    "equipment": null,
+    "primaryMuscles": [
+      "calves"
+    ],
+    "secondaryMuscles": [],
+    "instructions": [
+      "Stand with your back against a wall and your feet positioned about 20–30 cm (8–12 inches) in front of you.",
+      "Lean into the wall for support while keeping your heels firmly on the ground.",
+      "Lift your toes as high as possible by dorsiflexing your ankles, keeping your heels in contact with the floor.",
+      "Pause briefly at the top of the movement, feeling the muscles along the front of your lower legs contract.",
+      "Lower your toes back to the starting position under control and repeat."
+    ],
+    "category": "strength",
+    "images": [
+      "Tibialis_Raise/0.webp",
+      "Tibialis_Raise/1.webp"
+    ],
+    "id": "Tibialis_Raise"
   },
   {
     "name": "Tire Flip",
