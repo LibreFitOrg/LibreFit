@@ -370,4 +370,7 @@
     <string name="language_urdu">Urdu</string>
     <string name="language_russian">Russisch</string>
     <string name="language_korean">Koreanisch</string>
+    <string name="open_settings">Einstellungen öffnen</string>
+    <string name="metric">Metrisch</string>
+    <string name="language_swedish">Schwedisch</string>
 </resources>
