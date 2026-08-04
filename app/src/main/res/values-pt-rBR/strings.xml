@@ -250,4 +250,5 @@
     <string name="complete_workout">Treino completo</string>
     <string name="tut_complete_workout_headline">Ao iniciar um treino, você está registrando uma sessão ao vivo. O LibreFit mostra seu desempenho anterior em cada série, facilitando o desafio pessoal e a busca por sobrecarga progressiva.</string>
     <string name="tut_complete_workout_1">Para começar a registrar suas atividades, inicie um treino de uma de suas rotinas ou escolha um treino vazio para uma sessão espontânea.</string>
+    <string name="url_source_code_codeberg" translatable="false">https://codeberg.org/LibreFitOrg/LibreFit</string>
 </resources>
