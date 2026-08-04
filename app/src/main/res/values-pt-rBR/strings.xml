@@ -259,4 +259,5 @@
     <string name="language_indonesian">Indonésio</string>
     <string name="language_ukrainian">Ucraniano</string>
     <string name="rest_time_desc">O tempo de descanso é ativado ao completar uma série, imediatamente começando a contagem regressiva. Um alerta é enviado quando o tempo de descanso acaba.</string>
+    <string name="tut_complete_workout_2">Se você começou a partir de uma rotina, seus exercícios serão pré-carregados. Você ainda poderá adicionar mais exercícios durante a sessão.</string>
 </resources>
