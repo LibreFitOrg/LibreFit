@@ -201,10 +201,6 @@ class UserPreferencesRepository @Inject constructor(
             initialValue = Language.SYSTEM
         )
 
-    suspend fun <T> savePreference(key: Preferences.Key<T>, value: T) {
-        dataStore.edit { preferences -> preferences[key] = value }
-    }
-
     suspend fun saveThemeMode(mode: ThemeMode) {
         dataStore.edit { preferences -> preferences[THEME_MODE_KEY] = mode.value }
     }

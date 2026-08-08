@@ -24,7 +24,6 @@ kotlinxCollectionsImmutable = "0.4.0"
 material = "1.14.0"
 coil = "3.4.0"
 reorderable = "3.1.0"
-datastorePreferencesCore = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.18.0" }

@@ -128,13 +128,18 @@ fun SettingsScreen(
         uri?.let { viewModel.backupImport(it) }
     }
 
+    val importSuccessToast = stringResource(R.string.import_data_success)
+    val importFailedToast = stringResource(R.string.import_data_failed)
+    val exportSuccessToast = stringResource(R.string.export_data_success)
+    val exportFailedToast = stringResource(R.string.export_data_failed)
+
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             val message = when (event) {
-                SettingsEvent.ImportSuccess -> viewModel.importSuccessToast
-                SettingsEvent.ImportFailed -> viewModel.importFailedToast
-                SettingsEvent.ExportSuccess -> viewModel.exportSuccessToast
-                SettingsEvent.ExportFailed -> viewModel.exportFailedToast
+                SettingsEvent.ImportSuccess -> importSuccessToast
+                SettingsEvent.ImportFailed -> importFailedToast
+                SettingsEvent.ExportSuccess -> exportSuccessToast
+                SettingsEvent.ExportFailed -> exportFailedToast
             }
 
             viewModel.showDialog(message)
@@ -153,7 +158,6 @@ fun SettingsScreen(
         isWorkoutHeaderSticky = isWorkoutHeaderSticky,
         dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
         updatePreferences = viewModel::updatePreferences,
-        saveBooleanValue = viewModel::savePreference,
         onExportClicked = {
             val fileName = "librefit-backup.json"
             exportLauncher.launch(fileName)
@@ -185,7 +189,6 @@ private fun SettingsScreenContent(
     useScrollWheelForInput: Boolean,
     dismissScrollWheelInputAutomatically: Boolean,
     updatePreferences: (List<DialogPreference>) -> Unit,
-    saveBooleanValue: (Preferences.Key<Boolean>, value: Boolean) -> Unit,
     onExportClicked: () -> Unit,
     onImportClicked: () -> Unit,
     isImporting: Boolean,
@@ -457,21 +460,6 @@ fun SettingsScreenPreview() {
             updatePreferences = {},
             isSupporter = Random.nextBoolean(),
             isWorkoutHeaderSticky = isWorkoutHeaderSticky,
-            saveBooleanValue = { _, _ -> }, /*{ key, value ->
-                when (key) {
-                    UserPreferencesRepository.materialModeKey -> {
-                        materialModeOn = value
-                    }
-
-                    UserPreferencesRepository.keepOnWorkoutScreenKey -> {
-                        keepWorkoutScreenOn = value
-                    }
-
-                    UserPreferencesRepository.restTimerSoundKey -> {
-                        restTimerSoundOn = value
-                    }
-                }
-            }*/
             onExportClicked = {},
             onImportClicked = {},
             isImporting = false,

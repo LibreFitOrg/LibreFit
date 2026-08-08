@@ -12,22 +12,26 @@ import kotlinx.serialization.json.Json
 import org.librefit.R
 import org.librefit.db.AppDatabase
 import org.librefit.db.Schema
+import org.librefit.db.dao.MeasurementDao
+import org.librefit.db.dao.WorkoutDao
 import javax.inject.Inject
 import org.librefit.db.importExport.dto.ExportData
+import org.librefit.db.importExport.dto.ExportExercise
 import org.librefit.db.importExport.dto.ExportPayload
 import org.librefit.db.importExport.mapper.toExport
 import org.librefit.db.importExport.mapper.toRelation
 import org.librefit.di.qualifiers.IoDispatcher
+import org.librefit.di.stringProvider.StringProvider
+import java.io.InputStream
+import java.io.OutputStream
 
 class ImportExportRepository @Inject constructor(
-    private val db: AppDatabase,
-    @param:ApplicationContext private val context: Context,
+    private val workoutDao: WorkoutDao,
+    private val measurementDao: MeasurementDao,
+    private val stringProvider: StringProvider,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
-    suspend fun exportTo(uri: Uri) = withContext(ioDispatcher) {
-        val workoutDao = db.getWorkoutDao()
-        val measurementDao = db.getMeasurementDao()
-
+    suspend fun exportTo(outputStream: OutputStream) = withContext(ioDispatcher) {
         val workouts = workoutDao.getAllWorkoutsWithExercisesAndSetsOnce()
         val exportWorkouts = workouts.map {
             it.toExport()
@@ -43,33 +47,25 @@ class ImportExportRepository @Inject constructor(
             )
         )
 
-        context.contentResolver.openOutputStream(uri)?.use { output ->
+        outputStream.use { output ->
             val json = Json {
                 prettyPrint = true
                 ignoreUnknownKeys = true
                 encodeDefaults = true
             }
             output.write(json.encodeToString(payload).toByteArray())
-        } ?: return@withContext
+        }
     }
 
-    suspend fun importFrom(uri: Uri): ImportResult = withContext(ioDispatcher) {
+    suspend fun importFrom(inputStream: InputStream) = withContext(ioDispatcher) {
         val json = Json { ignoreUnknownKeys = true }
 
-        val rawPayload = context.contentResolver.openInputStream(uri)?.use { input ->
-            context.contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-
+        val rawPayload = inputStream.use { input ->
             val text = input.bufferedReader().readText()
             json.decodeFromString<ExportPayload>(text)
-        } ?: return@withContext ImportResult.Error(context.getString(R.string.import_data_failed))
+        }
 
         val payload = migratePayload(rawPayload)
-
-        val workoutDao = db.getWorkoutDao()
-        val measurementDao = db.getMeasurementDao()
 
         // 1. CONVERT INTO ENTITIES AND UPSERT WORKOUTS
         val relations = payload.data.workouts.map {
@@ -83,8 +79,6 @@ class ImportExportRepository @Inject constructor(
         payload.data.measurements.forEach {
             measurementDao.upsertMeasurement(it)
         }
-
-        return@withContext ImportResult.Success
     }
 
     private val currentSchemaVersion = Schema.VERSION
@@ -96,7 +90,7 @@ class ImportExportRepository @Inject constructor(
             current = when (current.schemaVersion) {
                 1 -> migrateV1ToV2(current)
                 2 -> migrateV2ToV3(current)
-                else -> error("${context.getString(R.string.unsupported_schema_version)}: ${current.schemaVersion}")
+                else -> error("${stringProvider.unsupportedSchemaVersion}: ${current.schemaVersion}")
             }
         }
 
@@ -108,28 +102,30 @@ class ImportExportRepository @Inject constructor(
     }
 
     private fun migrateV2ToV3(payload: ExportPayload): ExportPayload {
+        fun isValidOrder(list: List<ExportExercise>): Boolean {
+            val pos = list.map { it.position }
+            if (pos.size != pos.distinct().size) return false
+            val sortedPos = pos.sorted()
+            return sortedPos == (0 until pos.size).toList()
+        }
+
         return payload.copy(
-            schemaVersion = 3,
+            schemaVersion = Schema.VERSION,
             data = payload.data.copy(
                 workouts = payload.data.workouts.map { workout ->
-                    workout.copy(
-                        exercises = workout.exercises
-                            .groupBy { it.workoutId }
-                            .flatMap { (_, exercises) ->
-                                exercises
-                                    .sortedBy { it.id }
-                                    .mapIndexed { index, exercise ->
-                                        exercise.copy(position = index)
-                                    }
-                            }
-                    )
+                    val exercises = workout.exercises
+
+                    val reordered = if (isValidOrder(exercises)) {
+                        exercises
+                    } else {
+                        exercises
+                            .sortedBy { it.id }
+                            .mapIndexed { index, ex -> ex.copy(position = index) }
+                    }
+
+                    workout.copy(exercises = reordered)
                 }
             )
         )
     }
-}
-
-sealed class ImportResult {
-    data object Success : ImportResult()
-    data class Error(val message: String) : ImportResult()
 }

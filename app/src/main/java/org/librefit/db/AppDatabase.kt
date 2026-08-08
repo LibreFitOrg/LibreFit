@@ -25,10 +25,6 @@ import org.librefit.db.entity.Measurement
 import org.librefit.db.entity.Set
 import org.librefit.db.entity.Workout
 
-object Schema {
-    const val VERSION = 3
-}
-
 @Database(
     entities = [Workout::class, Exercise::class, Set::class, Measurement::class, ExerciseDC::class],
     version = Schema.VERSION,

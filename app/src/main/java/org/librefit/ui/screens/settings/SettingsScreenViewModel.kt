@@ -8,13 +8,10 @@
 
 package org.librefit.ui.screens.settings
 
-import android.content.Context
 import android.net.Uri
-import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,10 +23,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.librefit.R
 import org.librefit.db.repository.ImportExportRepository
-import org.librefit.db.repository.ImportResult
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.di.streamProvider.StreamProvider
+import org.librefit.di.stringProvider.StringProvider
+import org.librefit.di.uriAccess.UriAccess
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
@@ -37,9 +35,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
-    @param:ApplicationContext private val context: Context,
     private val userPreferences: UserPreferencesRepository,
-    private val importExportRepository: ImportExportRepository
+    private val importExportRepository: ImportExportRepository,
+    private val streamProvider: StreamProvider,
+    private val uriAccess: UriAccess
 ) : ViewModel() {
     val themeMode = userPreferences.themeMode
     val materialMode = userPreferences.materialMode
@@ -53,20 +52,6 @@ class SettingsScreenViewModel @Inject constructor(
 
     private val _isImporting = MutableStateFlow(false)
     val isImporting = _isImporting.asStateFlow()
-
-    fun <T> savePreference(key: Preferences.Key<T>, value: T) {
-        viewModelScope.launch {
-            userPreferences.savePreference(
-                key = key,
-                value = value
-            )
-        }
-    }
-
-    val importSuccessToast = context.getString(R.string.import_data_success)
-    val importFailedToast = context.getString(R.string.import_data_failed)
-    val exportSuccessToast = context.getString(R.string.export_data_success)
-    val exportFailedToast = context.getString(R.string.export_data_failed)
 
     private val _dialogMessage = MutableStateFlow<String?>(null)
     val dialogMessage = _dialogMessage.asStateFlow()
@@ -153,12 +138,10 @@ class SettingsScreenViewModel @Inject constructor(
 
     fun backupExport(uri: Uri) {
         viewModelScope.launch {
-            try {
-                importExportRepository.exportTo(uri)
+            streamProvider.getOutputStream(uri)?.let {
+                importExportRepository.exportTo(it)
                 _events.emit(SettingsEvent.ExportSuccess)
-            } catch (e: Exception) {
-                _events.emit(SettingsEvent.ExportFailed)
-            }
+            } ?: _events.emit(SettingsEvent.ExportFailed)
         }
     }
 
@@ -166,11 +149,11 @@ class SettingsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             _isImporting.value = true
 
-            val result = importExportRepository.importFrom(uri)
-            when (result) {
-                is ImportResult.Success -> _events.emit(SettingsEvent.ImportSuccess)
-                is ImportResult.Error -> _events.emit(SettingsEvent.ImportFailed)
-            }
+            streamProvider.getInputStream(uri)?.let {
+                it.use { uriAccess.takePersistableReadPermission(uri) }
+                importExportRepository.importFrom(it)
+                _events.emit(SettingsEvent.ImportSuccess)
+            } ?: _events.emit(SettingsEvent.ImportFailed)
 
             _isImporting.value = false
         }

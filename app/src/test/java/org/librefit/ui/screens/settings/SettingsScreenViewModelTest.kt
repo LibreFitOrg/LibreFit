@@ -54,7 +54,6 @@ class SettingsScreenViewModelTest {
     @Before
     fun setUp() {
         // Arrange: Create a mock for the repository
-        context = mockk(relaxed = true)
         userPreferencesRepository = mockk()
         importExportRepository = mockk()
         language = MutableStateFlow(Language.SYSTEM)
