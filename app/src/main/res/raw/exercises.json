@@ -4381,6 +4381,32 @@
     "id": "Circus_Bell"
   },
   {
+    "name": "Clamshell",
+    "force": null,
+    "level": "beginner",
+    "mechanic": "isolation",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "glutes"
+    ],
+    "secondaryMuscles": [
+      "abductors"
+    ],
+    "instructions": [
+      "Lie on your side with your feet together and knees bent at a 45 degree angle. Keep your hips stacked on top of each other.",
+      "Raise your top knee as high as possible, keeping your feet together and without rotating your pelvis backwards. If this is difficult, lie with your back to a wall to help prevent the hip rotating.",
+      "Pause at the top for one second.",
+      "Slowly lower your top knee back to the starting position.",
+      "To increase difficulty, use a band just above your knees."
+    ],
+    "category": "strength",
+    "images": [
+      "Clamshell/0.webp",
+      "Clamshell/1.webp"
+    ],
+    "id": "Clamshell"
+  },
+  {
     "name": "Clean",
     "force": "pull",
     "level": "intermediate",
