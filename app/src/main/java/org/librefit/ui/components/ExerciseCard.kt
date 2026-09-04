@@ -30,9 +30,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -56,6 +53,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedIconButton
@@ -554,17 +552,28 @@ fun SharedTransitionScope.ExerciseCard(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Spacer(Modifier)
+                            Spacer(
+                                Modifier
+                                    .fillMaxWidth(.1f)
+                            )
                             if (previousPerformances != null) {
                                 Text(
                                     text = stringResource(R.string.previous),
-                                    color = MaterialTheme.colorScheme.secondary
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
                                 )
                             }
                             if (exerciseWithSets.exercise.setMode == SetMode.DURATION) {
                                 Text(
                                     text = stringResource(R.string.time),
-                                    color = MaterialTheme.colorScheme.secondary
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
                                 )
                             } else {
                                 if (exerciseWithSets.exercise.setMode == SetMode.LOAD ||
@@ -572,31 +581,44 @@ fun SharedTransitionScope.ExerciseCard(
                                 ) {
                                     Text(
                                         text = stringResource(R.string.load) + " (" + unit + ")",
-                                        color = MaterialTheme.colorScheme.secondary
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f)
                                     )
                                 }
                                 Text(
                                     text = stringResource(id = R.string.reps),
-                                    color = MaterialTheme.colorScheme.secondary
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
                                 )
                             }
                             if (workout) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_check),
-                                    contentDescription = stringResource(R.string.done)
+                                    contentDescription = stringResource(R.string.done),
+                                    modifier = Modifier
+                                        .fillMaxWidth(.15f)
                                 )
                             }
                         }
 
                         //Sets
-                        Column(modifier = Modifier.animateContentSize()) {
+                        Column(
+                            modifier = Modifier
+                                .animateContentSize()
+                                .fillMaxWidth()
+                        ) {
                             exerciseWithSets.sets.forEachIndexed { i, set ->
                                 key(set.id) {
                                     Set(
                                         i = i,
                                         set = set,
                                         previousSet = previousPerformances?.getOrNull(i),
-                                        lastIndex = exerciseWithSets.sets.lastIndex,
                                         setMode = exerciseWithSets.exercise.setMode,
                                         isStopwatchRunning = idSetWithRunningStopwatch == null,
                                         isThisSetStopwatchRunning = idSetWithRunningStopwatch == set.id,
@@ -694,7 +716,6 @@ private fun Set(
     i: Int,
     set: UiSet,
     previousSet: PreviousPerformanceSet? = null,
-    lastIndex: Int,
     setMode: SetMode,
     isStopwatchRunning: Boolean,
     isThisSetStopwatchRunning: Boolean,
@@ -796,19 +817,9 @@ private fun Set(
         state = swipeToDismissBoxState,
         onDismiss = { deleteSet(set.id) },
         backgroundContent = {
-            val cornerShape = remember(i, lastIndex) {
-                RoundedCornerShape(
-                    topStart = CornerSize(if (i == 0) 50 else 0),
-                    topEnd = CornerSize(if (i == 0) 50 else 0),
-                    bottomEnd = CornerSize(if (i == lastIndex) 50 else 0),
-                    bottomStart = CornerSize(if (i == lastIndex) 50 else 0),
-                )
-            }
-
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(cornerShape)
                     .background(
                         when (swipeToDismissBoxState.dismissDirection) {
                             SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.errorContainer
@@ -850,19 +861,8 @@ private fun Set(
         )
         Row(
             modifier = Modifier
-                .clip(
-                    RoundedCornerShape(
-                        topStart = CornerSize(if (i == 0) 45 else 0),
-                        topEnd = CornerSize(if (i == 0) 45 else 0),
-                        bottomEnd = CornerSize(
-                            if (i == lastIndex) 45 else 0
-                        ),
-                        bottomStart = CornerSize(
-                            if (i == lastIndex) 45 else 0
-                        ),
-                    )
-                )
                 .background(backgroundColor)
+                .padding(horizontal = 10.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -870,13 +870,16 @@ private fun Set(
             Text(
                 text = "${i + 1}",
                 color = contentColor,
-                modifier = Modifier.padding(start = 20.dp)
+                modifier = Modifier.fillMaxWidth(.1f),
+                textAlign = TextAlign.Center,
             )
 
             previousSet?.let { values ->
                 TextButton(
                     onClick = { applyPreviousSet(set.id) },
-                    modifier = Modifier.wrapContentWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                 ) {
                     val (previousReps, previousLoad, previousTime) = values
                     val text = when (setMode) {
@@ -894,9 +897,13 @@ private fun Set(
             }
 
             if (setMode == SetMode.DURATION) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
                     if (workout) {
-
                         IconButton(
                             enabled = (isStopwatchRunning || isThisSetStopwatchRunning)
                                     && !set.completed,
@@ -906,7 +913,10 @@ private fun Set(
                             onClick = {
                                 val newId = if (isThisSetStopwatchRunning) null else set.id
                                 updateIdSetWithRunningStopwatch(newId)
-                            }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.5f),
                         ) {
                             Icon(
                                 painter = painterResource(
@@ -923,7 +933,6 @@ private fun Set(
                     Box {
                         OutlinedTextField(
                             shape = MaterialTheme.shapes.large,
-                            modifier = Modifier.width(80.dp),
                             state = timeTextFieldState,
                             lineLimits = TextFieldLineLimits.SingleLine,
                             inputTransformation = TimeInputTransformation(),
@@ -936,7 +945,8 @@ private fun Set(
                                 focusedTextColor = contentColor,
                                 unfocusedTextColor = contentColor,
                             ),
-                            readOnly = useScrollWheelForInput
+                            readOnly = useScrollWheelForInput,
+                            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
                         )
                         if (useScrollWheelForInput) {
                             Box(
@@ -960,10 +970,13 @@ private fun Set(
             } else {
                 if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                     //Weight
-                    Box {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                    ) {
                         OutlinedTextField(
                             shape = MaterialTheme.shapes.large,
-                            modifier = Modifier.width(80.dp),
                             value = weightValue,
                             onValueChange = { string ->
                                 weightValue = Formatter.normalizeNumericString(string)
@@ -985,7 +998,8 @@ private fun Set(
                                 focusedTextColor = contentColor,
                                 unfocusedTextColor = contentColor,
                             ),
-                            readOnly = useScrollWheelForInput
+                            readOnly = useScrollWheelForInput,
+                            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
                         )
                         if (useScrollWheelForInput) {
                             Box(
@@ -1006,10 +1020,13 @@ private fun Set(
                     }
                 }
                 //Reps
-                Box {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
                     OutlinedTextField(
                         shape = MaterialTheme.shapes.large,
-                        modifier = Modifier.width(80.dp),
                         value = repValue,
                         onValueChange = { string ->
                             repValue = Formatter.normalizeNumericString(string)
@@ -1026,7 +1043,8 @@ private fun Set(
                             focusedTextColor = contentColor,
                             unfocusedTextColor = contentColor,
                         ),
-                        readOnly = useScrollWheelForInput
+                        readOnly = useScrollWheelForInput,
+                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
                     )
                     if (useScrollWheelForInput) {
                         Box(
@@ -1052,7 +1070,9 @@ private fun Set(
                             updateIdSetWithRunningStopwatch(null)
                         }
                         updateSetCompleted(checked, set.id)
-                    }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(.15f)
                 )
             }
         }
@@ -1075,7 +1095,11 @@ private fun ExerciseCardPreview() {
                     restTime = 90,
                     setMode = SetMode.LOAD
                 ),
-                sets = persistentListOf(UiSet(completed = true), UiSet(elapsedTime = 100)),
+                sets = persistentListOf(
+                    UiSet(load = 10.0, warmup = true),
+                    UiSet(completed = true),
+                    UiSet(elapsedTime = 100)
+                ),
                 exerciseDC = UiExerciseDC(
                     name = "Exercise name",
                     images = persistentListOf("3_4_Sit-Up/0.jpg"),
