@@ -11,6 +11,7 @@ package org.librefit.ui.models
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
 import kotlin.random.Random
 
 /**
@@ -25,6 +26,7 @@ data class UiExercise(
     val id: Long = Random.nextLong(),
     val idExerciseDC: String = "",
     val notes: String = "",
+    val warmupMode: WarmupMode = WarmupMode.DEFAULT,
     val setMode: SetMode = SetMode.LOAD,
     val restTime: Int = 0,
     val position: Int = 0,
