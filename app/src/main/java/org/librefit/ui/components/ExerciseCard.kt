@@ -613,28 +613,31 @@ fun SharedTransitionScope.ExerciseCard(
                                 .animateContentSize()
                                 .fillMaxWidth()
                         ) {
-                            exerciseWithSets.sets.forEachIndexed { i, set ->
-                                key(set.id) {
-                                    Set(
-                                        i = i,
-                                        set = set,
-                                        previousSet = previousPerformances?.getOrNull(i),
-                                        setMode = exerciseWithSets.exercise.setMode,
-                                        isStopwatchRunning = idSetWithRunningStopwatch == null,
-                                        isThisSetStopwatchRunning = idSetWithRunningStopwatch == set.id,
-                                        workout = workout,
-                                        useScrollWheelForInput = useScrollWheelForInput,
-                                        dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
-                                        deleteSet = deleteSet,
-                                        updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
-                                        updateSetTime = updateSetTime,
-                                        updateSetReps = updateSetReps,
-                                        updateSetLoad = updateSetLoad,
-                                        updateSetCompleted = updateSetCompleted,
-                                        applyPreviousSet = applyPreviousSetPerformance
-                                    )
+                            exerciseWithSets.sets.groupBy { set -> set.warmup }
+                                .forEach { (_, sets) ->
+                                    sets.forEachIndexed { i, set ->
+                                        key(set.id) {
+                                            Set(
+                                                i = i,
+                                                set = set,
+                                                previousSet = previousPerformances?.getOrNull(i),
+                                                setMode = exerciseWithSets.exercise.setMode,
+                                                isStopwatchRunning = idSetWithRunningStopwatch == null,
+                                                isThisSetStopwatchRunning = idSetWithRunningStopwatch == set.id,
+                                                workout = workout,
+                                                useScrollWheelForInput = useScrollWheelForInput,
+                                                dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
+                                                deleteSet = deleteSet,
+                                                updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
+                                                updateSetTime = updateSetTime,
+                                                updateSetReps = updateSetReps,
+                                                updateSetLoad = updateSetLoad,
+                                                updateSetCompleted = updateSetCompleted,
+                                                applyPreviousSet = applyPreviousSetPerformance
+                                            )
+                                        }
+                                    }
                                 }
-                            }
                         }
                     }
 
@@ -846,6 +849,8 @@ private fun Set(
         val backgroundColor by animateColorAsState(
             targetValue = if (set.completed) {
                 MaterialTheme.colorScheme.tertiaryContainer
+            } else if (set.warmup) {
+                MaterialTheme.colorScheme.surfaceContainerHigh
             } else {
                 MaterialTheme.colorScheme.surfaceContainerHighest
             },
@@ -868,7 +873,7 @@ private fun Set(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "${i + 1}",
+                text = "${if (set.warmup) "W " else ""}${i + 1}",
                 color = contentColor,
                 modifier = Modifier.fillMaxWidth(.1f),
                 textAlign = TextAlign.Center,
