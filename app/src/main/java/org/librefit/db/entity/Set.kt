@@ -8,6 +8,7 @@
 
 package org.librefit.db.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -36,6 +37,7 @@ import kotlin.random.Random
  * @property elapsedTime The time taken to complete the set, in seconds.
  * @property completed Indicates whether the set has been completed.
  * @property exerciseId This is a foreign key reference to the [Exercise] entity.
+ * @property warmup Indicates whether the set is part of a warmup.s
  *
  */
 @Entity(
@@ -57,5 +59,6 @@ data class Set(
     val reps: Int = 0,
     val elapsedTime: Int = 0,
     val completed: Boolean = false,
-    val exerciseId: Long = 0// Foreign key reference to Exercise
+    val exerciseId: Long = 0,// Foreign key reference to Exercise
+    @ColumnInfo(name = "warmup", defaultValue = "0") val warmup: Boolean = false,
 )
