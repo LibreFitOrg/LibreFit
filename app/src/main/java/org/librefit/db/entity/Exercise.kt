@@ -69,7 +69,10 @@ data class Exercise(
     val idExerciseDC: String = "",
     val notes: String = "",
     val setMode: SetMode = SetMode.LOAD,
-    val warmupMode: WarmupMode = WarmupMode.DEFAULT,
+    @ColumnInfo(
+        name = "warmupMode",
+        defaultValue = "DEFAULT"
+    ) val warmupMode: WarmupMode = WarmupMode.DEFAULT,
     val restTime: Int = 0,
     @ColumnInfo(defaultValue = "0")
     val position: Int = 0,
