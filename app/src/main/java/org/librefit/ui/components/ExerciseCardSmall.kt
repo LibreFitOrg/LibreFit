@@ -45,6 +45,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -176,98 +177,166 @@ fun SharedTransitionScope.ExerciseCardSmall(
                     )
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 5.dp)
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = CornerSize(45),
+                                    topEnd = CornerSize(45),
+                                    bottomEnd = CornerSize(45),
+                                    bottomStart = CornerSize(45),
+                                )
+                            ),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
-                        Text(stringResource(R.string.set))
+                        Text(
+                            stringResource(R.string.set), textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
                         if (setMode == SetMode.DURATION) {
-                            Text(stringResource(R.string.time))
+                            Text(
+                                stringResource(R.string.time), textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            )
                         } else {
                             if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                                 Text(
-                                    stringResource(R.string.load) + " (" + autoUnitSuffix() + ")"
+                                    stringResource(R.string.load) + " (" + autoUnitSuffix() + ")",
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
                                 )
                             }
-                            Text(stringResource(R.string.reps))
+                            Text(
+                                stringResource(R.string.reps), textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            )
                         }
                         if (!isRoutine) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_check),
-                                contentDescription = stringResource(R.string.done)
+                                contentDescription = stringResource(R.string.done),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
                             )
                         }
                     }
                     Column {
-                        exerciseWithSets.sets.forEachIndexed { index, set ->
-                            val backgroundColor by animateColorAsState(
-                                targetValue = if (set.completed) {
-                                    MaterialTheme.colorScheme.tertiaryContainer
-                                } else {
-                                    MaterialTheme.colorScheme.surfaceContainerHighest
-                                },
-                                label = "animated_color_for_set_background"
-                            )
-                            val contentColor by animateColorAsState(
-                                targetValue = if (set.completed) {
-                                    MaterialTheme.colorScheme.onTertiaryContainer
-                                } else {
-                                    MaterialTheme.colorScheme.onSurface
-                                },
-                                label = "animated_color_for_set_content"
-                            )
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(
-                                        RoundedCornerShape(
-                                            topStart = CornerSize(if (index == 0) 45 else 0),
-                                            topEnd = CornerSize(if (index == 0) 45 else 0),
-                                            bottomEnd = CornerSize(
-                                                if (index == exerciseWithSets.sets.lastIndex) 45 else 0
-                                            ),
-                                            bottomStart = CornerSize(
-                                                if (index == exerciseWithSets.sets.lastIndex) 45 else 0
-                                            ),
-                                        )
-                                    )
-                                    .background(backgroundColor)
-                                    .padding(5.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceAround
-                            ) {
-                                Text(
-                                    text = "${index + 1}",
-                                    color = contentColor
-                                )
-                                if (setMode == SetMode.DURATION) {
-                                    Text(
-                                        text = formatTime(set.elapsedTime).substring(3),
-                                        color = contentColor
-                                    )
-                                } else {
-                                    if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
-                                        Text(
-                                            text = set.load.doubleValue().toString(),
-                                            color = contentColor
-                                        )
-                                    }
-                                    Text(
-                                        text = "${set.reps}",
-                                        color = contentColor
-                                    )
-                                }
-                                if (!isRoutine) {
-                                    Checkbox(
-                                        checked = set.completed,
-                                        onCheckedChange = null
+                        exerciseWithSets.sets.groupBy { set -> set.warmup }
+                            .forEach { (isWarmup, sets) ->
+                                sets.forEachIndexed { index, set ->
+                                    CreateSetRow(
+                                        index,
+                                        set,
+                                        setMode,
+                                        isRoutine,
+                                        prefix = if (isWarmup) "W " else ""
                                     )
                                 }
                             }
-                        }
                     }
                 }
             }
+        }
+    }
+}
+
+
+@Composable
+fun CreateSetRow(
+    index: Int,
+    set: UiSet,
+    setMode: SetMode,
+    isRoutine: Boolean,
+    prefix: String? = null
+) {
+    val backgroundColor by animateColorAsState(
+        targetValue = if (set.completed) {
+            MaterialTheme.colorScheme.tertiaryContainer
+        } else if (set.warmup){
+            MaterialTheme.colorScheme.surfaceContainerHigh
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerHighest
+        },
+        label = "animated_color_for_set_background"
+    )
+    val contentColor by animateColorAsState(
+        targetValue = if (set.completed) {
+            MaterialTheme.colorScheme.onTertiaryContainer
+        } else {
+            MaterialTheme.colorScheme.onSurface
+        },
+        label = "animated_color_for_set_content"
+    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(backgroundColor)
+            .padding(5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Text(
+            text = "${
+                if (!prefix.isNullOrEmpty()) {
+                    prefix
+                } else {
+                    ""
+                }
+            }${index + 1}",
+            color = contentColor,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        )
+        if (setMode == SetMode.DURATION) {
+            Text(
+                text = formatTime(set.elapsedTime).substring(3),
+                color = contentColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
+        } else {
+            if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
+                Text(
+                    text = set.load.doubleValue().toString(),
+                    color = contentColor,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+            }
+            Text(
+                text = "${set.reps}",
+                color = contentColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
+        }
+        if (!isRoutine) {
+            Checkbox(
+                checked = set.completed,
+                onCheckedChange = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
         }
     }
 }
@@ -290,7 +359,12 @@ private fun ExerciseCardSmallPreview() {
                             name = "Name exercise long long long long",
                             images = persistentListOf("3_4_Sit-Up/0.jpg")
                         ),
-                        sets = persistentListOf(UiSet(completed = true), UiSet(reps = 10), UiSet())
+                        sets = persistentListOf(
+                            UiSet(load = 60.0, warmup = true),
+                            UiSet(completed = true),
+                            UiSet(reps = 10),
+                            UiSet()
+                        )
                     ),
                     showExercisesImages = null,
                     animatedVisibilityScope = this

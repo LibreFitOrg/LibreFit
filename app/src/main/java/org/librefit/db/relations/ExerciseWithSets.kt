@@ -22,7 +22,7 @@ import org.librefit.db.entity.Set
  * the sets associated with it. The actual dataset is stored as [ExerciseDC] and provided
  * by [org.librefit.db.repository.DatasetRepository]
  *
- * @property exercise It contains the user related data associated with this [Exercise].s
+ * @property exercise It contains the user related data associated with this [Exercise].
  * @property sets The list of [Set] associated with the [exercise] containing all the user related data.
  * @property exerciseDC The actual features of the exercise itself. Details at [ExerciseDC]
  */
