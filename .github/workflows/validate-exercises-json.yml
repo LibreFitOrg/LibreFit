@@ -3,6 +3,8 @@ name: Validate exercises JSON
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'app/src/main/res/raw/exercises.json'
       - 'app/src/main/assets/**'
@@ -10,6 +12,11 @@ on:
     paths:
       - 'app/src/main/res/raw/exercises.json'
       - 'app/src/main/assets/**'
+
+# Cancel superseded runs when new commits are pushed to the same branch/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
