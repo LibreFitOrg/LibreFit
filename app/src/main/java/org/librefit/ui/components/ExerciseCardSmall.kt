@@ -48,11 +48,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import org.librefit.R
 import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
+import org.librefit.enums.createUiSets
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
@@ -179,15 +184,7 @@ fun SharedTransitionScope.ExerciseCardSmall(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 5.dp)
-                            .clip(
-                                RoundedCornerShape(
-                                    topStart = CornerSize(45),
-                                    topEnd = CornerSize(45),
-                                    bottomEnd = CornerSize(45),
-                                    bottomStart = CornerSize(45),
-                                )
-                            ),
+                            .padding(horizontal = 5.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
@@ -240,7 +237,7 @@ fun SharedTransitionScope.ExerciseCardSmall(
                                         set,
                                         setMode,
                                         isRoutine,
-                                        prefix = if (isWarmup) "W " else ""
+                                        prefix = if (isWarmup) "W" else ""
                                     )
                                 }
                             }
@@ -341,31 +338,45 @@ fun CreateSetRow(
     }
 }
 
+class ExerciseCardSmallPreviewProvider : PreviewParameterProvider<UiExerciseWithSets> {
+    private val previewList = SetMode.entries.flatMap { setMode ->
+        WarmupMode.entries.map { warmupMode ->
+            val warmupSets = warmupMode.createUiSets(10.0);
+            UiExerciseWithSets(
+                exercise = UiExercise(
+                    notes = "This is a note!",
+                    restTime = 90,
+                    setMode = setMode,
+                    warmupMode = warmupMode
+                ),
+                sets = (warmupSets + listOf(
+                    UiSet(completed = true),
+                    UiSet(elapsedTime = 100)
+                )).toPersistentList(),
+                exerciseDC = UiExerciseDC(
+                    name = "Exercise name",
+                    images = persistentListOf("3_4_Sit-Up/0.jpg")
+                )
+            )
+        }
+    }
+
+    override val values = previewList.asSequence();
+    override fun getDisplayName(index: Int): String? {
+        val exercise = previewList.getOrNull(index) ?: return null
+        return "Exercise with ${exercise.exercise.setMode} sets and ${exercise.exercise.warmupMode} warmups"
+    }
+}
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
-private fun ExerciseCardSmallPreview() {
+private fun ExerciseCardSmallPreview(@PreviewParameter(ExerciseCardSmallPreviewProvider::class) exercise: UiExerciseWithSets) {
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
                 ExerciseCardSmall(
-                    exerciseWithSets = UiExerciseWithSets(
-                        exercise = UiExercise(
-                            notes = "Notes",
-                            restTime = 100,
-                            setMode = SetMode.BODYWEIGHT
-                        ),
-                        exerciseDC = UiExerciseDC(
-                            name = "Name exercise long long long long",
-                            images = persistentListOf("3_4_Sit-Up/0.jpg")
-                        ),
-                        sets = persistentListOf(
-                            UiSet(load = 60.0, warmup = true),
-                            UiSet(completed = true),
-                            UiSet(reps = 10),
-                            UiSet()
-                        )
-                    ),
+                    exerciseWithSets = exercise,
                     showExercisesImages = null,
                     animatedVisibilityScope = this
                 ) { }
