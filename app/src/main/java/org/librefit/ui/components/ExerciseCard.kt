@@ -91,17 +91,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.collectLatest
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.PreviousPerformanceSet
 import org.librefit.enums.SetMode
 import org.librefit.enums.exercise.Equipment
+import org.librefit.enums.WarmupMode
+import org.librefit.enums.createUiSets
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.models.Weight
 import org.librefit.nav.LocalUnitSystem
@@ -213,6 +218,8 @@ fun SharedTransitionScope.ExerciseCard(
     updateSetCompleted: (Boolean, Long) -> Unit,
     showInfo: (InfoMode) -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit = {},
+    addWarmups: (Long) -> Unit,
+    updateWarmupMode: (WarmupMode, Long) -> Unit,
     applyPreviousSetPerformance: (Long) -> Unit = {},
     saveDefaultBarWeight: (Double) -> Unit,
 ) {
@@ -314,6 +321,19 @@ fun SharedTransitionScope.ExerciseCard(
                                     shapes = MenuDefaults.groupShape(0, 1) // Top-level group shape
                                 ) {
                                     // MenuDefaults.Label { Text("Header") }
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.add_warmup)) },
+                                        leadingIcon = {
+                                            Icon(
+                                                painterResource(R.drawable.ic_add_circle),
+                                                stringResource(R.string.add_warmup)
+                                            )
+                                        },
+                                        onClick = {
+                                            addWarmups(exerciseWithSets.exercise.id)
+                                            showMenu = false
+                                        }
+                                    )
                                     DropdownMenuItem(
                                         text = { Text(stringResource(R.string.reorder)) },
                                         leadingIcon = {
@@ -538,6 +558,107 @@ fun SharedTransitionScope.ExerciseCard(
                         }
                     }
 
+                    // Warmup Mode Selector
+                    if (exerciseWithSets.sets.any { it.warmup }) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                modifier = Modifier.weight(0.5f),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                IconButton(
+                                    // Refer to InfoModalBottomSheet to know the reason behind this value.
+                                    // Do NOT change it.
+                                    onClick = { showInfo(InfoMode.TYPE_OF_SET) }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_info),
+                                        contentDescription = stringResource(R.string.info) + ":"
+                                    )
+                                }
+                                Text(stringResource(R.string.warmup_mode))
+                            }
+
+                            var expanded by remember { mutableStateOf(false) }
+
+                            val focusRequester = remember { FocusRequester() }
+
+                            // Warmup mode selector
+                            ExposedDropdownMenuBox(
+                                expanded = expanded,
+                                onExpandedChange = { expanded = it },
+                                modifier = Modifier
+                                    .padding(start = 10.dp, end = 10.dp)
+                                    .weight(0.5f)
+                                    .clickable {
+                                        expanded = !expanded
+                                        focusRequester.requestFocus()
+                                    }
+                                    .focusRequester(focusRequester)
+                                    .focusable()
+                            ) {
+                                OutlinedTextField(
+                                    shape = MaterialTheme.shapes.large,
+                                    readOnly = true,
+                                    value = stringResource(
+                                        Formatter.warmupModeToStringId(
+                                            exerciseWithSets.exercise.warmupMode
+                                        )
+                                    ),
+                                    onValueChange = {},
+                                    singleLine = true,
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                    },
+                                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+                                )
+                                ExposedDropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    WarmupMode.entries.forEachIndexed { _, mode ->
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                updateWarmupMode(
+                                                    mode,
+                                                    exerciseWithSets.exercise.id
+                                                )
+                                                expanded = false
+                                            },
+                                            text = {
+                                                Text(
+                                                    text = stringResource(
+                                                        Formatter.warmupModeToStringId(
+                                                            mode
+                                                        )
+                                                    )
+                                                )
+                                            },
+                                            trailingIcon = if (exerciseWithSets.exercise.warmupMode == mode) {
+                                                {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.ic_check),
+                                                        contentDescription = stringResource(R.string.checkbox)
+                                                    )
+                                                }
+                                            } else null,
+                                            modifier = Modifier.background(
+                                                if (exerciseWithSets.exercise.warmupMode == mode) MaterialTheme.colorScheme.inversePrimary.copy(
+                                                    0.3f
+                                                ) else Color.Unspecified
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     ElevatedCard(
                         shape = MaterialTheme.shapes.extraLarge,
                         colors = CardDefaults.elevatedCardColors(
@@ -621,6 +742,7 @@ fun SharedTransitionScope.ExerciseCard(
                                                 i = i,
                                                 set = set,
                                                 previousSet = previousPerformances?.getOrNull(i),
+                                                showPreviousSet = !previousPerformances.isNullOrEmpty(),
                                                 setMode = exerciseWithSets.exercise.setMode,
                                                 isStopwatchRunning = idSetWithRunningStopwatch == null,
                                                 isThisSetStopwatchRunning = idSetWithRunningStopwatch == set.id,
@@ -719,6 +841,7 @@ private fun Set(
     i: Int,
     set: UiSet,
     previousSet: PreviousPerformanceSet? = null,
+    showPreviousSet: Boolean,
     setMode: SetMode,
     isStopwatchRunning: Boolean,
     isThisSetStopwatchRunning: Boolean,
@@ -873,32 +996,42 @@ private fun Set(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "${if (set.warmup) "W " else ""}${i + 1}",
+                text = "${if (set.warmup) "W" else ""}${i + 1}",
                 color = contentColor,
                 modifier = Modifier.fillMaxWidth(.1f),
                 textAlign = TextAlign.Center,
             )
 
-            previousSet?.let { values ->
-                TextButton(
-                    onClick = { applyPreviousSet(set.id) },
+            if (previousSet != null) {
+                previousSet.let { values ->
+                    TextButton(
+                        onClick = { applyPreviousSet(set.id) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                    ) {
+                        val (previousReps, previousLoad, previousTime) = values
+                        val text = when (setMode) {
+                            SetMode.LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
+                            SetMode.BODYWEIGHT -> "$previousReps"
+                            SetMode.BODYWEIGHT_WITH_LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
+                            SetMode.DURATION -> Formatter.formateSecondsInMinutesAndSeconds(
+                                previousTime
+                            )
+                        }
+                        Text(
+                            text = text,
+                            color = contentColor,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
+            } else if (showPreviousSet) {
+                Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f),
-                ) {
-                    val (previousReps, previousLoad, previousTime) = values
-                    val text = when (setMode) {
-                        SetMode.LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
-                        SetMode.BODYWEIGHT -> "$previousReps"
-                        SetMode.BODYWEIGHT_WITH_LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
-                        SetMode.DURATION -> Formatter.formateSecondsInMinutesAndSeconds(previousTime)
-                    }
-                    Text(
-                        text = text,
-                        color = contentColor,
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                        .weight(1f)
+                )
             }
 
             if (setMode == SetMode.DURATION) {
@@ -1085,48 +1218,67 @@ private fun Set(
 
 }
 
-
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)
-@Composable
-private fun ExerciseCardPreview() {
-    val currentIdSetWithRunningSet = remember { mutableStateOf<Long?>(null) }
-
-    val e = remember {
-        mutableStateOf(
-            UiExerciseWithSets(
+class ExerciseCardPreviewProvider :
+    PreviewParameterProvider<Pair<UiExerciseWithSets, List<PreviousPerformanceSet>>> {
+    private val warmupModesWithNull = WarmupMode.entries + null
+    private val defaultSets = listOf(
+        UiSet(completed = true),
+        UiSet(elapsedTime = 100)
+    );
+    private val previewList = SetMode.entries.flatMap { setMode ->
+        warmupModesWithNull.map { warmupMode ->
+            val warmupSets = warmupMode.createUiSets(10.0)
+            val exercise = UiExerciseWithSets(
                 exercise = UiExercise(
                     notes = "This is a note!",
                     restTime = 90,
-                    setMode = SetMode.LOAD
+                    setMode = setMode,
+                    warmupMode = warmupMode ?: WarmupMode.DEFAULT
                 ),
-                sets = persistentListOf(
-                    UiSet(load = 10.0, warmup = true),
-                    UiSet(completed = true),
-                    UiSet(elapsedTime = 100)
-                ),
+                sets = (if (warmupSets != null) (warmupSets + defaultSets) else defaultSets).toPersistentList(),
                 exerciseDC = UiExerciseDC(
                     name = "Exercise name",
                     images = persistentListOf("3_4_Sit-Up/0.jpg"),
                     equipment = Equipment.BARBELL
                 )
             )
-        )
-    }
 
-    val previousPerformances = e.value.sets.map { _ ->
-        when (e.value.exercise.setMode) {
-            SetMode.BODYWEIGHT -> PreviousPerformanceSet(reps = 10)
-            SetMode.DURATION -> PreviousPerformanceSet(time = 124)
-            SetMode.BODYWEIGHT_WITH_LOAD -> PreviousPerformanceSet(
-                reps = 10,
-                load = Weight.kilograms(12.0)
+            Pair(
+                exercise, exercise.sets.map {
+                    when (setMode) {
+                        SetMode.BODYWEIGHT -> PreviousPerformanceSet(reps = 10)
+                        SetMode.DURATION -> PreviousPerformanceSet(time = 124)
+                        SetMode.BODYWEIGHT_WITH_LOAD ->
+                            PreviousPerformanceSet(
+                                reps = 10,
+                                load = Weight.kilograms(12.0)
+                            )
+
+                        SetMode.LOAD -> PreviousPerformanceSet(reps = 10, load = Weight.kilograms(12.0))
+                    }
+                }
             )
-
-            SetMode.LOAD -> PreviousPerformanceSet(reps = 10, load = Weight.kilograms(12.0))
         }
     }
 
+    override val values = previewList.asSequence()
+    override fun getDisplayName(index: Int): String? {
+        val (exercise, _) = previewList.getOrNull(index) ?: return null
+        return "Exercise with ${exercise.exercise.setMode} sets and ${exercise.exercise.warmupMode} warmups"
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)
+@Composable
+private fun ExerciseCardPreview(@PreviewParameter(ExerciseCardPreviewProvider::class) data: Pair<UiExerciseWithSets, List<PreviousPerformanceSet>>) {
+    val (exercise, previousPerformances) = data
+
+    val e = remember {
+        mutableStateOf(exercise)
+    }
+
+    val currentIdSetWithRunningSet = remember { mutableStateOf<Long?>(null) }
     LibreFitTheme(dynamicColor = true, themeMode = ThemeMode.DARK) {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
@@ -1214,6 +1366,15 @@ private fun ExerciseCardPreview() {
                         }
                     },
                     onReorderRequest = {},
+                    addWarmups = {
+                        e.value = e.value.copy(
+                            sets = listOf(
+                                UiSet(warmup = true),
+                                *e.value.sets.toTypedArray()
+                            ).toImmutableList()
+                        )
+                    },
+                    updateWarmupMode = { _, _ -> },
                     saveDefaultBarWeight = {},
                 )
             }

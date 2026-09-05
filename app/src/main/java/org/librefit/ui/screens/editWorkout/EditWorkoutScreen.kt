@@ -47,6 +47,8 @@ import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
+import org.librefit.enums.SuccessMessage
+import org.librefit.enums.WarmupMode
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
@@ -147,6 +149,8 @@ fun SharedTransitionScope.EditWorkoutScreen(
         updateExerciseSetMode = viewModel::updateExerciseSetMode,
         moveExercise = viewModel::moveExercise,
         saveWorkoutWithExercisesInDB = viewModel::saveWorkoutWithExercisesInDB,
+        addWarmups = viewModel::addWarmups,
+        updateWarmupMode = viewModel::updateWarmupMode,
         saveDefaultBarWeight = viewModel::saveDefaultBarWeight
     )
 
@@ -183,6 +187,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     updateExerciseRestTime: (Int, Long) -> Unit,
     updateExerciseSetMode: (SetMode, Long) -> Unit,
     moveExercise: (Int, Int) -> Unit,
+    addWarmups: (Long) -> Unit,
+    updateWarmupMode: (WarmupMode, Long) -> Unit,
     saveWorkoutWithExercisesInDB: () -> Unit,
     saveDefaultBarWeight: (Double) -> Unit,
 ) {
@@ -343,8 +349,10 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                     items = exercisesWithSets,
                     key = { _, e -> e.exercise.id }
                 ) { _, exerciseWithSets ->
-                    ReorderableItem(reorderableLazyListState, key = exerciseWithSets.exercise.id) { isDragging ->
-
+                    ReorderableItem(
+                        reorderableLazyListState,
+                        key = exerciseWithSets.exercise.id
+                    ) { isDragging ->
                         val interactionSource = remember { MutableInteractionSource() }
                         ExerciseCard(
                             modifier = Modifier.animateItem(),
@@ -379,6 +387,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                             updateSetTime = updateSetTime,
                             updateSetReps = updateSetReps,
                             updateSetLoad = updateSetLoad,
+                            addWarmups = addWarmups,
+                            updateWarmupMode = updateWarmupMode,
                             updateSetCompleted = updateSetCompleted,
                             saveDefaultBarWeight = saveDefaultBarWeight
                         )
@@ -456,6 +466,8 @@ private fun EditWorkoutScreenPreview() {
                     updateSetTime = { _, _ -> },
                     updateSetReps = { _, _ -> },
                     updateSetLoad = { _, _ -> },
+                    addWarmups = { _ -> },
+                    updateWarmupMode = { _, _ -> },
                     updateSetCompleted = { _, _ -> },
                     saveDefaultBarWeight = {}
                 )

@@ -1,9 +1,10 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
+ * Copyright (c) 2025-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.screens.workout
@@ -34,7 +35,9 @@ import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.PreviousPerformanceSet
 import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
 import org.librefit.enums.WorkoutState
+import org.librefit.enums.createUiSets
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.helpers.SoundPlayer
@@ -508,6 +511,35 @@ class WorkoutScreenViewModel(
 
     fun stopWorkoutService() {
         workoutServiceManager.stopService()
+    }
+
+
+    fun addWarmups(exerciseId: Long) {
+        _exercises.update { currentExercises ->
+            currentExercises.map { exercise ->
+                if (exercise.exercise.id == exerciseId) {
+                    val setsWithoutWarmups = exercise.sets.filter { !it.warmup }.toImmutableList();
+                    val warmupSets =
+                        WarmupMode.DEFAULT.createUiSets(setsWithoutWarmups.firstOrNull()?.load);
+                    exercise.copy(sets = (setsWithoutWarmups + warmupSets).toImmutableList())
+                } else exercise
+            }
+        }
+        syncToRepository()
+    }
+
+    fun updateWarmupMode(warmupMode: WarmupMode, exerciseId: Long) {
+        _exercises.update { currentExercises ->
+            currentExercises.map { exercise ->
+                if (exercise.exercise.id == exerciseId) {
+                    val setsWithoutWarmups = exercise.sets.filter { !it.warmup }.toImmutableList();
+                    val warmupSets =
+                        warmupMode.createUiSets(setsWithoutWarmups.firstOrNull()?.load);
+                    exercise.copy(sets = (setsWithoutWarmups + warmupSets).toImmutableList())
+                } else exercise
+            }
+        }
+        syncToRepository()
     }
 
 

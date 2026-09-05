@@ -22,7 +22,6 @@
     <string name="library">Library</string>
 
 
-
     <!--About screen-->
     <string name="open">Open</string>
     <string name="copy">Copy</string>
@@ -193,6 +192,7 @@
     <string name="quit_routine_creation_question">Quit routine creation?</string>
     <string name="warning_delete_exercise_from_routine">Warning! Deleting exercises from existing routines will unlink all exercises of derivative workouts.</string>
     <string name="reorder">Reorder</string>
+    <string name="add_warmup">Add Warmup</string>
 
 
     <!-- Error screen-->
@@ -504,13 +504,13 @@
     <string name="weight">Weight</string>
 
 
-
     <!--Exercise card-->
     <string name="rest_time">Rest time</string>
     <string name="kg" translatable="false">kg</string>
     <string name="lb" translatable="false">lb</string>
     <string name="type_of_set">Type of set</string>
     <string name="previous">Previous</string>
+    <string name="warmup_mode">Warmup mode</string>
 
 
     <!--Chart-->
@@ -629,6 +629,9 @@
     <string name="do_not_show_again">Do not show again</string>
     <string name="undo">Undo</string>
     <string name="clear">Clear</string>
+
+    <!--Warmup Modes-->
+    <string name="default_warmup_mode">40/60/80</string>
 
     <!-- Input modal bottom sheet -->
     <string name="decrease_weight_by_10">Decrease weight by 10</string>
