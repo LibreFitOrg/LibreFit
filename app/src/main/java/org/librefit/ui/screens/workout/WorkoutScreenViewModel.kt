@@ -521,7 +521,7 @@ class WorkoutScreenViewModel(
                     val setsWithoutWarmups = exercise.sets.filter { !it.warmup }.toImmutableList();
                     val warmupSets =
                         WarmupMode.DEFAULT.createUiSets(setsWithoutWarmups.firstOrNull()?.load);
-                    exercise.copy(sets = (setsWithoutWarmups + warmupSets).toImmutableList())
+                    exercise.copy(sets = (warmupSets + setsWithoutWarmups).toImmutableList())
                 } else exercise
             }
         }
@@ -535,7 +535,7 @@ class WorkoutScreenViewModel(
                     val setsWithoutWarmups = exercise.sets.filter { !it.warmup }.toImmutableList();
                     val warmupSets =
                         warmupMode.createUiSets(setsWithoutWarmups.firstOrNull()?.load);
-                    exercise.copy(sets = (setsWithoutWarmups + warmupSets).toImmutableList())
+                    exercise.copy(sets = (warmupSets + setsWithoutWarmups).toImmutableList())
                 } else exercise
             }
         }
