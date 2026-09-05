@@ -1,9 +1,10 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2024-2026. The LibreFit Contributors
+ * Copyright (c) 2025-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
+ *
  */
 
 package org.librefit.ui.components.modalBottomSheets
@@ -56,6 +57,7 @@ fun InfoModalBottomSheet(
         val title = when (infoMode) {
             InfoMode.REST_TIMER -> stringResource(R.string.rest_time)
             InfoMode.TYPE_OF_SET -> stringResource(R.string.type_of_set)
+            InfoMode.WARMUP_MODE -> stringResource(R.string.warmup_mode)
             InfoMode.BEFORE_SAVING_STATS -> stringResource(R.string.statistics)
             InfoMode.MUSCLE_DISTRIBUTION -> stringResource(R.string.muscles_distribution)
             InfoMode.EXERCISES_DISTRIBUTION -> stringResource(R.string.exercises_distribution)
@@ -65,6 +67,7 @@ fun InfoModalBottomSheet(
         val text = when (infoMode) {
             InfoMode.REST_TIMER -> stringResource(R.string.rest_time_desc)
             InfoMode.TYPE_OF_SET -> stringResource(R.string.type_of_set_desc)
+            InfoMode.WARMUP_MODE -> stringResource(R.string.warmup_mode_desc)
             InfoMode.BEFORE_SAVING_STATS -> stringResource(R.string.statistics_desc)
             InfoMode.MUSCLE_DISTRIBUTION -> stringResource(R.string.muscle_distribution_desc)
             InfoMode.EXERCISES_DISTRIBUTION -> stringResource(R.string.exercises_distribution_desc)
@@ -116,6 +119,7 @@ fun InfoModalBottomSheet(
                     when (infoMode) {
                         InfoMode.REST_TIMER -> AlarmLottie()
                         InfoMode.TYPE_OF_SET -> TrainingLottie()
+                        InfoMode.WARMUP_MODE -> TrainingLottie()
                         InfoMode.BEFORE_SAVING_STATS -> StatsLottie()
                         InfoMode.MUSCLE_DISTRIBUTION -> StatsLottie()
                         InfoMode.EXERCISES_DISTRIBUTION -> StatsLottie()

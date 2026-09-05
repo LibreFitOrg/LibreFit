@@ -573,7 +573,7 @@ fun SharedTransitionScope.ExerciseCard(
                                 IconButton(
                                     // Refer to InfoModalBottomSheet to know the reason behind this value.
                                     // Do NOT change it.
-                                    onClick = { showInfo(InfoMode.TYPE_OF_SET) }
+                                    onClick = { showInfo(InfoMode.WARMUP_MODE) }
                                 ) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_info),
