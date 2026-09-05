@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -260,7 +258,7 @@ fun CreateSetRow(
     val backgroundColor by animateColorAsState(
         targetValue = if (set.completed) {
             MaterialTheme.colorScheme.tertiaryContainer
-        } else if (set.warmup){
+        } else if (set.warmup) {
             MaterialTheme.colorScheme.surfaceContainerHigh
         } else {
             MaterialTheme.colorScheme.surfaceContainerHighest
@@ -339,20 +337,22 @@ fun CreateSetRow(
 }
 
 class ExerciseCardSmallPreviewProvider : PreviewParameterProvider<UiExerciseWithSets> {
+    private val warmupModesWithNull = WarmupMode.entries + null;
+    private val defaultSets = listOf(
+        UiSet(completed = true),
+        UiSet(elapsedTime = 100)
+    );
     private val previewList = SetMode.entries.flatMap { setMode ->
-        WarmupMode.entries.map { warmupMode ->
-            val warmupSets = warmupMode.createUiSets(10.0);
+        warmupModesWithNull.map { warmupMode ->
+            val warmupSets = warmupMode?.createUiSets(10.0);
             UiExerciseWithSets(
                 exercise = UiExercise(
                     notes = "This is a note!",
                     restTime = 90,
                     setMode = setMode,
-                    warmupMode = warmupMode
+                    warmupMode = warmupMode ?: WarmupMode.DEFAULT
                 ),
-                sets = (warmupSets + listOf(
-                    UiSet(completed = true),
-                    UiSet(elapsedTime = 100)
-                )).toPersistentList(),
+                sets = (if (warmupSets != null) (warmupSets + defaultSets) else defaultSets).toPersistentList(),
                 exerciseDC = UiExerciseDC(
                     name = "Exercise name",
                     images = persistentListOf("3_4_Sit-Up/0.jpg")
