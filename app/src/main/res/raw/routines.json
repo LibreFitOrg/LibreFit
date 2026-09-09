@@ -1,0 +1,1376 @@
+[
+  {
+    "id": "Arms_And_Shoulders",
+    "titleKey": "routine_arms_and_shoulders_title",
+    "descriptionKey": "routine_arms_and_shoulders_desc",
+    "categoryKey": "routine_category_hypertrophy",
+    "exercises": [
+      {
+        "idExerciseDC": "Arnold_Dumbbell_Press",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Side_Laterals_to_Front_Raise",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Face_Pull",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "EZ-Bar_Curl",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Alternate_Hammer_Curl",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Triceps_Pushdown_-_Rope_Attachment",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Bench_Dips",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      }
+    ]
+  },
+  {
+    "id": "Bodyweight_Legs_Home",
+    "titleKey": "routine_bodyweight_legs_home_title",
+    "descriptionKey": "routine_bodyweight_legs_home_desc",
+    "categoryKey": "routine_category_bodyweight",
+    "exercises": [
+      {
+        "idExerciseDC": "Bodyweight_Squat",
+        "setMode": "BODYWEIGHT",
+        "sets": 4,
+        "reps": 20,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Butt_Lift_Bridge",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Bodyweight_Walking_Lunge",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 16,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Freehand_Jump_Squat",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Pistol_Squat",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 6,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Rocking_Standing_Calf_Raise",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 20,
+        "restTime": 30
+      }
+    ]
+  },
+  {
+    "id": "Bodyweight_Upper_Home",
+    "titleKey": "routine_bodyweight_upper_home_title",
+    "descriptionKey": "routine_bodyweight_upper_home_desc",
+    "categoryKey": "routine_category_bodyweight",
+    "exercises": [
+      {
+        "idExerciseDC": "Decline_Push-Up",
+        "setMode": "BODYWEIGHT",
+        "sets": 4,
+        "reps": 10,
+        "restTime": 75
+      },
+      {
+        "idExerciseDC": "Push-Up_Wide",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Pullups",
+        "setMode": "BODYWEIGHT",
+        "sets": 4,
+        "reps": 8,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "Bench_Dips",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Plank_Shoulder_Taps",
+        "setMode": "DURATION",
+        "sets": 3,
+        "elapsedTime": 40,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Superman",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      }
+    ]
+  },
+  {
+    "id": "Cardio_Burn_Machines",
+    "titleKey": "routine_cardio_burn_machines_title",
+    "descriptionKey": "routine_cardio_burn_machines_desc",
+    "categoryKey": "routine_category_cardio",
+    "exercises": [
+      {
+        "idExerciseDC": "Jogging_Treadmill",
+        "setMode": "DURATION",
+        "sets": 1,
+        "elapsedTime": 1200,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Bicycling_Stationary",
+        "setMode": "DURATION",
+        "sets": 1,
+        "elapsedTime": 900,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Elliptical_Trainer",
+        "setMode": "DURATION",
+        "sets": 1,
+        "elapsedTime": 600,
+        "restTime": 60
+      }
+    ]
+  },
+  {
+    "id": "Chest_And_Back",
+    "titleKey": "routine_chest_and_back_title",
+    "descriptionKey": "routine_chest_and_back_desc",
+    "categoryKey": "routine_category_hypertrophy",
+    "exercises": [
+      {
+        "idExerciseDC": "Barbell_Bench_Press_-_Medium_Grip",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 8,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "Pullups",
+        "setMode": "BODYWEIGHT",
+        "sets": 4,
+        "reps": 8,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "Dumbbell_Flyes",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "One-Arm_Dumbbell_Row",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Straight-Arm_Pulldown",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      }
+    ]
+  },
+  {
+    "id": "Comeback_After_A_Break",
+    "titleKey": "routine_comeback_after_a_break_title",
+    "descriptionKey": "routine_comeback_after_a_break_desc",
+    "categoryKey": "routine_category_mobility",
+    "exercises": [
+      {
+        "idExerciseDC": "Leg_Press",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Leverage_Chest_Press",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Wide-Grip_Lat_Pulldown",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Seated_Leg_Curl",
+        "setMode": "LOAD",
+        "sets": 2,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Cable_Seated_Lateral_Raise",
+        "setMode": "LOAD",
+        "sets": 2,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Plank",
+        "setMode": "DURATION",
+        "sets": 2,
+        "elapsedTime": 30,
+        "restTime": 60
+      }
+    ]
+  },
+  {
+    "id": "Core_And_Abs",
+    "titleKey": "routine_core_and_abs_title",
+    "descriptionKey": "routine_core_and_abs_desc",
+    "categoryKey": "routine_category_bodyweight",
+    "exercises": [
+      {
+        "idExerciseDC": "Plank",
+        "setMode": "DURATION",
+        "sets": 3,
+        "elapsedTime": 45,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Hanging_Leg_Raise",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Russian_Twist",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 20,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Crunches",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Dead_Bug",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Flutter_Kicks",
+        "setMode": "DURATION",
+        "sets": 3,
+        "elapsedTime": 30,
+        "restTime": 45
+      }
+    ]
+  },
+  {
+    "id": "Dumbbell_Discovery",
+    "titleKey": "routine_dumbbell_discovery_title",
+    "descriptionKey": "routine_dumbbell_discovery_desc",
+    "categoryKey": "routine_category_beginner",
+    "exercises": [
+      {
+        "idExerciseDC": "Goblet_Squat",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Dumbbell_Bench_Press",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "One-Arm_Dumbbell_Row",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Dumbbell_Shoulder_Press",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Alternate_Hammer_Curl",
+        "setMode": "LOAD",
+        "sets": 2,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Dumbbell_One-Arm_Triceps_Extension",
+        "setMode": "LOAD",
+        "sets": 2,
+        "reps": 12,
+        "restTime": 60
+      }
+    ]
+  },
+  {
+    "id": "Dumbbell_Strength_Full_Body",
+    "titleKey": "routine_dumbbell_strength_full_body_title",
+    "descriptionKey": "routine_dumbbell_strength_full_body_desc",
+    "categoryKey": "routine_category_full_body",
+    "exercises": [
+      {
+        "idExerciseDC": "Goblet_Squat",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 8,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "Dumbbell_Bench_Press",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 8,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "One-Arm_Dumbbell_Row",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 8,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Dumbbell_Shoulder_Press",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 8,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Dumbbell_Lunges",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Alternate_Hammer_Curl",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60
+      }
+    ]
+  },
+  {
+    "id": "Full_Body_Beginner_Bodyweight",
+    "titleKey": "routine_full_body_beginner_bodyweight_title",
+    "descriptionKey": "routine_full_body_beginner_bodyweight_desc",
+    "categoryKey": "routine_category_full_body",
+    "exercises": [
+      {
+        "idExerciseDC": "Bodyweight_Squat",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Incline_Push-Up",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Superman",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Crunches",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Plank",
+        "setMode": "DURATION",
+        "sets": 2,
+        "elapsedTime": 30,
+        "restTime": 45
+      }
+    ]
+  },
+  {
+    "id": "Full_Body_Beginner_Machines",
+    "titleKey": "routine_full_body_beginner_machines_title",
+    "descriptionKey": "routine_full_body_beginner_machines_desc",
+    "categoryKey": "routine_category_full_body",
+    "exercises": [
+      {
+        "idExerciseDC": "Leg_Press",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Wide-Grip_Lat_Pulldown",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Leverage_Chest_Press",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Seated_Leg_Curl",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Ab_Crunch_Machine",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      }
+    ]
+  },
+  {
+    "id": "Full_Body_Strength_Five_By_Five",
+    "titleKey": "routine_full_body_strength_five_by_five_full_body_a_title",
+    "descriptionKey": "routine_full_body_strength_five_by_five_full_body_a_desc",
+    "categoryKey": "routine_category_full_body",
+    "exercises": [
+      {
+        "idExerciseDC": "Barbell_Squat",
+        "setMode": "LOAD",
+        "sets": 5,
+        "reps": 5,
+        "restTime": 180
+      },
+      {
+        "idExerciseDC": "Barbell_Bench_Press_-_Medium_Grip",
+        "setMode": "LOAD",
+        "sets": 5,
+        "reps": 5,
+        "restTime": 180
+      },
+      {
+        "idExerciseDC": "Bent_Over_Barbell_Row",
+        "setMode": "LOAD",
+        "sets": 5,
+        "reps": 5,
+        "restTime": 180
+      }
+    ]
+  },
+  {
+    "id": "Full_Body_Strength_Five_By_Five_B",
+    "titleKey": "routine_full_body_strength_five_by_five_b_title",
+    "descriptionKey": "routine_full_body_strength_five_by_five_b_desc",
+    "categoryKey": "routine_category_full_body",
+    "exercises": [
+      {
+        "idExerciseDC": "Barbell_Deadlift",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 6,
+        "restTime": 180
+      },
+      {
+        "idExerciseDC": "Barbell_Shoulder_Press",
+        "setMode": "LOAD",
+        "sets": 5,
+        "reps": 5,
+        "restTime": 150
+      },
+      {
+        "idExerciseDC": "Bent_Over_Barbell_Row",
+        "setMode": "LOAD",
+        "sets": 5,
+        "reps": 5,
+        "restTime": 150
+      },
+      {
+        "idExerciseDC": "Dips_-_Chest_Version",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 8,
+        "restTime": 90
+      }
+    ]
+  },
+  {
+    "id": "Glutes_And_Legs",
+    "titleKey": "routine_glutes_and_legs_title",
+    "descriptionKey": "routine_glutes_and_legs_desc",
+    "categoryKey": "routine_category_targeted",
+    "exercises": [
+      {
+        "idExerciseDC": "Barbell_Hip_Thrust",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Hack_Squat",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 10,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "Stiff-Legged_Barbell_Deadlift",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Glute_Kickback",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Dumbbell_Lunges",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Standing_Barbell_Calf_Raise",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      }
+    ]
+  },
+  {
+    "id": "Home_No_Equipment_Full_Body",
+    "titleKey": "routine_home_no_equipment_full_body_title",
+    "descriptionKey": "routine_home_no_equipment_full_body_desc",
+    "categoryKey": "routine_category_full_body",
+    "exercises": [
+      {
+        "idExerciseDC": "Bodyweight_Squat",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Push-Up_Wide",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Bodyweight_Walking_Lunge",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Superman",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Sit-Up",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Plank",
+        "setMode": "DURATION",
+        "sets": 3,
+        "elapsedTime": 30,
+        "restTime": 45
+      }
+    ]
+  },
+  {
+    "id": "Lower_Body_Hypertrophy",
+    "titleKey": "routine_lower_body_hypertrophy_title",
+    "descriptionKey": "routine_lower_body_hypertrophy_desc",
+    "categoryKey": "routine_category_hypertrophy",
+    "exercises": [
+      {
+        "idExerciseDC": "Barbell_Squat",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 8,
+        "restTime": 150
+      },
+      {
+        "idExerciseDC": "Stiff-Legged_Barbell_Deadlift",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "Barbell_Lunge",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Lying_Leg_Curls",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Single-Leg_Leg_Extension",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Seated_Calf_Raise",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 15,
+        "restTime": 45
+      }
+    ]
+  },
+  {
+    "id": "Lower_Body_Strength",
+    "titleKey": "routine_lower_body_strength_title",
+    "descriptionKey": "routine_lower_body_strength_desc",
+    "categoryKey": "routine_category_strength",
+    "exercises": [
+      {
+        "idExerciseDC": "Barbell_Squat",
+        "setMode": "LOAD",
+        "sets": 5,
+        "reps": 5,
+        "restTime": 180
+      },
+      {
+        "idExerciseDC": "Stiff-Legged_Barbell_Deadlift",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 8,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "Leg_Press",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 10,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "Hyperextensions_Back_Extensions",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Seated_Calf_Raise",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 15,
+        "restTime": 45
+      }
+    ]
+  },
+  {
+    "id": "Metabolic_Dumbbell_Circuit",
+    "titleKey": "routine_metabolic_dumbbell_circuit_title",
+    "descriptionKey": "routine_metabolic_dumbbell_circuit_desc",
+    "categoryKey": "routine_category_cardio",
+    "exercises": [
+      {
+        "idExerciseDC": "Goblet_Squat",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "One-Arm_Kettlebell_Swings",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Dumbbell_Shoulder_Press",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Dumbbell_Lunges",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "One-Arm_Dumbbell_Row",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Mountain_Climbers",
+        "setMode": "DURATION",
+        "sets": 3,
+        "elapsedTime": 30,
+        "restTime": 30
+      }
+    ]
+  },
+  {
+    "id": "Mobility_And_Stretching",
+    "titleKey": "routine_mobility_and_stretching_title",
+    "descriptionKey": "routine_mobility_and_stretching_desc",
+    "categoryKey": "routine_category_mobility",
+    "exercises": [
+      {
+        "idExerciseDC": "Cat_Stretch",
+        "setMode": "DURATION",
+        "sets": 2,
+        "elapsedTime": 30,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Cobra_Stretch",
+        "setMode": "DURATION",
+        "sets": 2,
+        "elapsedTime": 30,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Behind_Head_Chest_Stretch",
+        "setMode": "DURATION",
+        "sets": 2,
+        "elapsedTime": 30,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Chair_Lower_Back_Stretch",
+        "setMode": "DURATION",
+        "sets": 2,
+        "elapsedTime": 30,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Chair_Leg_Extended_Stretch",
+        "setMode": "DURATION",
+        "sets": 2,
+        "elapsedTime": 30,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Calf_Stretch_Hands_Against_Wall",
+        "setMode": "DURATION",
+        "sets": 2,
+        "elapsedTime": 30,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Chin_To_Chest_Stretch",
+        "setMode": "DURATION",
+        "sets": 2,
+        "elapsedTime": 30,
+        "restTime": 30
+      }
+    ]
+  },
+  {
+    "id": "Posture_And_Upper_Back",
+    "titleKey": "routine_posture_and_upper_back_title",
+    "descriptionKey": "routine_posture_and_upper_back_desc",
+    "categoryKey": "routine_category_targeted",
+    "exercises": [
+      {
+        "idExerciseDC": "Face_Pull",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 15,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Cable_Rope_Rear-Delt_Rows",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 75
+      },
+      {
+        "idExerciseDC": "Seated_Bent-Over_Rear_Delt_Raise",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Barbell_Shrug",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 75
+      },
+      {
+        "idExerciseDC": "Straight-Arm_Pulldown",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Superman",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      }
+    ]
+  },
+  {
+    "id": "PPL_Legs",
+    "titleKey": "routine_ppl_legs_title",
+    "descriptionKey": "routine_ppl_legs_desc",
+    "categoryKey": "routine_category_ppl",
+    "exercises": [
+      {
+        "idExerciseDC": "Barbell_Squat",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 6,
+        "restTime": 180
+      },
+      {
+        "idExerciseDC": "Stiff-Legged_Barbell_Deadlift",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 8,
+        "restTime": 150
+      },
+      {
+        "idExerciseDC": "Leg_Press",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "Lying_Leg_Curls",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Standing_Barbell_Calf_Raise",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 12,
+        "restTime": 60
+      }
+    ]
+  },
+  {
+    "id": "PPL_Pull",
+    "titleKey": "routine_ppl_pull_title",
+    "descriptionKey": "routine_ppl_pull_desc",
+    "categoryKey": "routine_category_ppl",
+    "exercises": [
+      {
+        "idExerciseDC": "Chin-Up",
+        "setMode": "BODYWEIGHT",
+        "sets": 4,
+        "reps": 6,
+        "restTime": 180
+      },
+      {
+        "idExerciseDC": "Bent_Over_Barbell_Row",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 6,
+        "restTime": 150
+      },
+      {
+        "idExerciseDC": "Wide-Grip_Lat_Pulldown",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Face_Pull",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "EZ-Bar_Curl",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60
+      }
+    ]
+  },
+  {
+    "id": "PPL_Push",
+    "titleKey": "routine_ppl_push_title",
+    "descriptionKey": "routine_ppl_push_desc",
+    "categoryKey": "routine_category_ppl",
+    "exercises": [
+      {
+        "idExerciseDC": "Barbell_Bench_Press_-_Medium_Grip",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 6,
+        "restTime": 180
+      },
+      {
+        "idExerciseDC": "Barbell_Shoulder_Press",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 6,
+        "restTime": 150
+      },
+      {
+        "idExerciseDC": "Incline_Dumbbell_Flyes_-_With_A_Twist",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Dips_-_Triceps_Version",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 8,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Push-Ups_-_Close_Triceps_Position",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60
+      }
+    ]
+  },
+  {
+    "id": "Resistance_Bands_Full_Body",
+    "titleKey": "routine_resistance_bands_full_body_title",
+    "descriptionKey": "routine_resistance_bands_full_body_desc",
+    "categoryKey": "routine_category_beginner",
+    "exercises": [
+      {
+        "idExerciseDC": "Squats_-_With_Bands",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Bench_Press_-_With_Bands",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Back_Flyes_-_With_Bands",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Lateral_Raise_-_With_Bands",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "External_Rotation_with_Band",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      },
+      {
+        "idExerciseDC": "Calf_Raises_-_With_Bands",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 20,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Crunches",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 45
+      }
+    ]
+  },
+  {
+    "id": "Treadmill_Interval_Run",
+    "titleKey": "routine_treadmill_interval_run_title",
+    "descriptionKey": "routine_treadmill_interval_run_desc",
+    "categoryKey": "routine_category_cardio",
+    "exercises": [
+      {
+        "idExerciseDC": "Jogging_Treadmill",
+        "setMode": "DURATION",
+        "sets": 1,
+        "elapsedTime": 300,
+        "restTime": 0
+      },
+      {
+        "idExerciseDC": "Running_Treadmill",
+        "setMode": "DURATION",
+        "sets": 8,
+        "elapsedTime": 60,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Walking_Treadmill",
+        "setMode": "DURATION",
+        "sets": 1,
+        "elapsedTime": 300,
+        "restTime": 0
+      }
+    ]
+  },
+  {
+    "id": "Twenty_Minute_HIIT",
+    "titleKey": "routine_twenty_minute_hiit_title",
+    "descriptionKey": "routine_twenty_minute_hiit_desc",
+    "categoryKey": "routine_category_cardio",
+    "exercises": [
+      {
+        "idExerciseDC": "Jumping_Jacks",
+        "setMode": "DURATION",
+        "sets": 3,
+        "elapsedTime": 60,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Mountain_Climbers",
+        "setMode": "DURATION",
+        "sets": 3,
+        "elapsedTime": 40,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Freehand_Jump_Squat",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Knee_Tuck_Jump",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Rope_Jumping",
+        "setMode": "DURATION",
+        "sets": 3,
+        "elapsedTime": 60,
+        "restTime": 30
+      }
+    ]
+  },
+  {
+    "id": "Upper_Body_Hypertrophy",
+    "titleKey": "routine_upper_body_hypertrophy_title",
+    "descriptionKey": "routine_upper_body_hypertrophy_desc",
+    "categoryKey": "routine_category_hypertrophy",
+    "exercises": [
+      {
+        "idExerciseDC": "Barbell_Incline_Bench_Press_-_Medium_Grip",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 8,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "Seated_Cable_Rows",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 8,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Dumbbell_Shoulder_Press",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Wide-Grip_Lat_Pulldown",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Dumbbell_Flyes",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "EZ-Bar_Curl",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Cable_Rope_Overhead_Triceps_Extension",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      }
+    ]
+  },
+  {
+    "id": "Upper_Body_Strength",
+    "titleKey": "routine_upper_body_strength_title",
+    "descriptionKey": "routine_upper_body_strength_desc",
+    "categoryKey": "routine_category_strength",
+    "exercises": [
+      {
+        "idExerciseDC": "Barbell_Bench_Press_-_Medium_Grip",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 5,
+        "restTime": 180
+      },
+      {
+        "idExerciseDC": "Bent_Over_Barbell_Row",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 5,
+        "restTime": 150
+      },
+      {
+        "idExerciseDC": "Barbell_Shoulder_Press",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 6,
+        "restTime": 150
+      },
+      {
+        "idExerciseDC": "Pullups",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 8,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "EZ-Bar_Curl",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60
+      }
+    ]
+  },
+  {
+    "id": "Walk_And_Move",
+    "titleKey": "routine_walk_and_move_title",
+    "descriptionKey": "routine_walk_and_move_desc",
+    "categoryKey": "routine_category_cardio",
+    "exercises": [
+      {
+        "idExerciseDC": "Walking_Treadmill",
+        "setMode": "DURATION",
+        "sets": 1,
+        "elapsedTime": 1800,
+        "restTime": 0
+      },
+      {
+        "idExerciseDC": "Stairmaster",
+        "setMode": "DURATION",
+        "sets": 1,
+        "elapsedTime": 600,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Jumping_Jacks",
+        "setMode": "DURATION",
+        "sets": 3,
+        "elapsedTime": 45,
+        "restTime": 30
+      },
+      {
+        "idExerciseDC": "Rope_Jumping",
+        "setMode": "DURATION",
+        "sets": 3,
+        "elapsedTime": 60,
+        "restTime": 30
+      }
+    ]
+  },
+  {
+    "id": "Wide_Back_Lats",
+    "titleKey": "routine_wide_back_lats_title",
+    "descriptionKey": "routine_wide_back_lats_desc",
+    "categoryKey": "routine_category_targeted",
+    "exercises": [
+      {
+        "idExerciseDC": "Pullups",
+        "setMode": "BODYWEIGHT",
+        "sets": 4,
+        "reps": 8,
+        "restTime": 120
+      },
+      {
+        "idExerciseDC": "Wide-Grip_Lat_Pulldown",
+        "setMode": "LOAD",
+        "sets": 4,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Seated_Cable_Rows",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 10,
+        "restTime": 90
+      },
+      {
+        "idExerciseDC": "Straight-Arm_Pulldown",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Face_Pull",
+        "setMode": "LOAD",
+        "sets": 3,
+        "reps": 15,
+        "restTime": 60
+      },
+      {
+        "idExerciseDC": "Hyperextensions_Back_Extensions",
+        "setMode": "BODYWEIGHT",
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60
+      }
+    ]
+  }
+]

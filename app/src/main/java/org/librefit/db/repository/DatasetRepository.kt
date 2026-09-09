@@ -12,13 +12,11 @@ import android.content.Context
 import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.librefit.R
 import org.librefit.db.dao.DatasetDao
@@ -55,31 +53,34 @@ class DatasetRepository @Inject constructor(
             initialValue = emptyList()
         )
 
-    fun updateDatasetOnAppUpdate() {
-        applicationScope.launch(Dispatchers.IO) {
-            val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            val currentVersion =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) pInfo.longVersionCode else pInfo.versionCode.toLong()
-            val pastVersion = userPreferencesRepository.pastVersionCode.value
+    /**
+     * Updates the dataset on app update. It suspends until the update is completed, so that
+     * callers can sequence other updates which depend on the dataset being in place
+     * (e.g. routine templates referencing exercises by id).
+     */
+    suspend fun updateDatasetOnAppUpdateSynchronously() {
+        val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val currentVersion =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) pInfo.longVersionCode else pInfo.versionCode.toLong()
+        val pastVersion = userPreferencesRepository.pastVersionCode.value
 
-            // Update dataset only on app update
-            if (pastVersion != currentVersion) {
-                val jsonFile =
-                    context.resources.openRawResource(R.raw.exercises).bufferedReader().use {
-                        it.readText()
-                    }
+        // Update dataset only on app update
+        if (pastVersion != currentVersion) {
+            val jsonFile =
+                context.resources.openRawResource(R.raw.exercises).bufferedReader().use {
+                    it.readText()
+                }
 
-                val json = Json
+            val json = Json
 
-                // All entries of all enums must be annotated with @SerialName with its corresponding value in json file
-                val exercises = json.decodeFromString<List<ExerciseDC>>(jsonFile)
+            // All entries of all enums must be annotated with @SerialName with its corresponding value in json file
+            val exercises = json.decodeFromString<List<ExerciseDC>>(jsonFile)
 
-                // Set the dataset into the database using the DAO
-                datasetDao.setDataset(exercises)
+            // Set the dataset into the database using the DAO
+            datasetDao.setDataset(exercises)
 
-                // Save version
-                userPreferencesRepository.savePastVersionCode(currentVersion)
-            }
+            // Save version
+            userPreferencesRepository.savePastVersionCode(currentVersion)
         }
     }
 

@@ -36,6 +36,14 @@ interface WorkoutDao {
     fun getWorkoutsWithExercisesAndSetsByState(state: WorkoutState): Flow<List<WorkoutWithExercisesAndSets>>
 
     /**
+     * Same as [getWorkoutsWithExercisesAndSetsByState] but it suspends and returns a single list,
+     * so it can be used in one-shot operations (e.g. syncing routine templates on app update).
+     */
+    @Transaction
+    @Query("SELECT * FROM workouts WHERE state = :state ORDER BY created")
+    suspend fun getWorkoutsWithExercisesAndSetsListByState(state: WorkoutState): List<WorkoutWithExercisesAndSets>
+
+    /**
      * Returns a flow that emits a stream of [Workout]s which have the requested [state]. They are
      * ordered by date from newest to latest ([Workout.completed])
      */

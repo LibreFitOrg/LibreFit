@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^[0-9a-zA-Z_-]+$"
+      },
+      "titleKey": {
+        "type": "string",
+        "pattern": "^routine_[a-z0-9_]+_title$"
+      },
+      "descriptionKey": {
+        "type": "string",
+        "pattern": "^routine_[a-z0-9_]+_desc$"
+      },
+      "categoryKey": {
+        "type": "string",
+        "enum": [
+      "routine_category_beginner",
+      "routine_category_full_body",
+      "routine_category_ppl",
+      "routine_category_strength",
+      "routine_category_hypertrophy",
+      "routine_category_bodyweight",
+      "routine_category_cardio",
+      "routine_category_targeted",
+      "routine_category_mobility"
+     ]
+      },
+      "exercises": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "properties": {
+            "idExerciseDC": {
+              "type": "string",
+              "pattern": "^[0-9a-zA-Z_-]+$"
+            },
+            "setMode": {
+              "type": "string",
+              "enum": [
+                "LOAD",
+                "BODYWEIGHT",
+                "BODYWEIGHT_WITH_LOAD",
+                "DURATION"
+              ]
+            },
+            "sets": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            },
+            "reps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "elapsedTime": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 7200,
+              "description": "Duration of each set in seconds, required when setMode is DURATION"
+            },
+            "restTime": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 600,
+              "description": "Rest time after each set in seconds"
+            }
+          },
+          "required": [
+            "idExerciseDC",
+            "setMode",
+            "sets",
+            "restTime"
+          ]
+        }
+      }
+    },
+    "required": [
+      "id",
+      "titleKey",
+      "descriptionKey",
+      "categoryKey",
+      "exercises"
+    ]
+  }
+}

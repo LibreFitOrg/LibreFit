@@ -121,6 +121,7 @@ object Formatter {
     fun preferenceToStringId(dialogPreference: DialogPreference): Int {
         return when (dialogPreference) {
             Language.ENGLISH -> R.string.language_english_nt
+            Language.FRENCH -> R.string.language_french_nt
             Language.ITALIAN -> R.string.language_italian_nt
             Language.GERMAN -> R.string.language_german_nt
             Language.DUTCH -> R.string.language_dutch_nt

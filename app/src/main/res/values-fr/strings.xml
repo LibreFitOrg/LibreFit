@@ -162,4 +162,86 @@
     <string name="stack_trace_not_available">Trace d\'exécution non disponible</string>
     <string name="quit_adding_exercises_question">Arrêter l\'ajout d\'exercices ?</string>
     <string name="exit_create_routine">Êtes-vous sûrs de vouloir quitter ? Votre routine ne sera pas sauvegardée</string>
+
+    <!--Routine templates (library) -->
+    <string name="routine_category_beginner">Débutant</string>
+    <string name="routine_category_full_body">Corps entier</string>
+    <string name="routine_category_ppl">Push / Pull / Legs</string>
+    <string name="routine_category_strength">Force</string>
+    <string name="routine_category_hypertrophy">Hypertrophie</string>
+    <string name="routine_category_bodyweight">Poids du corps &amp; maison</string>
+    <string name="routine_category_cardio">Cardio &amp; perte de poids</string>
+    <string name="routine_category_targeted">Ciblé</string>
+    <string name="routine_category_mobility">Mobilité &amp; récupération</string>
+
+    <string name="routine_arms_and_shoulders_title">Bras &amp; Épaules</string>
+    <string name="routine_arms_and_shoulders_desc">Séance de volume axée sur les biceps, les triceps et les deltoïdes.</string>
+    <string name="routine_bodyweight_legs_home_title">Jambes à la Maison</string>
+    <string name="routine_bodyweight_legs_home_desc">Jambes et fessiers à la maison, des squats jusqu\'à la progression pistol squat.</string>
+    <string name="routine_bodyweight_upper_home_title">Haut du Corps – Maison</string>
+    <string name="routine_bodyweight_upper_home_desc">Pectoraux, dos et bras avec variantes de pompes et tractions.</string>
+    <string name="routine_cardio_burn_machines_title">Cardio Brûle-Tout – Machines</string>
+    <string name="routine_cardio_burn_machines_desc">Environ 45 minutes de cardio continu sur tapis, vélo et elliptique.</string>
+    <string name="routine_chest_and_back_title">Poitrine &amp; Dos</string>
+    <string name="routine_chest_and_back_desc">Couplage classique pousser/tirer pour un buste équilibré.</string>
+    <string name="routine_comeback_after_a_break_title">Reprise Après une Pause</string>
+    <string name="routine_comeback_after_a_break_desc">Séance légère full body sur machines pour reprendre en douceur.</string>
+    <string name="routine_core_and_abs_title">Gainage &amp; Abdos</string>
+    <string name="routine_core_and_abs_desc">Circuit gainage complet mais court : planche, élévations et rotations.</string>
+    <string name="routine_dumbbell_discovery_title">Découverte Haltères</string>
+    <string name="routine_dumbbell_discovery_desc">Apprenez les mouvements fondamentaux avec un seul haltère.</string>
+    <string name="routine_dumbbell_strength_full_body_title">Full Body Force Haltères</string>
+    <string name="routine_dumbbell_strength_full_body_desc">Haltères lourds uniquement : séries courtes sur les mouvements fondamentaux.</string>
+    <string name="routine_full_body_beginner_bodyweight_title">Débutant Full Body – Maison</string>
+    <string name="routine_full_body_beginner_bodyweight_desc">Sans équipement : squats, pompes et gainage à la maison.</string>
+    <string name="routine_full_body_beginner_machines_title">Full Body Débutant – Machines</string>
+    <string name="routine_full_body_beginner_machines_desc">Séance sécurisée sur machines guidées pour apprendre les mouvements de base.</string>
+    <string name="routine_glutes_and_legs_title">Fessiers &amp; Jambes</string>
+    <string name="routine_glutes_and_legs_desc">Séance bas du corps ciblée : hip thrust, squats et fentes.</string>
+    <string name="routine_twenty_minute_hiit_title">HIIT 20 Minutes</string>
+    <string name="routine_twenty_minute_hiit_desc">Circuit fractionné haute intensité avec repos courts. Brûlage maximum en 20 minutes.</string>
+    <string name="routine_home_no_equipment_full_body_title">Full Body Sans Équipement</string>
+    <string name="routine_home_no_equipment_full_body_desc">Entraînement complet du corps uniquement au poids du corps.</string>
+    <string name="routine_lower_body_hypertrophy_title">Hypertrophie Bas du Corps</string>
+    <string name="routine_lower_body_hypertrophy_desc">Squats, variantes de soulevé de terre et isolation pour la masse des jambes.</string>
+    <string name="routine_metabolic_dumbbell_circuit_title">Circuit Haltères Métabolique</string>
+    <string name="routine_metabolic_dumbbell_circuit_desc">Circuit rythmé combinant force et cardio avec repos minimal.</string>
+    <string name="routine_ppl_pull_title">Jour Tirage (PPL)</string>
+    <string name="routine_ppl_pull_desc">Jour tirage du split Push/Pull/Legs : dos, dorsaux et biceps.</string>
+    <string name="routine_ppl_push_title">Jour Poussée (PPL)</string>
+    <string name="routine_ppl_push_desc">Jour poussée du split Push/Pull/Legs : pectoraux, épaules et triceps.</string>
+    <string name="routine_ppl_legs_title">Jour Jambes (PPL)</string>
+    <string name="routine_ppl_legs_desc">Jour jambes du split Push/Pull/Legs : quadriceps, ischios et mollets.</string>
+    <string name="routine_full_body_strength_five_by_five_full_body_a_title">Full Body Force 5×5</string>
+    <string name="routine_full_body_strength_five_by_five_full_body_a_desc">Le classique 5×5 sur les trois grands mouvements. Simple et efficace pour la force.</string>
+    <string name="routine_full_body_strength_five_by_five_b_title">Full Body Force 5×5 – B</string>
+    <string name="routine_full_body_strength_five_by_five_b_desc">Séance B du 5×5 : soulevé de terre, développé et rowing à alterner avec la séance A.</string>
+    <string name="routine_lower_body_strength_title">Force Bas du Corps</string>
+    <string name="routine_lower_body_strength_desc">Force brute des jambes : squats lourds, charnières et volume en poussée.</string>
+    <string name="routine_mobility_and_stretching_title">Mobilité &amp; Étirements</string>
+    <string name="routine_mobility_and_stretching_desc">Étirements guidés pour le dos, la poitrine, les jambes et la nuque. Idéal les jours de repos.</string>
+    <string name="routine_posture_and_upper_back_title">Posture &amp; Haut du Dos</string>
+    <string name="routine_posture_and_upper_back_desc">Deltoïdes postérieurs, trapèzes et scapulaires pour corriger la posture de bureau.</string>
+    <string name="routine_resistance_bands_full_body_title">Full Body avec Bandes</string>
+    <string name="routine_resistance_bands_full_body_desc">Séance full body douce pour les articulations avec une simple paire de bandes.</string>
+    <string name="routine_treadmill_interval_run_title">Fractionné Tapis de Course</string>
+    <string name="routine_treadmill_interval_run_desc">8 intervalles rapides encadrés par un footing d\'échauffement et un retour au calme en marchant.</string>
+    <string name="routine_upper_body_strength_title">Force Haut du Corps</string>
+    <string name="routine_upper_body_strength_desc">Barre en séries courtes : développé couché, rowing, développé militaire et tractions.</string>
+    <string name="routine_upper_body_hypertrophy_title">Hypertrophie Haut du Corps</string>
+    <string name="routine_upper_body_hypertrophy_desc">Séance haut du corps en volume élevé pour la masse musculaire.</string>
+    <string name="routine_walk_and_move_title">Marche &amp; Bouger</string>
+    <string name="routine_walk_and_move_desc">Récupération active à faible impact : marche, escaliers et cardio léger.</string>
+    <string name="routine_wide_back_lats_title">Dos Large &amp; Dorsaux</string>
+    <string name="routine_wide_back_lats_desc">Tirages verticaux et horizontaux pour se construire un dos plus large.</string>
+
+    <!--Library -->
+    <string name="add_to_my_routines">Ajouter à mes routines</string>
+    <string name="added_to_my_routines">Ajouté à mes routines</string>
+    <string name="library_header">Routines prêtes à l\'emploi</string>
+    <string name="library_subtitle">Choisissez une routine, ajoutez-la aux vôtres et personnalisez-la.</string>
+    <string name="exercises_count">%1$d exercices</string>
+    <string name="estimated_duration">~%1$d min</string>
+    <string name="remove_from_library_text">Ce modèle de routine sera retiré de la bibliothèque. Il reviendra lors de la prochaine mise à jour de l\'application.</string>
+
 </resources>

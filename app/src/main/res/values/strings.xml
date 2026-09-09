@@ -583,4 +583,85 @@
     <string name="undo">Undo</string>
     <string name="clear">Clear</string>
 
+    <!--Routine templates (library) -->
+    <string name="routine_category_beginner">Beginner</string>
+    <string name="routine_category_full_body">Full body</string>
+    <string name="routine_category_ppl">Push / Pull / Legs</string>
+    <string name="routine_category_strength">Strength</string>
+    <string name="routine_category_hypertrophy">Hypertrophy</string>
+    <string name="routine_category_bodyweight">Bodyweight &amp; home</string>
+    <string name="routine_category_cardio">Cardio &amp; fat loss</string>
+    <string name="routine_category_targeted">Targeted</string>
+    <string name="routine_category_mobility">Mobility &amp; recovery</string>
+
+    <string name="routine_arms_and_shoulders_title">Arms &amp; Shoulders</string>
+    <string name="routine_arms_and_shoulders_desc">Volume session focused on biceps, triceps and deltoids.</string>
+    <string name="routine_bodyweight_legs_home_title">Home Legs – Bodyweight</string>
+    <string name="routine_bodyweight_legs_home_desc">Legs and glutes at home, from squats to pistol squat progression.</string>
+    <string name="routine_bodyweight_upper_home_title">Home Upper – Bodyweight</string>
+    <string name="routine_bodyweight_upper_home_desc">Chest, back and arms with push-up variations and pull-ups.</string>
+    <string name="routine_cardio_burn_machines_title">Cardio Burn – Machines</string>
+    <string name="routine_cardio_burn_machines_desc">About 45 minutes of steady cardio on treadmill, bike and elliptical.</string>
+    <string name="routine_chest_and_back_title">Chest &amp; Back</string>
+    <string name="routine_chest_and_back_desc">Classic push/pull pairing for a balanced torso.</string>
+    <string name="routine_comeback_after_a_break_title">Comeback After a Break</string>
+    <string name="routine_comeback_after_a_break_desc">Light full-body machines session to gently get back into training.</string>
+    <string name="routine_core_and_abs_title">Core &amp; Abs</string>
+    <string name="routine_core_and_abs_desc">Short but complete core circuit: plank, raises and rotations.</string>
+    <string name="routine_dumbbell_discovery_title">Dumbbell Discovery</string>
+    <string name="routine_dumbbell_discovery_desc">Learn the fundamental movements with just one dumbbell.</string>
+    <string name="routine_dumbbell_strength_full_body_title">Dumbbell Strength Full Body</string>
+    <string name="routine_dumbbell_strength_full_body_desc">Heavy dumbbells only: low reps on the fundamental lifts.</string>
+    <string name="routine_full_body_beginner_bodyweight_title">Full Body Beginner – At Home</string>
+    <string name="routine_full_body_beginner_bodyweight_desc">No equipment needed: squats, push-ups and core at home.</string>
+    <string name="routine_full_body_beginner_machines_title">Full Body Beginner – Machines</string>
+    <string name="routine_full_body_beginner_machines_desc">Safe guided-machine session to learn the basic movement patterns.</string>
+    <string name="routine_glutes_and_legs_title">Glutes &amp; Legs</string>
+    <string name="routine_glutes_and_legs_desc">Targeted lower-body session: hip thrust, squats and lunges.</string>
+    <string name="routine_twenty_minute_hiit_title">HIIT 20 Minutes</string>
+    <string name="routine_twenty_minute_hiit_desc">High-intensity interval circuit with short rests. Maximum burn in 20 minutes.</string>
+    <string name="routine_home_no_equipment_full_body_title">Home Full Body, No Equipment</string>
+    <string name="routine_home_no_equipment_full_body_desc">Complete full-body workout using only your bodyweight.</string>
+    <string name="routine_lower_body_hypertrophy_title">Lower Body Hypertrophy</string>
+    <string name="routine_lower_body_hypertrophy_desc">Squats, deadlift variations and isolation for leg growth.</string>
+    <string name="routine_metabolic_dumbbell_circuit_title">Metabolic Dumbbell Circuit</string>
+    <string name="routine_metabolic_dumbbell_circuit_desc">Fast-paced circuit combining strength and cardio with minimal rest.</string>
+    <string name="routine_ppl_pull_title">Pull Day (PPL)</string>
+    <string name="routine_ppl_pull_desc">Pull day of the Push/Pull/Legs split: back, lats and biceps.</string>
+    <string name="routine_ppl_push_title">Push Day (PPL)</string>
+    <string name="routine_ppl_push_desc">Push day of the Push/Pull/Legs split: chest, shoulders and triceps.</string>
+    <string name="routine_ppl_legs_title">Legs Day (PPL)</string>
+    <string name="routine_ppl_legs_desc">Leg day of the Push/Pull/Legs split: quads, hamstrings and calves.</string>
+    <string name="routine_full_body_strength_five_by_five_full_body_a_title">Full Body Strength 5×5</string>
+    <string name="routine_full_body_strength_five_by_five_full_body_a_desc">The classic 5×5 on the three big lifts. Simple and effective strength building.</string>
+    <string name="routine_full_body_strength_five_by_five_b_title">Full Body Strength 5×5 – B</string>
+    <string name="routine_full_body_strength_five_by_five_b_desc">Workout B of the 5×5: deadlift, press and row to alternate with workout A.</string>
+    <string name="routine_lower_body_strength_title">Lower Body Strength</string>
+    <string name="routine_lower_body_strength_desc">Raw leg strength: heavy squats, hinges and pressing volume.</string>
+    <string name="routine_mobility_and_stretching_title">Mobility &amp; Stretching</string>
+    <string name="routine_mobility_and_stretching_desc">Guided stretching for back, chest, legs and neck. Ideal on rest days.</string>
+    <string name="routine_posture_and_upper_back_title">Posture &amp; Upper Back</string>
+    <string name="routine_posture_and_upper_back_desc">Rear delts, traps and scapular muscles to fix desk posture.</string>
+    <string name="routine_resistance_bands_full_body_title">Full Body with Bands</string>
+    <string name="routine_resistance_bands_full_body_desc">Joint-friendly full body session with a simple pair of bands.</string>
+    <string name="routine_treadmill_interval_run_title">Treadmill Interval Run</string>
+    <string name="routine_treadmill_interval_run_desc">8 fast intervals framed by a warm-up jog and a walking cool-down.</string>
+    <string name="routine_upper_body_strength_title">Upper Body Strength</string>
+    <string name="routine_upper_body_strength_desc">Low-rep barbell work: bench press, rows, press and pull-ups.</string>
+    <string name="routine_upper_body_hypertrophy_title">Upper Body Hypertrophy</string>
+    <string name="routine_upper_body_hypertrophy_desc">High-volume upper body session for muscle mass.</string>
+    <string name="routine_walk_and_move_title">Walk &amp; Move</string>
+    <string name="routine_walk_and_move_desc">Low-impact active recovery: walking, stairs and light cardio.</string>
+    <string name="routine_wide_back_lats_title">Wide Back &amp; Lats</string>
+    <string name="routine_wide_back_lats_desc">Vertical and horizontal pulls to build a wider back.</string>
+
+    <!--Library -->
+    <string name="add_to_my_routines">Add to my routines</string>
+    <string name="added_to_my_routines">Added to my routines</string>
+    <string name="library_header">Ready-to-use routines</string>
+    <string name="library_subtitle">Pick a routine, add it to yours and make it yours.</string>
+    <string name="exercises_count">%1$d exercises</string>
+    <string name="estimated_duration">~%1$d min</string>
+    <string name="remove_from_library_text">This routine template will be removed from the library. It will come back on the next app update.</string>
+
 </resources>

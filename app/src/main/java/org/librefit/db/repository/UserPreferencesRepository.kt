@@ -48,6 +48,7 @@ private val REST_TIMER_SOUND_KEY = booleanPreferencesKey("alert_sound")
 private val SHOW_WELCOME_SCREEN_KEY = booleanPreferencesKey("show_welcome_screen")
 private val IS_SUPPORTER_KEY = booleanPreferencesKey("is_supporter")
 private val PAST_VERSION_CODE_KEY = longPreferencesKey("pastVersionCode")
+private val PAST_ROUTINES_VERSION_CODE_KEY = longPreferencesKey("pastRoutinesVersionCode")
 private val IS_WORKOUT_HEADER_STICKY_KEY = booleanPreferencesKey("is_workout_header_sticky")
 private val SHOW_KEEP_ANDROID_OPEN_KEY = booleanPreferencesKey("showKeepAndroidOpenKey")
 private val USE_SCROLL_WHEEL_FOR_INPUT_KEY = booleanPreferencesKey("use_number_picker")
@@ -140,6 +141,14 @@ class UserPreferencesRepository @Inject constructor(
 
     val pastVersionCode: StateFlow<Long> = dataStore.data
         .map { preferences -> preferences[PAST_VERSION_CODE_KEY] ?: -1L }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = -1L
+        )
+
+    val pastRoutinesVersionCode: StateFlow<Long> = dataStore.data
+        .map { preferences -> preferences[PAST_ROUTINES_VERSION_CODE_KEY] ?: -1L }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
@@ -309,6 +318,10 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun savePastVersionCode(versionCode: Long) {
         dataStore.edit { preferences -> preferences[PAST_VERSION_CODE_KEY] = versionCode }
+    }
+
+    suspend fun savePastRoutinesVersionCode(versionCode: Long) {
+        dataStore.edit { preferences -> preferences[PAST_ROUTINES_VERSION_CODE_KEY] = versionCode }
     }
 
     suspend fun saveIsWorkoutHeaderSticky(isSticky: Boolean) {

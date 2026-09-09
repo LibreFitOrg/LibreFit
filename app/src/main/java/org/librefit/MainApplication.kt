@@ -10,7 +10,12 @@ package org.librefit
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.librefit.db.repository.DatasetRepository
+import org.librefit.db.repository.RoutineTemplateRepository
+import org.librefit.di.qualifiers.ApplicationScope
 import org.librefit.util.GlobalExceptionHandler
 import javax.inject.Inject
 
@@ -22,12 +27,23 @@ class MainApplication : Application() {
     @Inject
     lateinit var datasetRepository: DatasetRepository
 
+    @Inject
+    lateinit var routineTemplateRepository: RoutineTemplateRepository
+
+    @Inject
+    @ApplicationScope
+    lateinit var applicationScope: CoroutineScope
+
     override fun onCreate() {
         super.onCreate()
         // Setup global exception handler
         globalExceptionHandler.initialize()
 
-        // Update dataset on each app update
-        datasetRepository.updateDatasetOnAppUpdate()
+        // Update dataset and routine templates on each app update. They are sequenced because
+        // routine templates reference exercises from the dataset by id.
+        applicationScope.launch(Dispatchers.IO) {
+            datasetRepository.updateDatasetOnAppUpdateSynchronously()
+            routineTemplateRepository.updateRoutinesOnAppUpdateSynchronously()
+        }
     }
 }
