@@ -240,8 +240,8 @@ Thanks to everyone who helped the project!
 #### Brazilian Portuguese 🇧🇷
 
 - [miguelsoaresouza8-droid](https://github.com/miguelsoaresouza8-droid) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
-- Miles Espadoto
-- [vinitdrk](https://github.com/vinitdrk)
+- Miles Espadoto [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
+- [vinitdrk](https://github.com/vinitdrk) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### Czech 🇨🇿
 
@@ -256,9 +256,9 @@ Thanks to everyone who helped the project!
 - [Spartang-117](https://github.com/Spartang-117) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
 - [Semprista](https://github.com/Semprista) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
 - [BigP0tato](https://github.com/B1gP0tato) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
-- [UbioZur](https://github.com/UbioZur)
-- [malespiaut](https://github.com/malespiaut)
-- [alexischarp](https://github.com/alexischarp)
+- [UbioZur](https://github.com/UbioZur) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
+- [malespiaut](https://github.com/malespiaut) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
+- [alexischarp](https://github.com/alexischarp) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### German 🇩🇪
 
@@ -267,13 +267,13 @@ Thanks to everyone who helped the project!
 - [sprivaq](https://github.com/sprivaq) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
 - [mister-bum](https://github.com/mister-bum) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
 - [Jent1357](https://github.com/Jent1357) [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
-- [zhx000](https://github.com/zhx000)
+- [zhx000](https://github.com/zhx000) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### Hindi 🇮🇳
 
 - [SilentCoderHere](https://github.com/SilentCoderHere) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
-- [WinnerWind](https://github.com/WinnerWind)
-- Rajesh Ranmara
+- [WinnerWind](https://github.com/WinnerWind) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
+- Rajesh Ranmara [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### Indonesian 🇮🇩
 
@@ -281,7 +281,7 @@ Thanks to everyone who helped the project!
 
 #### Italian 🇮🇹
 
-- [lotation](https://github.com/lotation)
+- [lotation](https://github.com/lotation) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### Korean 🇰🇷
 
@@ -293,7 +293,7 @@ Thanks to everyone who helped the project!
 
 #### Portuguese 🇵🇹
 
-- [joncasagrande](https://github.com/joncasagrande)
+- [joncasagrande](https://github.com/joncasagrande) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### Russian 🇷🇺
 
@@ -315,12 +315,12 @@ Thanks to everyone who helped the project!
 - [johncorea580-crypto](https://github.com/johncorea580-crypto) [#83](https://github.com/LibreFitOrg/LibreFit/pull/83)
 - [xorodev](https://github.com/xorodev) [#83](https://github.com/LibreFitOrg/LibreFit/pull/83)
 - tomel51733 [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
-- [hyperion](https://github.com/hyperioncodes)
+- [hyperion](https://github.com/hyperioncodes) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### Swedish 🇸🇪
 
 - [T-Silverspoon](https://github.com/T-Silverspoon) [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
-- Jahn Andreas
+- Jahn Andreas [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### Ukrainian 🇺🇦
 
