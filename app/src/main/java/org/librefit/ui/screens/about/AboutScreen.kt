@@ -724,6 +724,129 @@ fun AboutScreen(navController: NavHostController) {
                 )
             }
 
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.zhx000),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_german),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_zhx000)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.UbioZur),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_UbioZur)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.malespiaut),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_malespiaut)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.alexis_charp),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_alexis_charp)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.Miles_Espadoto),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_brazilian_portuguese)
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.vinitdrk),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_brazilian_portuguese),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_vinitdrk)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.Jahn_Andreas),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_swedish)
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.hyperion51),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_spanish),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_hyperion51)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.lotation),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_italian),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_lotation)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.joncasagrande),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_portuguese),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_joncasagrande)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.WinnerWind),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_hindi),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_WinnerWind)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.Rajesh_Ranmara),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_hindi)
+                )
+            }
+
         }
     }
 }
