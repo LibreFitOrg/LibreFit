@@ -127,6 +127,27 @@
     <string name="url_ByYeah" translatable="false">https://github.com/ByYeah</string>
     <string name="VanemKrAu" translatable="false">VanemKrAu</string>
     <string name="url_VanemKrAu" translatable="false">https://github.com/VanemKrAu</string>
+    <string name="UbioZur" translatable="false">UbioZur</string>
+    <string name="url_UbioZur" translatable="false">https://github.com/UbioZur</string>
+    <string name="malespiaut" translatable="false">malespiaut</string>
+    <string name="url_malespiaut" translatable="false">https://github.com/malespiaut</string>
+    <string name="zhx000" translatable="false">zhx000</string>
+    <string name="url_zhx000" translatable="false">https://github.com/zhx000</string>
+    <string name="Miles_Espadoto" translatable="false">Miles Espadoto</string>
+    <string name="vinitdrk" translatable="false">vinitdrk</string>
+    <string name="url_vinitdrk" translatable="false">https://github.com/vinitdrk</string>
+    <string name="Jahn_Andreas" translatable="false">Jahn Andreas</string>
+    <string name="hyperion51" translatable="false">hyperion</string>
+    <string name="url_hyperion51" translatable="false">https://github.com/hyperioncodes</string>
+    <string name="joncasagrande" translatable="false">joncasagrande</string>
+    <string name="url_joncasagrande" translatable="false">https://github.com/joncasagrande</string>
+    <string name="lotation" translatable="false">lotation</string>
+    <string name="url_lotation" translatable="false">https://github.com/lotation</string>
+    <string name="WinnerWind" translatable="false">WinnerWind</string>
+    <string name="url_WinnerWind" translatable="false">https://github.com/WinnerWind</string>
+    <string name="Rajesh_Ranmara" translatable="false">Rajesh Ranmara</string>
+    <string name="alexis_charp" translatable="false">alexischarp</string>
+    <string name="url_alexis_charp" translatable="false">https://github.com/alexischarp</string>
 
 
     <!--Before saving screen-->
@@ -371,6 +392,8 @@
     <string name="language_korean">Korean</string>
     <string name="language_swedish_nt" translatable="false">Svenska</string>
     <string name="language_swedish">Swedish</string>
+    <string name="language_portuguese_nt" translatable="false">Português</string>
+    <string name="language_portuguese">Portuguese</string>
 
     <!-- Statistics screen-->
     <string name="past">Past</string>
