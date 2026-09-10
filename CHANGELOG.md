@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--
+- Modernize bottom navigation bar to Material Design 3 Expressive `ShortNavigationBar`
 
 ### Deprecated
 

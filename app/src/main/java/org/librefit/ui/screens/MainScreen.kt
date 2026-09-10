@@ -17,8 +17,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.ShortNavigationBar
+import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -89,9 +89,9 @@ fun SharedTransitionScope.MainScreen(
         fabDescription = stringResource(R.string.create_routine),
         fabText = stringResource(R.string.create_routine),
         bottomBar = {
-            NavigationBar {
+            ShortNavigationBar {
                 MainScreenPages.entries.forEach { page ->
-                    NavigationBarItem(
+                    ShortNavigationBarItem(
                         selected = pagerState.currentPage == page.ordinal,
                         onClick = { goToPage(page.ordinal) },
                         icon = {
