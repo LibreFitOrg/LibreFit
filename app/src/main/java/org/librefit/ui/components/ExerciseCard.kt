@@ -70,6 +70,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -222,6 +224,7 @@ fun SharedTransitionScope.ExerciseCard(
     updateWarmupMode: (WarmupMode, Long) -> Unit,
     applyPreviousSetPerformance: (Long) -> Unit = {},
     saveDefaultBarWeight: (Double) -> Unit,
+    updateWarmupTarget: (Double, Long) -> Unit,
 ) {
     val unit = autoUnitSuffix()
 
@@ -232,6 +235,51 @@ fun SharedTransitionScope.ExerciseCard(
 
     var showMenu by rememberSaveable { mutableStateOf(false) }
     val shape = MaterialTheme.shapes.extraLarge
+
+    var inputModalBottomSheetState by remember { mutableStateOf<InputModalBottomSheetState?>(null) }
+    var warmupTarget by remember {
+        mutableDoubleStateOf(
+            exerciseWithSets.sets.first { set -> !set.warmup }.load
+        )
+    };
+    var warmupTargetLinkedToSet by remember {
+        mutableStateOf<Boolean>(
+            true
+        )
+    };
+
+    inputModalBottomSheetState?.let {
+        InputModalBottomSheet(
+            state = it,
+            onValueChange = { newState ->
+                inputModalBottomSheetState = newState
+                when (newState) {
+                    is InputModalBottomSheetState.Weight -> {
+                        warmupTarget = newState.totalWeight
+                        updateWarmupTarget(
+                            newState.totalWeight, exerciseWithSets.exercise.id
+                        )
+                    }
+
+                    is InputModalBottomSheetState.MinutesSeconds -> {
+                        warmupTarget = newState.totalSeconds.toDouble()
+                        updateWarmupTarget(
+                            newState.totalSeconds.toDouble(),
+                            exerciseWithSets.exercise.id
+                        )
+                    }
+
+                    else -> error("newState in ExerciseCard should not have this value: $newState")
+                }
+
+            },
+            onDismiss = {
+                inputModalBottomSheetState = null
+            },
+            dismissAutomatically = dismissScrollWheelInputAutomatically
+        )
+    }
+
     ElevatedCard(
         modifier = modifier.shadow(
             elevation = elevation,
@@ -330,7 +378,7 @@ fun SharedTransitionScope.ExerciseCard(
                                             )
                                         },
                                         onClick = {
-                                            addWarmups(exerciseWithSets.exercise.id)
+                                            addWarmups(exerciseWithSets.exercise.id, warmupTarget)
                                             showMenu = false
                                         }
                                     )
@@ -566,7 +614,7 @@ fun SharedTransitionScope.ExerciseCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Row(
-                                modifier = Modifier.weight(0.5f),
+                                modifier = Modifier.weight(1f),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center
                             ) {
@@ -580,12 +628,113 @@ fun SharedTransitionScope.ExerciseCard(
                                         contentDescription = stringResource(R.string.info) + ":"
                                     )
                                 }
-                                Text(stringResource(R.string.warmup_mode))
+                                Text(stringResource(R.string.warmup_target))
                             }
 
-                            var expanded by remember { mutableStateOf(false) }
+                            // Warmup target selector
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 10.dp, end = 5.dp)
+                                    .weight(.75f),
+                            ) {
+                                OutlinedTextField(
+                                    shape = MaterialTheme.shapes.large,
+                                    value = Formatter.normalizeNumericString(warmupTarget.toString()),
+                                    onValueChange = { string ->
+                                        warmupTarget =
+                                            Formatter.parseDoubleFromString(string) ?: 0.0
+                                        updateWarmupTarget(
+                                            warmupTarget,
+                                            exerciseWithSets.exercise.id
+                                        )
+                                    },
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                    colors = OutlinedTextFieldDefaults.colors(),
+                                    readOnly = useScrollWheelForInput,
+                                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                                    enabled = !warmupTargetLinkedToSet
+                                )
+                                if (useScrollWheelForInput) {
+                                    Box(
+                                        modifier = Modifier
+                                            .matchParentSize()
+                                            .clip(MaterialTheme.shapes.extraLarge)
+                                            .clickable {
+                                                if (!warmupTargetLinkedToSet) {
+                                                    inputModalBottomSheetState =
+                                                        InputModalBottomSheetState.Weight(
+                                                            integerWeight = warmupTarget.toInt(),
+                                                            decimalWeight = warmupTarget
+                                                                .getDecimalDigitsAsInteger()
+                                                        )
+                                                }
+                                            }
+                                    ) { }
+                                }
 
-                            val focusRequester = remember { FocusRequester() }
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 5.dp, end = 10.dp)
+                                    .weight(.25f)
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        warmupTargetLinkedToSet = !warmupTargetLinkedToSet
+                                        if (warmupTargetLinkedToSet) {
+                                            warmupTarget =
+                                                exerciseWithSets.sets.first { set -> !set.warmup }.load
+
+                                            updateWarmupTarget(
+                                                warmupTarget, exerciseWithSets.exercise.id
+                                            )
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(if (warmupTargetLinkedToSet) R.drawable.ic_unlink else R.drawable.ic_link),
+                                        contentDescription = stringResource(R.string.info) + ":"
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+
+
+                    HorizontalDivider()
+
+                    // Set mode selection
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            modifier = Modifier.weight(0.5f),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            IconButton(
+                                // Refer to InfoModalBottomSheet to know the reason behind this value.
+                                // Do NOT change it.
+                                onClick = { showInfo(InfoMode.TYPE_OF_SET) }
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_info),
+                                    contentDescription = stringResource(R.string.info) + ":"
+                                )
+                            }
+                            Text(stringResource(R.string.type_of_set))
+                        }
+
+                        var expanded by remember { mutableStateOf(false) }
+
+                        val focusRequester = remember { FocusRequester() }
 
                             // Warmup mode selector
                             ExposedDropdownMenuBox(
@@ -755,7 +904,12 @@ fun SharedTransitionScope.ExerciseCard(
                                                 updateSetReps = updateSetReps,
                                                 updateSetLoad = updateSetLoad,
                                                 updateSetCompleted = updateSetCompleted,
-                                                applyPreviousSet = applyPreviousSetPerformance
+                                                applyPreviousSet = applyPreviousSetPerformance,
+                                                updateWarmupTarget = { target: Double, exerciseId: Long ->
+                                                    warmupTarget = target;
+                                                    updateWarmupTarget(target, exerciseId);
+                                                },
+                                                exerciseId = exerciseWithSets.exercise.id
                                             )
                                         }
                                     }
@@ -854,7 +1008,9 @@ private fun Set(
     updateSetLoad: (Weight, Long) -> Unit,
     updateSetCompleted: (Boolean, Long) -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
-    applyPreviousSet: (Long) -> Unit
+    applyPreviousSet: (Long) -> Unit,
+    updateWarmupTarget: (Double, Long) -> Unit,
+    exerciseId: Long
 ) {
     val unitSystem = LocalUnitSystem.current
 
@@ -868,6 +1024,11 @@ private fun Set(
             set.load.doubleValue(unitSystem).toString()
         )
     }
+    var warmupTarget by remember {
+        mutableDoubleStateOf(
+            0.0
+        )
+    };
 
     // Sync elapsed time with time text field
     LaunchedEffect(set.elapsedTime) {
@@ -898,6 +1059,12 @@ private fun Set(
     var inputModalBottomSheetState by remember { mutableStateOf<InputModalBottomSheetState?>(null) }
     var inputSetId by rememberSaveable { mutableStateOf<Long?>(null) }
 
+    var warmupTargetLinkedToSet by remember {
+        mutableStateOf<Boolean>(
+            true
+        )
+    };
+
     inputModalBottomSheetState?.let {
         InputModalBottomSheet(
             state = it,
@@ -906,6 +1073,12 @@ private fun Set(
                 inputSetId?.let { id ->
                     when (newState) {
                         is InputModalBottomSheetState.Weight -> {
+                            if (!set.warmup && i == 0 && warmupTargetLinkedToSet) {
+                                updateWarmupTarget(
+                                    newState.totalWeight, exerciseId
+                                )
+                            }
+
                             updateSetLoad(
                                 Weight.auto(newState.totalWeight, unitSystem),
                                 id
@@ -1119,6 +1292,14 @@ private fun Set(
                             onValueChange = { string ->
                                 weightValue = Formatter.normalizeNumericString(string)
 
+                                if (!set.warmup && i == 0 && warmupTargetLinkedToSet) {
+                                    warmupTarget = Formatter.parseDoubleFromString(string) ?: 0.0
+                                    updateWarmupTarget(
+                                        warmupTarget, exerciseId
+                                    )
+                                }
+
+
                                 updateSetLoad(
                                     Weight.auto(
                                         Formatter.parseDoubleFromString(weightValue) ?: 0.0,
@@ -1215,7 +1396,6 @@ private fun Set(
             }
         }
     }
-
 }
 
 class ExerciseCardPreviewProvider :
@@ -1366,7 +1546,7 @@ private fun ExerciseCardPreview(@PreviewParameter(ExerciseCardPreviewProvider::c
                         }
                     },
                     onReorderRequest = {},
-                    addWarmups = {
+                    addWarmups = { _, _ ->
                         e.value = e.value.copy(
                             sets = listOf(
                                 UiSet(warmup = true),
@@ -1374,7 +1554,8 @@ private fun ExerciseCardPreview(@PreviewParameter(ExerciseCardPreviewProvider::c
                             ).toImmutableList()
                         )
                     },
-                    updateWarmupMode = { _, _ -> },
+                    updateWarmupMode = { _, _, _ -> },
+                    updateWarmupTarget = { _, _ -> },
                     saveDefaultBarWeight = {},
                 )
             }

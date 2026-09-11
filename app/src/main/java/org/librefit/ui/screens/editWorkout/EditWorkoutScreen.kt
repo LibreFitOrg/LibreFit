@@ -151,7 +151,8 @@ fun SharedTransitionScope.EditWorkoutScreen(
         saveWorkoutWithExercisesInDB = viewModel::saveWorkoutWithExercisesInDB,
         addWarmups = viewModel::addWarmups,
         updateWarmupMode = viewModel::updateWarmupMode,
-        saveDefaultBarWeight = viewModel::saveDefaultBarWeight
+        saveDefaultBarWeight = viewModel::saveDefaultBarWeight,
+        updateWarmupTarget = viewModel::updateWarmupTarget,
     )
 
 }
@@ -187,6 +188,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     updateExerciseRestTime: (Int, Long) -> Unit,
     updateExerciseSetMode: (SetMode, Long) -> Unit,
     moveExercise: (Int, Int) -> Unit,
+    updateWarmupTarget: (Double, Long) -> Unit,
     addWarmups: (Long) -> Unit,
     updateWarmupMode: (WarmupMode, Long) -> Unit,
     saveWorkoutWithExercisesInDB: () -> Unit,
@@ -389,6 +391,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                             updateSetLoad = updateSetLoad,
                             addWarmups = addWarmups,
                             updateWarmupMode = updateWarmupMode,
+                            updateWarmupTarget = updateWarmupTarget,
+                            updateWarmupMode = updateWarmupMode,
                             updateSetCompleted = updateSetCompleted,
                             saveDefaultBarWeight = saveDefaultBarWeight
                         )
@@ -469,6 +473,9 @@ private fun EditWorkoutScreenPreview() {
                     addWarmups = { _ -> },
                     updateWarmupMode = { _, _ -> },
                     updateSetCompleted = { _, _ -> },
+                    addWarmups = { _, _ -> },
+                    updateWarmupMode = { _, _, _ -> },
+                    updateWarmupTarget = { _, _ -> },
                     saveDefaultBarWeight = {}
                 )
             }

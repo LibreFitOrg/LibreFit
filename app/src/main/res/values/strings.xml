@@ -512,6 +512,7 @@
     <string name="type_of_set">Type of set</string>
     <string name="previous">Previous</string>
     <string name="warmup_mode">Warmup mode</string>
+    <string name="warmup_target">Warmup target</string>
 
 
     <!--Chart-->

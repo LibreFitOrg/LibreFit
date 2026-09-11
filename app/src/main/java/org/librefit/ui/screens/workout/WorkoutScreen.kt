@@ -258,8 +258,8 @@ fun SharedTransitionScope.WorkoutScreen(
                 applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance,
                 addWarmups = viewModel::addWarmups,
                 updateWarmupMode = viewModel::updateWarmupMode,
-                applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance,
-                saveDefaultBarWeight = viewModel::saveDefaultBarWeight
+                saveDefaultBarWeight = viewModel::saveDefaultBarWeight,
+                updateWarmupTarget = viewModel::updateWarmupTarget,
             )
         }
     }
@@ -305,6 +305,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     moveExercise: (Int, Int) -> Unit,
     onSelectedExerciseIdChange: (Long, String) -> Unit,
     showInfo: (InfoMode) -> Unit,
+    updateWarmupTarget: (Double, Long) -> Unit,
     addWarmups: (Long) -> Unit,
     updateWarmupMode: (WarmupMode, Long) -> Unit,
     applyPreviousSetPerformance: (Long) -> Unit,
@@ -443,7 +444,6 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                 items = exercisesWithSets,
                 key = { _, exercise -> exercise.exercise.id }
             ) { i, exerciseWithSets ->
-
                 ReorderableItem(
                     reorderableLazyListState,
                     key = exerciseWithSets.exercise.id
@@ -489,7 +489,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                         applyPreviousSetPerformance = applyPreviousSetPerformance,
                         addWarmups = addWarmups,
                         updateWarmupMode = updateWarmupMode,
-                        applyPreviousSetPerformance = applyPreviousSetPerformance,
+                        updateWarmupTarget = updateWarmupTarget,
                         saveDefaultBarWeight = saveDefaultBarWeight
                     )
                 }
@@ -726,9 +726,9 @@ private fun WorkoutScreenPreview() {
                             onSelectedExerciseIdChange = { _, _ -> },
                             showInfo = {},
                             applyPreviousSetPerformance = {},
-                            addWarmups = {},
-                            updateWarmupMode = { _, _ -> },
-                            applyPreviousSetPerformance = {},
+                            addWarmups = { _, _ -> },
+                            updateWarmupMode = { _, _, _ -> },
+                            updateWarmupTarget = { _, _ -> },
                             saveDefaultBarWeight = {}
                         )
                         FloatingWorkoutActionBar(

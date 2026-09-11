@@ -513,33 +513,51 @@ class WorkoutScreenViewModel(
         workoutServiceManager.stopService()
     }
 
-
-    fun addWarmups(exerciseId: Long) {
+    fun addWarmups(exerciseId: Long, target: Double) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
                 if (exercise.exercise.id == exerciseId) {
-                    val setsWithoutWarmups = exercise.sets.filter { !it.warmup }.toImmutableList();
+                    val setsWithoutWarmups =
+                        exercise.sets.filter { !it.warmup }
+                    val completedWarmups = exercise.sets.filter { it.warmup && it.completed }
                     val warmupSets =
-                        WarmupMode.DEFAULT.createUiSets(setsWithoutWarmups.firstOrNull()?.load);
-                    exercise.copy(sets = (warmupSets + setsWithoutWarmups).toImmutableList())
+                        WarmupMode.DEFAULT.createUiSets(target);
+                    exercise.copy(sets = (completedWarmups + warmupSets + setsWithoutWarmups).toImmutableList())
                 } else exercise
             }
         }
         syncToRepository()
     }
 
-    fun updateWarmupMode(warmupMode: WarmupMode, exerciseId: Long) {
+    fun updateWarmupMode(warmupMode: WarmupMode, target: Double, exerciseId: Long) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
                 if (exercise.exercise.id == exerciseId) {
-                    val setsWithoutWarmups = exercise.sets.filter { !it.warmup }.toImmutableList();
+                    val setsWithoutWarmups =
+                        exercise.sets.filter { !it.warmup }
+                    val completedWarmups = exercise.sets.filter { it.warmup && it.completed }
                     val warmupSets =
-                        warmupMode.createUiSets(setsWithoutWarmups.firstOrNull()?.load);
-                    exercise.copy(sets = (warmupSets + setsWithoutWarmups).toImmutableList())
+                        warmupMode.createUiSets(target);
+                    exercise.copy(sets = (completedWarmups + warmupSets + setsWithoutWarmups).toImmutableList())
                 } else exercise
             }
         }
         syncToRepository()
+    }
+
+    fun updateWarmupTarget(target: Double, exerciseId: Long) {
+        _exercises.update { currentExercises ->
+            currentExercises.map { exercise ->
+                if (exercise.exercise.id == exerciseId) {
+                    val setsWithoutWarmups =
+                        exercise.sets.filter { !it.warmup }
+                    val completedWarmups = exercise.sets.filter { it.warmup && it.completed }
+                    val warmupSets =
+                        exercise.exercise.warmupMode.createUiSets(target);
+                    exercise.copy(sets = (completedWarmups + warmupSets + setsWithoutWarmups).toImmutableList())
+                } else exercise
+            }
+        }
     }
 
 
