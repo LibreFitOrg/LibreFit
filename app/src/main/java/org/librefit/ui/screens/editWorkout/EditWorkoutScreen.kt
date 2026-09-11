@@ -150,6 +150,7 @@ fun SharedTransitionScope.EditWorkoutScreen(
         moveExercise = viewModel::moveExercise,
         saveWorkoutWithExercisesInDB = viewModel::saveWorkoutWithExercisesInDB,
         addWarmups = viewModel::addWarmups,
+        addEmptyWarmup = viewModel::addEmptyWarmup,
         updateWarmupMode = viewModel::updateWarmupMode,
         saveDefaultBarWeight = viewModel::saveDefaultBarWeight,
         updateWarmupTarget = viewModel::updateWarmupTarget,
@@ -188,10 +189,11 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     updateExerciseRestTime: (Int, Long) -> Unit,
     updateExerciseSetMode: (SetMode, Long) -> Unit,
     moveExercise: (Int, Int) -> Unit,
-    updateWarmupTarget: (Double, Long) -> Unit,
-    addWarmups: (Long) -> Unit,
-    updateWarmupMode: (WarmupMode, Long) -> Unit,
     saveWorkoutWithExercisesInDB: () -> Unit,
+    addWarmups: (Long, Double) -> Unit,
+    addEmptyWarmup: (Long) -> Unit,
+    updateWarmupMode: (WarmupMode, Double, Long) -> Unit,
+    updateWarmupTarget: (Double, Long) -> Unit,
     saveDefaultBarWeight: (Double) -> Unit,
 ) {
 
@@ -390,9 +392,9 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                             updateSetReps = updateSetReps,
                             updateSetLoad = updateSetLoad,
                             addWarmups = addWarmups,
+                            addEmptyWarmup = addEmptyWarmup,
                             updateWarmupMode = updateWarmupMode,
                             updateWarmupTarget = updateWarmupTarget,
-                            updateWarmupMode = updateWarmupMode,
                             updateSetCompleted = updateSetCompleted,
                             saveDefaultBarWeight = saveDefaultBarWeight
                         )
@@ -474,7 +476,7 @@ private fun EditWorkoutScreenPreview() {
                     updateWarmupMode = { _, _ -> },
                     updateSetCompleted = { _, _ -> },
                     addWarmups = { _, _ -> },
-                    updateWarmupMode = { _, _, _ -> },
+                    addEmptyWarmup = {},
                     updateWarmupTarget = { _, _ -> },
                     saveDefaultBarWeight = {}
                 )

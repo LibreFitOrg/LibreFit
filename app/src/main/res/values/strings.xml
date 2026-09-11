@@ -513,6 +513,7 @@
     <string name="previous">Previous</string>
     <string name="warmup_mode">Warmup mode</string>
     <string name="warmup_target">Warmup target</string>
+    <string name="add_warmup_set">Add Warmup Set</string>
 
 
     <!--Chart-->
@@ -634,6 +635,7 @@
 
     <!--Warmup Modes-->
     <string name="default_warmup_mode">40/60/80</string>
+    <string name="custom">Custom</string>
 
     <!-- Input modal bottom sheet -->
     <string name="decrease_weight_by_10">Decrease weight by 10</string>

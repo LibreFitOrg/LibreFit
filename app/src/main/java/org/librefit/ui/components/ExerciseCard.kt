@@ -223,6 +223,7 @@ fun SharedTransitionScope.ExerciseCard(
     addWarmups: (Long) -> Unit,
     updateWarmupMode: (WarmupMode, Long) -> Unit,
     applyPreviousSetPerformance: (Long) -> Unit = {},
+    addEmptyWarmup: (Long) -> Unit,
     saveDefaultBarWeight: (Double) -> Unit,
     updateWarmupTarget: (Double, Long) -> Unit,
 ) {
@@ -608,97 +609,101 @@ fun SharedTransitionScope.ExerciseCard(
 
                     // Warmup Mode Selector
                     if (exerciseWithSets.sets.any { it.warmup }) {
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceAround,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                modifier = Modifier.weight(1f),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                IconButton(
-                                    // Refer to InfoModalBottomSheet to know the reason behind this value.
-                                    // Do NOT change it.
-                                    onClick = { showInfo(InfoMode.WARMUP_MODE) }
+                            if (exerciseWithSets.exercise.warmupMode !== WarmupMode.CUSTOM) {
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
                                 ) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_info),
-                                        contentDescription = stringResource(R.string.info) + ":"
-                                    )
-                                }
-                                Text(stringResource(R.string.warmup_target))
-                            }
-
-                            // Warmup target selector
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 10.dp, end = 5.dp)
-                                    .weight(.75f),
-                            ) {
-                                OutlinedTextField(
-                                    shape = MaterialTheme.shapes.large,
-                                    value = Formatter.normalizeNumericString(warmupTarget.toString()),
-                                    onValueChange = { string ->
-                                        warmupTarget =
-                                            Formatter.parseDoubleFromString(string) ?: 0.0
-                                        updateWarmupTarget(
-                                            warmupTarget,
-                                            exerciseWithSets.exercise.id
+                                    IconButton(
+                                        // Refer to InfoModalBottomSheet to know the reason behind this value.
+                                        // Do NOT change it.
+                                        onClick = { showInfo(InfoMode.WARMUP_MODE) }
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_info),
+                                            contentDescription = stringResource(R.string.info) + ":"
                                         )
-                                    },
-                                    singleLine = true,
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                    colors = OutlinedTextFieldDefaults.colors(),
-                                    readOnly = useScrollWheelForInput,
-                                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-                                    enabled = !warmupTargetLinkedToSet
-                                )
-                                if (useScrollWheelForInput) {
-                                    Box(
-                                        modifier = Modifier
-                                            .matchParentSize()
-                                            .clip(MaterialTheme.shapes.extraLarge)
-                                            .clickable {
-                                                if (!warmupTargetLinkedToSet) {
-                                                    inputModalBottomSheetState =
-                                                        InputModalBottomSheetState.Weight(
-                                                            integerWeight = warmupTarget.toInt(),
-                                                            decimalWeight = warmupTarget
-                                                                .getDecimalDigitsAsInteger()
-                                                        )
-                                                }
-                                            }
-                                    ) { }
+                                    }
+                                    Text(stringResource(R.string.warmup_target))
                                 }
 
-                            }
 
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp, end = 10.dp)
-                                    .weight(.25f)
-                            ) {
-                                IconButton(
-                                    onClick = {
-                                        warmupTargetLinkedToSet = !warmupTargetLinkedToSet
-                                        if (warmupTargetLinkedToSet) {
-                                            warmupTarget =
-                                                exerciseWithSets.sets.first { set -> !set.warmup }.load
-
-                                            updateWarmupTarget(
-                                                warmupTarget, exerciseWithSets.exercise.id
-                                            )
-                                        }
-                                    }
+                                // Warmup target selector
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp, end = 5.dp)
+                                        .weight(.75f),
                                 ) {
-                                    Icon(
-                                        painter = painterResource(if (warmupTargetLinkedToSet) R.drawable.ic_unlink else R.drawable.ic_link),
-                                        contentDescription = stringResource(R.string.info) + ":"
+                                    OutlinedTextField(
+                                        shape = MaterialTheme.shapes.large,
+                                        value = Formatter.normalizeNumericString(warmupTarget.toString()),
+                                        onValueChange = { string ->
+                                            warmupTarget =
+                                                Formatter.parseDoubleFromString(string) ?: 0.0
+                                            updateWarmupTarget(
+                                                warmupTarget,
+                                                exerciseWithSets.exercise.id
+                                            )
+                                        },
+                                        singleLine = true,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                        colors = OutlinedTextFieldDefaults.colors(),
+                                        readOnly = useScrollWheelForInput,
+                                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                                        enabled = !warmupTargetLinkedToSet
                                     )
+                                    if (useScrollWheelForInput) {
+                                        Box(
+                                            modifier = Modifier
+                                                .matchParentSize()
+                                                .clip(MaterialTheme.shapes.extraLarge)
+                                                .clickable {
+                                                    if (!warmupTargetLinkedToSet) {
+                                                        inputModalBottomSheetState =
+                                                            InputModalBottomSheetState.Weight(
+                                                                integerWeight = warmupTarget.toInt(),
+                                                                decimalWeight = warmupTarget
+                                                                    .getDecimalDigitsAsInteger()
+                                                            )
+                                                    }
+                                                }
+                                        ) { }
+                                    }
+
+                                }
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 5.dp, end = 10.dp)
+                                        .weight(.25f)
+                                ) {
+                                    IconButton(
+                                        onClick = {
+                                            warmupTargetLinkedToSet = !warmupTargetLinkedToSet
+                                            if (warmupTargetLinkedToSet) {
+                                                warmupTarget =
+                                                    exerciseWithSets.sets.first { set -> !set.warmup }.load
+
+                                                updateWarmupTarget(
+                                                    warmupTarget, exerciseWithSets.exercise.id
+                                                )
+                                            }
+                                        }
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(if (warmupTargetLinkedToSet) R.drawable.ic_unlink else R.drawable.ic_link),
+                                            contentDescription = stringResource(R.string.info) + ":"
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -916,7 +921,15 @@ fun SharedTransitionScope.ExerciseCard(
                                 }
                         }
                     }
+                    if (exerciseWithSets.sets.any { it.warmup } && exerciseWithSets.exercise.warmupMode === WarmupMode.CUSTOM) {
 
+                        LibreFitButton(
+                            text = stringResource(R.string.add_warmup_set),
+                            icon = painterResource(R.drawable.ic_add_circle),
+                            onClick = { addEmptyWarmup(exerciseWithSets.exercise.id) },
+                            elevated = true
+                        )
+                    }
                     //Add set button + barbell calculator (if exercise requires barbell)
 
                     if (exerciseWithSets.exerciseDC.equipment != Equipment.BARBELL) {
@@ -1554,6 +1567,7 @@ private fun ExerciseCardPreview(@PreviewParameter(ExerciseCardPreviewProvider::c
                             ).toImmutableList()
                         )
                     },
+                    addEmptyWarmup = {},
                     updateWarmupMode = { _, _, _ -> },
                     updateWarmupTarget = { _, _ -> },
                     saveDefaultBarWeight = {},

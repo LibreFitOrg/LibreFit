@@ -529,6 +529,24 @@ class WorkoutScreenViewModel(
         syncToRepository()
     }
 
+    fun addEmptyWarmup(exerciseId: Long) {
+        _exercises.update { currentExercises ->
+            currentExercises.map { exercise ->
+                if (exercise.exercise.id == exerciseId) {
+                    val newSets = exercise.sets.groupBy { it.warmup }.map { (isWarmup, sets) ->
+                        if (!isWarmup) {
+                            listOf(UiSet(warmup = true)) + sets
+                        } else {
+                            sets
+                        }
+                    }.flatten()
+                    exercise.copy(sets = newSets.toImmutableList())
+                } else exercise
+            }
+        }
+        syncToRepository()
+    }
+
     fun updateWarmupMode(warmupMode: WarmupMode, target: Double, exerciseId: Long) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
@@ -538,7 +556,10 @@ class WorkoutScreenViewModel(
                     val completedWarmups = exercise.sets.filter { it.warmup && it.completed }
                     val warmupSets =
                         warmupMode.createUiSets(target);
-                    exercise.copy(sets = (completedWarmups + warmupSets + setsWithoutWarmups).toImmutableList())
+                    exercise.copy(
+                        sets = (completedWarmups + warmupSets + setsWithoutWarmups).toImmutableList(),
+                        exercise = exercise.exercise.copy(warmupMode = warmupMode)
+                    )
                 } else exercise
             }
         }

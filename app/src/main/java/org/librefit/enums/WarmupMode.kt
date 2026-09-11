@@ -12,7 +12,9 @@ package org.librefit.enums
 import org.librefit.ui.models.UiSet
 
 enum class WarmupMode {
-    DEFAULT
+    DEFAULT,
+
+    CUSTOM
 }
 
 fun WarmupMode.createUiSets(target: Double?): List<UiSet> {
@@ -23,5 +25,7 @@ fun WarmupMode.createUiSets(target: Double?): List<UiSet> {
             UiSet(load = loadTarget * 0.6, reps = 6, warmup = true),
             UiSet(load = loadTarget * 0.8, reps = 3, warmup = true)
         )
+
+        WarmupMode.CUSTOM -> listOf(UiSet(warmup = true))
     }
 }

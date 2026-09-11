@@ -102,6 +102,7 @@ object Formatter {
     fun warmupModeToStringId(warmupMode: WarmupMode): Int {
         return when (warmupMode) {
             WarmupMode.DEFAULT -> R.string.default_warmup_mode
+            WarmupMode.CUSTOM -> R.string.custom
         }
     }
 
