@@ -9,10 +9,12 @@
 package org.librefit.models
 
 import androidx.annotation.FloatRange
+import androidx.compose.runtime.Composable
 import kotlinx.serialization.Serializable
 import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.models.Weight.Companion.MAX_WEIGHT_IN_KILOGRAMS
 import org.librefit.models.Weight.Companion.MIN_WEIGHT_IN_KILOGRAMS
+import org.librefit.nav.LocalUnitSystem
 
 /**
  * A type-safe wrapper for weight values, represented in kilograms.
@@ -125,6 +127,23 @@ value class Weight private constructor(
          * @return A valid [Weight] instance.
          */
         fun auto(value: Double, unitSystem: UnitSystem): Weight {
+            return when (unitSystem) {
+                UnitSystem.METRIC -> kilograms(value)
+                UnitSystem.IMPERIAL -> pounds(value)
+            }
+        }
+
+        /**
+         * Factory method to create a [Weight] instance from [value] automatically parsed based on current [UnitSystem]
+         *
+         * @param value The weight value
+         * @throws IllegalArgumentException if the resulting kilogram conversion is outside the permitted range.
+         * @return A valid [Weight] instance.
+         */
+        @Composable
+        fun auto(value: Double): Weight {
+            val unitSystem = LocalUnitSystem.current
+
             return when (unitSystem) {
                 UnitSystem.METRIC -> kilograms(value)
                 UnitSystem.IMPERIAL -> pounds(value)
