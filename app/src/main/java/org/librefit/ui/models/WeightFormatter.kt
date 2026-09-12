@@ -24,6 +24,13 @@ import java.util.Locale
 import kotlin.math.floor
 import kotlin.math.pow
 
+/**
+ * Tolerance (in units of the final decimal place) that absorbs floating point noise from
+ * kg<->lb conversions before flooring. Without it, a weight such as 225 lb (stored as
+ * 102.058... kg internally and round-tripping to 224.99999999999997 lb) displays as 224.99.
+ */
+private const val UNIT_CONVERSION_TOLERANCE = 1e-6
+
 
 @Composable
 fun Weight.formatToText(
@@ -39,12 +46,17 @@ fun Weight.formatToText(
         if (unitSystem == UnitSystem.METRIC) {
             format.format(
                 Measure(
-                    floor(inKilograms * multiplier) / multiplier,
+                    floor((inKilograms * multiplier) + UNIT_CONVERSION_TOLERANCE) / multiplier,
                     MeasureUnit.KILOGRAM
                 )
             )
         } else {
-            format.format(Measure(floor(inPounds * multiplier) / multiplier, MeasureUnit.POUND))
+            format.format(
+                Measure(
+                    floor((inPounds * multiplier) + UNIT_CONVERSION_TOLERANCE) / multiplier,
+                    MeasureUnit.POUND
+                )
+            )
         }
     }
 }
@@ -78,11 +90,11 @@ fun Weight.doubleValue(
 ): Double {
     val multiplier = 10.0.pow(numberOfDecimalDigits.toDouble())
     return floor(
-        if (unitSystem == UnitSystem.METRIC) {
+        (if (unitSystem == UnitSystem.METRIC) {
             inKilograms
         } else {
             inPounds
-        } * multiplier
+        } * multiplier) + UNIT_CONVERSION_TOLERANCE
     ) / multiplier
 }
 
