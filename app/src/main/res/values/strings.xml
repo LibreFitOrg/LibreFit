@@ -518,6 +518,20 @@
     <!--Notification and channels-->
     <string name="workout_info_channel_title">Real-time workout information</string>
     <string name="workout_info_channel_desc">This channel is used to provide real-time updates on the ongoing workout.</string>
+
+
+    <!--Barbell calculator-->
+    <string name="barbell_calculator">Barbell Calculator</string>
+    <string name="target_weight">Target weight</string>
+    <string name="barbell_weight">Barbell weight</string>
+    <string name="plates_per_side">Plates per side</string>
+    <string name="no_plates_needed">No plates needed</string>
+    <string name="weight_le_bar">Weight is less than or equal to the bar</string>
+    <string name="include_small_plates">Include small plates</string>
+    <string name="closest_achievable">Closest achievable: %1$s</string>
+    <string name="plate_weight_description">%1$s plate</string>
+    <string name="chip_selected">Selected</string>
+    <string name="chip_not_selected">Not selected</string>
     <string name="rest_timer_channel_title">Rest time alerts</string>
     <string name="rest_timer_channel_desc">This channel is used to provide alerts when the rest time ends.</string>
     <string name="rest_time_is_over">Rest time is over!</string>
