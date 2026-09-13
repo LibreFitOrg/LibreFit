@@ -56,6 +56,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
@@ -613,7 +614,7 @@ fun SharedTransitionScope.ExerciseCard(
                         ) {
                             customItem(
                                 buttonGroupContent = {
-                                    IconButton(
+                                    OutlinedIconButton(
                                         onClick = {
                                             showBarbellCalculator = true
                                         },
