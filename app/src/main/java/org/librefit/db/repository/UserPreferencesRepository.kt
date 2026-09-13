@@ -67,6 +67,9 @@ private val DEFAULT_BAR_WEIGHT_KEY = doublePreferencesKey("default_bar_weight")
  *   automatically syncs with Android's per-app language system settings.
  * - **Observation**: Current language state is monitored reactively through the [currentLocale]
  *   [Flow], triggered by configuration changes.
+ * - **Timing**: [AppCompatDelegate.getApplicationLocales] is only valid after
+ *   `Activity.onCreate()`, so [language] must not be read eagerly; it is collected only
+ *   while a screen is observing it.
  *
  * @see <a href="https://developer.android.com/reference/android/icu/util/LocaleData.MeasurementSystem">LocaleData.MeasurementSystem</a>
  * @see <a href="https://developer.android.com/guide/topics/resources/app-languages">Per-app languages in system settings</a>
@@ -246,26 +249,30 @@ class UserPreferencesRepository @Inject constructor(
     }
 
     /**
-     * Helper to read the exact synchronous language state.
-     */
-    private fun getCurrentLanguage(): Language {
-        val currentLocale = AppCompatDelegate.getApplicationLocales().get(0)
-        return resolveLanguage(currentLocale)
-    }
-
-    /**
      * A Flow that emits the new Locale whenever the app's configuration changes.
      */
     private val currentLocale: Flow<Locale?> = application.configurationChanges()
         .map { AppCompatDelegate.getApplicationLocales().get(0) }
         .onStart { emit(AppCompatDelegate.getApplicationLocales().get(0)) }
 
+    /**
+     * The user-selected application language.
+     *
+     * The upstream reads [AppCompatDelegate.getApplicationLocales], which per the official
+     * contract must only be called after `Activity.onCreate()`: before any `AppCompatActivity`
+     * has attached its delegate (e.g., while [org.librefit.MainApplication] is creating this
+     * singleton via `GlobalExceptionHandler`), it resolves no context and returns an empty
+     * locale list. For that reason this state is collected lazily (`WhileSubscribed`), so the
+     * first read happens once a screen is collecting it — i.e., after an activity exists —
+     * and every re-subscription re-reads fresh. Do not read `value` without an active
+     * collector.
+     */
     val language: StateFlow<Language> = currentLocale
         .map { resolveLanguage(it) }
         .stateIn(
             scope = applicationScope,
-            started = SharingStarted.Eagerly,
-            initialValue = getCurrentLanguage()
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = Language.SYSTEM
         )
 
     suspend fun saveThemeMode(mode: ThemeMode) {
