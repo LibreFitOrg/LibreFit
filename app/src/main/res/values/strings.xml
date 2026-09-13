@@ -620,4 +620,12 @@
     <string name="undo">Undo</string>
     <string name="clear">Clear</string>
 
+    <!-- Input modal bottom sheet -->
+    <string name="decrease_weight_by_10">Decrease weight by 10</string>
+    <string name="increase_weight_by_10">Increase weight by 10</string>
+    <string name="decrease_reps_by_5">Decrease reps by 5</string>
+    <string name="increase_reps_by_5">Increase reps by 5</string>
+    <string name="decrease_time_by_30_seconds">Decrease time by 30 seconds</string>
+    <string name="increase_time_by_30_seconds">Increase time by 30 seconds</string>
+
 </resources>
