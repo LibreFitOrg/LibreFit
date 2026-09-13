@@ -194,11 +194,6 @@ class WorkoutScreenViewModel @Inject constructor(
     // A Job to hold the running set's stopwatch coroutine
     private var stopwatchJob: Job? = null
 
-    override fun onCleared() {
-        super.onCleared()
-        stopwatchJob?.cancel()
-    }
-
     init {
         viewModelScope.launch {
             if (workoutId != 0L) {
