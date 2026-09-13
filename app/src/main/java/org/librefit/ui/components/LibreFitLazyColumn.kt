@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -60,15 +60,14 @@ fun LibreFitLazyColumn(
         //Apply padding only when width is greater than 600.dp (so when screen orientation is landscape)
         val optionalPadding = if (maxWidth < threshold.dp) 0f else (maxWidth.value - threshold) / 2
         LazyColumn(
-            modifier = Modifier.padding(
-                bottom = innerPadding.calculateBottomPadding()
-            ),
+            modifier = Modifier.consumeWindowInsets(innerPadding),
             contentPadding = PaddingValues(
                 top = innerPadding.calculateTopPadding(),
                 start = innerPadding.calculateLeftPadding(LayoutDirection.Ltr) + optionalPadding.dp
                         + startEndPadding,
                 end = innerPadding.calculateRightPadding(LayoutDirection.Ltr) + optionalPadding.dp
                         + startEndPadding,
+                bottom = innerPadding.calculateBottomPadding()
             ),
             verticalArrangement = Arrangement.spacedBy(verticalSpacing),
             horizontalAlignment = Alignment.CenterHorizontally,

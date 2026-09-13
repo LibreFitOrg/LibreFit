@@ -82,6 +82,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -237,7 +238,11 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
         actionsElevated = persistentListOf(false, false)
     ) { innerPadding ->
         BoxWithConstraints(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(
+                top = innerPadding.calculateTopPadding(),
+                start = innerPadding.calculateLeftPadding(LayoutDirection.Ltr),
+                end = innerPadding.calculateRightPadding(LayoutDirection.Ltr)
+            )
         ) {
             LibreFitLazyColumn(startEndPadding = 0.dp, bottomSpacer = false) {
                 item {

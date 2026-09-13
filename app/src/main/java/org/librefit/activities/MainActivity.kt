@@ -8,6 +8,7 @@
 
 package org.librefit.activities
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -37,6 +38,9 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
 
         setContent {
             val theme by userPreferences.themeMode.collectAsStateWithLifecycle()
