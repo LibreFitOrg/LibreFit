@@ -1,34 +1,34 @@
 [versions]
-agp = "9.2.1"
+agp = "9.4.0"
 datastore = "1.2.1"
-kotlin = "2.4.0"
+kotlin = "2.4.20"
 junit = "4.13.2"
 espressoCore = "3.7.0"
-composeBom = "2026.06.01"
-roomVersion = "2.8.4"
-appcompat = "1.7.1"
-ksp = "2.3.4"
+composeBom = "2026.09.00"
+roomVersion = "2.8.5"
+appcompat = "1.8.0"
+ksp = "2.3.6"
 lottieCompose = "6.7.1"
 coreSplashscreen = "1.2.0"
-composeM3 = "3.2.3"
+composeM3 = "3.3.1"
 hiltAndroid = "2.60.1"
 hiltNavigationCompose = "1.4.0"
-aboutLibraries = "15.0.3"
-aboutlibrariesComposeM3 = "15.0.3"
+aboutLibraries = "15.2.0"
+aboutlibrariesComposeM3 = "15.2.0"
 kotlinxCoroutinesTest = "1.11.0"
 truth = "1.7.0"
 turbine = "1.2.1"
 mockk = "1.14.11"
-kotlinxCollectionsImmutable = "0.5.1"
+kotlinxCollectionsImmutable = "0.5.2"
 material = "1.14.0"
-coil = "3.5.0"
+coil = "3.6.2"
 reorderable = "3.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.19.0" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
-androidx-room-ktx = { module = "androidx.room:room-ktx", version = "2.8.4" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version = "2.8.5" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version = "1.3.0" }
@@ -43,7 +43,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.9.8" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.10.1" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.11.0" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

@@ -46,6 +46,7 @@ import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -64,6 +65,7 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -402,7 +404,12 @@ fun SharedTransitionScope.ExerciseCard(
                         }
                         AnimatedVisibility(visible = showSlider) {
                             Slider(
-                                value = restTime.toFloat(),
+                                state = rememberSliderState(
+                                    value = restTime.toFloat(),
+                                    trackRange = 0f..300f,
+                                    // 19 steps means values multiple of 5
+                                    steps = 19
+                                ),
                                 onValueChange = {
                                     // By dividing first and then multiplying by 5, it rounds to the closest number multiple of 5
                                     restTime = (it / 5).roundToInt() * 5
@@ -413,10 +420,7 @@ fun SharedTransitionScope.ExerciseCard(
                                         restTime,
                                         exerciseWithSets.exercise.id
                                     )
-                                },
-                                valueRange = 0f..300f,
-                                // 19 steps means values multiple of 5
-                                steps = 19
+                                }
                             )
                         }
                     }

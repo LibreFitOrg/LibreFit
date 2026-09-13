@@ -843,7 +843,7 @@ private fun SharedTransitionScope.AlternatingImages(
                                 checked = isRunning,
                                 modifier = Modifier.padding(10.dp),
                                 onCheckedChange = { isRunning = it },
-                                shapes = ToggleButtonDefaults.shapes()
+                                shapes = ToggleButtonDefaults.shapesFor(ToggleButtonDefaults.size)
                             ) {
                                 Icon(
                                     painter = painterResource(

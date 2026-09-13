@@ -21,7 +21,13 @@ plugins {
 
 android {
     namespace = "org.librefit"
-    compileSdk = 37
+
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 2
+        }
+    }
+
 
     buildFeatures {
         buildConfig = true

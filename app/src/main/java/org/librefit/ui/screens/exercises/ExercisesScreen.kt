@@ -33,7 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -295,7 +295,7 @@ private fun SharedTransitionScope.ItemExerciseDC(
                 onInfo()
             }
         },
-        shapes = ToggleButtonDefaults.shapes(
+        shapes = ToggleButtonShapes(
             shape = MaterialTheme.shapes.extraLargeIncreased,
             pressedShape = MaterialTheme.shapes.extraSmall,
             checkedShape = MaterialTheme.shapes.medium

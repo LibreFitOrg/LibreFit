@@ -366,7 +366,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                         ElevatedToggleButton(
                             checked = !isStopwatchPaused,
                             onCheckedChange = { toggleStopwatch() },
-                            shapes = ToggleButtonDefaults.shapes()
+                            shapes = ToggleButtonDefaults.shapesFor(ToggleButtonDefaults.size)
                         ) {
                             Icon(
                                 painter = painterResource(if (isStopwatchPaused) R.drawable.ic_play_arrow else R.drawable.ic_pause),
