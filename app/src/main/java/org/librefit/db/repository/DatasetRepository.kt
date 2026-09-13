@@ -9,7 +9,7 @@
 package org.librefit.db.repository
 
 import android.content.Context
-import android.os.Build
+import androidx.core.content.pm.PackageInfoCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,8 +58,7 @@ class DatasetRepository @Inject constructor(
     fun updateDatasetOnAppUpdate() {
         applicationScope.launch(Dispatchers.IO) {
             val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            val currentVersion =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) pInfo.longVersionCode else pInfo.versionCode.toLong()
+            val currentVersion = PackageInfoCompat.getLongVersionCode(pInfo)
             val pastVersion = userPreferencesRepository.pastVersionCode.value
 
             // Update dataset only on app update

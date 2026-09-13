@@ -9,8 +9,6 @@
 package org.librefit.db.repository
 
 import android.app.Application
-import android.content.ComponentCallbacks
-import android.content.res.Configuration
 import android.icu.util.LocaleData
 import android.icu.util.ULocale
 import android.os.Build
@@ -25,18 +23,17 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import org.librefit.di.qualifiers.ApplicationScope
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
+import org.librefit.util.configurationChanges
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -79,7 +76,7 @@ private val DEFAULT_BAR_WEIGHT_KEY = doublePreferencesKey("default_bar_weight")
 class UserPreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
     @param:ApplicationScope private val applicationScope: CoroutineScope,
-    private val application: Application
+    application: Application
 ) {
 
     val themeMode: StateFlow<ThemeMode> = dataStore.data
@@ -259,26 +256,9 @@ class UserPreferencesRepository @Inject constructor(
     /**
      * A Flow that emits the new Locale whenever the app's configuration changes.
      */
-    private val currentLocale: Flow<Locale?> = callbackFlow {
-        // Emit current state
-        trySend(AppCompatDelegate.getApplicationLocales()[0])
-
-        val callback = object : ComponentCallbacks {
-            override fun onConfigurationChanged(newConfig: Configuration) {
-                trySend(AppCompatDelegate.getApplicationLocales()[0])
-            }
-
-            override fun onLowMemory() {}
-        }
-
-        // Register the callback
-        application.registerComponentCallbacks(callback)
-
-        // Unregister the callback when the flow is canceled
-        awaitClose {
-            application.unregisterComponentCallbacks(callback)
-        }
-    }.conflate()
+    private val currentLocale: Flow<Locale?> = application.configurationChanges()
+        .map { AppCompatDelegate.getApplicationLocales().get(0) }
+        .onStart { emit(AppCompatDelegate.getApplicationLocales().get(0)) }
 
     val language: StateFlow<Language> = currentLocale
         .map { resolveLanguage(it) }

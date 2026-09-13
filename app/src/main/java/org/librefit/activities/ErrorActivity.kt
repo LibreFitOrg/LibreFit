@@ -11,7 +11,6 @@ package org.librefit.activities
 import android.app.PendingIntent
 import android.content.ClipData
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -61,6 +60,7 @@ import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.WarningLottie
 import org.librefit.ui.theme.LibreFitTheme
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 class ErrorActivity : ComponentActivity() {
 
@@ -83,11 +83,9 @@ class ErrorActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val stackTrace = intent.getStringExtra(EXTRA_STACK_TRACE) ?: ""
-        val theme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getSerializableExtra(EXTRA_THEME_MODE, ThemeMode::class.java)
-        } else {
-            intent.getSerializableExtra(EXTRA_THEME_MODE) as? ThemeMode
-        } ?: ThemeMode.SYSTEM
+        val theme =
+            IntentCompat.getSerializableExtra(intent, EXTRA_THEME_MODE, ThemeMode::class.java)
+                ?: ThemeMode.SYSTEM
         val dynamicColor = intent.getBooleanExtra(EXTRA_MATERIAL_MODE, false)
 
         setContent {
@@ -123,7 +121,7 @@ private fun ErrorScreen(
     LaunchedEffect(copied) {
         if(copied) {
             // Display check icon instead of copy icon for 3 seconds after stack trace is copied
-            delay(3000)
+            delay(3000.milliseconds)
             copied = false
         }
     }
