@@ -119,6 +119,8 @@ private const val MAX_VISIBLE_PLATES = 7
 @Composable
 fun BarbellCalculatorModalBottomSheet(
     initialTargetWeight: Weight,
+    defaultBarWeight: Double?,
+    onSaveDefaultBarWeight: (Double) -> Unit,
     onDismiss: () -> Unit
 ) {
     val unitSystem = LocalUnitSystem.current
@@ -140,7 +142,12 @@ fun BarbellCalculatorModalBottomSheet(
         }
     }
 
-    var barbellWeight by remember { mutableStateOf(barbellWeights.last()) }
+    val initialBarbellWeight = remember(defaultBarWeight, unitSystem) {
+        barbellWeights.find { it.doubleValue(unitSystem) == defaultBarWeight }
+            ?: barbellWeights.last()
+    }
+
+    var barbellWeight by remember { mutableStateOf(initialBarbellWeight) }
 
     val availablePlates = remember(standardPlates, includeSmallPlates, unitSystem) {
         standardPlates.filterSmallPlates(includeSmallPlates, unitSystem).toImmutableList()
@@ -321,7 +328,10 @@ fun BarbellCalculatorModalBottomSheet(
                                 )
                                 FilterChip(
                                     selected = isSelected,
-                                    onClick = { barbellWeight = weight },
+                                    onClick = {
+                                        barbellWeight = weight
+                                        onSaveDefaultBarWeight(weight.doubleValue(unitSystem))
+                                    },
                                     label = { Text(weight.formatToText()) },
                                     modifier = Modifier.semantics {
                                         stateDescription = chipStateDescription
@@ -555,8 +565,11 @@ private fun BarbellCalculatorPreviewMetricDark() {
     CompositionLocalProvider(LocalUnitSystem provides unitSystem) {
         LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
             BarbellCalculatorModalBottomSheet(
-                initialTargetWeight = Weight.auto(100.0, unitSystem),
-                onDismiss = {})
+                initialTargetWeight = Weight.auto(100.0),
+                defaultBarWeight = null,
+                onSaveDefaultBarWeight = {},
+                onDismiss = {}
+            )
         }
     }
 }
@@ -568,8 +581,11 @@ private fun BarbellCalculatorPreviewImperialDark() {
     CompositionLocalProvider(LocalUnitSystem provides unitSystem) {
         LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
             BarbellCalculatorModalBottomSheet(
-                initialTargetWeight = Weight.auto(225.0, unitSystem),
-                onDismiss = {})
+                initialTargetWeight = Weight.auto(225.0),
+                defaultBarWeight = null,
+                onSaveDefaultBarWeight = {},
+                onDismiss = {}
+            )
         }
     }
 }
@@ -581,8 +597,11 @@ private fun BarbellCalculatorPreviewEmptyState() {
     CompositionLocalProvider(LocalUnitSystem provides unitSystem) {
         LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
             BarbellCalculatorModalBottomSheet(
-                initialTargetWeight = Weight.auto(15.0, unitSystem),
-                onDismiss = {})
+                initialTargetWeight = Weight.auto(15.0),
+                defaultBarWeight = null,
+                onSaveDefaultBarWeight = {},
+                onDismiss = {}
+            )
         }
     }
 }

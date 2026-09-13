@@ -19,6 +19,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
@@ -55,6 +56,7 @@ private val DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY =
     booleanPreferencesKey("dismiss_input_modal_bottom_sheet_automatically_key")
 private val SHOW_EXERCISES_IMAGES_KEY = booleanPreferencesKey("show_exercises_images_key")
 private val UNIT_SYSTEM_KEY = stringPreferencesKey("unit_system")
+private val DEFAULT_BAR_WEIGHT_KEY = doublePreferencesKey("default_bar_weight")
 /**
  * Central repository managing application-level preferences, including theme, unit systems, and language.
  *
@@ -198,6 +200,17 @@ class UserPreferencesRepository @Inject constructor(
             initialValue = resolveDefaultUnitSystem()
         )
 
+    val defaultBarWeight: StateFlow<Double?> = dataStore.data
+        .map { preferences ->
+            preferences[DEFAULT_BAR_WEIGHT_KEY]
+        }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
+
+
     private fun resolveDefaultUnitSystem(): UnitSystem {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             // Use the ICU LocaleData API to get the measurement system for this locale
@@ -337,5 +350,9 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun saveUnitSystem(system: UnitSystem) {
         dataStore.edit { preferences -> preferences[UNIT_SYSTEM_KEY] = system.name }
+    }
+
+    suspend fun saveDefaultBarWeight(value: Double) {
+        dataStore.edit { preferences -> preferences[DEFAULT_BAR_WEIGHT_KEY] = value }
     }
 }

@@ -88,6 +88,8 @@ fun SharedTransitionScope.EditWorkoutScreen(
 
     val dismissInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
 
+    val defaultBarWeight by viewModel.defaultBarWeight.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) {
         sharedViewModel.getSelectedExercisesList().forEach(viewModel::addExerciseWithSets)
     }
@@ -120,6 +122,7 @@ fun SharedTransitionScope.EditWorkoutScreen(
         dismissInputAutomatically = dismissInputAutomatically,
         useScrollWheelForInput = useScrollWheelForInput,
         showExercisesImages = showExercisesImages,
+        defaultBarWeight = defaultBarWeight,
         updateTitle = viewModel::updateTitle,
         updateNotes = viewModel::updateNotes,
         updateSetTime = viewModel::updateSetTime,
@@ -136,6 +139,7 @@ fun SharedTransitionScope.EditWorkoutScreen(
         updateExerciseSetMode = viewModel::updateExerciseSetMode,
         moveExercise = viewModel::moveExercise,
         saveWorkoutWithExercisesInDB = viewModel::saveWorkoutWithExercisesInDB,
+        saveDefaultBarWeight = viewModel::saveDefaultBarWeight
     )
 
 }
@@ -153,6 +157,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     dismissInputAutomatically: Boolean,
     useScrollWheelForInput: Boolean,
     showExercisesImages: Boolean?,
+    defaultBarWeight: Double?,
     updateTitle: (String) -> Unit,
     updateNotes: (String) -> Unit,
     deleteSet: (Long) -> Unit,
@@ -166,7 +171,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     updateExerciseRestTime: (Int, Long) -> Unit,
     updateExerciseSetMode: (SetMode, Long) -> Unit,
     moveExercise: (Int, Int) -> Unit,
-    saveWorkoutWithExercisesInDB: () -> Unit
+    saveWorkoutWithExercisesInDB: () -> Unit,
+    saveDefaultBarWeight: (Double) -> Unit,
 ) {
 
     var showConfirmDialog by remember { mutableStateOf(false) }
@@ -364,6 +370,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                                     hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
                                 }
                             ),
+                            defaultBarWeight = defaultBarWeight,
                             onReorderRequest = { isReorderingEnabled = true },
                             deleteSet = deleteSet,
                             updateExerciseNotes = updateExerciseNotes,
@@ -373,7 +380,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                             updateSetTime = updateSetTime,
                             updateSetReps = updateSetReps,
                             updateSetLoad = updateSetLoad,
-                            updateSetCompleted = updateSetCompleted
+                            updateSetCompleted = updateSetCompleted,
+                            saveDefaultBarWeight = saveDefaultBarWeight
                         )
                     }
                 }
@@ -431,6 +439,7 @@ private fun EditWorkoutScreenPreview() {
                     useScrollWheelForInput = false,
                     dismissInputAutomatically = false,
                     showExercisesImages = null,
+                    defaultBarWeight = null,
                     updateTitle = { _ -> },
                     updateNotes = { _ -> },
                     addSetToExercise = { _ -> },
@@ -444,7 +453,8 @@ private fun EditWorkoutScreenPreview() {
                     updateSetTime = { _, _ -> },
                     updateSetReps = { _, _ -> },
                     updateSetLoad = { _, _ -> },
-                    updateSetCompleted = { _, _ -> }
+                    updateSetCompleted = { _, _ -> },
+                    saveDefaultBarWeight = {}
                 )
             }
         }

@@ -141,6 +141,8 @@ fun SharedTransitionScope.WorkoutScreen(
 
     val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
 
+    val defaultBarWeight by viewModel.defaultBarWeight.collectAsStateWithLifecycle()
+
 
     //It keeps the screen turned on
     if (keepWorkoutScreenOn) {
@@ -225,6 +227,7 @@ fun SharedTransitionScope.WorkoutScreen(
                 useScrollWheelForInput = useScrollWheelForInput,
                 dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                 showExercisesImages = showExercisesImages,
+                defaultBarWeight = defaultBarWeight,
                 toggleStopwatch = viewModel::toggleStopwatch,
                 updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
                 onSelectedExerciseIdChange = { id, idExerciseDC ->
@@ -249,7 +252,8 @@ fun SharedTransitionScope.WorkoutScreen(
                 },
                 moveExercise = viewModel::moveExercise,
                 showInfo = { infoMode.value = it },
-                applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance
+                applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance,
+                saveDefaultBarWeight = viewModel::saveDefaultBarWeight
             )
         }
     }
@@ -288,6 +292,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     useScrollWheelForInput: Boolean,
     showExercisesImages: Boolean?,
     dismissScrollWheelInputAutomatically: Boolean,
+    defaultBarWeight: Double?,
     toggleStopwatch: () -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
     addSetToExercise: (Long) -> Unit,
@@ -303,7 +308,8 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     moveExercise: (Int, Int) -> Unit,
     onSelectedExerciseIdChange: (Long, String) -> Unit,
     showInfo: (InfoMode) -> Unit,
-    applyPreviousSetPerformance: (Long) -> Unit
+    applyPreviousSetPerformance: (Long) -> Unit,
+    saveDefaultBarWeight: (Double) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
     val hapticFeedback = LocalHapticFeedback.current
@@ -428,6 +434,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                             }
                         ),
                         isDragging = isDragging,
+                        defaultBarWeight = defaultBarWeight,
                         dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                         onReorderRequest = { isReorderingEnabled = true },
                         deleteSet = deleteSet,
@@ -440,7 +447,8 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                         updateSetReps = updateSetReps,
                         updateSetLoad = updateSetLoad,
                         updateSetCompleted = updateSetCompleted,
-                        applyPreviousSetPerformance = applyPreviousSetPerformance
+                        applyPreviousSetPerformance = applyPreviousSetPerformance,
+                        saveDefaultBarWeight = saveDefaultBarWeight
                     )
                 }
             }
@@ -655,6 +663,7 @@ private fun WorkoutScreenPreview() {
                             useScrollWheelForInput = true,
                             showExercisesImages = null,
                             dismissScrollWheelInputAutomatically = false,
+                            defaultBarWeight = null,
                             toggleStopwatch = {},
                             addSetToExercise = {},
                             updateSetTime = { _, _ -> },
@@ -669,7 +678,8 @@ private fun WorkoutScreenPreview() {
                             moveExercise = { _, _ -> },
                             onSelectedExerciseIdChange = { _, _ -> },
                             showInfo = {},
-                            applyPreviousSetPerformance = {}
+                            applyPreviousSetPerformance = {},
+                            saveDefaultBarWeight = {}
                         )
                         FloatingWorkoutActionBar(
                             restTimerProgress = 97f / 120,

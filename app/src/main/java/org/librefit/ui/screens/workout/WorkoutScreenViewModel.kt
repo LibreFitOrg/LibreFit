@@ -588,4 +588,12 @@ class WorkoutScreenViewModel @Inject constructor(
     val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
 
     val displayExercisesImages = userPreferences.showExercisesImages
+
+    val defaultBarWeight = userPreferences.defaultBarWeight
+
+    fun saveDefaultBarWeight(value: Double) {
+        viewModelScope.launch {
+            userPreferences.saveDefaultBarWeight(value)
+        }
+    }
 }

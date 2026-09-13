@@ -47,13 +47,21 @@ class EditWorkoutScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val workoutRepository: WorkoutRepository,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
     val showExercisesImages = userPreferencesRepository.showExercisesImages
     val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
 
     val dismissScrollWheelInputAutomatically =
         userPreferencesRepository.dismissScrollWheelInputAutomatically
+
+    val defaultBarWeight = userPreferencesRepository.defaultBarWeight
+
+    fun saveDefaultBarWeight(value: Double) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveDefaultBarWeight(value)
+        }
+    }
 
     private val workoutId = savedStateHandle.toRoute<Route.EditWorkoutScreen>().workoutId
 

@@ -203,6 +203,7 @@ fun SharedTransitionScope.ExerciseCard(
     useScrollWheelForInput: Boolean,
     dismissScrollWheelInputAutomatically: Boolean,
     showExercisesImages: Boolean?,
+    defaultBarWeight: Double?,
     onReorderRequest: () -> Unit,
     deleteSet: (Long) -> Unit,
     updateExerciseNotes: (String, Long) -> Unit,
@@ -214,7 +215,8 @@ fun SharedTransitionScope.ExerciseCard(
     updateSetCompleted: (Boolean, Long) -> Unit,
     showInfo: (InfoMode) -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit = {},
-    applyPreviousSetPerformance: (Long) -> Unit = {}
+    applyPreviousSetPerformance: (Long) -> Unit = {},
+    saveDefaultBarWeight: (Double) -> Unit,
 ) {
     val unit = autoUnitSuffix()
 
@@ -602,7 +604,9 @@ fun SharedTransitionScope.ExerciseCard(
                                 ?: exerciseWithSets.sets.lastOrNull()
 
                             BarbellCalculatorModalBottomSheet(
-                                initialTargetWeight = lastSet?.load ?: Weight.auto(50.0)
+                                initialTargetWeight = lastSet?.load ?: Weight.auto(50.0),
+                                defaultBarWeight = defaultBarWeight,
+                                onSaveDefaultBarWeight = saveDefaultBarWeight
                             ) {
                                 showBarbellCalculator = false
                             }
@@ -1047,7 +1051,8 @@ private fun ExerciseCardPreview() {
                 sets = persistentListOf(UiSet(completed = true), UiSet(elapsedTime = 100)),
                 exerciseDC = UiExerciseDC(
                     name = "Exercise name",
-                    images = persistentListOf("3_4_Sit-Up/0.jpg")
+                    images = persistentListOf("3_4_Sit-Up/0.jpg"),
+                    equipment = Equipment.BARBELL
                 )
             )
         )
@@ -1093,6 +1098,7 @@ private fun ExerciseCardPreview() {
                     useScrollWheelForInput = false,
                     dismissScrollWheelInputAutomatically = false,
                     showExercisesImages = false,
+                    defaultBarWeight = null,
                     updateExerciseNotes = { notes, _ ->
                         e.value = e.value.copy(exercise = e.value.exercise.copy(notes = notes))
                     },
@@ -1152,6 +1158,7 @@ private fun ExerciseCardPreview() {
                         }
                     },
                     onReorderRequest = {},
+                    saveDefaultBarWeight = {},
                 )
             }
         }
