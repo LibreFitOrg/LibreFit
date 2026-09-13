@@ -381,4 +381,5 @@
     <string name="open_settings">Abrir configuración</string>
     <string name="hide_images_desc">Las imágenes de los ejercicios estarán ocultas.</string>
     <string name="show_images_desc">Se mostrarán imágenes de los ejercicios.</string>
+    <string name="unit_system">Sistema de unidades</string>
 </resources>
