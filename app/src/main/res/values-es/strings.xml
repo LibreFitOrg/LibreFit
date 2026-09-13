@@ -377,4 +377,8 @@
     <string name="imperial">Imperial</string>
     <string name="language_urdu">Urdu</string>
     <string name="language_korean">Koreano</string>
+    <string name="notifications_permission_permanently_denied_desc">Las notificaciones están bloqueadas. Actívalas en la configuración del sistema para recibir actualizaciones sobre los entrenamientos.</string>
+    <string name="open_settings">Abrir configuración</string>
+    <string name="hide_images_desc">Las imágenes de los ejercicios estarán ocultas.</string>
+    <string name="show_images_desc">Se mostrarán imágenes de los ejercicios.</string>
 </resources>
