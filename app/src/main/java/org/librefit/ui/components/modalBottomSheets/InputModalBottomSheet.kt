@@ -48,6 +48,7 @@ import org.librefit.ui.models.InputModalBottomSheetState
 import org.librefit.ui.models.InputModalBottomSheetState.Weight.Companion.safeCopy
 import org.librefit.ui.models.autoUnitSuffix
 import org.librefit.ui.theme.LibreFitTheme
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -72,9 +73,7 @@ fun InputModalBottomSheet(
         LaunchedEffect(isAnyNumberPickerChanging, state) {
             // Only trigger if modified and not currently scrolling
             if (initialState != state && !isAnyNumberPickerChanging) {
-                delay(
-                    timeMillis = 500L
-                )
+                delay(500.milliseconds)
                 sheetState.hide()
             }
         }

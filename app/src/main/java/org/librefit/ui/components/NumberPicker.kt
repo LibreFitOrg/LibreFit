@@ -53,6 +53,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.ui.theme.LibreFitTheme
 import kotlin.math.abs
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * @param visibleItemsCount it must be a positive and odd number. Default value is recommended.
@@ -131,7 +132,7 @@ fun NumberPicker(
     LaunchedEffect(listState) {
         snapshotFlow { centeredItemIndex }
             .distinctUntilChanged()
-            .debounce(300) // Increase this to discard higher frequent changes
+            .debounce(300.milliseconds) // Increase this to discard higher frequent changes
             .collect { index ->
                 val realIndex = index - padCount
                 options.getOrNull(realIndex)?.let { newItem ->

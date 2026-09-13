@@ -58,6 +58,7 @@ import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -122,7 +123,7 @@ fun AnimatedMorphShapes(
                     }
                     color = colors.randomOrNull() ?: defaultColor
                     onColorUpdate?.invoke(color)
-                    delay(morphIntervalMillis)
+                    delay(morphIntervalMillis.milliseconds)
                     deferred.await()
                 }
             }
