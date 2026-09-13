@@ -8,7 +8,6 @@
 
 package org.librefit.ui.screens.library
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
