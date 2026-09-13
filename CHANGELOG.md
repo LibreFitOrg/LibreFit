@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Auto-fill weight inputs with the last saved measurement (defaults to 60 kg) [#164](https://github.com/LibreFitOrg/LibreFit/issues/164)
-- Barbell plate calculator based on target weight
+- Barbell plate calculator based on target weight [#15](https://github.com/LibreFitOrg/LibreFit/issues/15)
 
 ### Changed
 
