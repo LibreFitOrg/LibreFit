@@ -80,7 +80,9 @@ fun NavigationHost(
                 enterTransition = { scaleIn(tween(300), 0.9f) + fadeIn(tween(200)) },
                 exitTransition = { scaleOut(tween(300), 1.1f) },
                 popEnterTransition = { scaleIn(tween(300), 1.1f) },
-                popExitTransition = { scaleOut(tween(300), 0.9f) + fadeOut(tween(200)) }
+                popExitTransition = { scaleOut(tween(300), 0.9f) + fadeOut(tween(200)) },
+                predictivePopEnterTransition = { scaleIn(tween(300), 1.1f) },
+                predictivePopExitTransition = { scaleOut(tween(300), 0.9f) + fadeOut(tween(200)) }
             ) {
                 composable<Route.AboutScreen> {
                     AboutScreen(navController = navController)
