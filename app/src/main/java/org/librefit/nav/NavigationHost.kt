@@ -27,6 +27,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import org.librefit.enums.SuccessMessage
+import org.librefit.enums.pages.TutorialContent
 import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.ui.screens.MainScreen
 import org.librefit.ui.screens.about.AboutScreen
@@ -128,7 +129,19 @@ fun NavigationHost(
                 }
                 composable<Route.CalendarScreen> {
                     CalendarScreen(
-                        navController = navController,
+                        onNavigateBack = navController::navigateUp,
+                        onNavigateToInfoWorkout = { workoutId ->
+                            navController.navigate(Route.InfoWorkoutScreen(workoutId)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToTutorialScreen = {
+                            navController.navigate(
+                                Route.TutorialScreen(TutorialContent.COMPLETE_WORKOUT)
+                            ) {
+                                launchSingleTop = true
+                            }
+                        },
                         animatedVisibilityScope = this
                     )
                 }
