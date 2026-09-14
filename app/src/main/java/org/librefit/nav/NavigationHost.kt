@@ -341,9 +341,17 @@ fun NavigationHost(
                     LicenseScreen(navigateBack = navController::navigateUp)
                 }
                 composable<Route.RequestPermissionScreen> {
+                    val route = it.toRoute<Route.RequestPermissionScreen>()
                     RequestPermissionScreen(
-                        navController = navController,
-                        workoutId = it.toRoute<Route.RequestPermissionScreen>().workoutId,
+                        onNavigateBack = navController::navigateUp,
+                        onNavigateToWorkoutScreen = {
+                            navController.navigate(Route.WorkoutScreen(workoutId = route.workoutId)) {
+                                launchSingleTop = true
+                                popUpTo(Route.RequestPermissionScreen(workoutId = route.workoutId)) {
+                                    inclusive = true
+                                }
+                            }
+                        },
                         requestPermissionNextTime = requestPermissionNextTime,
                         saveRequestPermissionAgainPreference = sharedViewModel::saveRequestPermissionAgainPreference
                     )
