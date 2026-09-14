@@ -73,7 +73,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
 import org.librefit.enums.InfoMode
@@ -83,7 +82,6 @@ import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.models.Weight
-import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
@@ -103,7 +101,10 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.WorkoutScreen(
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToBeforeSavingScreen: (Long) -> Unit,
+    onNavigateToAddExercises: () -> Unit,
+    onNavigateToInfoExercise: (Long, String) -> Unit,
     sharedViewModel: SharedViewModel,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: WorkoutScreenViewModel = hiltViewModel()
@@ -186,21 +187,17 @@ fun SharedTransitionScope.WorkoutScreen(
 
     BackHandler {
         viewModel.stopWorkoutService()
-        navController.navigateUp()
+        onNavigateBack()
     }
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.workout)),
         navigateBack = {
             viewModel.stopWorkoutService()
-            navController.navigateUp()
+            onNavigateBack()
         },
         actions = persistentListOf({
-            navController.navigate(
-                Route.BeforeSavingScreen(
-                    runningWorkoutId = runningWorkoutId
-                ),
-            ) { launchSingleTop = true }
+            onNavigateToBeforeSavingScreen(runningWorkoutId)
         }),
         actionsEnabled = persistentListOf(!exercisesWithSets.isEmpty()),
         actionsDescription = persistentListOf(stringResource(R.string.done)),
@@ -216,11 +213,7 @@ fun SharedTransitionScope.WorkoutScreen(
                 restTimerProgress = restTimerProgress,
                 restTime = restTime,
                 modifyRestTime = viewModel::modifyRestTime,
-                fabAction = {
-                    navController.navigate(Route.ExercisesScreen(addExercises = true)) {
-                        launchSingleTop = true
-                    }
-                }
+                fabAction = onNavigateToAddExercises
             )
             WorkoutScreenContent(
                 animatedVisibilityScope = animatedVisibilityScope,
@@ -238,12 +231,7 @@ fun SharedTransitionScope.WorkoutScreen(
                 toggleStopwatch = viewModel::toggleStopwatch,
                 updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
                 onSelectedExerciseIdChange = { id, idExerciseDC ->
-                    navController.navigate(
-                        Route.InfoExerciseScreen(
-                            id,
-                            idExerciseDC
-                        )
-                    ) { launchSingleTop = true }
+                    onNavigateToInfoExercise(id, idExerciseDC)
                 },
                 updateSetTime = viewModel::updateSetTime,
                 updateSetReps = viewModel::updateSetReps,

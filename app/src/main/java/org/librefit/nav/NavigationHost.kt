@@ -387,24 +387,56 @@ fun NavigationHost(
                     )
                 }
                 composable<Route.StatisticsScreen> {
-                    StatisticsScreen(navController = navController)
+                    StatisticsScreen(onNavigateBack = navController::navigateUp)
                 }
                 composable<Route.TutorialScreen> {
                     TutorialScreen(
                         tutorialContent = it.toRoute<Route.TutorialScreen>().tutorialContent,
                         fromWelcomeScreen = it.toRoute<Route.TutorialScreen>().fromWelcomeScreen,
-                        navController = navController
+                        onNavigateBack = navController::navigateUp,
+                        onNavigateToMainScreen = {
+                            navController.navigate(Route.MainScreen) {
+                                launchSingleTop = true
+                                popUpTo(Route.TutorialScreen()) { inclusive = true }
+                            }
+                        }
                     )
                 }
                 composable<Route.WelcomeScreen> {
                     WelcomeScreen(
-                        navController = navController,
+                        onNavigateToTutorialScreen = {
+                            navController.navigate(Route.TutorialScreen(fromWelcomeScreen = true)) {
+                                launchSingleTop = true
+                                popUpTo(Route.WelcomeScreen) { inclusive = true }
+                            }
+                        },
+                        onNavigateToMainScreen = {
+                            navController.navigate(Route.MainScreen) {
+                                launchSingleTop = true
+                                popUpTo(Route.WelcomeScreen) { inclusive = true }
+                            }
+                        },
                         doNotShowWelcomeScreenAgain = sharedViewModel::doNotShowWelcomeScreenAgain
                     )
                 }
                 composable<Route.WorkoutScreen> {
                     WorkoutScreen(
-                        navController = navController,
+                        onNavigateBack = navController::navigateUp,
+                        onNavigateToBeforeSavingScreen = { workoutId ->
+                            navController.navigate(Route.BeforeSavingScreen(workoutId)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToAddExercises = {
+                            navController.navigate(Route.ExercisesScreen(addExercises = true)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToInfoExercise = { id, exerciseDCid ->
+                            navController.navigate(Route.InfoExerciseScreen(id, exerciseDCid)) {
+                                launchSingleTop = true
+                            }
+                        },
                         sharedViewModel = sharedViewModel,
                         animatedVisibilityScope = this
                     )

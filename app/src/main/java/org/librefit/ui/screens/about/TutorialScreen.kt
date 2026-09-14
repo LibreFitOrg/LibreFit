@@ -43,15 +43,12 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import org.librefit.R
 import org.librefit.enums.pages.TutorialContent
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
@@ -64,7 +61,8 @@ import kotlin.math.roundToInt
 fun TutorialScreen(
     tutorialContent: TutorialContent = TutorialContent.CREATE_ROUTINE,
     fromWelcomeScreen: Boolean = false,
-    navController: NavHostController
+    onNavigateBack: () -> Unit,
+    onNavigateToMainScreen: () -> Unit,
 ) {
     val coroutine = rememberCoroutineScope()
 
@@ -83,17 +81,14 @@ fun TutorialScreen(
         }
     )
 
-    val navigateBack: (() -> Unit)? = if (fromWelcomeScreen) null else navController::navigateUp
+    val navigateBack: (() -> Unit)? = if (fromWelcomeScreen) null else onNavigateBack
 
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.tutorial)),
         navigateBack = navigateBack,
         actions = if (fromWelcomeScreen) persistentListOf({
-            navController.navigate(Route.MainScreen) {
-                launchSingleTop = true
-                popUpTo(Route.TutorialScreen()) { inclusive = true }
-            }
+            onNavigateToMainScreen()
         }) else persistentListOf(),
         actionsDescription = persistentListOf(stringResource(R.string.done))
     ) { innerPadding ->
@@ -354,6 +349,9 @@ fun TutorialScreen(
 @Composable
 private fun TutorialScreenPreview() {
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
-        TutorialScreen(navController = rememberNavController())
+        TutorialScreen(
+            onNavigateBack = {},
+            onNavigateToMainScreen = {}
+        )
     }
 }

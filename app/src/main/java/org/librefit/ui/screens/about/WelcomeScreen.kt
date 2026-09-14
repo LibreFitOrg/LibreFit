@@ -43,12 +43,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.nav.Route
 import org.librefit.ui.components.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitScaffold
@@ -58,12 +54,14 @@ import org.librefit.ui.theme.LibreFitTheme
 
 @Composable
 fun WelcomeScreen(
-    navController: NavHostController,
+    onNavigateToTutorialScreen: () -> Unit,
+    onNavigateToMainScreen: () -> Unit,
     doNotShowWelcomeScreenAgain: () -> Unit
 ) {
 
     WelcomeScreenContent(
-        navController = navController,
+        onNavigateToTutorialScreen = onNavigateToTutorialScreen,
+        onNavigateToMainScreen = onNavigateToMainScreen,
         doNotShowWelcomeScreenAgain = doNotShowWelcomeScreenAgain,
     )
 
@@ -72,7 +70,8 @@ fun WelcomeScreen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun WelcomeScreenContent(
-    navController: NavHostController,
+    onNavigateToTutorialScreen: () -> Unit,
+    onNavigateToMainScreen: () -> Unit,
     doNotShowWelcomeScreenAgain: () -> Unit
 ) {
     /**
@@ -96,7 +95,11 @@ private fun WelcomeScreenContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceAround
                 ) {
-                    welcomeScreenContent(navController, doNotShowWelcomeScreenAgain)
+                    welcomeScreenContent(
+                        onNavigateToTutorialScreen,
+                        onNavigateToMainScreen,
+                        doNotShowWelcomeScreenAgain
+                    )
                 }
             } else {
                 LazyRow(
@@ -107,7 +110,11 @@ private fun WelcomeScreenContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    welcomeScreenContent(navController, doNotShowWelcomeScreenAgain)
+                    welcomeScreenContent(
+                        onNavigateToTutorialScreen,
+                        onNavigateToMainScreen,
+                        doNotShowWelcomeScreenAgain
+                    )
                 }
             }
         }
@@ -116,7 +123,8 @@ private fun WelcomeScreenContent(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyListScope.welcomeScreenContent(
-    navController: NavController,
+    onNavigateToTutorialScreen: () -> Unit,
+    onNavigateToMainScreen: () -> Unit,
     doNotShowWelcomeScreenAgain: () -> Unit
 ) {
     item {
@@ -188,10 +196,7 @@ private fun LazyListScope.welcomeScreenContent(
                                     text = stringResource(R.string.tutorial),
                                     interactionSource = interactionSources[0]
                                 ) {
-                                    navController.navigate(Route.TutorialScreen(fromWelcomeScreen = true)) {
-                                        launchSingleTop = true
-                                        popUpTo(Route.WelcomeScreen) { inclusive = true }
-                                    }
+                                    onNavigateToTutorialScreen()
                                     doNotShowWelcomeScreenAgain()
                                 }
                             },
@@ -207,10 +212,7 @@ private fun LazyListScope.welcomeScreenContent(
                                     interactionSource = interactionSources[1],
                                     elevated = false
                                 ) {
-                                    navController.navigate(Route.MainScreen) {
-                                        launchSingleTop = true
-                                        popUpTo(Route.WelcomeScreen) { inclusive = true }
-                                    }
+                                    onNavigateToMainScreen()
                                     doNotShowWelcomeScreenAgain()
                                 }
                             },
@@ -227,6 +229,9 @@ private fun LazyListScope.welcomeScreenContent(
 @Composable
 private fun WelcomeScreenPreview() {
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
-        WelcomeScreenContent(rememberNavController()) {}
+        WelcomeScreenContent(
+            onNavigateToTutorialScreen = {},
+            onNavigateToMainScreen = {}
+        ) {}
     }
 }
