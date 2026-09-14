@@ -53,8 +53,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.RoundedPolygon
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.enums.supporter.SupporterVerificationResult
 import org.librefit.enums.userPreferences.ThemeMode
@@ -72,7 +70,7 @@ import org.librefit.util.SupporterVerifier
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SupportScreen(
-    navHostController: NavHostController,
+    onNavigateBack: () -> Unit,
     supporterInfo: Boolean = false,
     isSupporter: Boolean = false,
     updateIsSupporter: (Boolean) -> Unit = {}
@@ -103,7 +101,7 @@ fun SupportScreen(
     }
 
     LibreFitScaffold(
-        navigateBack = navHostController::navigateUp
+        navigateBack = onNavigateBack
     ) { innerPadding ->
         LibreFitLazyColumn(
             innerPadding = innerPadding, lazyListState = lazyListState
@@ -479,7 +477,7 @@ private fun SupportScreenPreview() {
 
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
         SupportScreen(
-            navHostController = rememberNavController(),
+            onNavigateBack = {},
             supporterInfo = true,
             isSupporter = isSupporter,
             updateIsSupporter = { isSupporter = true })

@@ -380,7 +380,7 @@ fun NavigationHost(
                 }
                 composable<Route.SupportScreen> {
                     SupportScreen(
-                        navHostController = navController,
+                        onNavigateBack = navController::navigateUp,
                         supporterInfo = it.toRoute<Route.SupportScreen>().supporterInfo,
                         isSupporter = isSupporter,
                         updateIsSupporter = sharedViewModel::updateIsSupporter
