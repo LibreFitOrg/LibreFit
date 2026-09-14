@@ -26,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import org.librefit.enums.SuccessMessage
 import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.ui.screens.MainScreen
 import org.librefit.ui.screens.about.AboutScreen
@@ -110,7 +111,18 @@ fun NavigationHost(
                 }
                 composable<Route.BeforeSavingScreen> {
                     BeforeSavingScreen(
-                        navController = navController,
+                        onNavigateBack = navController::navigateUp,
+                        onNavigateToInfoWorkout = { workoutId ->
+                            navController.navigate(Route.InfoWorkoutScreen(workoutId)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToSuccessScreen = {
+                            navController.navigate(Route.SuccessScreen(SuccessMessage.WORKOUT_SAVED)) {
+                                launchSingleTop = true
+                                popUpTo(Route.MainScreen) { inclusive = false }
+                            }
+                        },
                         animatedVisibilityScope = this
                     )
                 }
@@ -169,7 +181,7 @@ fun NavigationHost(
                 composable<Route.PrivacyScreen> {
                     PrivacyScreen(navigateBack = navController::navigateUp)
                 }
-                composable<Route.LibrariesScreen> {
+                composable<Route.DependenciesScreen> {
                     DependenciesScreen(navigateBack = navController::navigateUp)
                 }
                 composable<Route.LicenseScreen> {
