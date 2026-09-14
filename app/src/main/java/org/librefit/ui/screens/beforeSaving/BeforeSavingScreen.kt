@@ -65,6 +65,7 @@ import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.models.Weight
+import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
@@ -93,7 +94,11 @@ fun SharedTransitionScope.BeforeSavingScreen(
     onNavigateBack: () -> Unit,
     onNavigateToInfoWorkout: (Long) -> Unit,
     onNavigateToSuccessScreen: () -> Unit,
-    viewModel: BeforeSavingScreenViewModel = hiltViewModel(),
+    route: Route.BeforeSavingScreen,
+    viewModel: BeforeSavingScreenViewModel =
+        hiltViewModel<BeforeSavingScreenViewModel, BeforeSavingScreenViewModel.Factory>(
+            creationCallback = { it.create(route) }
+        ),
     animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
 

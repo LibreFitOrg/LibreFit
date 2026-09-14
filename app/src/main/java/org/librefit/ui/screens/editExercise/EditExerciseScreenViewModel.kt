@@ -8,10 +8,11 @@
 
 package org.librefit.ui.screens.editExercise
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -32,20 +33,23 @@ import org.librefit.enums.exercise.Muscle
 import org.librefit.nav.Route
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.mappers.toEntity
-import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-@HiltViewModel
-class EditExerciseScreenViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = EditExerciseScreenViewModel.Factory::class)
+class EditExerciseScreenViewModel @AssistedInject constructor(
+    @Assisted route: Route.EditExerciseScreen,
     private val datasetRepository: DatasetRepository,
     userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+    @AssistedFactory
+    interface Factory {
+        fun create(route: Route.EditExerciseScreen): EditExerciseScreenViewModel
+    }
 
     val showExercisesImages = userPreferencesRepository.showExercisesImages
 
-    val exerciseDCid = savedStateHandle.toRoute<Route.EditExerciseScreen>().exerciseDCid
+    val exerciseDCid = route.exerciseDCid
 
     @OptIn(ExperimentalUuidApi::class)
     private val isCustomExercise = if (exerciseDCid.isBlank()) true else runCatching {

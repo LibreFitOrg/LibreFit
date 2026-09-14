@@ -165,8 +165,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Navigation
-    implementation(libs.navigation.compose)
+    // Navigation 3
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+
+    // Scopes a ViewModelStore to each NavEntry (required for hiltViewModel() per destination)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
     // Room
     implementation(libs.androidx.room.runtime)

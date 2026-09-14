@@ -8,10 +8,11 @@
 
 package org.librefit.ui.screens.workout
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
@@ -56,14 +57,13 @@ import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import org.librefit.ui.models.moveExercise
 import org.librefit.ui.models.withNormalizedExercisePositions
-import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
-@HiltViewModel
-class WorkoutScreenViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = WorkoutScreenViewModel.Factory::class)
+class WorkoutScreenViewModel @AssistedInject constructor(
+    @Assisted route: Route.WorkoutScreen,
     private val userPreferences: UserPreferencesRepository,
     private val workoutServiceManager: WorkoutServiceManager,
     private val workoutRepository: WorkoutRepository,
@@ -72,6 +72,11 @@ class WorkoutScreenViewModel @Inject constructor(
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @param:MainDispatcher private val mainDispatcher: CoroutineDispatcher
 ) : ViewModel() {
+    @AssistedFactory
+    interface Factory {
+        fun create(route: Route.WorkoutScreen): WorkoutScreenViewModel
+    }
+
     private val _idsOfSetsWithStopwatchNotStartedAtLeastOnce =
         MutableStateFlow<Set<Long>>(emptySet())
     val idsOfSetsWithStopwatchNotStartedAtLeastOnce =
@@ -107,7 +112,7 @@ class WorkoutScreenViewModel @Inject constructor(
         }
     }
 
-    private val workoutId = savedStateHandle.toRoute<Route.WorkoutScreen>().workoutId
+    private val workoutId = route.workoutId
 
 
     private val _workout = MutableStateFlow(UiWorkout())
