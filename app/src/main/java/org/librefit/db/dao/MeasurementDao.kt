@@ -19,7 +19,10 @@ import java.time.LocalDateTime
 @Dao
 interface MeasurementDao {
     @Upsert
-    suspend fun upsertMeasurement(measurement: Measurement)
+    suspend fun upsertMeasurement(measurement: Measurement): Long
+
+    @Query("SELECT * FROM measurements WHERE id = :id")
+    suspend fun getMeasurement(id: Long): Measurement?
 
     @Delete
     suspend fun deleteMeasurement(measurement: Measurement)

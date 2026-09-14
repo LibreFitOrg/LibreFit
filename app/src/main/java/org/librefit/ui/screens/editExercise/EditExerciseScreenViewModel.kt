@@ -29,6 +29,7 @@ import org.librefit.enums.exercise.Force
 import org.librefit.enums.exercise.Level
 import org.librefit.enums.exercise.Mechanic
 import org.librefit.enums.exercise.Muscle
+import org.librefit.enums.healthConnect.HealthConnectSegmentType
 import org.librefit.nav.Route
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.mappers.toEntity
@@ -74,6 +75,12 @@ class EditExerciseScreenViewModel @Inject constructor(
                     it.copy(
                         id = exerciseDCid.ifBlank { Uuid.random().toString() },
                         isCustomExercise = isCustomExercise,
+                        // Only the bundled dataset has reviewed Health Connect mappings.
+                        healthConnectSegmentType = if (isCustomExercise) {
+                            HealthConnectSegmentType.OTHER_WORKOUT
+                        } else {
+                            it.healthConnectSegmentType
+                        },
                         instructions = it.instructions  // Each new line becomes an element of the list
                             .firstOrNull()
                             ?.split("\n")

@@ -16,6 +16,7 @@ import org.librefit.enums.exercise.Force
 import org.librefit.enums.exercise.Level
 import org.librefit.enums.exercise.Mechanic
 import org.librefit.enums.exercise.Muscle
+import org.librefit.enums.healthConnect.HealthConnectSegmentType
 
 class ExerciseDCConverter {
     private val json = Json
@@ -70,4 +71,11 @@ class ExerciseDCConverter {
 
     @TypeConverter
     fun toCategory(category: Category): String = category.name
+
+    @TypeConverter
+    fun fromHealthConnectSegmentType(value: String): HealthConnectSegmentType =
+        HealthConnectSegmentType.valueOf(value)
+
+    @TypeConverter
+    fun toHealthConnectSegmentType(type: HealthConnectSegmentType): String = type.name
 }

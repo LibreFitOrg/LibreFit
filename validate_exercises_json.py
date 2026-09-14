@@ -314,6 +314,18 @@ ID_WHITELISTED_FROM_REGEX = [
     "Wrist_Rotations_with_Straight_Bar"
 ]
 
+CARDIO_SEGMENT_TYPES = {
+    "biking",
+    "biking_stationary",
+    "elliptical",
+    "rowing_machine",
+    "running",
+    "running_treadmill",
+    "stair_climbing",
+    "stair_climbing_machine",
+    "walking",
+}
+
 
 def validate_exercises(json_path: str, schema_path: str, image_folder_path: str) -> bool:
     if not Path(json_path).exists():
@@ -355,6 +367,31 @@ def validate_exercises(json_path: str, schema_path: str, image_folder_path: str)
         ids.append(ex_id)
 
         # --- GUIDELINES CHECKS ---
+
+        segment_type = exercise.get('healthConnectSegmentType')
+        category = exercise.get('category')
+        equipment = exercise.get('equipment')
+
+        # These checks keep future dataset edits compatible with the session exported to Health Connect.
+        if category == 'stretching' and segment_type != 'stretching':
+            logging.error(f"Stretching exercise '{ex_id}' must use the stretching segment type.")
+            return False
+
+        if category != 'stretching' and segment_type == 'stretching':
+            logging.error(f"Non-stretching exercise '{ex_id}' cannot use the stretching segment type.")
+            return False
+
+        if segment_type in CARDIO_SEGMENT_TYPES and category != 'cardio':
+            logging.error(f"Exercise '{ex_id}' uses a cardio segment type outside the cardio category.")
+            return False
+
+        if segment_type and segment_type.startswith('dumbbell_') and equipment != 'dumbbell':
+            logging.error(f"Exercise '{ex_id}' uses a dumbbell segment type without dumbbells.")
+            return False
+
+        if segment_type == 'barbell_shoulder_press' and equipment != 'barbell':
+            logging.error(f"Exercise '{ex_id}' uses the barbell press segment type without a barbell.")
+            return False
 
         # ID Formatting (Pascal_Snake_Case)
         if not pascal_snake_regex.match(ex_id) and ex_id not in ID_WHITELISTED_FROM_REGEX:

@@ -13,6 +13,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 import org.librefit.models.Weight
 import kotlin.random.Random
 
@@ -34,6 +35,8 @@ import kotlin.random.Random
  * @property load The weight of the set, in kilograms.
  * @property reps The number of repetitions performed in the set.
  * @property elapsedTime The time taken to complete the set, in seconds.
+ * @property startedAt The timestamp when this set started, when known.
+ * @property completedAt The timestamp when this set was completed, when known.
  * @property completed Indicates whether the set has been completed.
  * @property exerciseId This is a foreign key reference to the [Exercise] entity.
  *
@@ -56,6 +59,10 @@ data class Set(
     val load: Weight = Weight.zero(),
     val reps: Int = 0,
     val elapsedTime: Int = 0,
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val startedAt: LocalDateTime? = null,
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val completedAt: LocalDateTime? = null,
     val completed: Boolean = false,
     val exerciseId: Long = 0// Foreign key reference to Exercise
 )

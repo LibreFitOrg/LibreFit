@@ -25,6 +25,7 @@ fun ExerciseDC.toUi(): UiExerciseDC {
         instructions = this.instructions.toImmutableList(),
         category = this.category,
         images = this.images.toImmutableList(),
+        healthConnectSegmentType = this.healthConnectSegmentType,
         isCustomExercise = this.isCustomExercise
     )
 }
@@ -42,6 +43,7 @@ fun UiExerciseDC.toEntity(): ExerciseDC {
         instructions = this.instructions,
         category = this.category,
         images = this.images,
+        healthConnectSegmentType = this.healthConnectSegmentType,
         isCustomExercise = this.isCustomExercise
     )
 }

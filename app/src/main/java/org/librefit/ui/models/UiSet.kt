@@ -10,6 +10,7 @@ package org.librefit.ui.models
 
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
+import java.time.LocalDateTime
 import org.librefit.models.Weight
 import kotlin.random.Random
 
@@ -26,6 +27,8 @@ data class UiSet(
     val load: Weight = Weight.zero(),
     val reps: Int = 0,
     val elapsedTime: Int = 0,
+    val startedAt: LocalDateTime? = null,
+    val completedAt: LocalDateTime? = null,
     val completed: Boolean = false,
     val exerciseId: Long = 0
 )

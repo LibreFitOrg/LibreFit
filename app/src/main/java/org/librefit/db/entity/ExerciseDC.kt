@@ -17,6 +17,7 @@ import org.librefit.enums.exercise.Force
 import org.librefit.enums.exercise.Level
 import org.librefit.enums.exercise.Mechanic
 import org.librefit.enums.exercise.Muscle
+import org.librefit.enums.healthConnect.HealthConnectSegmentType
 
 /**
  * This data class stores exercises as parsed from `res/raw/exercises.json`. The dataset in provided by [org.librefit.db.repository.DatasetRepository]
@@ -153,6 +154,64 @@ import org.librefit.enums.exercise.Muscle
  *     "images": {
  *       "type": "array",
  *       "items": [{ "type": "string" }]
+ *     },
+ *     "healthConnectSegmentType": {
+ *       "type": "string",
+ *       "enum": [
+ *         "arm_curl",
+ *         "back_extension",
+ *         "ball_slam",
+ *         "barbell_shoulder_press",
+ *         "bench_press",
+ *         "bench_sit_up",
+ *         "biking",
+ *         "biking_stationary",
+ *         "burpee",
+ *         "crunch",
+ *         "deadlift",
+ *         "double_arm_triceps_extension",
+ *         "dumbbell_curl_left_arm",
+ *         "dumbbell_curl_right_arm",
+ *         "dumbbell_front_raise",
+ *         "dumbbell_lateral_raise",
+ *         "dumbbell_row",
+ *         "dumbbell_triceps_extension_left_arm",
+ *         "dumbbell_triceps_extension_right_arm",
+ *         "dumbbell_triceps_extension_two_arm",
+ *         "elliptical",
+ *         "forward_twist",
+ *         "front_raise",
+ *         "high_intensity_interval_training",
+ *         "hip_thrust",
+ *         "jump_rope",
+ *         "jumping_jack",
+ *         "kettlebell_swing",
+ *         "lateral_raise",
+ *         "lat_pull_down",
+ *         "leg_curl",
+ *         "leg_extension",
+ *         "leg_press",
+ *         "leg_raise",
+ *         "lunge",
+ *         "mountain_climber",
+ *         "other_workout",
+ *         "plank",
+ *         "pull_up",
+ *         "punch",
+ *         "rowing_machine",
+ *         "running",
+ *         "running_treadmill",
+ *         "shoulder_press",
+ *         "single_arm_triceps_extension",
+ *         "sit_up",
+ *         "squat",
+ *         "stair_climbing",
+ *         "stair_climbing_machine",
+ *         "stretching",
+ *         "upper_twist",
+ *         "walking",
+ *         "weightlifting"
+ *       ]
  *     }
  *   },
  *   "required": [
@@ -165,7 +224,8 @@ import org.librefit.enums.exercise.Muscle
  *     "secondaryMuscles",
  *     "instructions",
  *     "category",
- *     "images"
+ *     "images",
+ *     "healthConnectSegmentType"
  *   ]
  * }
  * ```
@@ -182,6 +242,7 @@ import org.librefit.enums.exercise.Muscle
  * @property instructions Step-by-step instructions detailing how to perform the exercise.
  * @property category The [org.librefit.enums.exercise.Category] of the exercise. Acceptable values are defined in the JSON schema.
  * @property images Identifiers of images associated with the exercise.
+ * @property healthConnectSegmentType The Health Connect segment type used when exporting this exercise.
  * @property isCustomExercise It tells whether this exercise is created by the user or not. By default,
  * the exercise comes from `exercises.json` so it is set to `false`.
  */
@@ -199,5 +260,6 @@ data class ExerciseDC(
     val instructions: List<String> = listOf(),
     val category: Category = Category.POWERLIFTING,
     val images: List<String> = listOf(),
+    val healthConnectSegmentType: HealthConnectSegmentType = HealthConnectSegmentType.OTHER_WORKOUT,
     val isCustomExercise: Boolean = false
 )
