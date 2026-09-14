@@ -164,7 +164,28 @@ fun NavigationHost(
                 composable<Route.EditWorkoutScreen> {
                     EditWorkoutScreen(
                         sharedViewModel = sharedViewModel,
-                        navController = navController,
+                        onNavigateBack = navController::navigateUp,
+                        onNavigateToInfoExercise = { id, exerciseDCid ->
+                            navController.navigate(Route.InfoExerciseScreen(id, exerciseDCid)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToAddExercises = {
+                            navController.navigate(Route.ExercisesScreen(addExercises = true)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToBeforeSavingScreen = { workoutId ->
+                            navController.navigate(Route.BeforeSavingScreen(workoutId)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToSuccessScreen = {
+                            navController.navigate(Route.SuccessScreen(SuccessMessage.ROUTINE_SAVED)) {
+                                launchSingleTop = true
+                                popUpTo(Route.MainScreen) { inclusive = false }
+                            }
+                        },
                         animatedVisibilityScope = this
                     )
                 }
