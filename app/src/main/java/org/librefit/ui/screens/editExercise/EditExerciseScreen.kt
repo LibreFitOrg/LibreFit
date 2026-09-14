@@ -68,6 +68,7 @@ import org.librefit.enums.exercise.Level
 import org.librefit.enums.exercise.Mechanic
 import org.librefit.enums.exercise.Muscle
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.nav.Route
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.dialogs.ConfirmDialog
@@ -80,7 +81,11 @@ fun SharedTransitionScope.EditExerciseScreen(
     id: Long, // Used only for transition animation
     onNavigateBack: () -> Unit,
     onNavigateToSuccessScreen: () -> Unit,
-    viewModel: EditExerciseScreenViewModel = hiltViewModel()
+    route: Route.EditExerciseScreen,
+    viewModel: EditExerciseScreenViewModel =
+        hiltViewModel<EditExerciseScreenViewModel, EditExerciseScreenViewModel.Factory>(
+            creationCallback = { it.create(route) }
+        )
 ) {
 
     val exerciseDC by viewModel.exerciseDC.collectAsStateWithLifecycle()

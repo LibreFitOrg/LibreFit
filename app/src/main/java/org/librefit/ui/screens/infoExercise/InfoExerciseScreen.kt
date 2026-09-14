@@ -105,6 +105,7 @@ import org.librefit.enums.exercise.Mechanic
 import org.librefit.enums.exercise.Muscle
 import org.librefit.enums.pages.InfoExercisePages
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
@@ -137,7 +138,11 @@ fun SharedTransitionScope.InfoExerciseScreen(
     onNavigateToEditExercise: (String) -> Unit,
     onNavigateToInfoWorkout: (Long) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: InfoExerciseScreenViewModel = hiltViewModel(),
+    route: Route.InfoExerciseScreen,
+    viewModel: InfoExerciseScreenViewModel =
+        hiltViewModel<InfoExerciseScreenViewModel, InfoExerciseScreenViewModel.Factory>(
+            creationCallback = { it.create(route) }
+        ),
 ) {
     val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
 

@@ -8,12 +8,13 @@
 
 package org.librefit.nav
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import org.librefit.enums.SuccessMessage
 import org.librefit.enums.pages.TutorialContent
 
 
-sealed interface Route {
+sealed interface Route : NavKey {
     @Serializable
     data object AboutScreen : Route
 

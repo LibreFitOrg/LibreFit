@@ -49,6 +49,7 @@ import org.librefit.R
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.models.Weight
+import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCardSmall
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
@@ -81,7 +82,11 @@ fun SharedTransitionScope.InfoWorkoutScreen(
     onNavigateToInfoExercise: (Long, String) -> Unit,
     workoutId: Long,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: InfoWorkoutScreenViewModel = hiltViewModel(),
+    route: Route.InfoWorkoutScreen,
+    viewModel: InfoWorkoutScreenViewModel =
+        hiltViewModel<InfoWorkoutScreenViewModel, InfoWorkoutScreenViewModel.Factory>(
+            creationCallback = { it.create(route) }
+        ),
 ) {
 
     val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()

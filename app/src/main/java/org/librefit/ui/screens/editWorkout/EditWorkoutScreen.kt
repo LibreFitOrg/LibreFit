@@ -49,6 +49,7 @@ import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.models.Weight
+import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCard
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
@@ -75,7 +76,11 @@ fun SharedTransitionScope.EditWorkoutScreen(
     onNavigateToBeforeSavingScreen: (Long) -> Unit,
     onNavigateToSuccessScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: EditWorkoutScreenViewModel = hiltViewModel()
+    route: Route.EditWorkoutScreen,
+    viewModel: EditWorkoutScreenViewModel =
+        hiltViewModel<EditWorkoutScreenViewModel, EditWorkoutScreenViewModel.Factory>(
+            creationCallback = { it.create(route) }
+        )
 ) {
 
     val workout by viewModel.workout.collectAsStateWithLifecycle()

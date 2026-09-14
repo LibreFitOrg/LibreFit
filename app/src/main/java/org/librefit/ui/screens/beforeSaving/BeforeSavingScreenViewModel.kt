@@ -8,10 +8,11 @@
 
 package org.librefit.ui.screens.beforeSaving
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -37,25 +38,29 @@ import org.librefit.ui.models.mappers.toUi
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
-@HiltViewModel
-class BeforeSavingScreenViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = BeforeSavingScreenViewModel.Factory::class)
+class BeforeSavingScreenViewModel @AssistedInject constructor(
+    @Assisted route: Route.BeforeSavingScreen,
     private val workoutRepository: WorkoutRepository,
     private val workoutServiceManager: WorkoutServiceManager,
     private val dataHelper: DataHelper,
     userPreferencesRepository: UserPreferencesRepository,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
+    @AssistedFactory
+    interface Factory {
+        fun create(route: Route.BeforeSavingScreen): BeforeSavingScreenViewModel
+    }
+
     val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
 
     val dismissScrollWheelInputAutomatically =
         userPreferencesRepository.dismissScrollWheelInputAutomatically
 
-    private val runningWorkoutId = savedStateHandle.toRoute<Route.BeforeSavingScreen>().runningWorkoutId
+    private val runningWorkoutId = route.runningWorkoutId
 
 
     private val _exercises = MutableStateFlow<List<UiExerciseWithSets>>(emptyList())

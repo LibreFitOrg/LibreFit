@@ -8,10 +8,11 @@
 
 package org.librefit.ui.screens.infoWorkout
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,21 +39,24 @@ import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import org.librefit.util.Formatter
-import javax.inject.Inject
 import kotlin.random.Random
 
-@HiltViewModel
-class InfoWorkoutScreenViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = InfoWorkoutScreenViewModel.Factory::class)
+class InfoWorkoutScreenViewModel @AssistedInject constructor(
+    @Assisted route: Route.InfoWorkoutScreen,
     private val workoutRepository: WorkoutRepository,
     dataHelper: DataHelper,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+    @AssistedFactory
+    interface Factory {
+        fun create(route: Route.InfoWorkoutScreen): InfoWorkoutScreenViewModel
+    }
 
     val showExercisesImages = userPreferencesRepository.showExercisesImages
 
-    private val workoutId = savedStateHandle.toRoute<Route.InfoWorkoutScreen>().workoutId
+    private val workoutId = route.workoutId
 
     private val _volume = MutableStateFlow(Weight.zero())
     val volume = _volume.asStateFlow()
