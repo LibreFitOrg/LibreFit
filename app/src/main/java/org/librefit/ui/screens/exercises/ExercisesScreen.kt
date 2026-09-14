@@ -55,7 +55,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -65,7 +64,6 @@ import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.exercise.FilterValue
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.nav.Route
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.NoResultLottie
@@ -81,8 +79,11 @@ import org.librefit.util.Formatter.exerciseEnumToStringId
 @Composable
 fun SharedTransitionScope.ExercisesScreen(
     addExercises: Boolean,
-    navController: NavHostController,
     sharedViewModel: SharedViewModel,
+    onNavigateBack: () -> Unit,
+    onNavigateToInfoExercise: (ExerciseDC) -> Unit,
+    onNavigateToEditExercise: () -> Unit,
+    onNavigateToSupportScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: ExercisesScreenViewModel = hiltViewModel()
 ) {
@@ -113,7 +114,7 @@ fun SharedTransitionScope.ExercisesScreen(
             text = stringResource(R.string.quit_adding_exercises_text),
             confirmText = stringResource(R.string.quit_dialog),
             onConfirm = {
-                navController.navigateUp()
+                onNavigateBack()
                 showConfirmDialog = false
             },
             onDismiss = { showConfirmDialog = false }
@@ -122,7 +123,7 @@ fun SharedTransitionScope.ExercisesScreen(
 
     val actions = remember {
         if (addExercises) persistentListOf({
-            navController.navigateUp()
+            onNavigateBack()
             sharedViewModel.setSelectedExercisesList(selectedExercisesList.map { it.toEntity() })
         }) else persistentListOf()
     }
@@ -140,14 +141,10 @@ fun SharedTransitionScope.ExercisesScreen(
         updateQuery = viewModel::updateQuery,
         updateFilter = viewModel::updateFilter,
         actions = actions,
-        navigateBack = navController::navigateUp,
-        navigateToInfoExercise = {
-            navController.navigate(Route.InfoExerciseScreen(0L, it.id)) { launchSingleTop = true }
-        },
+        navigateBack = onNavigateBack,
+        navigateToInfoExercise = onNavigateToInfoExercise,
         navigateToEditExercise = {
-            navController.navigate(
-                if (isSupporter) Route.EditExerciseScreen() else Route.SupportScreen(supporterInfo = true)
-            ) { launchSingleTop = true }
+            if (isSupporter) onNavigateToEditExercise() else onNavigateToSupportScreen()
         }
     )
 

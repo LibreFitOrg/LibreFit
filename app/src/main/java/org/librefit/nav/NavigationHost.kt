@@ -192,8 +192,23 @@ fun NavigationHost(
                 composable<Route.ExercisesScreen> {
                     ExercisesScreen(
                         addExercises = it.toRoute<Route.ExercisesScreen>().addExercises,
-                        navController = navController,
                         sharedViewModel = sharedViewModel,
+                        onNavigateBack = navController::navigateUp,
+                        onNavigateToInfoExercise = { exerciseDC ->
+                            navController.navigate(Route.InfoExerciseScreen(0L, exerciseDC.id)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToEditExercise = {
+                            navController.navigate(Route.EditExerciseScreen()) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToSupportScreen = {
+                            navController.navigate(Route.SupportScreen(supporterInfo = true)) {
+                                launchSingleTop = true
+                            }
+                        },
                         animatedVisibilityScope = this
                     )
                 }
