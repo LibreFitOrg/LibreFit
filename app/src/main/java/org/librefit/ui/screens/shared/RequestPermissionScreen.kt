@@ -50,11 +50,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.nav.Route
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.PreferencesLottie
@@ -64,8 +61,8 @@ import kotlin.random.Random
 
 @Composable
 fun RequestPermissionScreen(
-    navController: NavHostController,
-    workoutId: Long,
+    onNavigateBack: () -> Unit,
+    onNavigateToWorkoutScreen: () -> Unit,
     requestPermissionNextTime: Boolean,
     saveRequestPermissionAgainPreference: (Boolean) -> Unit
 ) {
@@ -167,24 +164,19 @@ fun RequestPermissionScreen(
     }
 
     RequestPermissionsScreenContent(
-        navController = navController,
+        navigateBack = onNavigateBack,
         requestPermissionNextTime = requestPermissionNextTime,
         hasNotificationPermission = hasNotificationPermission,
         handleNotificationPermissionRequest = handleNotificationPermissionRequest,
         saveRequestPermissionAgainPreference = saveRequestPermissionAgainPreference,
-        navigateToWorkoutScreen = {
-            navController.navigate(Route.WorkoutScreen(workoutId = workoutId)) {
-                launchSingleTop = true
-                popUpTo(Route.RequestPermissionScreen(workoutId = workoutId)) { inclusive = true }
-            }
-        }
+        navigateToWorkoutScreen = onNavigateToWorkoutScreen
     )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun RequestPermissionsScreenContent(
-    navController: NavHostController,
+    navigateBack: () -> Unit,
     requestPermissionNextTime: Boolean,
     hasNotificationPermission: Boolean,
     handleNotificationPermissionRequest: () -> Unit,
@@ -193,7 +185,7 @@ private fun RequestPermissionsScreenContent(
 ) {
 
     LibreFitScaffold(
-        navigateBack = navController::navigateUp
+        navigateBack = navigateBack
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding, 30.dp) {
             item {
@@ -340,7 +332,7 @@ private fun RequestPermissionsScreenPreview() {
     val hasNotificationPermission = remember { mutableStateOf(false) }
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
         RequestPermissionsScreenContent(
-            navController = rememberNavController(),
+            navigateBack = {},
             requestPermissionNextTime = Random.nextBoolean(),
             hasNotificationPermission = hasNotificationPermission.value,
             handleNotificationPermissionRequest = {

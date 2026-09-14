@@ -67,7 +67,7 @@ sealed interface Route {
     ) : Route
 
     @Serializable
-    data object LibrariesScreen : Route
+    data object DependenciesScreen : Route
 
     @Serializable
     data object LicenseScreen : Route

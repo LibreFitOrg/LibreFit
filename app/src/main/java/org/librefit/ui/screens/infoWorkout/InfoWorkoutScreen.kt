@@ -44,14 +44,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.models.Weight
-import org.librefit.nav.Route
 import org.librefit.ui.components.ExerciseCardSmall
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
@@ -78,10 +75,13 @@ import kotlin.random.Random
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.InfoWorkoutScreen(
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToEditWorkout: (Long) -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    onNavigateToInfoExercise: (Long, String) -> Unit,
     workoutId: Long,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: InfoWorkoutScreenViewModel = hiltViewModel()
+    viewModel: InfoWorkoutScreenViewModel = hiltViewModel(),
 ) {
 
     val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
@@ -102,7 +102,10 @@ fun SharedTransitionScope.InfoWorkoutScreen(
     InfoWorkoutScreenContent(
         workoutId = workoutId,
         animatedVisibilityScope = animatedVisibilityScope,
-        navController = navController,
+        onNavigateBack = onNavigateBack,
+        onNavigateToEditWorkout = onNavigateToEditWorkout,
+        onNavigateToInfoWorkout = onNavigateToInfoWorkout,
+        onNavigateToInfoExercise = onNavigateToInfoExercise,
         workout = workout,
         routine = routine,
         isRoutine = viewModel.isRoutine(),
@@ -123,7 +126,10 @@ fun SharedTransitionScope.InfoWorkoutScreen(
 private fun SharedTransitionScope.InfoWorkoutScreenContent(
     workoutId: Long,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToEditWorkout: (Long) -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    onNavigateToInfoExercise: (Long, String) -> Unit,
     workout: UiWorkout,
     routine: UiWorkout,
     isRoutine: Boolean,
@@ -153,7 +159,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
             onConfirm = {
                 deleteWorkout()
                 showConfirmDialog = false
-                navController.navigateUp()
+                onNavigateBack()
             },
             onDismiss = { showConfirmDialog = false }
         )
@@ -178,12 +184,10 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(if (isRoutine) R.string.routine else R.string.workout)),
-        navigateBack = navController::navigateUp,
+        navigateBack = onNavigateBack,
         actions = persistentListOf(
             {
-                navController.navigate(Route.EditWorkoutScreen(workoutId = workout.id)) {
-                    launchSingleTop = true
-                }
+                onNavigateToEditWorkout(workout.id)
             },
             {
                 showConfirmDialog = true
@@ -323,9 +327,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                         chartModes = WorkoutChart.entries,
                         chartMode = workoutChart,
                         updateChartMode = updateChartMode,
-                        onEntrySelection = {
-                            navController.navigate(Route.InfoWorkoutScreen(it))
-                        }
+                        onEntrySelection = onNavigateToInfoWorkout
                     )
                 }
             }
@@ -338,9 +340,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
 
                 item {
                     ElevatedCard(
-                        onClick = {
-                            navController.navigate(Route.InfoWorkoutScreen(routine.id))
-                        },
+                        onClick = { onNavigateToInfoWorkout(routine.id) },
                         shape = MaterialTheme.shapes.extraLarge,
                         modifier = Modifier
                             .sharedBounds(
@@ -396,9 +396,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                                 elevated = false,
                                 text = stringResource(R.string.open_this_routine),
                                 icon = painterResource(R.drawable.ic_open_new)
-                            ) {
-                                navController.navigate(Route.InfoWorkoutScreen(routine.id))
-                            }
+                            ) { onNavigateToInfoWorkout(routine.id) }
                         }
                     }
                 }
@@ -412,14 +410,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
                     isRoutine = isRoutine,
                     showExercisesImages = showExercisesImages,
                     animatedVisibilityScope = animatedVisibilityScope
-                ) {
-                    navController.navigate(
-                        Route.InfoExerciseScreen(
-                            e.exercise.id,
-                            e.exerciseDC.id
-                        )
-                    ) { launchSingleTop = true }
-                }
+                ) { onNavigateToInfoExercise(e.exercise.id, e.exerciseDC.id) }
             }
         }
     }
@@ -435,7 +426,10 @@ private fun InfoRoutineScreenPreview() {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
                 InfoWorkoutScreenContent(
-                    navController = rememberNavController(),
+                    onNavigateBack = {},
+                    onNavigateToEditWorkout = {},
+                    onNavigateToInfoWorkout = {},
+                    onNavigateToInfoExercise = { _, _ -> },
                     deleteWorkout = {},
                     workout = UiWorkout(title = "My long workout title", notes = "This is a note!"),
                     routine = routine,
