@@ -56,12 +56,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
 import org.librefit.db.entity.ExerciseDC
-import org.librefit.enums.SuccessMessage
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.exercise.ExerciseProperty
@@ -70,7 +68,6 @@ import org.librefit.enums.exercise.Level
 import org.librefit.enums.exercise.Mechanic
 import org.librefit.enums.exercise.Muscle
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.nav.Route
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.dialogs.ConfirmDialog
@@ -79,10 +76,10 @@ import org.librefit.util.Formatter.exerciseEnumToStringId
 
 @Composable
 fun SharedTransitionScope.EditExerciseScreen(
-    navController: NavHostController,
     animatedVisibilityScope: AnimatedVisibilityScope,
     id: Long, // Used only for transition animation
-    exerciseDCid: String,
+    onNavigateBack: () -> Unit,
+    onNavigateToSuccessScreen: () -> Unit,
     viewModel: EditExerciseScreenViewModel = hiltViewModel()
 ) {
 
@@ -107,7 +104,7 @@ fun SharedTransitionScope.EditExerciseScreen(
         category = exerciseDC.category,
         images = exerciseDC.images,
         showExercisesImages = showExercisesImages,
-        navigateBack = navController::navigateUp,
+        navigateBack = onNavigateBack,
         animatedVisibilityScope = animatedVisibilityScope,
         updateValue = viewModel::updateValue,
         updatePrimaryMuscles = viewModel::updatePrimaryMuscles,
@@ -115,17 +112,7 @@ fun SharedTransitionScope.EditExerciseScreen(
         saveExercise = viewModel::saveExercise,
         updateName = viewModel::updateName,
         updateInstructions = viewModel::updateInstructions,
-        navigateToSuccessScreen = {
-            navController.navigate(Route.SuccessScreen(SuccessMessage.EXERCISE_SAVED)) {
-                launchSingleTop = true
-                popUpTo(
-                    Route.EditExerciseScreen(
-                        id = id,
-                        exerciseDCid = exerciseDCid
-                    )
-                ) { inclusive = true }
-            }
-        }
+        navigateToSuccessScreen = onNavigateToSuccessScreen
     )
 }
 
