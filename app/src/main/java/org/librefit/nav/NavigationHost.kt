@@ -235,9 +235,22 @@ fun NavigationHost(
                 }
                 composable<Route.InfoWorkoutScreen> {
                     InfoWorkoutScreen(
-                        animatedVisibilityScope = this,
-                        navController = navController,
                         workoutId = it.toRoute<Route.InfoWorkoutScreen>().workoutId,
+                        animatedVisibilityScope = this,
+                        onNavigateBack = navController::navigateUp,
+                        onNavigateToEditWorkout = { workoutId ->
+                            navController.navigate(Route.EditWorkoutScreen(workoutId)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToInfoWorkout = { workoutId ->
+                            navController.navigate(Route.InfoWorkoutScreen(workoutId))
+                        },
+                        onNavigateToInfoExercise = { id, exerciseDCid ->
+                            navController.navigate(Route.InfoExerciseScreen(id, exerciseDCid)) {
+                                launchSingleTop = true
+                            }
+                        }
                     )
                 }
                 composable<Route.MainScreen> {
