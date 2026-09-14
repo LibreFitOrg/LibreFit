@@ -369,7 +369,13 @@ fun NavigationHost(
                 composable<Route.SuccessScreen> {
                     SuccessScreen(
                         message = it.toRoute<Route.SuccessScreen>().message,
-                        navController = navController
+                        onNavigateBack = navController::navigateUp,
+                        onNavigateToSupportScreen = {
+                            navController.navigate(Route.SupportScreen()) {
+                                launchSingleTop = true
+                                popUpTo(Route.MainScreen)
+                            }
+                        }
                     )
                 }
                 composable<Route.SupportScreen> {
