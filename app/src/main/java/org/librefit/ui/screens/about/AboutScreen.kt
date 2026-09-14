@@ -56,12 +56,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.nav.Route
 import org.librefit.ui.components.AppNameText
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
@@ -74,7 +71,14 @@ import org.librefit.ui.theme.LibreFitTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AboutScreen(navController: NavHostController) {
+fun AboutScreen(
+    onNavigateBack: () -> Unit,
+    onNavigateToSupportScreen: () -> Unit,
+    onNavigateToTutorialScreen: () -> Unit,
+    onNavigateToPrivacyScreen: () -> Unit,
+    onNavigateToLicenseScreen: () -> Unit,
+    onNavigateToDependenciesScreen: () -> Unit
+) {
 
     val context = LocalContext.current
 
@@ -100,7 +104,7 @@ fun AboutScreen(navController: NavHostController) {
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.about)),
-        navigateBack = navController::navigateUp,
+        navigateBack = onNavigateBack,
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding) {
             item {
@@ -153,11 +157,7 @@ fun AboutScreen(navController: NavHostController) {
                 val isPressed by interactionSource.collectIsPressedAsState()
 
                 Button(
-                    onClick = {
-                        navController.navigate(Route.SupportScreen()) {
-                            launchSingleTop = true
-                        }
-                    },
+                    onClick = onNavigateToSupportScreen,
                     shapes = ButtonDefaults.shapes(),
                     contentPadding = ButtonDefaults.MediumContentPadding,
                     interactionSource = interactionSource,
@@ -225,9 +225,7 @@ fun AboutScreen(navController: NavHostController) {
                     icon = painterResource(R.drawable.ic_help),
                     text = stringResource(R.string.tutorial),
                     description = stringResource(R.string.tutorial_desc),
-                    onClick = {
-                        navController.navigate(Route.TutorialScreen()) { launchSingleTop = true }
-                    }
+                    onClick = onNavigateToTutorialScreen
                 )
             }
 
@@ -236,9 +234,7 @@ fun AboutScreen(navController: NavHostController) {
                     icon = painterResource(R.drawable.ic_policy),
                     text = stringResource(R.string.privacy),
                     description = stringResource(R.string.privacy_policy_desc),
-                    onClick = {
-                        navController.navigate(Route.PrivacyScreen) { launchSingleTop = true }
-                    }
+                    onClick = onNavigateToPrivacyScreen
                 )
             }
 
@@ -258,9 +254,7 @@ fun AboutScreen(navController: NavHostController) {
                     icon = painterResource(R.drawable.ic_license),
                     text = stringResource(R.string.license),
                     description = stringResource(R.string.license_desc),
-                    onClick = {
-                        navController.navigate(Route.LicenseScreen) { launchSingleTop = true }
-                    }
+                    onClick = onNavigateToLicenseScreen
                 )
             }
 
@@ -290,9 +284,7 @@ fun AboutScreen(navController: NavHostController) {
                 AboutItem(
                     icon = painterResource(R.drawable.ic_contract),
                     text = stringResource(R.string.dependencies),
-                    onClick = {
-                        navController.navigate(Route.LibrariesScreen) { launchSingleTop = true }
-                    }
+                    onClick = onNavigateToDependenciesScreen
                 )
             }
 
@@ -902,6 +894,13 @@ private fun AboutItem(
 @Composable
 private fun AboutScreenPreview() {
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
-        AboutScreen(rememberNavController())
+        AboutScreen(
+            onNavigateBack = {},
+            onNavigateToSupportScreen = {},
+            onNavigateToTutorialScreen = {},
+            onNavigateToPrivacyScreen = {},
+            onNavigateToLicenseScreen = {},
+            onNavigateToDependenciesScreen = {}
+        )
     }
 }

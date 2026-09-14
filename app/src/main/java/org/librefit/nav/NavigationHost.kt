@@ -85,7 +85,28 @@ fun NavigationHost(
                 predictivePopExitTransition = { scaleOut(tween(300), 0.9f) + fadeOut(tween(200)) }
             ) {
                 composable<Route.AboutScreen> {
-                    AboutScreen(navController = navController)
+                    AboutScreen(
+                        onNavigateBack = navController::navigateUp,
+                        onNavigateToSupportScreen = {
+                            navController.navigate(Route.SupportScreen()) { launchSingleTop = true }
+                        },
+                        onNavigateToTutorialScreen = {
+                            navController.navigate(Route.TutorialScreen()) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToPrivacyScreen = {
+                            navController.navigate(Route.PrivacyScreen) { launchSingleTop = true }
+                        },
+                        onNavigateToLicenseScreen = {
+                            navController.navigate(Route.LicenseScreen) { launchSingleTop = true }
+                        },
+                        onNavigateToDependenciesScreen = {
+                            navController.navigate(Route.DependenciesScreen) {
+                                launchSingleTop = true
+                            }
+                        }
+                    )
                 }
                 composable<Route.BeforeSavingScreen> {
                     BeforeSavingScreen(
