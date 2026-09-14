@@ -255,7 +255,76 @@ fun NavigationHost(
                 }
                 composable<Route.MainScreen> {
                     MainScreen(
-                        navController = navController,
+                        onNavigateToSupportScreen = {
+                            navController.navigate(Route.SupportScreen()) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToAboutScreen = {
+                            navController.navigate(Route.AboutScreen) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToSettingsScreen = {
+                            navController.navigate(Route.SettingsScreen) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToEditWorkout = {
+                            navController.navigate(Route.EditWorkoutScreen(0L)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToInfoWorkout = { workoutId ->
+                            navController.navigate(Route.InfoWorkoutScreen(workoutId)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToRequestPermissionScreen = { workoutId ->
+                            navController.navigate(Route.RequestPermissionScreen(workoutId)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToWorkout = { workoutId ->
+                            navController.navigate(Route.WorkoutScreen(workoutId)) {
+                                launchSingleTop = true
+                                popUpTo(Route.RequestPermissionScreen(workoutId)) {
+                                    inclusive = true
+                                }
+                            }
+                        },
+                        onNavigateToTutorialScreen = {
+                            navController.navigate(Route.TutorialScreen()) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToCompleteWorkoutTutorial = {
+                            navController.navigate(
+                                Route.TutorialScreen(TutorialContent.COMPLETE_WORKOUT)
+                            ) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToExercisesScreen = {
+                            navController.navigate(Route.ExercisesScreen(addExercises = false)) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToStatisticsScreen = {
+                            navController.navigate(Route.StatisticsScreen) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToMeasurementsScreen = {
+                            navController.navigate(Route.MeasurementScreen) {
+                                launchSingleTop = true
+                            }
+                        },
+                        onNavigateToCalendarScreen = {
+                            navController.navigate(Route.CalendarScreen) {
+                                launchSingleTop = true
+                            }
+                        },
                         animatedVisibilityScope = this
                     )
                 }
