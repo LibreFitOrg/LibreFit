@@ -46,14 +46,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
-import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
@@ -66,7 +63,8 @@ import kotlin.random.Random
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SettingsScreen(
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToSupportScreen: () -> Unit,
     viewModel: SettingsScreenViewModel = hiltViewModel()
 ) {
     val unitSystem by viewModel.unitSystem.collectAsStateWithLifecycle()
@@ -127,7 +125,8 @@ fun SettingsScreen(
     }
 
     SettingsScreenContent(
-        navController = navController,
+        onNavigateBack = onNavigateBack,
+        onNavigateToSupportScreen = onNavigateToSupportScreen,
         selectedTheme = selectedTheme,
         materialModeOn = materialModeOn,
         selectedLanguage = selectedLanguage,
@@ -156,7 +155,8 @@ fun SettingsScreen(
 
 @Composable
 private fun SettingsScreenContent(
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToSupportScreen: () -> Unit,
     selectedTheme: ThemeMode,
     materialModeOn: Boolean,
     selectedLanguage: Language,
@@ -180,7 +180,7 @@ private fun SettingsScreenContent(
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.settings)),
-        navigateBack = navController::navigateUp
+        navigateBack = onNavigateBack
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding) {
             item { HeadlineText(text = stringResource(id = R.string.appearance)) }
@@ -203,9 +203,7 @@ private fun SettingsScreenContent(
                             if (isSupporter) {
                                 onMaterialModeChange(!materialModeOn)
                             } else {
-                                navController.navigate(Route.SupportScreen(true)) {
-                                    launchSingleTop = true
-                                }
+                                onNavigateToSupportScreen()
                             }
                         },
                         icon = painterResource(R.drawable.ic_material),
@@ -403,7 +401,8 @@ fun SettingsScreenPreview() {
 
     LibreFitTheme(dynamicColor = materialModeOn, themeMode = theme) {
         SettingsScreenContent(
-            navController = rememberNavController(),
+            onNavigateBack = {},
+            onNavigateToSupportScreen = {},
             selectedTheme = theme,
             materialModeOn = materialModeOn,
             selectedLanguage = Language.SYSTEM,

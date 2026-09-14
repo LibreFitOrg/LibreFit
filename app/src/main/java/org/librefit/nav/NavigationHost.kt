@@ -357,7 +357,14 @@ fun NavigationHost(
                     )
                 }
                 composable<Route.SettingsScreen> {
-                    SettingsScreen(navController = navController)
+                    SettingsScreen(
+                        onNavigateBack = navController::navigateUp,
+                        onNavigateToSupportScreen = {
+                            navController.navigate(Route.SupportScreen(supporterInfo = true)) {
+                                launchSingleTop = true
+                            }
+                        }
+                    )
                 }
                 composable<Route.SuccessScreen> {
                     SuccessScreen(
