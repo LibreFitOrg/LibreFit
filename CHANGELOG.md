@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New buttons to speed up scroll wheel input [#181](https://github.com/LibreFitOrg/LibreFit/pull/181)
 - Barbell plate calculator based on target weight [#15](https://github.com/LibreFitOrg/LibreFit/issues/15)
 - Auto-fill weight inputs with the last saved measurement (defaults to 60 kg) [#164](https://github.com/LibreFitOrg/LibreFit/issues/164)
+- Option to open settings from the Android system Settings app [#184](https://github.com/LibreFitOrg/LibreFit/pull/184)
 
 ### Changed
 

@@ -18,6 +18,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -58,10 +59,28 @@ import org.librefit.ui.screens.workout.WorkoutScreen
 
 val LocalUnitSystem = compositionLocalOf { UnitSystem.METRIC }
 
+/**
+ * Root navigation host: owns the Navigation 3 back stack and wires every [Route] to its screen.
+ *
+ * @param initialDeepLink optional key to seed the synthetic back stack on cold start, parsed
+ *   from the launch intent (see [deepLinkKeyForAction]). Ignored while onboarding is active.
+ *   [rememberNavBackStack] only honors it when no saved state exists, so configuration changes
+ *   and process death never re-seed it.
+ * @param pendingDeepLink optional key queued by the host activity while the app is already
+ *   running (via `onNewIntent`); applied exactly once, then reported through
+ *   [onPendingDeepLinkConsumed]. Idempotent: a no-op when the key is already on top, and
+ *   intentionally skipped while onboarding is active.
+ * @param onPendingDeepLinkConsumed invoked after [pendingDeepLink] was handled (applied or
+ *   intentionally skipped) so the host activity can clear its pending state.
+ * @param sharedViewModel shared app-level ViewModel provided by Hilt.
+ */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun NavigationHost(
-    sharedViewModel: SharedViewModel = hiltViewModel()
+    initialDeepLink: Route? = null,
+    pendingDeepLink: Route? = null,
+    onPendingDeepLinkConsumed: () -> Unit = {},
+    sharedViewModel: SharedViewModel = hiltViewModel(),
 ) {
 
     val unitSystem by sharedViewModel.unitSystem.collectAsStateWithLifecycle()
@@ -76,7 +95,27 @@ fun NavigationHost(
         if (showWelcomeScreen) Route.WelcomeScreen else Route.MainScreen
     }
 
-    val backStack = rememberNavBackStack(startDestination)
+    // Seed a synthetic back stack for cold-start deep links (e.g. opened from the system
+    // Settings app): [Main, Settings] so Back from Settings lands on Main. rememberNavBackStack
+    // ignores the seed elements whenever saved state exists (config change / process death).
+    val seededDeepLink = initialDeepLink?.takeIf { startDestination != Route.WelcomeScreen }
+    val initialBackStackKeys = buildList {
+        add(startDestination)
+        if (seededDeepLink != null) {
+            add(seededDeepLink)
+        }
+    }
+    val backStack = rememberNavBackStack(*initialBackStackKeys.toTypedArray())
+
+    // Applies warm-start deep links delivered via onNewIntent while the app is already running.
+    // Applied exactly once per request; intentionally skipped while onboarding is in progress.
+    LaunchedEffect(pendingDeepLink) {
+        if (pendingDeepLink == null) return@LaunchedEffect
+        if (startDestination != Route.WelcomeScreen) {
+            backStack.navigate(pendingDeepLink) // no-op when the key is already on top
+        }
+        onPendingDeepLinkConsumed()
+    }
 
     CompositionLocalProvider(LocalUnitSystem provides unitSystem) {
         SharedTransitionLayout {
