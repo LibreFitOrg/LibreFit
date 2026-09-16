@@ -422,7 +422,8 @@ fun NavigationHost(
                                 )
                             },
                             doNotShowWelcomeScreenAgain =
-                                sharedViewModel::doNotShowWelcomeScreenAgain
+                                sharedViewModel::doNotShowWelcomeScreenAgain,
+                            sharedViewModel = sharedViewModel
                         )
                     }
                     entry<Route.WorkoutScreen> { route ->
