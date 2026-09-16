@@ -361,7 +361,7 @@ private fun SettingItem(
         ) {
             Icon(
                 painter = icon,
-                contentDescription = stringResource(R.string.theme),
+                contentDescription = null,
                 modifier = Modifier.padding(start = 5.dp, end = 20.dp)
             )
             Column {
