@@ -19,6 +19,8 @@ import org.junit.Before
 import org.junit.Test
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.enums.userPreferences.Language
+import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
 
 class SharedViewModelTest {
@@ -33,6 +35,8 @@ class SharedViewModelTest {
     private lateinit var requestPermissionNextTime: MutableStateFlow<Boolean>
     private lateinit var isSupporter: MutableStateFlow<Boolean>
     private lateinit var unitSystem: MutableStateFlow<UnitSystem>
+    private lateinit var themeMode: MutableStateFlow<ThemeMode>
+    private lateinit var language: MutableStateFlow<Language>
 
     @Before
     fun setUp() {
@@ -42,12 +46,16 @@ class SharedViewModelTest {
         requestPermissionNextTime = MutableStateFlow(true)
         isSupporter = MutableStateFlow(false)
         unitSystem = MutableStateFlow(UnitSystem.METRIC)
+        themeMode = MutableStateFlow(ThemeMode.SYSTEM)
+        language = MutableStateFlow(Language.SYSTEM)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.showWelcomeScreen } returns showWelcomeScreen
         every { userPreferencesRepository.requestPermissionsNextTime } returns requestPermissionNextTime
         every { userPreferencesRepository.isSupporter } returns isSupporter
         every { userPreferencesRepository.unitSystem } returns unitSystem
+        every { userPreferencesRepository.themeMode } returns themeMode
+        every { userPreferencesRepository.language } returns language
 
         coEvery { userPreferencesRepository.saveShowWelcomeScreen(any()) } answers {
             showWelcomeScreen.value = firstArg()
@@ -57,6 +65,15 @@ class SharedViewModelTest {
         }
         coEvery { userPreferencesRepository.saveIsSupporter(any()) } answers {
             isSupporter.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveUnitSystem(any()) } answers {
+            unitSystem.value = firstArg()
+        }
+        coEvery { userPreferencesRepository.saveThemeMode(any()) } answers {
+            themeMode.value = firstArg()
+        }
+        every { userPreferencesRepository.saveLanguage(any()) } answers {
+            language.value = firstArg()
         }
 
         // Arrange: Create the ViewModel instance with the mock repository
@@ -132,6 +149,44 @@ class SharedViewModelTest {
 
             // Assert: update is correct
             assertThat(awaitItem()).isFalse()
+        }
+    }
+
+    @Test
+    fun `initial state - unit system is metric`() = runTest {
+        assertThat(viewModel.unitSystem.value).isEqualTo(UnitSystem.METRIC)
+    }
+
+    @Test
+    fun `initial state - theme mode is system`() = runTest {
+        assertThat(viewModel.themeMode.value).isEqualTo(ThemeMode.SYSTEM)
+    }
+
+    @Test
+    fun `unit system updates correctly`() = runTest {
+        viewModel.unitSystem.test {
+            // Initial emission
+            assertThat(awaitItem()).isEqualTo(UnitSystem.METRIC)
+
+            // Act: update preference
+            viewModel.saveUnitSystem(UnitSystem.IMPERIAL)
+
+            // Assert: update is correct
+            assertThat(awaitItem()).isEqualTo(UnitSystem.IMPERIAL)
+        }
+    }
+
+    @Test
+    fun `theme mode updates correctly`() = runTest {
+        viewModel.themeMode.test {
+            // Initial emission
+            assertThat(awaitItem()).isEqualTo(ThemeMode.SYSTEM)
+
+            // Act: update preference
+            viewModel.saveThemeMode(ThemeMode.DARK)
+
+            // Assert: update is correct
+            assertThat(awaitItem()).isEqualTo(ThemeMode.DARK)
         }
     }
 

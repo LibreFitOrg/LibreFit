@@ -479,6 +479,7 @@
 
     <!-- Welcome screen-->
     <string name="welcome_to">Welcome to</string>
+    <string name="make_it_yours">Make it yours</string>
 
 
     <!--Info modal bottom sheet-->
