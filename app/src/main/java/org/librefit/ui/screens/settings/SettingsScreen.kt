@@ -287,7 +287,7 @@ private fun SettingsScreenContent(
                             showConfirmDialogShowExerciseImages()
                         }
                     },
-                    icon = painterResource(if (showExercisesImages == true) R.drawable.ic_image else R.drawable.ic_hide_image),
+                    icon = painterResource(R.drawable.ic_image),
                     settingName = stringResource(R.string.show_images),
                     settingDesc = stringResource(if (showExercisesImages == true) R.string.show_images_desc else R.string.hide_images_desc)
                 )
