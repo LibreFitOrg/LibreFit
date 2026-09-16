@@ -98,16 +98,17 @@ fun SharedTransitionScope.MainScreen(
         bottomBar = {
             ShortNavigationBar {
                 MainScreenPages.entries.forEach { page ->
+                    val selected = pagerState.currentPage == page.ordinal
                     ShortNavigationBarItem(
-                        selected = pagerState.currentPage == page.ordinal,
+                        selected = selected,
                         onClick = { goToPage(page.ordinal) },
                         icon = {
                             Icon(
                                 painter = painterResource(
                                     id = when (page) {
-                                        MainScreenPages.LIBRARY -> R.drawable.ic_library
-                                        MainScreenPages.HOME -> R.drawable.ic_home
-                                        MainScreenPages.PROFILE -> R.drawable.ic_person
+                                        MainScreenPages.LIBRARY -> if (selected) R.drawable.ic_library_filled else R.drawable.ic_library
+                                        MainScreenPages.HOME -> if (selected) R.drawable.ic_home_filled else R.drawable.ic_home
+                                        MainScreenPages.PROFILE -> if (selected) R.drawable.ic_person_filled else R.drawable.ic_person
                                     }
                                 ),
                                 contentDescription = stringResource(
