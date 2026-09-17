@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+This was a big update with a lot of refactoring and performance improvements.
+
 ### Added
 
 - French 🇫🇷 [#180](https://github.com/LibreFitOrg/LibreFit/pull/180)
@@ -31,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Crash when switching to chinese languange [#154](https://github.com/LibreFitOrg/LibreFit/issues/154)
+- Crash when switching to chinese language [#154](https://github.com/LibreFitOrg/LibreFit/issues/154)
 - Weight display issue in exercise details screen [#176](https://github.com/LibreFitOrg/LibreFit/pull/176)
 - Edge to edge display implementation [#100](https://github.com/LibreFitOrg/LibreFit/issues/100)
 
