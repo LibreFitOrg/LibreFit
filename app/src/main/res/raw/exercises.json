@@ -4382,7 +4382,7 @@
   },
   {
     "name": "Clamshell",
-    "force": push,
+    "force": "push",
     "level": "beginner",
     "mechanic": "isolation",
     "equipment": "body only",
