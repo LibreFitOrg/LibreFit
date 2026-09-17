@@ -8,8 +8,6 @@
 
 package org.librefit.ui.screens.workout
 
-import android.app.Activity
-import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -63,8 +61,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -74,9 +72,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
 import org.librefit.R
@@ -159,17 +155,14 @@ fun SharedTransitionScope.WorkoutScreen(
 
 
     //It keeps the screen turned on
-    if (keepWorkoutScreenOn) {
-        val context = LocalContext.current
+    val currentView = LocalView.current
 
-        DisposableEffect(key1 = Unit) {
-            val window = (context as Activity).window
-
-            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-            onDispose {
-                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            }
+    DisposableEffect(keepWorkoutScreenOn) {
+        if (keepWorkoutScreenOn) {
+            currentView.keepScreenOn = true
+        }
+        onDispose {
+            currentView.keepScreenOn = false
         }
     }
 
@@ -273,17 +266,10 @@ fun SharedTransitionScope.WorkoutScreen(
 
 
     // Keep track of focus to play alter sound or not
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> viewModel.updateFocus(isFocused = true)
-                else -> viewModel.updateFocus(isFocused = false)
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
+    LifecycleResumeEffect(Unit) {
+        viewModel.updateFocus(isFocused = true)
+        onPauseOrDispose {
+            viewModel.updateFocus(isFocused = false)
         }
     }
 }
