@@ -263,7 +263,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
         actionsDescription = persistentListOf(stringResource(R.string.save)),
         actionsEnabled = persistentListOf(!isTitleEmpty && !isTitleTooLong)
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding = innerPadding) {
             item {
                 OutlinedTextField(
                     shape = MaterialTheme.shapes.large,

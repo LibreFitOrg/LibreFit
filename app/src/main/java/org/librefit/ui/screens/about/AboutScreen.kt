@@ -106,7 +106,7 @@ fun AboutScreen(
         title = AnnotatedString(stringResource(id = R.string.about)),
         navigateBack = onNavigateBack,
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding = innerPadding) {
             item {
                 Image(
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),

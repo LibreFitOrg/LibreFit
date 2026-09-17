@@ -182,7 +182,7 @@ private fun SettingsScreenContent(
         title = AnnotatedString(stringResource(id = R.string.settings)),
         navigateBack = onNavigateBack
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding = innerPadding) {
             item { HeadlineText(text = stringResource(id = R.string.appearance)) }
 
             item {

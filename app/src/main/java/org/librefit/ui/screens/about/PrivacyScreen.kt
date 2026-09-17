@@ -58,7 +58,7 @@ fun PrivacyScreen(
         title = AnnotatedString(stringResource(id = R.string.privacy)),
         navigateBack = navigateBack,
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding = innerPadding) {
             item { HeadlineText(stringResource(R.string.privacy_notice)) }
 
             item {
