@@ -251,7 +251,7 @@ private fun SharedTransitionScope.ExercisesScreenContent(
                 }
 
 
-                var isFilterExpanded by rememberSaveable { mutableStateOf(true) }
+                var isFilterExpanded by rememberSaveable { mutableStateOf(false) }
 
 
 
