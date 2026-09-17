@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Modernize bottom navigation bar to Material Design 3 Expressive [#172](https://github.com/LibreFitOrg/LibreFit/pull/172)
+- Sticky header disappears on scroll down and reappears immediately on scroll up [#189](https://github.com/LibreFitOrg/LibreFit/pull/189)
 
 ### Deprecated
 
