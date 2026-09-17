@@ -16,7 +16,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +29,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.CheckableDropdownMenuItem
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -44,6 +44,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
@@ -250,7 +251,7 @@ private fun SharedTransitionScope.ExercisesScreenContent(
                 }
 
 
-                var isFilterExpanded by rememberSaveable { mutableStateOf(true) }
+                var isFilterExpanded by rememberSaveable { mutableStateOf(false) }
 
 
 
@@ -457,40 +458,51 @@ private fun ItemFilter(
             )
             ExposedDropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                // Allow DropdownMenuGroup to control styling, shape, and elevation
+                containerColor = Color.Transparent,
+                shadowElevation = 0.dp,
+                border = null
             ) {
-                options.forEach { enum ->
-                    DropdownMenuItem(
-                        onClick = {
-                            when (enumType) {
-                                Force::class -> update(value.copy(force = enum as Force?))
-                                Level::class -> update(value.copy(level = enum as Level?))
-                                Mechanic::class -> update(value.copy(mechanic = enum as Mechanic?))
-                                Muscle::class -> update(value.copy(muscles = enum as Muscle?))
-                                Equipment::class -> update(value.copy(equipment = enum as Equipment?))
-                                Category::class -> update(value.copy(category = enum as Category?))
-                                else -> {}
-                            }
-                            expanded = false
-                        },
-                        text = {
-                            Text(
-                                text = stringResource(exerciseEnumToStringId(enum))
-                            )
-                        },
-                        trailingIcon = if (propertyFilterValue == enum) {
-                            {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_check),
-                                    contentDescription = stringResource(R.string.checkbox)
-                                )
-                            }
-                        } else null,
-                        modifier = Modifier.background(
-                            if (propertyFilterValue == enum) MaterialTheme.colorScheme.inversePrimary
-                                .copy(0.3f) else Color.Unspecified
+                // Wrap items inside Expressive DropdownMenuGroup
+                DropdownMenuGroup(
+                    shapes = MenuDefaults.groupShape(0, 1)
+                ) {
+                    val itemCount = options.size
+
+                    options.forEachIndexed { index, enum ->
+                        val isSelected = enum == propertyFilterValue
+
+                        CheckableDropdownMenuItem(
+                            checked = isSelected,
+                            onCheckedChange = {
+                                when (enumType) {
+                                    Force::class -> update(value.copy(force = enum as Force?))
+                                    Level::class -> update(value.copy(level = enum as Level?))
+                                    Mechanic::class -> update(value.copy(mechanic = enum as Mechanic?))
+                                    Muscle::class -> update(value.copy(muscles = enum as Muscle?))
+                                    Equipment::class -> update(value.copy(equipment = enum as Equipment?))
+                                    Category::class -> update(value.copy(category = enum as Category?))
+                                    else -> {}
+                                }
+                                expanded = false
+                            },
+                            text = {
+                                Text(text = stringResource(exerciseEnumToStringId(enum)))
+                            },
+                            // Expressive rounded shapes per item position in group
+                            shapes = MenuDefaults.itemShape(index, itemCount),
+                            trailingContent = if (isSelected) {
+                                {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_check),
+                                        contentDescription = stringResource(R.string.checkbox),
+                                        modifier = Modifier.size(MenuDefaults.TrailingIconSize)
+                                    )
+                                }
+                            } else null
                         )
-                    )
+                    }
                 }
             }
         }
