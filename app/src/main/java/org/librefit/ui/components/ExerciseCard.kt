@@ -38,6 +38,7 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CheckableDropdownMenuItem
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
@@ -482,33 +483,52 @@ fun SharedTransitionScope.ExerciseCard(
                             )
                             ExposedDropdownMenu(
                                 expanded = expanded,
-                                onDismissRequest = { expanded = false }
+                                onDismissRequest = { expanded = false },
+                                // Allow DropdownMenuGroup to control styling, shape, and elevation
+                                containerColor = Color.Transparent,
+                                shadowElevation = 0.dp,
+                                border = null
                             ) {
-                                SetMode.entries.forEachIndexed { _, mode ->
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            updateExerciseSetMode(mode, exerciseWithSets.exercise.id)
-                                            expanded = false
-                                        },
-                                        text = {
-                                            Text(
-                                                text = stringResource(Formatter.setModeToStringId(mode))
-                                            )
-                                        },
-                                        trailingIcon = if (exerciseWithSets.exercise.setMode == mode) {
-                                            {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.ic_check),
-                                                    contentDescription = stringResource(R.string.checkbox)
+                                // Wrap items inside Expressive DropdownMenuGroup
+                                DropdownMenuGroup(
+                                    shapes = MenuDefaults.groupShape(0, 1)
+                                ) {
+                                    val itemCount = SetMode.entries.size
+
+                                    SetMode.entries.forEachIndexed { index, mode ->
+                                        val isSelected = mode == exerciseWithSets.exercise.setMode
+
+                                        CheckableDropdownMenuItem(
+                                            checked = isSelected,
+                                            onCheckedChange = {
+                                                updateExerciseSetMode(
+                                                    mode,
+                                                    exerciseWithSets.exercise.id
                                                 )
-                                            }
-                                        } else null,
-                                        modifier = Modifier.background(
-                                            if (exerciseWithSets.exercise.setMode == mode) MaterialTheme.colorScheme.inversePrimary.copy(
-                                                0.3f
-                                            ) else Color.Unspecified
+                                                expanded = false
+                                            },
+                                            text = {
+                                                Text(
+                                                    text = stringResource(
+                                                        Formatter.setModeToStringId(
+                                                            mode
+                                                        )
+                                                    )
+                                                )
+                                            },
+                                            trailingContent = if (exerciseWithSets.exercise.setMode == mode) {
+                                                {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.ic_check),
+                                                        contentDescription = stringResource(R.string.checkbox)
+                                                    )
+                                                }
+                                            } else null,
+                                            // Expressive rounded shapes per item position in group
+                                            shapes = MenuDefaults.itemShape(index, itemCount),
                                         )
-                                    )
+                                    }
+
                                 }
                             }
                         }

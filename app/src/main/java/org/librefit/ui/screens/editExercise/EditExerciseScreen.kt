@@ -13,14 +13,15 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CheckableDropdownMenuItem
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenu
@@ -29,6 +30,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -349,32 +351,42 @@ private fun RowScope.EditExercisePropertyItem(
             )
             ExposedDropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                // Allow DropdownMenuGroup to control styling, shape, and elevation
+                containerColor = Color.Transparent,
+                shadowElevation = 0.dp,
+                border = null
             ) {
-                options.forEach { enum ->
-                    DropdownMenuItem(
-                        onClick = {
-                            updateValue(enum)
-                            expanded = false
-                        },
-                        text = {
-                            Text(
-                                text = stringResource(exerciseEnumToStringId(enum))
-                            )
-                        },
-                        trailingIcon = if (enum in values) {
-                            {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_check),
-                                    contentDescription = stringResource(R.string.checkbox)
-                                )
-                            }
-                        } else null,
-                        modifier = Modifier.background(
-                            if (enum in values) MaterialTheme.colorScheme.inversePrimary
-                                .copy(0.3f) else Color.Unspecified
+                // Wrap items inside Expressive DropdownMenuGroup
+                DropdownMenuGroup(
+                    shapes = MenuDefaults.groupShape(0, 1)
+                ) {
+                    val itemCount = options.size
+                    options.forEachIndexed { index, enum ->
+                        val isSelected = enum in values
+
+                        CheckableDropdownMenuItem(
+                            checked = isSelected,
+                            onCheckedChange = {
+                                updateValue(enum)
+                                expanded = false
+                            },
+                            text = {
+                                Text(text = stringResource(exerciseEnumToStringId(enum)))
+                            },
+                            // Expressive rounded shapes per item position in group
+                            shapes = MenuDefaults.itemShape(index, itemCount),
+                            trailingContent = if (isSelected) {
+                                {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_check),
+                                        contentDescription = stringResource(R.string.checkbox),
+                                        modifier = Modifier.size(MenuDefaults.TrailingIconSize)
+                                    )
+                                }
+                            } else null
                         )
-                    )
+                    }
                 }
             }
         }
