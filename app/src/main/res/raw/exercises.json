@@ -4382,22 +4382,24 @@
   },
   {
     "name": "Clamshell",
-    "force": null,
+    "force": push,
     "level": "beginner",
     "mechanic": "isolation",
     "equipment": "body only",
     "primaryMuscles": [
+      "abductors",
       "glutes"
     ],
-    "secondaryMuscles": [
-      "abductors"
-    ],
+    "secondaryMuscles": [],
     "instructions": [
-      "Lie on your side with your feet together and knees bent at a 45 degree angle. Keep your hips stacked on top of each other.",
-      "Raise your top knee as high as possible, keeping your feet together and without rotating your pelvis backwards. If this is difficult, lie with your back to a wall to help prevent the hip rotating.",
-      "Pause at the top for one second.",
-      "Slowly lower your top knee back to the starting position.",
-      "To increase difficulty, use a band just above your knees."
+      "Lie on your side on an exercise mat with your head resting on your lower arm or a pillow. Stack your hips, knees, and feet directly on top of each other.",
+      "Bend your hips to approximately 45 degrees and your knees to a 90-degree angle.",
+      "Brace your core and keep your pelvis perpendicular to the floor to prevent your top hip from rolling backward.",
+      "Keeping your feet glued together, slowly raise your top knee as high as comfortable by rotating your hip outward.",
+      "Pause and squeeze your glutes and outer hip at the peak of the contraction for one second.",
+      "Slowly lower your top knee back to the starting position under control.",
+      "Complete the desired repetitions, then switch sides. To increase resistance, place a mini resistance band just above your knees."
+  
     ],
     "category": "strength",
     "images": [
