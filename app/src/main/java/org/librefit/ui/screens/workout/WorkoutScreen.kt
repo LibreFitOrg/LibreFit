@@ -55,9 +55,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -89,6 +94,8 @@ import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.DumbbellLottie
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
+import org.librefit.ui.components.rememberStickyHeaderScrollConnection
+import org.librefit.ui.components.rememberStickyHeaderScrollState
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
@@ -208,11 +215,15 @@ fun SharedTransitionScope.WorkoutScreen(
         actionsDescription = persistentListOf(stringResource(R.string.done)),
     ) { innerPadding ->
         Box(
-            modifier = Modifier.padding(
-                top = innerPadding.calculateTopPadding(),
-                start = innerPadding.calculateLeftPadding(LayoutDirection.Ltr),
-                end = innerPadding.calculateRightPadding(LayoutDirection.Ltr)
-            )
+            modifier = Modifier
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    start = innerPadding.calculateLeftPadding(LayoutDirection.Ltr),
+                    end = innerPadding.calculateRightPadding(LayoutDirection.Ltr)
+                )
+                // Clips the list translated by the sticky header scroll behavior, so the
+                // hidden header disappears underneath the app bar instead of drawing over it
+                .clipToBounds()
         ) {
             FloatingWorkoutActionBar(
                 restTimerProgress = restTimerProgress,
@@ -314,6 +325,30 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     val lazyListState = rememberLazyListState()
     val hapticFeedback = LocalHapticFeedback.current
 
+    // Appear/disappear behavior of the sticky header while the list is scrolled
+    val headerScrollState = rememberStickyHeaderScrollState()
+    val headerScrollConnection = rememberStickyHeaderScrollConnection(
+        state = headerScrollState,
+        isEnabled = isHeaderSticky
+    )
+
+    // Synchronizes the list scroll position with the header scroll state so that when
+    // positioned at the top of the list, the header item scrolls naturally without lagging.
+    LaunchedEffect(lazyListState, headerScrollState) {
+        snapshotFlow { lazyListState.firstVisibleItemIndex to lazyListState.firstVisibleItemScrollOffset }
+            .collect { (index, offset) ->
+                headerScrollState.updateScrollPosition(
+                    isAtTop = index == 0,
+                    firstVisibleItemScrollOffset = offset
+                )
+            }
+    }
+
+    // Ensures the header is fully re-appeared whenever the sticky preference is disabled
+    LaunchedEffect(isHeaderSticky) {
+        if (!isHeaderSticky) headerScrollState.expand()
+    }
+
     var isReorderingEnabled by rememberSaveable { mutableStateOf(false) }
 
     val exerciseSectionStartIndex = 1
@@ -329,9 +364,17 @@ private fun SharedTransitionScope.WorkoutScreenContent(
         }
     }
 
-    LibreFitLazyColumn(lazyListState = lazyListState) {
+    LibreFitLazyColumn(
+        modifier = Modifier.nestedScroll(headerScrollConnection),
+        lazyListState = lazyListState
+    ) {
         val headerContent: @Composable LazyItemScope.() -> Unit = {
-            ElevatedCard(shape = MaterialTheme.shapes.extraLargeIncreased) {
+            ElevatedCard(
+                modifier = Modifier
+                    .graphicsLayer { translationY = headerScrollState.translationY }
+                    .onSizeChanged { headerScrollState.onHeaderSizeChanged(it.height) },
+                shape = MaterialTheme.shapes.extraLargeIncreased
+            ) {
                 Column(
                     modifier = Modifier.padding(15.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
