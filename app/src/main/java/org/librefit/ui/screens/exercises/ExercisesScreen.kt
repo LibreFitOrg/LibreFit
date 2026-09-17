@@ -9,37 +9,57 @@
 package org.librefit.ui.screens.exercises
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExposedDropdownMenu
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonShapes
+import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +67,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -62,7 +84,12 @@ import org.librefit.R
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
+import org.librefit.enums.exercise.ExerciseProperty
 import org.librefit.enums.exercise.FilterValue
+import org.librefit.enums.exercise.Force
+import org.librefit.enums.exercise.Level
+import org.librefit.enums.exercise.Mechanic
+import org.librefit.enums.exercise.Muscle
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
@@ -73,6 +100,7 @@ import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.screens.shared.SharedViewModel
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter.exerciseEnumToStringId
+import kotlin.reflect.KClass
 
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -170,9 +198,6 @@ private fun SharedTransitionScope.ExercisesScreenContent(
 ) {
 
 
-    var isFilterExpanded by rememberSaveable { mutableStateOf(false) }
-
-
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.exercises)),
         navigateBack = navigateBack,
@@ -186,52 +211,154 @@ private fun SharedTransitionScope.ExercisesScreenContent(
         LibreFitLazyColumn(
             innerPadding = innerPadding
         ) {
-            // Search bar
+            // search bar + filters
             item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
+                val searchBarState = rememberSearchBarState()
+                val textFieldState = rememberTextFieldState(query)
+                val interactionSource = remember { MutableInteractionSource() }
+                val isFocused by interactionSource.collectIsFocusedAsState()
+
+                // Context controllers for clearing focus and dismissing the keyboard
+                val focusManager = LocalFocusManager.current
+                val keyboardController = LocalSoftwareKeyboardController.current
+
+                val hasQuery = textFieldState.text.isNotEmpty()
+                val isSearchActive = isFocused || hasQuery
+
+                // Central exit search action
+                val onExitSearch: () -> Unit = {
+                    textFieldState.edit { replace(0, length, "") }
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                }
+
+                // Intercept system back gesture when searching
+                BackHandler(enabled = isSearchActive) {
+                    onExitSearch()
+                }
+
+                // Width animation for search bar
+                val animatedHorizontalPadding by animateDpAsState(
+                    targetValue = if (isSearchActive) 4.dp else 16.dp,
+                    label = "SearchBarWidthAnimation"
+                )
+
+                // The input is the single writer of the query; the ViewModel deduplicates and debounces it.
+                LaunchedEffect(textFieldState) {
+                    snapshotFlow { textFieldState.text }
+                        .collect { text -> updateQuery(text.toString()) }
+                }
+
+
+                var isFilterExpanded by rememberSaveable { mutableStateOf(true) }
+
+
+
+                ElevatedCard(
+                    modifier = Modifier.padding(horizontal = animatedHorizontalPadding),
+                    shape = MaterialTheme.shapes.extraLarge,
                 ) {
-                    TextField(
-                        value = query,
-                        modifier = Modifier.fillMaxWidth(),
-                        onValueChange = updateQuery,
-                        shape = CircleShape,
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_search),
-                                contentDescription = stringResource(R.string.search_exercise_field)
+                    // search bar
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Surface(
+                            shape = SearchBarDefaults.inputFieldShape,
+                            color = SearchBarDefaults.colors().containerColor,
+                            tonalElevation = SearchBarDefaults.TonalElevation,
+                            shadowElevation = SearchBarDefaults.ShadowElevation,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            SearchBarDefaults.InputField(
+                                textFieldState = textFieldState,
+                                searchBarState = searchBarState,
+                                interactionSource = interactionSource,
+                                onSearch = {
+                                    // Hide keyboard when IME search action is tapped
+                                    focusManager.clearFocus()
+                                    keyboardController?.hide()
+                                },
+                                placeholder = { Text(stringResource(R.string.search_exercise_field)) },
+                                leadingIcon = {
+                                    // Animated transition between Search icon and Back button
+                                    AnimatedContent(
+                                        targetState = hasQuery,
+                                        label = "LeadingIconCrossfade"
+                                    ) { showBackArrow ->
+                                        if (showBackArrow) {
+                                            IconButton(onClick = onExitSearch) {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.ic_arrow_back),
+                                                    contentDescription = stringResource(R.string.navigate_back)
+                                                )
+                                            }
+                                        } else {
+                                            Icon(
+                                                painter = painterResource(R.drawable.ic_search),
+                                                contentDescription = stringResource(R.string.search_exercise_field)
+                                            )
+                                        }
+                                    }
+                                },
+                                trailingIcon = {
+                                    IconToggleButton(
+                                        checked = isFilterExpanded,
+                                        onCheckedChange = { isFilterExpanded = it },
+                                        colors = IconButtonDefaults.iconToggleButtonVibrantColors()
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_filter),
+                                            contentDescription = stringResource(R.string.filters)
+                                        )
+                                    }
+                                }
                             )
-                        },
-                        trailingIcon = {
-                            if (query.isNotEmpty()) {
-                                IconButton(onClick = { updateQuery("") }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_cancel),
-                                        contentDescription = stringResource(R.string.delete)
+                        }
+                        // Filters
+                        AnimatedVisibility(
+                            visible = isFilterExpanded,
+                            label = "FiltersAnimation"
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(all = 10.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(20.dp)
+                            ) {
+                                FlowRow(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                                    horizontalArrangement = Arrangement.SpaceAround
+                                ) {
+                                    ExerciseProperty.propertiesPairsByEnum.forEach { propertiesPair ->
+                                        ItemFilter(
+                                            pair = propertiesPair,
+                                            update = updateFilter,
+                                            value = filterValue
+                                        )
+                                    }
+                                }
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(all = 15.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.show_only_custom_exercises),
+                                        modifier = Modifier.weight(1f),
+                                    )
+                                    Switch(
+                                        checked = filterValue.showOnlyCustomExercises,
+                                        onCheckedChange = {
+                                            updateFilter(filterValue.copy(showOnlyCustomExercises = it))
+                                        }
                                     )
                                 }
                             }
-                        },
-                        label = { Text(text = stringResource(id = R.string.search_exercise_field)) },
-                        singleLine = true,
-                        colors = TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        )
-                    )
+                        }
+                    }
                 }
-            }
-
-            // Card to let the user filter the exercises list
-            item {
-                FiltersCard(
-                    isFilterExpanded = isFilterExpanded,
-                    updateCardExpansion = { isFilterExpanded = !isFilterExpanded },
-                    updateFilter = updateFilter,
-                    filterValue = filterValue
-                )
             }
 
             if (filteredExerciseList.isEmpty()) {
@@ -266,6 +393,105 @@ private fun SharedTransitionScope.ExercisesScreenContent(
                     isSelected = exercise.id in selectedExercisesIdList,
                     onInfo = { navigateToInfoExercise(exercise.toEntity()) }
                 )
+            }
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ItemFilter(
+    pair: Pair<List<ExerciseProperty?>, KClass<out ExerciseProperty>>,
+    update: (FilterValue) -> Unit,
+    value: FilterValue
+) {
+    val options: List<ExerciseProperty?> = pair.first
+
+    val enumType = pair.second
+
+    val propertyFilterValue: ExerciseProperty? = when (enumType) {
+        Level::class -> value.level
+        Force::class -> value.force
+        Mechanic::class -> value.mechanic
+        Muscle::class -> value.muscles
+        Equipment::class -> value.equipment
+        Category::class -> value.category
+        else -> null
+    }
+
+    var expanded by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier.width(150.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(
+                id = when (enumType) {
+                    Level::class -> R.string.level
+                    Force::class -> R.string.force
+                    Mechanic::class -> R.string.mechanic
+                    Muscle::class -> R.string.muscles
+                    Equipment::class -> R.string.equipment
+                    Category::class -> R.string.category
+                    else -> R.string.any
+                }
+            )
+        )
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+        ) {
+            OutlinedTextField(
+                shape = MaterialTheme.shapes.large,
+                readOnly = true,
+                value = stringResource(exerciseEnumToStringId(propertyFilterValue)),
+                onValueChange = {},
+                singleLine = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                options.forEach { enum ->
+                    DropdownMenuItem(
+                        onClick = {
+                            when (enumType) {
+                                Force::class -> update(value.copy(force = enum as Force?))
+                                Level::class -> update(value.copy(level = enum as Level?))
+                                Mechanic::class -> update(value.copy(mechanic = enum as Mechanic?))
+                                Muscle::class -> update(value.copy(muscles = enum as Muscle?))
+                                Equipment::class -> update(value.copy(equipment = enum as Equipment?))
+                                Category::class -> update(value.copy(category = enum as Category?))
+                                else -> {}
+                            }
+                            expanded = false
+                        },
+                        text = {
+                            Text(
+                                text = stringResource(exerciseEnumToStringId(enum))
+                            )
+                        },
+                        trailingIcon = if (propertyFilterValue == enum) {
+                            {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_check),
+                                    contentDescription = stringResource(R.string.checkbox)
+                                )
+                            }
+                        } else null,
+                        modifier = Modifier.background(
+                            if (propertyFilterValue == enum) MaterialTheme.colorScheme.inversePrimary
+                                .copy(0.3f) else Color.Unspecified
+                        )
+                    )
+                }
             }
         }
     }
@@ -368,7 +594,7 @@ private fun SharedTransitionScope.ItemExerciseDC(
 
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-@Preview(device = "id:medium_phone")
+@Preview
 @Composable
 private fun ExercisesScreenPreview() {
     var query by remember { mutableStateOf("running") }
