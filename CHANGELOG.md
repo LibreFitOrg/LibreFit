@@ -20,8 +20,9 @@ This was a big update with a lot of refactoring and performance improvements.
 
 ### Changed
 
-- Modernize bottom navigation bar to Material Design 3 Expressive [#172](https://github.com/LibreFitOrg/LibreFit/pull/172)
+- Modernize search bar in exercises screen to Material Design 3 Expressive [#191](https://github.com/LibreFitOrg/LibreFit/pull/191)
 - Sticky header disappears on scroll down and reappears immediately on scroll up [#189](https://github.com/LibreFitOrg/LibreFit/pull/189)
+- Modernize bottom navigation bar to Material Design 3 Expressive [#172](https://github.com/LibreFitOrg/LibreFit/pull/172)
 
 ### Deprecated
 
