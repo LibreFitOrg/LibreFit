@@ -41,10 +41,13 @@ import androidx.compose.ui.unit.dp
  * @param startEndPadding The padding applied in the start and in the end of [LazyColumn]
  * @param lazyListState A [LazyListState] to manage the list scroll
  * @param bottomSpacer If `true`, this lazy column will have a [Spacer] of `100.dp` at the bottom.
+ * @param modifier The modifier applied to the inner [LazyColumn], e.g. to attach a
+ * [androidx.compose.ui.input.nestedscroll.NestedScrollConnection] to it.
  * @param content A lambda with receiver of type [LazyListScope] used to populate the lazy list.
  */
 @Composable
 fun LibreFitLazyColumn(
+    modifier: Modifier = Modifier,
     innerPadding: PaddingValues = PaddingValues(),
     verticalSpacing: Dp = 15.dp,
     startEndPadding: Dp = 15.dp,
@@ -60,7 +63,7 @@ fun LibreFitLazyColumn(
         //Apply padding only when width is greater than 600.dp (so when screen orientation is landscape)
         val optionalPadding = if (maxWidth < threshold.dp) 0f else (maxWidth.value - threshold) / 2
         LazyColumn(
-            modifier = Modifier.consumeWindowInsets(innerPadding),
+            modifier = modifier.consumeWindowInsets(innerPadding),
             contentPadding = PaddingValues(
                 top = innerPadding.calculateTopPadding(),
                 start = innerPadding.calculateLeftPadding(LayoutDirection.Ltr) + optionalPadding.dp

@@ -119,7 +119,7 @@ private fun SharedTransitionScope.CalendarScreenContent(
         title = AnnotatedString(stringResource(R.string.calendar)),
         navigateBack = onNavigateBack
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding = innerPadding) {
             item {
                 DatePicker(
                     modifier = Modifier.clip(MaterialTheme.shapes.large),

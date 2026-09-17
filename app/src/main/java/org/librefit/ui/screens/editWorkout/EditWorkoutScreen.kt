@@ -276,7 +276,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
         fabDescription = stringResource(R.string.add_exercise),
         fabText = stringResource(R.string.add_exercise),
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding, lazyListState = lazyListState) {
+        LibreFitLazyColumn(innerPadding = innerPadding, lazyListState = lazyListState) {
             item {
                 OutlinedTextField(
                     shape = MaterialTheme.shapes.large,

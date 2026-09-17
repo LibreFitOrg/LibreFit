@@ -204,7 +204,7 @@ private fun SharedTransitionScope.InfoWorkoutScreenContent(
         ),
         actionsElevated = persistentListOf(false, false)
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding = innerPadding) {
             item {
                 ElevatedCard(
                     shape = MaterialTheme.shapes.extraLarge,

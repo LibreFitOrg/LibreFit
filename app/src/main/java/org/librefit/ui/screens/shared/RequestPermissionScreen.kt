@@ -187,7 +187,7 @@ private fun RequestPermissionsScreenContent(
     LibreFitScaffold(
         navigateBack = navigateBack
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding, 30.dp) {
+        LibreFitLazyColumn(innerPadding = innerPadding, verticalSpacing = 30.dp) {
             item {
                 Column(
                     modifier = Modifier.fillMaxWidth(),

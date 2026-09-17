@@ -276,7 +276,7 @@ private fun MeasurementScreenContent(
         title = AnnotatedString(stringResource(R.string.measurements)),
         navigateBack = navigateBack
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding, lazyListState = lazyListState) {
+        LibreFitLazyColumn(innerPadding = innerPadding, lazyListState = lazyListState) {
             item {
                 LibreFitCartesianChart(
                     decimalCount = when (measurementChart) {

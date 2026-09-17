@@ -59,7 +59,7 @@ fun LicenseScreen(navigateBack: () -> Unit) {
         title = AnnotatedString(stringResource(id = R.string.license)),
         navigateBack = navigateBack,
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding = innerPadding) {
 
             item {
                 MarkdownText(noticeText.value)
