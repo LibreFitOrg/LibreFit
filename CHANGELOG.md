@@ -7,24 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-This was a big update with a lot of refactoring and performance improvements.
-
 ### Added
 
-- French 🇫🇷 [#180](https://github.com/LibreFitOrg/LibreFit/pull/180)
-- New buttons to speed up scroll wheel input [#181](https://github.com/LibreFitOrg/LibreFit/pull/181)
-- Barbell plate calculator based on target weight [#15](https://github.com/LibreFitOrg/LibreFit/issues/15)
-- Quick setup in welcome screen [#185](https://github.com/LibreFitOrg/LibreFit/pull/185)
-- Reordering of routines in home screen [#68](https://github.com/LibreFitOrg/LibreFit/issues/68)
-- Auto-fill weight inputs with the last saved measurement (defaults to 60 kg) [#164](https://github.com/LibreFitOrg/LibreFit/issues/164)
-- Option to open settings from the Android system Settings app [#184](https://github.com/LibreFitOrg/LibreFit/pull/184)
+-
 
 ### Changed
 
-- Modernize search bar design in exercises screen to M3 Expressive [#191](https://github.com/LibreFitOrg/LibreFit/pull/191)
-- Modernize dropdown menus to M3 Expressive [#192](https://github.com/LibreFitOrg/LibreFit/pull/192)
-- Sticky header disappears on scroll down and reappears immediately on scroll up [#189](https://github.com/LibreFitOrg/LibreFit/pull/189)
-- Modernize bottom navigation bar to Material Design 3 Expressive [#172](https://github.com/LibreFitOrg/LibreFit/pull/172)
+-
 
 ### Deprecated
 
@@ -36,9 +25,39 @@ This was a big update with a lot of refactoring and performance improvements.
 
 ### Fixed
 
-- Crash when switching to chinese language [#154](https://github.com/LibreFitOrg/LibreFit/issues/154)
-- Weight display issue in exercise details screen [#176](https://github.com/LibreFitOrg/LibreFit/pull/176)
-- Edge to edge display implementation [#100](https://github.com/LibreFitOrg/LibreFit/issues/100)
+-
+
+## [0.5.0] - 2026-09-18
+
+This release focuses on streamlining the workout experience with faster data entry tools and a modernized, more intuitive interface. Hope you enjoy
+it!
+
+|                                                           Scroll Wheel Buttons                                                           |                                                                  Search & Menus                                                                  |                                                         Welcome Screen                                                          |                                                            Barbell Calc                                                             |
+|:----------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------:|
+| <img width="100%" alt="buttons in scroll whell" src="https://github.com/user-attachments/assets/ef1a6206-e07d-4155-be9d-ba571bfdd6d6" /> | <img width="100%" alt="expressive search bar and menus" src="https://github.com/user-attachments/assets/3c3bfec1-cf11-473b-8edd-e03feeddb0c4" /> | <img width="100%" alt="welcome screen" src="https://github.com/user-attachments/assets/0d87df9a-01df-491f-9a80-6d168ddecf76" /> | <img width="100%" alt="barbell calculator" src="https://github.com/user-attachments/assets/fafafb48-efa1-4d0f-92c2-0bdb841f3c02" /> |
+
+### Added
+
+- French language support 🇫🇷 [#180](https://github.com/LibreFitOrg/LibreFit/pull/180)
+- New buttons for faster scroll wheel input [#181](https://github.com/LibreFitOrg/LibreFit/pull/181)
+- Barbell plate calculator to quickly determine plate loads based on target weight [#15](https://github.com/LibreFitOrg/LibreFit/issues/15)
+- Quick setup in welcome screen [#185](https://github.com/LibreFitOrg/LibreFit/pull/185)
+- Reordering of routines in home screen [#68](https://github.com/LibreFitOrg/LibreFit/issues/68)
+- Smart auto-fill for weight inputs based on the last saved measurement [#164](https://github.com/LibreFitOrg/LibreFit/issues/164)
+- Option to open settings from the Android system Settings app [#184](https://github.com/LibreFitOrg/LibreFit/pull/184)
+
+### Changed
+
+- Modernize search bar design in exercises screen to Material Expressive [#191](https://github.com/LibreFitOrg/LibreFit/pull/191)
+- Modernize dropdown menus to Material Expressive [#192](https://github.com/LibreFitOrg/LibreFit/pull/192)
+- Sticky header disappears on scroll down and reappears immediately on scroll up [#189](https://github.com/LibreFitOrg/LibreFit/pull/189)
+- Modernize bottom navigation bar to Material Expressive [#172](https://github.com/LibreFitOrg/LibreFit/pull/172)
+
+### Fixed
+
+- Fixed a crash occurring when switching the app language to Chinese [#154](https://github.com/LibreFitOrg/LibreFit/issues/154)
+- Corrected weight display issues on the exercise details screen [#176](https://github.com/LibreFitOrg/LibreFit/pull/176)
+- Fixed edge-to-edge display issues for a true full-screen experience [#100](https://github.com/LibreFitOrg/LibreFit/issues/100)
 
 ## [0.4.1] - 2026-07-28
 
@@ -144,7 +163,9 @@ Thank you for your support!
 
 First public release. Bugs are expected! Report them so they can be fixed.
 
-[Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.5.0...HEAD
+
+[0.5.0]: https://github.com/LibreFitOrg/LibreFit/compare/v0.4.1...v0.5.0
 
 [0.4.1]: https://github.com/LibreFitOrg/LibreFit/compare/v0.4.0...v0.4.1
 
