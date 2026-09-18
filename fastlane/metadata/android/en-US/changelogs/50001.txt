@@ -1,0 +1,18 @@
+✨ Added
+- French language support 🇫🇷
+- New buttons for faster scroll wheel input
+- Barbell plate calculator to quickly determine plate loads based on target weight
+- Quick setup in welcome screen
+- Smart auto-fill for weight inputs based on the last saved measurement
+- Option to open settings from the Android system Settings app
+
+🔧 Changed
+- Modernize search bar design in exercises screen to Material Expressive
+- Modernize dropdown menus to Material Expressive
+- Sticky header disappears on scroll down and reappears immediately on scroll up
+- Modernize bottom navigation bar to Material Expressive
+
+🐛 Fixed
+- Fixed a crash occurring when switching the app language to Chinese
+- Corrected weight display issues on the exercise details screen
+- Fixed edge-to-edge display issues for a true full-screen experience
