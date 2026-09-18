@@ -28,11 +28,11 @@ interface WorkoutDao {
     /**
      * Returns a flow that emits a stream of [org.librefit.db.entity.Workout]s filtered by [state]
      */
-    @Query("SELECT * FROM workouts WHERE state = :state ORDER BY created")
+    @Query("SELECT * FROM workouts WHERE state = :state ORDER BY position, created")
     fun getWorkoutsByState(state: WorkoutState): Flow<List<Workout>>
 
     @Transaction
-    @Query("SELECT * FROM workouts WHERE state = :state ORDER BY created")
+    @Query("SELECT * FROM workouts WHERE state = :state ORDER BY position, created")
     fun getWorkoutsWithExercisesAndSetsByState(state: WorkoutState): Flow<List<WorkoutWithExercisesAndSets>>
 
     /**
@@ -57,6 +57,9 @@ interface WorkoutDao {
 
     @Update
     suspend fun updateWorkout(workout: Workout)
+
+    @Update
+    suspend fun updateWorkouts(workouts: List<Workout>)
 
     @Delete
     suspend fun deleteWorkout(workout: Workout)

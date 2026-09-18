@@ -11,6 +11,7 @@ package org.librefit.ui.screens.home
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -18,23 +19,30 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.DropdownMenuGroup
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ShortNavigationBar
 import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
@@ -48,10 +56,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -81,6 +92,8 @@ import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.random.Random
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -142,6 +155,7 @@ fun SharedTransitionScope.HomeScreen(
         deleteRunningWorkout = viewModel::deleteRunningWorkout,
         showKeepAndroidOpen = showKeepAndroidOpen,
         onKeepAndroidOpenCheckboxChange = viewModel::saveKeepOpenAndroidCheckbox,
+        moveRoutine = viewModel::moveRoutine,
         navigateToRoutine = { workoutId ->
             val requestPermission = !hasNotificationPermission && requestPermissionNextTime
 
@@ -165,6 +179,7 @@ private fun SharedTransitionScope.HomeScreenContent(
     onKeepAndroidOpenCheckboxChange: (Boolean) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     deleteRunningWorkout: () -> Unit,
+    moveRoutine: (Int, Int) -> Unit,
     navigateToRoutine: (Long) -> Unit
 ) {
     val showConfirmDeleteRunningWorkoutDialog = rememberSaveable { mutableStateOf(false) }
@@ -217,7 +232,26 @@ private fun SharedTransitionScope.HomeScreenContent(
         )
     }
 
-    LibreFitLazyColumn {
+    val lazyListState = rememberLazyListState()
+    val hapticFeedback = LocalHapticFeedback.current
+    var isReorderingEnabled by rememberSaveable { mutableStateOf(false) }
+
+    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        // Get the actual Workout IDs from the Reorderable keys
+        val fromId = from.key as? Long ?: return@rememberReorderableLazyListState
+        val toId = to.key as? Long ?: return@rememberReorderableLazyListState
+
+        // Find their real indices in domain list
+        val fromListIndex = routines.indexOfFirst { it.id == fromId }
+        val toListIndex = routines.indexOfFirst { it.id == toId }
+
+        if (fromListIndex != -1 && toListIndex != -1) {
+            moveRoutine(fromListIndex, toListIndex)
+            hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+        }
+    }
+
+    LibreFitLazyColumn(lazyListState = lazyListState) {
         item {
             val infiniteTransition = rememberInfiniteTransition()
             val animatedColor by infiniteTransition.animateColor(
@@ -317,58 +351,142 @@ private fun SharedTransitionScope.HomeScreenContent(
             }
         }
 
-        items(routines, key = { it.id }) { routine ->
-            ElevatedCard(
-                onClick = { onNavigateToInfoWorkout(routine.id) },
-                shape = MaterialTheme.shapes.extraLarge,
-                modifier = Modifier
-                    .sharedBounds(
-                        sharedContentState = rememberSharedContentState(routine.id),
-                        animatedVisibilityScope = animatedVisibilityScope
-                    )
-            ) {
-                Column(
+        itemsIndexed(routines, key = { _, e -> e.id }) { _, routine ->
+            ReorderableItem(reorderableLazyListState, key = routine.id) { isDragging ->
+                val elevation by animateDpAsState(
+                    targetValue = if (isDragging) 10.dp else 0.dp,
+                    label = "drag_elevation"
+                )
+                val interactionSource = remember { MutableInteractionSource() }
+
+                ElevatedCard(
+                    onClick = { if (!isReorderingEnabled) onNavigateToInfoWorkout(routine.id) },
+                    interactionSource = interactionSource,
+                    shape = MaterialTheme.shapes.extraLarge,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = routine.title,
-                            style = MaterialTheme.typography.headlineMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.sharedElement(
-                                sharedContentState = rememberSharedContentState(
-                                    routine.id.toString() + routine.title
-                                ),
-                                animatedVisibilityScope = animatedVisibilityScope
-                            )
+                        .animateItem()
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(routine.id),
+                            animatedVisibilityScope = animatedVisibilityScope
                         )
-                        IconButton(
-                            onClick = { onNavigateToInfoWorkout(routine.id) }
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_info),
-                                contentDescription = stringResource(R.string.info)
-                            )
-                        }
-                    }
-                    LibreFitButton(
-                        text = stringResource(R.string.start_routine),
-                        icon = painterResource(R.drawable.ic_play_arrow),
-                        elevated = false
+                        .shadow(
+                            elevation = elevation,
+                            shape = MaterialTheme.shapes.extraLarge
+                        )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(15.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        if (runningWorkout != null) {
-                            routineIdToStart.value = routine.id
-                        } else {
-                            navigateToRoutine(routine.id)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = routine.title,
+                                style = MaterialTheme.typography.headlineMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .sharedElement(
+                                        sharedContentState = rememberSharedContentState(
+                                            routine.id.toString() + routine.title
+                                        ),
+                                        animatedVisibilityScope = animatedVisibilityScope
+                                    )
+                            )
+                            AnimatedContent(
+                                targetState = isReorderingEnabled,
+                                label = "DragHandleTransition"
+                            ) { isReordering ->
+                                if (isReordering) {
+                                    IconButton(
+                                        modifier = Modifier.draggableHandle(
+                                            interactionSource = interactionSource,
+                                            onDragStarted = {
+                                                hapticFeedback.performHapticFeedback(
+                                                    HapticFeedbackType.GestureThresholdActivate
+                                                )
+                                            },
+                                            onDragStopped = {
+                                                isReorderingEnabled = false
+                                                hapticFeedback.performHapticFeedback(
+                                                    HapticFeedbackType.GestureEnd
+                                                )
+                                            }
+                                        ),
+                                        onClick = {}
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_drag_handle),
+                                            contentDescription = stringResource(R.string.reorder)
+                                        )
+                                    }
+                                } else {
+                                    var showMenu by remember { mutableStateOf(false) }
+
+                                    IconButton(
+                                        onClick = { showMenu = true }
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_more_options),
+                                            contentDescription = stringResource(R.string.more_options)
+                                        )
+                                    }
+                                    DropdownMenuPopup(
+                                        expanded = showMenu,
+                                        onDismissRequest = { showMenu = false }
+                                    ) {
+                                        DropdownMenuGroup(
+                                            shapes = MenuDefaults.groupShape(0, 1)
+                                        ) {
+                                            DropdownMenuItem(
+                                                text = { Text(stringResource(R.string.info)) },
+                                                leadingIcon = {
+                                                    Icon(
+                                                        painterResource(R.drawable.ic_info),
+                                                        stringResource(R.string.info)
+                                                    )
+                                                },
+                                                onClick = {
+                                                    onNavigateToInfoWorkout(routine.id)
+                                                    showMenu = false
+                                                }
+                                            )
+                                            DropdownMenuItem(
+                                                text = { Text(stringResource(R.string.reorder)) },
+                                                leadingIcon = {
+                                                    Icon(
+                                                        painterResource(R.drawable.ic_reorder),
+                                                        stringResource(R.string.reorder)
+                                                    )
+                                                },
+                                                onClick = {
+                                                    isReorderingEnabled = true
+                                                    showMenu = false
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        LibreFitButton(
+                            text = stringResource(R.string.start_routine),
+                            icon = painterResource(R.drawable.ic_play_arrow),
+                            elevated = false,
+                            enabled = !isReorderingEnabled
+                        ) {
+                            if (runningWorkout != null) {
+                                routineIdToStart.value = routine.id
+                            } else {
+                                navigateToRoutine(routine.id)
+                            }
                         }
                     }
                 }
@@ -472,6 +590,7 @@ fun HomeScreenPreview() {
                             ),
                             navigateToRoutine = {},
                             deleteRunningWorkout = { runningWorkout.value = null },
+                            moveRoutine = { _, _ -> },
                             animatedVisibilityScope = this
                         )
                     }

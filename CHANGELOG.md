@@ -15,6 +15,7 @@ This was a big update with a lot of refactoring and performance improvements.
 - New buttons to speed up scroll wheel input [#181](https://github.com/LibreFitOrg/LibreFit/pull/181)
 - Barbell plate calculator based on target weight [#15](https://github.com/LibreFitOrg/LibreFit/issues/15)
 - Quick setup in welcome screen [#185](https://github.com/LibreFitOrg/LibreFit/pull/185)
+- Reordering of routines in home screen [#68](https://github.com/LibreFitOrg/LibreFit/issues/68)
 - Auto-fill weight inputs with the last saved measurement (defaults to 60 kg) [#164](https://github.com/LibreFitOrg/LibreFit/issues/164)
 - Option to open settings from the Android system Settings app [#184](https://github.com/LibreFitOrg/LibreFit/pull/184)
 

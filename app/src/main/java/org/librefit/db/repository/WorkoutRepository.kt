@@ -86,6 +86,10 @@ class WorkoutRepository @Inject constructor(
         workoutDao.updateWorkout(workout)
     }
 
+    suspend fun updateWorkoutPositions(workouts: List<Workout>) {
+        workoutDao.updateWorkouts(workouts)
+    }
+
     suspend fun deleteWorkout(workout: Workout) {
         workoutDao.deleteWorkout(workout)
     }

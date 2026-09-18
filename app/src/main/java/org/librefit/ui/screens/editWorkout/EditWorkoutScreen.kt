@@ -14,6 +14,7 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -230,15 +231,17 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
 
     var isReorderingEnabled by rememberSaveable { mutableStateOf(false) }
 
-    val exerciseSectionStartIndex = 3
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
-        val fromExerciseIndex = from.index - exerciseSectionStartIndex
-        val toExerciseIndex = (to.index - exerciseSectionStartIndex)
-            .coerceIn(0, exercisesWithSets.lastIndex)
+        // Get IDs from the dragged keys
+        val fromId = from.key as? Long ?: return@rememberReorderableLazyListState
+        val toId = to.key as? Long ?: return@rememberReorderableLazyListState
 
-        if (fromExerciseIndex in exercisesWithSets.indices && toExerciseIndex in exercisesWithSets.indices) {
-            moveExercise(fromExerciseIndex, toExerciseIndex)
+        // Find their actual positions in your domain list
+        val fromIndex = exercisesWithSets.indexOfFirst { it.exercise.id == fromId }
+        val toIndex = exercisesWithSets.indexOfFirst { it.exercise.id == toId }
 
+        if (fromIndex != -1 && toIndex != -1) {
+            moveExercise(fromIndex, toIndex)
             hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
         }
     }
@@ -343,6 +346,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                     key = { _, e -> e.exercise.id }
                 ) { _, exerciseWithSets ->
                     ReorderableItem(reorderableLazyListState, key = exerciseWithSets.exercise.id) { isDragging ->
+
+                        val interactionSource = remember { MutableInteractionSource() }
                         ExerciseCard(
                             modifier = Modifier.animateItem(),
                             animatedVisibilityScope = animatedVisibilityScope,
@@ -357,6 +362,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                             onDelete = deleteExercise,
                             isCollapsed = isReorderingEnabled,
                             dragHandleModifier = Modifier.draggableHandle(
+                                interactionSource = interactionSource,
                                 onDragStarted = {
                                     hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
                                 },

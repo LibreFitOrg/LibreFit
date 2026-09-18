@@ -8,6 +8,7 @@
 
 package org.librefit.db.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -66,6 +67,7 @@ data class Exercise(
     val notes: String = "",
     val setMode: SetMode = SetMode.LOAD,
     val restTime: Int = 0,
+    @ColumnInfo(defaultValue = "0")
     val position: Int = 0,
     val workoutId: Long = 0// Foreign key reference to Workout
 )

@@ -27,6 +27,7 @@ data class UiWorkout(
     val title: String = "",
     val state: WorkoutState = WorkoutState.COMPLETED,
     val timeElapsed: Int = 0,
+    val position: Int = 0,
     val created: LocalDateTime = LocalDateTime.now(),
     val completed: LocalDateTime = LocalDateTime.now()
 )

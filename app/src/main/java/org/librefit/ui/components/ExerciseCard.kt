@@ -16,6 +16,7 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -219,11 +220,16 @@ fun SharedTransitionScope.ExerciseCard(
 ) {
     val unit = autoUnitSuffix()
 
+    val elevation by animateDpAsState(
+        targetValue = if (isDragging) 10.dp else 0.dp,
+        label = "drag_elevation"
+    )
+
     var showMenu by rememberSaveable { mutableStateOf(false) }
     val shape = MaterialTheme.shapes.extraLarge
     ElevatedCard(
         modifier = modifier.shadow(
-            elevation = if (isDragging) 10.dp else 0.dp,
+            elevation = elevation,
             shape = shape
         ),
         shape = shape

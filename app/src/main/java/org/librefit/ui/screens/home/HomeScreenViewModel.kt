@@ -11,15 +11,19 @@ package org.librefit.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.librefit.db.entity.Workout
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
+import org.librefit.ui.models.moveWorkout
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,7 +33,17 @@ class HomeScreenViewModel @Inject constructor(
 ) : ViewModel() {
     val requestPermissionNextTime: StateFlow<Boolean> = userPreferences.requestPermissionsNextTime
 
-    val routines = workoutRepository.routines
+
+    init {
+        viewModelScope.launch {
+            workoutRepository.routines.collect { newValue ->
+                _routines.value = newValue
+            }
+        }
+    }
+
+    val _routines = MutableStateFlow<List<Workout>>(emptyList())
+    val routines = _routines.asStateFlow()
         .map { list -> list.map { it.toUi() } }
         .stateIn(
             scope = viewModelScope,
@@ -59,6 +73,17 @@ class HomeScreenViewModel @Inject constructor(
             runningWorkout.value?.let {
                 workoutRepository.deleteWorkout(it.toEntity())
             }
+        }
+    }
+
+    fun moveRoutine(fromIndex: Int, toIndex: Int) {
+        val currentRoutines = routines.value
+        val reordered = currentRoutines.moveWorkout(fromIndex, toIndex)
+
+        _routines.value = reordered.map { it.toEntity() }
+
+        viewModelScope.launch {
+            workoutRepository.updateWorkoutPositions(reordered.map { it.toEntity() })
         }
     }
 
