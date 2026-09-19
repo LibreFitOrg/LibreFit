@@ -289,4 +289,9 @@
     <string name="undo">Отменить</string>
     <string name="clear">Очистить</string>
     <string name="add_exercise">Добавить упражнение</string>
+    <string name="about">О приложении</string>
+    <string name="home">Главная</string>
+    <string name="contributed_to">Внесли вклад в:</string>
+    <string name="tutorial_desc">Научитесь создавать программы и отслеживать тренировки.</string>
+    <string name="unlink_routine_question">Отвязать программу?</string>
 </resources>
