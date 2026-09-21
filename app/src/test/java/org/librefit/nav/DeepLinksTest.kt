@@ -9,8 +9,9 @@
 package org.librefit.nav
 
 import android.content.Intent
-import com.google.common.truth.Truth.assertThat
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 /**
  * Unit tests for [deepLinkKeyForAction], the pure mapper binding system-originated intent
@@ -20,23 +21,25 @@ class DeepLinksTest {
 
     @Test
     fun `deepLinkKeyForAction maps the application preferences action to the settings screen`() {
-        assertThat(Intent.ACTION_APPLICATION_PREFERENCES.deepLinkKeyForAction())
-            .isEqualTo(Route.SettingsScreen)
+        assertEquals(
+            Route.SettingsScreen,
+            Intent.ACTION_APPLICATION_PREFERENCES.deepLinkKeyForAction()
+        )
     }
 
     @Test
     fun `deepLinkKeyForAction ignores the launcher main action`() {
-        assertThat(Intent.ACTION_MAIN.deepLinkKeyForAction()).isNull()
+        assertNull(Intent.ACTION_MAIN.deepLinkKeyForAction())
     }
 
     @Test
     fun `deepLinkKeyForAction ignores unknown actions`() {
-        assertThat("com.example.UNKNOWN_ACTION".deepLinkKeyForAction()).isNull()
+        assertNull("com.example.UNKNOWN_ACTION".deepLinkKeyForAction())
     }
 
     @Test
     fun `deepLinkKeyForAction ignores a null action`() {
         val action: String? = null
-        assertThat(action.deepLinkKeyForAction()).isNull()
+        assertNull(action.deepLinkKeyForAction())
     }
 }

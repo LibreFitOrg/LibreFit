@@ -8,8 +8,9 @@
 
 package org.librefit.ui.models
 
-import com.google.common.truth.Truth.assertThat
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 class WorkoutOrderTest {
 
@@ -23,15 +24,15 @@ class WorkoutOrderTest {
     fun `moveWorkout reorders list and rewrites positions`() {
         val reordered = routines.moveWorkout(fromIndex = 0, toIndex = 2)
 
-        assertThat(reordered.map { it.id }).containsExactly(22L, 33L, 11L).inOrder()
-        assertThat(reordered.map { it.position }).containsExactly(0, 1, 2).inOrder()
+        assertContentEquals(listOf(22L, 33L, 11L), reordered.map { it.id })
+        assertContentEquals(listOf(0, 1, 2), reordered.map { it.position })
     }
 
     @Test
     fun `moveWorkout ignores invalid indices`() {
         val reordered = routines.moveWorkout(fromIndex = -1, toIndex = 2)
 
-        assertThat(reordered).isEqualTo(routines)
+        assertEquals(routines, reordered)
     }
 
     @Test
@@ -41,7 +42,7 @@ class WorkoutOrderTest {
             UiWorkout(id = 11L, position = 44)
         ).withNormalizedWorkoutPositions()
 
-        assertThat(normalized.map { it.id }).containsExactly(22L, 11L).inOrder()
-        assertThat(normalized.map { it.position }).containsExactly(0, 1).inOrder()
+        assertContentEquals(listOf(22L, 11L), normalized.map { it.id })
+        assertContentEquals(listOf(0, 1), normalized.map { it.position })
     }
 }

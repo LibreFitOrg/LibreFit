@@ -8,11 +8,9 @@
 
 package org.librefit.di
 
-import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import org.junit.Test
 import org.koin.core.qualifier.StringQualifier
 import org.koin.core.qualifier.named
 import org.koin.dsl.koinApplication
@@ -21,6 +19,10 @@ import org.librefit.di.qualifiers.ApplicationScope
 import org.librefit.di.qualifiers.DefaultDispatcher
 import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.di.qualifiers.MainDispatcher
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertSame
 
 /**
  * Runtime guard for the Koin container: actually starts the module graph and resolves the
@@ -42,8 +44,10 @@ class KoinRuntimeResolutionTest {
     fun `main dispatcher resolves when dispatcherModule is registered directly`() {
         val application = koinApplication { modules(dispatcherModule) }
         try {
-            assertThat(application.koin.get<CoroutineDispatcher>(named<MainDispatcher>()))
-                .isSameInstanceAs(Dispatchers.Main)
+            assertSame(
+                Dispatchers.Main,
+                application.koin.get<CoroutineDispatcher>(named<MainDispatcher>())
+            )
         } finally {
             application.close()
         }
@@ -57,7 +61,7 @@ class KoinRuntimeResolutionTest {
         }
         val application = koinApplication { modules(controlModule) }
         try {
-            assertThat(application.koin.get<String>(qualifier)).isEqualTo("control-value")
+            assertEquals("control-value", application.koin.get<String>(qualifier))
         } finally {
             application.close()
         }
@@ -67,7 +71,7 @@ class KoinRuntimeResolutionTest {
     fun `application scope resolves from libreFitModules`() {
         val application = koinApplication { modules(libreFitModules) }
         try {
-            assertThat(application.koin.get<CoroutineScope>(named<ApplicationScope>())).isNotNull()
+            assertNotNull(application.koin.get<CoroutineScope>(named<ApplicationScope>()))
         } finally {
             application.close()
         }
@@ -77,8 +81,10 @@ class KoinRuntimeResolutionTest {
     fun `io dispatcher resolves from libreFitModules`() {
         val application = koinApplication { modules(libreFitModules) }
         try {
-            assertThat(application.koin.get<CoroutineDispatcher>(named<IoDispatcher>()))
-                .isSameInstanceAs(Dispatchers.IO)
+            assertSame(
+                Dispatchers.IO,
+                application.koin.get<CoroutineDispatcher>(named<IoDispatcher>())
+            )
         } finally {
             application.close()
         }
@@ -88,8 +94,10 @@ class KoinRuntimeResolutionTest {
     fun `default dispatcher resolves from libreFitModules`() {
         val application = koinApplication { modules(libreFitModules) }
         try {
-            assertThat(application.koin.get<CoroutineDispatcher>(named<DefaultDispatcher>()))
-                .isSameInstanceAs(Dispatchers.Default)
+            assertSame(
+                Dispatchers.Default,
+                application.koin.get<CoroutineDispatcher>(named<DefaultDispatcher>())
+            )
         } finally {
             application.close()
         }
@@ -99,8 +107,10 @@ class KoinRuntimeResolutionTest {
     fun `main dispatcher resolves from libreFitModules`() {
         val application = koinApplication { modules(libreFitModules) }
         try {
-            assertThat(application.koin.get<CoroutineDispatcher>(named<MainDispatcher>()))
-                .isSameInstanceAs(Dispatchers.Main)
+            assertSame(
+                Dispatchers.Main,
+                application.koin.get<CoroutineDispatcher>(named<MainDispatcher>())
+            )
         } finally {
             application.close()
         }
@@ -114,8 +124,10 @@ class KoinRuntimeResolutionTest {
         }
         val application = koinApplication { modules(consumerModule) }
         try {
-            assertThat(application.koin.get<MainDispatcherConsumer>().mainDispatcher)
-                .isSameInstanceAs(Dispatchers.Main)
+            assertSame(
+                Dispatchers.Main,
+                application.koin.get<MainDispatcherConsumer>().mainDispatcher
+            )
         } finally {
             application.close()
         }

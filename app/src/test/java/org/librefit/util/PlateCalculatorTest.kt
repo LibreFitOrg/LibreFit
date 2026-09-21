@@ -8,10 +8,13 @@
 
 package org.librefit.util
 
-import com.google.common.truth.Truth.assertThat
-import org.junit.Test
 import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.models.Weight
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class PlateCalculatorTest {
 
@@ -27,10 +30,11 @@ class PlateCalculatorTest {
         )
 
         // 40 kg per side: greedy largest-first with a 15 kg plate available → 25 + 15
-        assertThat(breakdown.platesPerSide)
-            .containsExactly(Weight.kilograms(25.0), 1, Weight.kilograms(15.0), 1)
-            .inOrder()
-        assertThat(breakdown.remainder.inKilograms).isWithin(1e-9).of(0.0)
+        assertEquals(
+            mapOf(Weight.kilograms(25.0) to 1, Weight.kilograms(15.0) to 1),
+            breakdown.platesPerSide
+        )
+        assertEquals(0.0, breakdown.remainder.inKilograms, absoluteTolerance = 1e-9)
     }
 
     @Test
@@ -42,8 +46,8 @@ class PlateCalculatorTest {
         )
 
         // 50 kg per side: 2x25
-        assertThat(breakdown.platesPerSide).containsExactly(Weight.kilograms(25.0), 2)
-        assertThat(breakdown.remainder.inKilograms).isWithin(1e-9).of(0.0)
+        assertEquals(mapOf(Weight.kilograms(25.0) to 2), breakdown.platesPerSide)
+        assertEquals(0.0, breakdown.remainder.inKilograms, absoluteTolerance = 1e-9)
     }
 
     @Test
@@ -55,8 +59,8 @@ class PlateCalculatorTest {
         )
 
         // 15 kg per side: the 15 kg plate fits exactly
-        assertThat(breakdown.platesPerSide).containsExactly(Weight.kilograms(15.0), 1)
-        assertThat(breakdown.remainder.inKilograms).isWithin(1e-9).of(0.0)
+        assertEquals(mapOf(Weight.kilograms(15.0) to 1), breakdown.platesPerSide)
+        assertEquals(0.0, breakdown.remainder.inKilograms, absoluteTolerance = 1e-9)
     }
 
     @Test
@@ -69,8 +73,8 @@ class PlateCalculatorTest {
         )
 
         // 20.005 kg per side: 25 doesn't fit, 20 fits, remainder 0.005 rounds to 0.01
-        assertThat(breakdown.platesPerSide).containsExactly(Weight.kilograms(20.0), 1)
-        assertThat(breakdown.remainder.inKilograms).isWithin(1e-9).of(0.01)
+        assertEquals(mapOf(Weight.kilograms(20.0) to 1), breakdown.platesPerSide)
+        assertEquals(0.01, breakdown.remainder.inKilograms, absoluteTolerance = 1e-9)
     }
 
     @Test
@@ -86,10 +90,10 @@ class PlateCalculatorTest {
             availablePlates = metricPlates
         )
 
-        assertThat(belowBar.platesPerSide).isEmpty()
-        assertThat(belowBar.remainder.inKilograms).isWithin(1e-9).of(0.0)
-        assertThat(equalToBar.platesPerSide).isEmpty()
-        assertThat(equalToBar.remainder.inKilograms).isWithin(1e-9).of(0.0)
+        assertTrue(belowBar.platesPerSide.isEmpty())
+        assertEquals(0.0, belowBar.remainder.inKilograms, absoluteTolerance = 1e-9)
+        assertTrue(equalToBar.platesPerSide.isEmpty())
+        assertEquals(0.0, equalToBar.remainder.inKilograms, absoluteTolerance = 1e-9)
     }
 
     @Test
@@ -101,9 +105,11 @@ class PlateCalculatorTest {
         )
 
         // 16.25 kg per side: 15 + 1.25
-        assertThat(breakdown.platesPerSide)
-            .containsExactly(Weight.kilograms(15.0), 1, Weight.kilograms(1.25), 1)
-        assertThat(breakdown.remainder.inKilograms).isWithin(1e-9).of(0.0)
+        assertEquals(
+            mapOf(Weight.kilograms(15.0) to 1, Weight.kilograms(1.25) to 1),
+            breakdown.platesPerSide
+        )
+        assertEquals(0.0, breakdown.remainder.inKilograms, absoluteTolerance = 1e-9)
     }
 
     @Test
@@ -113,9 +119,10 @@ class PlateCalculatorTest {
             unitSystem = UnitSystem.METRIC
         )
 
-        assertThat(withoutSmall.map { it.inKilograms })
-            .containsExactly(25.0, 20.0, 15.0, 10.0, 5.0, 2.5)
-            .inOrder()
+        assertContentEquals(
+            listOf(25.0, 20.0, 15.0, 10.0, 5.0, 2.5),
+            withoutSmall.map { it.inKilograms }
+        )
     }
 
     @Test
@@ -125,7 +132,7 @@ class PlateCalculatorTest {
             unitSystem = UnitSystem.METRIC
         )
 
-        assertThat(withSmall).hasSize(metricPlates.size)
+        assertEquals(metricPlates.size, withSmall.size)
     }
 
     @Test
@@ -137,8 +144,8 @@ class PlateCalculatorTest {
         )
 
         // 16.25 kg per side: 15 fits, remainder 1.25 has no plate (small plates excluded)
-        assertThat(breakdown.platesPerSide).containsExactly(Weight.kilograms(15.0), 1)
-        assertThat(breakdown.remainder.inKilograms).isWithin(1e-9).of(1.25)
+        assertEquals(mapOf(Weight.kilograms(15.0) to 1), breakdown.platesPerSide)
+        assertEquals(1.25, breakdown.remainder.inKilograms, absoluteTolerance = 1e-9)
     }
 
     @Test
@@ -154,8 +161,8 @@ class PlateCalculatorTest {
             availablePlates = metricPlates
         )
 
-        assertThat(imperialBreakdown.platesPerSide).isEqualTo(metricBreakdown.platesPerSide)
-        assertThat(imperialBreakdown.remainder).isEqualTo(metricBreakdown.remainder)
+        assertEquals(metricBreakdown.platesPerSide, imperialBreakdown.platesPerSide)
+        assertEquals(metricBreakdown.remainder, imperialBreakdown.remainder)
     }
 
     @Test
@@ -167,18 +174,18 @@ class PlateCalculatorTest {
         )
 
         // 90 lb per side: 2x45
-        assertThat(breakdown.platesPerSide).containsExactly(Weight.pounds(45.0), 2)
-        assertThat(breakdown.remainder.inKilograms).isWithin(1e-9).of(0.0)
+        assertEquals(mapOf(Weight.pounds(45.0) to 2), breakdown.platesPerSide)
+        assertEquals(0.0, breakdown.remainder.inKilograms, absoluteTolerance = 1e-9)
     }
 
     @Test
     fun `isSmallPlate classifies fractional plates per unit system`() {
-        assertThat(Weight.kilograms(1.25).isSmallPlate(UnitSystem.METRIC)).isTrue()
-        assertThat(Weight.kilograms(0.5).isSmallPlate(UnitSystem.METRIC)).isTrue()
-        assertThat(Weight.kilograms(0.25).isSmallPlate(UnitSystem.METRIC)).isTrue()
-        assertThat(Weight.kilograms(2.5).isSmallPlate(UnitSystem.METRIC)).isFalse()
-        assertThat(Weight.pounds(1.25).isSmallPlate(UnitSystem.IMPERIAL)).isTrue()
-        assertThat(Weight.pounds(2.5).isSmallPlate(UnitSystem.IMPERIAL)).isFalse()
+        assertTrue(Weight.kilograms(1.25).isSmallPlate(UnitSystem.METRIC))
+        assertTrue(Weight.kilograms(0.5).isSmallPlate(UnitSystem.METRIC))
+        assertTrue(Weight.kilograms(0.25).isSmallPlate(UnitSystem.METRIC))
+        assertFalse(Weight.kilograms(2.5).isSmallPlate(UnitSystem.METRIC))
+        assertTrue(Weight.pounds(1.25).isSmallPlate(UnitSystem.IMPERIAL))
+        assertFalse(Weight.pounds(2.5).isSmallPlate(UnitSystem.IMPERIAL))
     }
 
     @Test
@@ -190,17 +197,19 @@ class PlateCalculatorTest {
         )
 
         // 41.88 kg per side: 25 + 15 + 1.25 + 0.5 = 41.75 loaded, ~0.13 kg leftover
-        assertThat(breakdown.remainder.inKilograms).isWithin(1e-9).of(0.13)
+        assertEquals(0.13, breakdown.remainder.inKilograms, absoluteTolerance = 1e-9)
 
         // The achievable total must derive from the unrounded leftover (bar + loaded mass),
         // never from the rounded remainder (103.76 - 2 x 0.13 = 103.5 happens to agree here,
         // but the invariant below rules out any remainder-based derivation).
-        assertThat(breakdown.closestAchievable.inKilograms).isWithin(1e-9).of(103.5)
+        assertEquals(103.5, breakdown.closestAchievable.inKilograms, absoluteTolerance = 1e-9)
         val loadedPerSideKg = breakdown.platesPerSide.entries
             .sumOf { (plate, count) -> plate.inKilograms * count }
-        assertThat(breakdown.closestAchievable.inKilograms)
-            .isWithin(1e-9)
-            .of(2 * loadedPerSideKg + 20.0)
+        assertEquals(
+            2 * loadedPerSideKg + 20.0,
+            breakdown.closestAchievable.inKilograms,
+            absoluteTolerance = 1e-9
+        )
     }
 
     @Test
@@ -213,7 +222,7 @@ class PlateCalculatorTest {
 
         // 225 lb is exactly achievable (bar + 2 x 45 lb per side); the kg<->lb round trip
         // introduces ~1e-14 lb of float noise that must not surface in the result.
-        assertThat(breakdown.remainder.inKilograms).isWithin(1e-9).of(0.0)
-        assertThat(breakdown.closestAchievable.inPounds).isWithin(1e-9).of(225.0)
+        assertEquals(0.0, breakdown.remainder.inKilograms, absoluteTolerance = 1e-9)
+        assertEquals(225.0, breakdown.closestAchievable.inPounds, absoluteTolerance = 1e-9)
     }
 }

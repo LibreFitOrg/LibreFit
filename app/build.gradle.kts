@@ -147,15 +147,19 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     // Unit test
-    testImplementation(libs.junit)
+    // kotlin-test-junit: multiplatform kotlin-test API compiled onto the JUnit 4 runner;
+    // brings kotlin-test + junit transitively. Explicit artifact because AGP built-in Kotlin
+    // does not drive kotlin-test's framework-variant auto-selection.
+    testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.androidx.truth)
     testImplementation(libs.turbine)
     testImplementation(libs.mockk.android)
     testImplementation(libs.mockk.agent)
     testImplementation(libs.koin.test)
 
     // Instrumented test
+    // kotlin-test-junit compiles kotlin.test annotations to JUnit 4 for AndroidJUnitRunner
+    androidTestImplementation(libs.kotlin.test.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

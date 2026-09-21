@@ -8,9 +8,9 @@
 
 package org.librefit.ui.models
 
-import com.google.common.truth.Truth.assertThat
 import kotlinx.collections.immutable.toImmutableList
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class InputModalBottomSheetStateTest {
 
@@ -22,8 +22,8 @@ class InputModalBottomSheetStateTest {
 
         val stepped = state.steppedBy(30)
 
-        assertThat(stepped.minutes).isEqualTo(1)
-        assertThat(stepped.seconds).isEqualTo(20)
+        assertEquals(1, stepped.minutes)
+        assertEquals(20, stepped.seconds)
     }
 
     @Test
@@ -32,8 +32,8 @@ class InputModalBottomSheetStateTest {
 
         val stepped = state.steppedBy(-30)
 
-        assertThat(stepped.minutes).isEqualTo(0)
-        assertThat(stepped.seconds).isEqualTo(35)
+        assertEquals(0, stepped.minutes)
+        assertEquals(35, stepped.seconds)
     }
 
     @Test
@@ -42,8 +42,10 @@ class InputModalBottomSheetStateTest {
 
         val stepped = state.steppedBy(-30)
 
-        assertThat(stepped)
-            .isEqualTo(InputModalBottomSheetState.MinutesSeconds(minutes = 0, seconds = 0))
+        assertEquals(
+            InputModalBottomSheetState.MinutesSeconds(minutes = 0, seconds = 0),
+            stepped
+        )
     }
 
     @Test
@@ -52,8 +54,10 @@ class InputModalBottomSheetStateTest {
 
         val stepped = state.steppedBy(30)
 
-        assertThat(stepped)
-            .isEqualTo(InputModalBottomSheetState.MinutesSeconds(minutes = 59, seconds = 59))
+        assertEquals(
+            InputModalBottomSheetState.MinutesSeconds(minutes = 59, seconds = 59),
+            stepped
+        )
     }
 
     @Test
@@ -62,7 +66,7 @@ class InputModalBottomSheetStateTest {
 
         val stepped = state.steppedBy(0)
 
-        assertThat(stepped).isEqualTo(state)
+        assertEquals(state, stepped)
     }
 
     // ---------- HoursMinutesSeconds ----------
@@ -74,9 +78,9 @@ class InputModalBottomSheetStateTest {
 
         val stepped = state.steppedBy(30)
 
-        assertThat(stepped.hours).isEqualTo(1)
-        assertThat(stepped.minutes).isEqualTo(0)
-        assertThat(stepped.seconds).isEqualTo(20)
+        assertEquals(1, stepped.hours)
+        assertEquals(0, stepped.minutes)
+        assertEquals(20, stepped.seconds)
     }
 
     @Test
@@ -86,14 +90,14 @@ class InputModalBottomSheetStateTest {
 
         val stepped = state.steppedBy(-30)
 
-        assertThat(stepped)
-            .isEqualTo(
-                InputModalBottomSheetState.HoursMinutesSeconds(
-                    hours = 0,
-                    minutes = 0,
-                    seconds = 0
-                )
-            )
+        assertEquals(
+            InputModalBottomSheetState.HoursMinutesSeconds(
+                hours = 0,
+                minutes = 0,
+                seconds = 0
+            ),
+            stepped
+        )
     }
 
     @Test
@@ -103,14 +107,14 @@ class InputModalBottomSheetStateTest {
 
         val stepped = state.steppedBy(30)
 
-        assertThat(stepped)
-            .isEqualTo(
-                InputModalBottomSheetState.HoursMinutesSeconds(
-                    hours = 23,
-                    minutes = 59,
-                    seconds = 59
-                )
-            )
+        assertEquals(
+            InputModalBottomSheetState.HoursMinutesSeconds(
+                hours = 23,
+                minutes = 59,
+                seconds = 59
+            ),
+            stepped
+        )
     }
 
     // ---------- Reps ----------
@@ -122,8 +126,8 @@ class InputModalBottomSheetStateTest {
         val incremented = state.steppedBy(5)
         val decremented = state.steppedBy(-5)
 
-        assertThat(incremented.reps).isEqualTo(13)
-        assertThat(decremented.reps).isEqualTo(3)
+        assertEquals(13, incremented.reps)
+        assertEquals(3, decremented.reps)
     }
 
     @Test
@@ -131,8 +135,8 @@ class InputModalBottomSheetStateTest {
         val decremented = InputModalBottomSheetState.Reps(reps = 2).steppedBy(-5)
         val incrementedFromMax = InputModalBottomSheetState.Reps(reps = 997).steppedBy(5)
 
-        assertThat(decremented.reps).isEqualTo(0)
-        assertThat(incrementedFromMax.reps).isEqualTo(999)
+        assertEquals(0, decremented.reps)
+        assertEquals(999, incrementedFromMax.reps)
     }
 
     // ---------- Weight ----------
@@ -143,9 +147,9 @@ class InputModalBottomSheetStateTest {
 
         val stepped = state.steppedBy(10)
 
-        assertThat(stepped.integerWeight).isEqualTo(72)
-        assertThat(stepped.decimalWeight).isEqualTo(30)
-        assertThat(stepped.totalWeight).isWithin(1e-9).of(72.3)
+        assertEquals(72, stepped.integerWeight)
+        assertEquals(30, stepped.decimalWeight)
+        assertEquals(72.3, stepped.totalWeight, absoluteTolerance = 1e-9)
     }
 
     @Test
@@ -154,8 +158,8 @@ class InputModalBottomSheetStateTest {
 
         val stepped = state.steppedBy(-10)
 
-        assertThat(stepped.integerWeight).isEqualTo(0)
-        assertThat(stepped.decimalWeight).isEqualTo(30)
+        assertEquals(0, stepped.integerWeight)
+        assertEquals(30, stepped.decimalWeight)
     }
 
     @Test
@@ -169,6 +173,6 @@ class InputModalBottomSheetStateTest {
 
         val stepped = state.steppedBy(10)
 
-        assertThat(stepped.integerWeight).isEqualTo(15)
+        assertEquals(15, stepped.integerWeight)
     }
 }

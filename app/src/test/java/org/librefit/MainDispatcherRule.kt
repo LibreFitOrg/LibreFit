@@ -14,19 +14,39 @@ import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
 
-@ExperimentalCoroutinesApi
+/**
+ * Replaces [Dispatchers.Main] with a [TestDispatcher] for the duration of a test.
+ *
+ * KMP-portable replacement for the former JUnit 4 `TestWatcher` rule: it carries no
+ * framework-specific base class, so it compiles unchanged once tests move to a common
+ * source set. Wire it up with kotlin-test lifecycle callbacks:
+ *
+ * ```
+ * private val mainDispatcherRule = MainDispatcherRule()
+ *
+ * @BeforeTest
+ * fun setUp() { mainDispatcherRule.setUp() }
+ *
+ * @AfterTest
+ * fun tearDown() { mainDispatcherRule.tearDown() }
+ * ```
+ *
+ * @property testDispatcher the dispatcher installed as [Dispatchers.Main] while the
+ * test runs; reuse it (or its [TestDispatcher.scheduler]) to advance virtual time.
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainDispatcherRule(
-    val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
-) : TestWatcher() {
+    val testDispatcher: TestDispatcher = UnconfinedTestDispatcher(),
+) {
 
-    override fun starting(description: Description) {
+    /** Installs [testDispatcher] as [Dispatchers.Main]. */
+    fun setUp() {
         Dispatchers.setMain(testDispatcher)
     }
 
-    override fun finished(description: Description) {
+    /** Restores the original [Dispatchers.Main]. */
+    fun tearDown() {
         Dispatchers.resetMain()
     }
 }

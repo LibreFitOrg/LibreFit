@@ -9,19 +9,21 @@
 package org.librefit.ui.screens.shared
 
 import app.cash.turbine.test
-import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Test
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class SharedViewModelTest {
     // The mock repository
@@ -38,7 +40,7 @@ class SharedViewModelTest {
     private lateinit var themeMode: MutableStateFlow<ThemeMode>
     private lateinit var language: MutableStateFlow<Language>
 
-    @Before
+    @BeforeTest
     fun setUp() {
         // Arrange: Create a mock for the repository
         userPreferencesRepository = mockk()
@@ -86,22 +88,22 @@ class SharedViewModelTest {
         val result = viewModel.getSelectedExercisesList()
 
         // Assert
-        assertThat(result).isEmpty()
+        assertTrue(result.isEmpty())
     }
 
     @Test
     fun `initial state - show welcome screen is true`() = runTest {
-        assertThat(viewModel.showWelcomeScreen.value).isTrue()
+        assertTrue(viewModel.showWelcomeScreen.value)
     }
 
     @Test
     fun `initial state - request permission again is true`() = runTest {
-        assertThat(viewModel.requestPermissionNextTime.value).isTrue()
+        assertTrue(viewModel.requestPermissionNextTime.value)
     }
 
     @Test
     fun `initial state - is supporter is false`() = runTest {
-        assertThat(viewModel.isSupporter.value).isFalse()
+        assertFalse(viewModel.isSupporter.value)
     }
 
     @Test
@@ -115,26 +117,26 @@ class SharedViewModelTest {
         val firstResult = viewModel.getSelectedExercisesList()
 
         // Assert (First call)
-        assertThat(firstResult).isEqualTo(exercises)
+        assertEquals(exercises, firstResult)
 
         // Act (Second call)
         val secondResult = viewModel.getSelectedExercisesList()
 
         // Assert (Second call)
-        assertThat(secondResult).isEmpty()
+        assertTrue(secondResult.isEmpty())
     }
 
     @Test
     fun `show welcome screen updates correctly`() = runTest {
         viewModel.showWelcomeScreen.test {
             // Initial emission
-            assertThat(awaitItem()).isTrue()
+            assertTrue(awaitItem())
 
             // Act: update preference
             viewModel.doNotShowWelcomeScreenAgain()
 
             // Assert: update is correct
-            assertThat(awaitItem()).isFalse()
+            assertFalse(awaitItem())
         }
     }
 
@@ -142,37 +144,37 @@ class SharedViewModelTest {
     fun `request permission again updates correctly`() = runTest {
         viewModel.requestPermissionNextTime.test {
             // Initial emission
-            assertThat(awaitItem()).isTrue()
+            assertTrue(awaitItem())
 
             // Act: update preference
             viewModel.saveRequestPermissionAgainPreference(false)
 
             // Assert: update is correct
-            assertThat(awaitItem()).isFalse()
+            assertFalse(awaitItem())
         }
     }
 
     @Test
     fun `initial state - unit system is metric`() = runTest {
-        assertThat(viewModel.unitSystem.value).isEqualTo(UnitSystem.METRIC)
+        assertEquals(UnitSystem.METRIC, viewModel.unitSystem.value)
     }
 
     @Test
     fun `initial state - theme mode is system`() = runTest {
-        assertThat(viewModel.themeMode.value).isEqualTo(ThemeMode.SYSTEM)
+        assertEquals(ThemeMode.SYSTEM, viewModel.themeMode.value)
     }
 
     @Test
     fun `unit system updates correctly`() = runTest {
         viewModel.unitSystem.test {
             // Initial emission
-            assertThat(awaitItem()).isEqualTo(UnitSystem.METRIC)
+            assertEquals(UnitSystem.METRIC, awaitItem())
 
             // Act: update preference
             viewModel.saveUnitSystem(UnitSystem.IMPERIAL)
 
             // Assert: update is correct
-            assertThat(awaitItem()).isEqualTo(UnitSystem.IMPERIAL)
+            assertEquals(UnitSystem.IMPERIAL, awaitItem())
         }
     }
 
@@ -180,13 +182,13 @@ class SharedViewModelTest {
     fun `theme mode updates correctly`() = runTest {
         viewModel.themeMode.test {
             // Initial emission
-            assertThat(awaitItem()).isEqualTo(ThemeMode.SYSTEM)
+            assertEquals(ThemeMode.SYSTEM, awaitItem())
 
             // Act: update preference
             viewModel.saveThemeMode(ThemeMode.DARK)
 
             // Assert: update is correct
-            assertThat(awaitItem()).isEqualTo(ThemeMode.DARK)
+            assertEquals(ThemeMode.DARK, awaitItem())
         }
     }
 
@@ -194,13 +196,13 @@ class SharedViewModelTest {
     fun `is supporter updates correctly`() = runTest {
         viewModel.isSupporter.test {
             // Initial emission
-            assertThat(awaitItem()).isFalse()
+            assertFalse(awaitItem())
 
             // Act: update preference
             viewModel.updateIsSupporter(true)
 
             // Assert: update is correct
-            assertThat(awaitItem()).isTrue()
+            assertTrue(awaitItem())
         }
     }
 }
