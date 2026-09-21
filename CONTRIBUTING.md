@@ -158,8 +158,7 @@ the latest Android toolkit:
 - [MVVM](https://developer.android.com/topic/architecture/recommendations) – [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) + [StateFlow](https://developer.android.com/kotlin/flow/stateflow-and-sharedflow)
   for UI state.
 - [Jetpack Compose](https://developer.android.com/compose) for UI.
-- [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) for dependency
-  injection.
+- [Koin](https://insert-koin.io/) for dependency injection.
 - [Room](https://developer.android.com/training/data-storage/room) for storage of workouts,
   exercises, sets and dataset.
 - [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) for user

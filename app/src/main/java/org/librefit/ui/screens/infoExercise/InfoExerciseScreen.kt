@@ -84,12 +84,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.SetMode
 import org.librefit.enums.chart.BodyweightChart
@@ -139,10 +140,7 @@ fun SharedTransitionScope.InfoExerciseScreen(
     onNavigateToInfoWorkout: (Long) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     route: Route.InfoExerciseScreen,
-    viewModel: InfoExerciseScreenViewModel =
-        hiltViewModel<InfoExerciseScreenViewModel, InfoExerciseScreenViewModel.Factory>(
-            creationCallback = { it.create(route) }
-        ),
+    viewModel: InfoExerciseScreenViewModel = koinViewModel { parametersOf(route) },
 ) {
     val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
 

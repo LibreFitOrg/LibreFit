@@ -8,53 +8,31 @@
 
 package org.librefit.di
 
-import android.content.Context
 import androidx.room.Room
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 import org.librefit.db.AppDatabase
 import org.librefit.db.dao.DatasetDao
 import org.librefit.db.dao.MeasurementDao
 import org.librefit.db.dao.WorkoutDao
-import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
-object DatabaseModule {
+/**
+ * Provides the Room database and its DAOs as application-wide singletons.
+ */
+val databaseModule = module {
 
-    @Provides
-    @Singleton
-    fun provideDatabase(
-        @ApplicationContext appContext: Context
-    ): AppDatabase {
-        return Room.databaseBuilder(
-            appContext,
+    single {
+        Room.databaseBuilder(
+            androidContext(),
             AppDatabase::class.java,
-            AppDatabase.NAME
+            AppDatabase.NAME,
         )
             .addMigrations(AppDatabase.MIGRATION_2_3)
             .build()
     }
 
     // DAOs
-    @Provides
-    @Singleton
-    fun provideWorkoutDao(database: AppDatabase): WorkoutDao {
-        return database.getWorkoutDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideMeasurementDao(database: AppDatabase): MeasurementDao {
-        return database.getMeasurementDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideDatasetDao(database: AppDatabase): DatasetDao {
-        return database.getDatasetDao()
-    }
+    single<WorkoutDao> { get<AppDatabase>().getWorkoutDao() }
+    single<MeasurementDao> { get<AppDatabase>().getMeasurementDao() }
+    single<DatasetDao> { get<AppDatabase>().getDatasetDao() }
 }

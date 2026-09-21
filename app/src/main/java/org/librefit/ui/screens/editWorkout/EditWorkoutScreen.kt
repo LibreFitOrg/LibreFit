@@ -40,9 +40,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
@@ -78,10 +79,7 @@ fun SharedTransitionScope.EditWorkoutScreen(
     onNavigateToSuccessScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     route: Route.EditWorkoutScreen,
-    viewModel: EditWorkoutScreenViewModel =
-        hiltViewModel<EditWorkoutScreenViewModel, EditWorkoutScreenViewModel.Factory>(
-            creationCallback = { it.create(route) }
-        )
+    viewModel: EditWorkoutScreenViewModel = koinViewModel { parametersOf(route) }
 ) {
 
     val workout by viewModel.workout.collectAsStateWithLifecycle()

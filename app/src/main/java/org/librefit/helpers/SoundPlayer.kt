@@ -13,7 +13,6 @@ import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.SoundPool
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -21,18 +20,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.librefit.R
-import org.librefit.di.qualifiers.MainDispatcher
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Manages short, low-latency audio playback using [SoundPool].
  */
-@Singleton
-class SoundPlayer @Inject constructor(
-    @param:ApplicationContext private val context: Context,
-    @param:MainDispatcher private val mainDispatcher: CoroutineDispatcher
+class SoundPlayer(
+    context: Context,
+    mainDispatcher: CoroutineDispatcher,
 ) : AutoCloseable {
 
     private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager

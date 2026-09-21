@@ -10,10 +10,6 @@ package org.librefit.ui.screens.beforeSaving
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +20,6 @@ import org.librefit.db.entity.Workout
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
-import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
 import org.librefit.helpers.DataHelper
@@ -41,19 +36,14 @@ import java.time.ZoneOffset
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
-@HiltViewModel(assistedFactory = BeforeSavingScreenViewModel.Factory::class)
-class BeforeSavingScreenViewModel @AssistedInject constructor(
-    @Assisted route: Route.BeforeSavingScreen,
+class BeforeSavingScreenViewModel(
+    route: Route.BeforeSavingScreen,
     private val workoutRepository: WorkoutRepository,
     private val workoutServiceManager: WorkoutServiceManager,
     private val dataHelper: DataHelper,
     userPreferencesRepository: UserPreferencesRepository,
-    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
-    @AssistedFactory
-    interface Factory {
-        fun create(route: Route.BeforeSavingScreen): BeforeSavingScreenViewModel
-    }
 
     val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
 

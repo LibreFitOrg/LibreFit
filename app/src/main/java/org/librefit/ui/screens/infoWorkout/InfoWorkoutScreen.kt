@@ -42,9 +42,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.enums.userPreferences.ThemeMode
@@ -83,10 +84,7 @@ fun SharedTransitionScope.InfoWorkoutScreen(
     workoutId: Long,
     animatedVisibilityScope: AnimatedVisibilityScope,
     route: Route.InfoWorkoutScreen,
-    viewModel: InfoWorkoutScreenViewModel =
-        hiltViewModel<InfoWorkoutScreenViewModel, InfoWorkoutScreenViewModel.Factory>(
-            creationCallback = { it.create(route) }
-        ),
+    viewModel: InfoWorkoutScreenViewModel = koinViewModel { parametersOf(route) },
 ) {
 
     val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()

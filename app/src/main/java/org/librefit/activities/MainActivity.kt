@@ -18,22 +18,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.android.ext.android.inject
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.nav.NavigationHost
 import org.librefit.nav.Route
 import org.librefit.nav.deepLinkKeyForAction
 import org.librefit.services.WorkoutServiceManager
 import org.librefit.ui.theme.LibreFitTheme
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    @Inject
-    lateinit var userPreferences: UserPreferencesRepository
-
-    @Inject
-    lateinit var workoutServiceManager: WorkoutServiceManager
+    private val userPreferences: UserPreferencesRepository by inject()
+    private val workoutServiceManager: WorkoutServiceManager by inject()
 
     /**
      * Deep-link key parsed once from the launch intent (cold start). Only used to seed the

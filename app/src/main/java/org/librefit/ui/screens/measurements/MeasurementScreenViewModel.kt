@@ -10,7 +10,6 @@ package org.librefit.ui.screens.measurements
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,7 +24,6 @@ import kotlinx.coroutines.launch
 import org.librefit.db.entity.Measurement
 import org.librefit.db.repository.MeasurementRepository
 import org.librefit.db.repository.UserPreferencesRepository
-import org.librefit.di.qualifiers.DefaultDispatcher
 import org.librefit.enums.MeasurementCardState
 import org.librefit.enums.chart.MeasurementChart
 import org.librefit.enums.userPreferences.UnitSystem
@@ -34,7 +32,6 @@ import org.librefit.ui.components.charts.Point
 import org.librefit.ui.models.doubleValue
 import org.librefit.util.Formatter
 import java.time.LocalDateTime
-import javax.inject.Inject
 
 /**
  * Default body weight (in kilograms) used to pre-fill the new-measurement card when no valid
@@ -42,11 +39,10 @@ import javax.inject.Inject
  */
 private const val DEFAULT_BODY_WEIGHT_KG = 60.0
 
-@HiltViewModel
-class MeasurementScreenViewModel @Inject constructor(
+class MeasurementScreenViewModel(
     private val measurementRepository: MeasurementRepository,
-    @param:DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
-    userPreferencesRepository: UserPreferencesRepository
+    defaultDispatcher: CoroutineDispatcher,
+    userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
     val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
 

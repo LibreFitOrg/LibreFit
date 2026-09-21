@@ -63,11 +63,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import org.koin.androidx.compose.koinViewModel
 import org.librefit.R
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.enums.pages.MainScreenPages
@@ -103,7 +103,7 @@ fun SharedTransitionScope.ProfileScreen(
     onNavigateToInfoWorkout: (Long) -> Unit,
     onNavigateToTutorialScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: ProfileScreenViewModel = hiltViewModel(),
+    viewModel: ProfileScreenViewModel = koinViewModel(),
 ) {
 
     val points by viewModel.points.collectAsStateWithLifecycle()

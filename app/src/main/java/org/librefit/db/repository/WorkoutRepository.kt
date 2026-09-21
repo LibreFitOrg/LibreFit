@@ -18,8 +18,6 @@ import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.enums.WorkoutState
 import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
 import org.librefit.ui.models.mappers.toUi
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Repository class for managing workout data.
@@ -33,9 +31,8 @@ import javax.inject.Singleton
  * @property completedWorkoutsWithExercisesAndSets Refer to [WorkoutDao.getWorkoutsWithExercisesAndSetsByStateAndOrderedByCompleted]
  *
  */
-@Singleton
-class WorkoutRepository @Inject constructor(
-    private val workoutDao: WorkoutDao
+class WorkoutRepository(
+    private val workoutDao: WorkoutDao,
 ) {
     private val mutex = Mutex()
 

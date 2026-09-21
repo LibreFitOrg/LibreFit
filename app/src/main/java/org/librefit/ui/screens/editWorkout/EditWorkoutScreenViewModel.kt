@@ -10,10 +10,6 @@ package org.librefit.ui.screens.editWorkout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +20,6 @@ import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
-import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
 import org.librefit.enums.exercise.Category
@@ -42,17 +37,12 @@ import org.librefit.ui.models.moveExercise
 import org.librefit.ui.models.withNormalizedExercisePositions
 import kotlin.random.Random
 
-@HiltViewModel(assistedFactory = EditWorkoutScreenViewModel.Factory::class)
-class EditWorkoutScreenViewModel @AssistedInject constructor(
-    @Assisted route: Route.EditWorkoutScreen,
+class EditWorkoutScreenViewModel(
+    route: Route.EditWorkoutScreen,
     private val workoutRepository: WorkoutRepository,
-    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val ioDispatcher: CoroutineDispatcher,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
-    @AssistedFactory
-    interface Factory {
-        fun create(route: Route.EditWorkoutScreen): EditWorkoutScreenViewModel
-    }
 
     val showExercisesImages = userPreferencesRepository.showExercisesImages
     val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput

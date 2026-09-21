@@ -72,12 +72,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.androidx.compose.koinViewModel
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.pages.MainScreenPages
@@ -104,7 +104,7 @@ fun SharedTransitionScope.HomeScreen(
     onNavigateToWorkout: (Long) -> Unit,
     onNavigateToTutorialScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: HomeScreenViewModel = hiltViewModel(),
+    viewModel: HomeScreenViewModel = koinViewModel(),
 ) {
     val context = LocalContext.current
     var hasNotificationPermission by remember {

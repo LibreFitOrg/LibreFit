@@ -29,14 +29,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import org.librefit.di.qualifiers.ApplicationScope
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.util.configurationChanges
 import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Singleton
 
 private val THEME_MODE_KEY = intPreferencesKey("theme_mode")
 private val MATERIAL_MODE_KEY = booleanPreferencesKey("material_mode")
@@ -75,11 +72,10 @@ private val DEFAULT_BAR_WEIGHT_KEY = doublePreferencesKey("default_bar_weight")
  * @see <a href="https://developer.android.com/guide/topics/resources/app-languages">Per-app languages in system settings</a>
  * @see <a href="https://developer.android.com/reference/androidx/appcompat/app/AppCompatDelegate">AppCompatDelegate</a>
  */
-@Singleton
-class UserPreferencesRepository @Inject constructor(
+class UserPreferencesRepository(
     private val dataStore: DataStore<Preferences>,
-    @param:ApplicationScope private val applicationScope: CoroutineScope,
-    application: Application
+    applicationScope: CoroutineScope,
+    application: Application,
 ) {
 
     val themeMode: StateFlow<ThemeMode> = dataStore.data

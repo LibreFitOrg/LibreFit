@@ -10,7 +10,6 @@ package org.librefit.ui.screens.exercises
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,13 +26,11 @@ import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.exercise.FilterValue
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.util.fuzzySearch.FuzzySearch
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
-@HiltViewModel
-class ExercisesScreenViewModel @Inject constructor(
+class ExercisesScreenViewModel(
     datasetRepository: DatasetRepository,
-    userPreferencesRepository: UserPreferencesRepository
+    userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
     val showExercisesImages = userPreferencesRepository.showExercisesImages
 

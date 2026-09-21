@@ -9,7 +9,6 @@
 package org.librefit.helpers
 
 import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -34,14 +33,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class DataHelper @Inject constructor(
+class DataHelper(
     private val measurementRepository: MeasurementRepository,
-    @param:ApplicationContext private val context: Context,
-    userPreferencesRepository: UserPreferencesRepository
+    private val context: Context,
+    userPreferencesRepository: UserPreferencesRepository,
 ) {
     val shortFormatter: DateTimeFormatter? =
         DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(

@@ -10,7 +10,6 @@ package org.librefit.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -24,12 +23,10 @@ import org.librefit.db.repository.WorkoutRepository
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import org.librefit.ui.models.moveWorkout
-import javax.inject.Inject
 
-@HiltViewModel
-class HomeScreenViewModel @Inject constructor(
+class HomeScreenViewModel(
     private val userPreferences: UserPreferencesRepository,
-    private val workoutRepository: WorkoutRepository
+    private val workoutRepository: WorkoutRepository,
 ) : ViewModel() {
     val requestPermissionNextTime: StateFlow<Boolean> = userPreferences.requestPermissionsNextTime
 

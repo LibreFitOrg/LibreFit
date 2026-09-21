@@ -71,10 +71,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.PreviousPerformanceSet
@@ -112,10 +113,7 @@ fun SharedTransitionScope.WorkoutScreen(
     sharedViewModel: SharedViewModel,
     animatedVisibilityScope: AnimatedVisibilityScope,
     route: Route.WorkoutScreen,
-    viewModel: WorkoutScreenViewModel =
-        hiltViewModel<WorkoutScreenViewModel, WorkoutScreenViewModel.Factory>(
-            creationCallback = { it.create(route) }
-        )
+    viewModel: WorkoutScreenViewModel = koinViewModel { parametersOf(route) }
 ) {
 
     LaunchedEffect(Unit) {

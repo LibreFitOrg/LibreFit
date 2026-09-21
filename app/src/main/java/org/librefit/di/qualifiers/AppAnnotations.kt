@@ -8,8 +8,8 @@
 
 package org.librefit.di.qualifiers
 
-import javax.inject.Qualifier
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class ApplicationScope
+/**
+ * Type-safe Koin qualifier for the application-wide [kotlinx.coroutines.CoroutineScope]
+ * (a SupervisorJob on Dispatchers.Default — see CoroutineScopeModule).
+ */
+object ApplicationScope
