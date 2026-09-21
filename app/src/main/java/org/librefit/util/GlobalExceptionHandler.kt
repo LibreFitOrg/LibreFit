@@ -11,17 +11,13 @@ package org.librefit.util
 import android.content.Context
 import android.content.Intent
 import android.os.Process
-import dagger.hilt.android.qualifiers.ApplicationContext
 import org.librefit.activities.ErrorActivity
 import org.librefit.db.repository.UserPreferencesRepository
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.system.exitProcess
 
 
-@Singleton
-class GlobalExceptionHandler @Inject constructor(
-    @param:ApplicationContext private val context: Context,
+class GlobalExceptionHandler(
+    private val context: Context,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) : Thread.UncaughtExceptionHandler {
 

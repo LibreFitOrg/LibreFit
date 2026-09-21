@@ -10,7 +10,6 @@ package org.librefit.ui.screens.shared
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,12 +17,10 @@ import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
-@HiltViewModel
-class SharedViewModel @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
+class SharedViewModel(
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
     // Used by ExercisesScreen and EditWorkout/WorkoutScreen
     private var selectedExercisesList = listOf<ExerciseDC>()

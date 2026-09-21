@@ -11,8 +11,6 @@ ksp = "2.3.6"
 lottieCompose = "6.7.1"
 coreSplashscreen = "1.2.0"
 composeM3 = "3.3.1"
-hiltAndroid = "2.60.1"
-hiltNavigationCompose = "1.4.0"
 aboutLibraries = "15.2.0"
 aboutlibrariesComposeM3 = "15.2.0"
 kotlinxCoroutinesTest = "1.11.0"
@@ -25,6 +23,7 @@ coil = "3.6.2"
 reorderable = "3.1.0"
 nav3Core = "1.1.7"
 lifecycleViewmodelNav3 = "2.11.0"
+koin = "4.2.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.19.0" }
@@ -54,9 +53,6 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "composeM3" }
-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
-hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltAndroid" }
-androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 aboutlibraries-compose-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibrariesComposeM3" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 androidx-truth = { group = "androidx.test.ext", name = "truth", version.ref = "truth" }
@@ -67,11 +63,13 @@ kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotli
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
+koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 about-libraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }

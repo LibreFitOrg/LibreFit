@@ -54,10 +54,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
@@ -95,10 +96,7 @@ fun SharedTransitionScope.BeforeSavingScreen(
     onNavigateToInfoWorkout: (Long) -> Unit,
     onNavigateToSuccessScreen: () -> Unit,
     route: Route.BeforeSavingScreen,
-    viewModel: BeforeSavingScreenViewModel =
-        hiltViewModel<BeforeSavingScreenViewModel, BeforeSavingScreenViewModel.Factory>(
-            creationCallback = { it.create(route) }
-        ),
+    viewModel: BeforeSavingScreenViewModel = koinViewModel { parametersOf(route) },
     animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
 

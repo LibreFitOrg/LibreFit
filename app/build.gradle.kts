@@ -13,7 +13,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.about.libraries)
 }
@@ -154,6 +153,7 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.mockk.android)
     testImplementation(libs.mockk.agent)
+    testImplementation(libs.koin.test)
 
     // Instrumented test
     androidTestImplementation(libs.androidx.junit)
@@ -169,7 +169,7 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
 
-    // Scopes a ViewModelStore to each NavEntry (required for hiltViewModel() per destination)
+    // Scopes a ViewModelStore to each NavEntry (required for koinViewModel() per destination)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
     // Room
@@ -193,10 +193,9 @@ dependencies {
     // M3 Compose vico charts
     implementation(libs.compose.m3)
 
-    // Dagger - Hilt for dependency injection
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
+    // Koin for dependency injection
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
 
     // AboutLibraries to show used dependencies in jetpack compose

@@ -44,8 +44,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.androidx.compose.koinViewModel
 import org.librefit.R
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
@@ -65,7 +65,7 @@ import kotlin.random.Random
 fun SettingsScreen(
     onNavigateBack: () -> Unit,
     onNavigateToSupportScreen: () -> Unit,
-    viewModel: SettingsScreenViewModel = hiltViewModel()
+    viewModel: SettingsScreenViewModel = koinViewModel()
 ) {
     val unitSystem by viewModel.unitSystem.collectAsStateWithLifecycle()
 

@@ -10,10 +10,6 @@ package org.librefit.ui.screens.workout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
@@ -36,8 +32,6 @@ import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.DatasetRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
-import org.librefit.di.qualifiers.IoDispatcher
-import org.librefit.di.qualifiers.MainDispatcher
 import org.librefit.enums.PreviousPerformanceSet
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
@@ -61,21 +55,16 @@ import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
-@HiltViewModel(assistedFactory = WorkoutScreenViewModel.Factory::class)
-class WorkoutScreenViewModel @AssistedInject constructor(
-    @Assisted route: Route.WorkoutScreen,
+class WorkoutScreenViewModel(
+    route: Route.WorkoutScreen,
     private val userPreferences: UserPreferencesRepository,
     private val workoutServiceManager: WorkoutServiceManager,
     private val workoutRepository: WorkoutRepository,
     private val datasetRepository: DatasetRepository,
     private val soundPlayer: SoundPlayer,
-    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @param:MainDispatcher private val mainDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
+    private val mainDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
-    @AssistedFactory
-    interface Factory {
-        fun create(route: Route.WorkoutScreen): WorkoutScreenViewModel
-    }
 
     private val _idsOfSetsWithStopwatchNotStartedAtLeastOnce =
         MutableStateFlow<Set<Long>>(emptySet())

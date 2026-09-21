@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -31,6 +30,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
+import org.koin.androidx.compose.koinViewModel
 import org.librefit.enums.SuccessMessage
 import org.librefit.enums.pages.TutorialContent
 import org.librefit.enums.userPreferences.UnitSystem
@@ -72,7 +72,7 @@ val LocalUnitSystem = compositionLocalOf { UnitSystem.METRIC }
  *   intentionally skipped while onboarding is active.
  * @param onPendingDeepLinkConsumed invoked after [pendingDeepLink] was handled (applied or
  *   intentionally skipped) so the host activity can clear its pending state.
- * @param sharedViewModel shared app-level ViewModel provided by Hilt.
+ * @param sharedViewModel shared app-level ViewModel provided by Koin.
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -80,7 +80,7 @@ fun NavigationHost(
     initialDeepLink: Route? = null,
     pendingDeepLink: Route? = null,
     onPendingDeepLinkConsumed: () -> Unit = {},
-    sharedViewModel: SharedViewModel = hiltViewModel(),
+    sharedViewModel: SharedViewModel = koinViewModel(),
 ) {
 
     val unitSystem by sharedViewModel.unitSystem.collectAsStateWithLifecycle()
@@ -124,7 +124,7 @@ fun NavigationHost(
                 onBack = backStack::goBack,
                 entryDecorators = listOf(
                     rememberSaveableStateHolderNavEntryDecorator(),
-                    // Gives each NavEntry its own ViewModelStore so hiltViewModel() inside
+                    // Gives each NavEntry its own ViewModelStore so koinViewModel() inside
                     // screens is scoped (and cleared) per destination, matching Nav2 behavior.
                     rememberViewModelStoreNavEntryDecorator(),
                 ),

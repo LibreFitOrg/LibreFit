@@ -10,7 +10,6 @@ package org.librefit.ui.screens.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,12 +28,10 @@ import org.librefit.ui.components.charts.Point
 import org.librefit.ui.models.mappers.toUi
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import javax.inject.Inject
 
-@HiltViewModel
-class ProfileScreenViewModel @Inject constructor(
+class ProfileScreenViewModel(
     workoutRepository: WorkoutRepository,
-    dataHelper: DataHelper
+    dataHelper: DataHelper,
 ) : ViewModel() {
     val workoutsWithExercises = workoutRepository.completedWorkoutsWithExercisesAndSets
         .distinctUntilChanged()

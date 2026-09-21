@@ -11,7 +11,6 @@ package org.librefit.services
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -22,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.librefit.enums.WorkoutServiceActions
 import org.librefit.helpers.NotificationHelper
 import org.librefit.services.WorkoutService.Companion.EXTRA_ADD_TEN_SECONDS
@@ -30,7 +30,6 @@ import org.librefit.services.WorkoutService.Companion.EXTRA_IS_FOCUSED
 import org.librefit.services.WorkoutService.Companion.isStopwatchPaused
 import org.librefit.services.WorkoutService.Companion.restTime
 import org.librefit.services.WorkoutService.Companion.timeElapsed
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -70,7 +69,6 @@ import kotlin.time.Duration.Companion.milliseconds
  * The service uses [NotificationHelper] to create and manage notifications.
  */
 
-@AndroidEntryPoint
 class WorkoutService : Service() {
 
     // A lifecycle-aware scope for the entire service
@@ -96,8 +94,7 @@ class WorkoutService : Service() {
     private var initialRestTime = 0
     private var isFocused = true
 
-    @Inject
-    lateinit var notificationHelper: NotificationHelper
+    private val notificationHelper: NotificationHelper by inject()
 
     override fun onBind(intent: Intent?): IBinder? {
         return null

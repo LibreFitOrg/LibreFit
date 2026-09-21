@@ -47,8 +47,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.androidx.compose.koinViewModel
 import org.librefit.R
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.ui.components.HeadlineText
@@ -69,7 +69,7 @@ fun SharedTransitionScope.CalendarScreen(
     onNavigateToInfoWorkout: (Long) -> Unit,
     onNavigateToTutorialScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: CalendarScreenViewModel = hiltViewModel()
+    viewModel: CalendarScreenViewModel = koinViewModel()
 ) {
 
     val yearRange by viewModel.yearRange.collectAsStateWithLifecycle()

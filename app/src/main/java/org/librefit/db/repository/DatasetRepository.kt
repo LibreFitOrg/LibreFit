@@ -10,7 +10,6 @@ package org.librefit.db.repository
 
 import android.content.Context
 import androidx.core.content.pm.PackageInfoCompat
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -23,11 +22,8 @@ import kotlinx.serialization.json.Json
 import org.librefit.R
 import org.librefit.db.dao.DatasetDao
 import org.librefit.db.entity.ExerciseDC
-import org.librefit.di.qualifiers.ApplicationScope
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.mappers.toUi
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Repository class to provide `res/raw/exercises.json` as a [List] of [ExerciseDC].
@@ -40,12 +36,11 @@ import javax.inject.Singleton
  * @param applicationScope A long-lived coroutine on the application scope in order to update the dataset.
  * @property dataset It provides the latest dataset saved in Room
  */
-@Singleton
-class DatasetRepository @Inject constructor(
+class DatasetRepository(
     private val datasetDao: DatasetDao,
-    @param:ApplicationScope private val applicationScope: CoroutineScope,
+    private val applicationScope: CoroutineScope,
     private val userPreferencesRepository: UserPreferencesRepository,
-    @param:ApplicationContext private val context: Context
+    private val context: Context,
 ) {
     val dataset: StateFlow<List<UiExerciseDC>> = datasetDao.getDataset()
         .map { dataset -> dataset.map { it.toUi() } }

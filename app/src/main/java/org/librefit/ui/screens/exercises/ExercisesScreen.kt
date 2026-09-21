@@ -76,11 +76,11 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.androidx.compose.koinViewModel
 import org.librefit.R
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.enums.exercise.Category
@@ -114,7 +114,7 @@ fun SharedTransitionScope.ExercisesScreen(
     onNavigateToEditExercise: () -> Unit,
     onNavigateToSupportScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: ExercisesScreenViewModel = hiltViewModel()
+    viewModel: ExercisesScreenViewModel = koinViewModel()
 ) {
 
     val filteredExerciseList by viewModel.filteredExerciseList.collectAsStateWithLifecycle()

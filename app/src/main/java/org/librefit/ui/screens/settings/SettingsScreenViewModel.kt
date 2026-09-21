@@ -10,7 +10,6 @@ package org.librefit.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,11 +24,9 @@ import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingsScreenViewModel @Inject constructor(
-    private val userPreferences: UserPreferencesRepository
+class SettingsScreenViewModel(
+    private val userPreferences: UserPreferencesRepository,
 ) : ViewModel() {
     val themeMode = userPreferences.themeMode
     val materialMode = userPreferences.materialMode

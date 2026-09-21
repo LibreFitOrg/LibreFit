@@ -63,9 +63,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import org.librefit.R
 import org.librefit.db.entity.Measurement
 import org.librefit.enums.MeasurementCardState
@@ -103,7 +103,7 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MeasurementScreen(
-    viewModel: MeasurementScreenViewModel = hiltViewModel(),
+    viewModel: MeasurementScreenViewModel = koinViewModel(),
     navigateBack: () -> Unit
 ) {
     val unitSystem = LocalUnitSystem.current

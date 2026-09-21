@@ -52,10 +52,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.enums.exercise.Category
@@ -80,10 +81,7 @@ fun SharedTransitionScope.EditExerciseScreen(
     onNavigateBack: () -> Unit,
     onNavigateToSuccessScreen: () -> Unit,
     route: Route.EditExerciseScreen,
-    viewModel: EditExerciseScreenViewModel =
-        hiltViewModel<EditExerciseScreenViewModel, EditExerciseScreenViewModel.Factory>(
-            creationCallback = { it.create(route) }
-        )
+    viewModel: EditExerciseScreenViewModel = koinViewModel { parametersOf(route) }
 ) {
 
     val exerciseDC by viewModel.exerciseDC.collectAsStateWithLifecycle()

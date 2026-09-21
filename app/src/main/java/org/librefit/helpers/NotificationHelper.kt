@@ -17,14 +17,11 @@ import android.content.Intent
 import android.media.AudioAttributes
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
-import dagger.hilt.android.qualifiers.ApplicationContext
 import org.librefit.R
 import org.librefit.activities.MainActivity
 import org.librefit.enums.WorkoutServiceActions
 import org.librefit.services.WorkoutService
 import org.librefit.util.Formatter.formatTime
-import javax.inject.Inject
-import javax.inject.Singleton
 
 
 /**
@@ -35,9 +32,8 @@ import javax.inject.Singleton
  * handles user interactions through actions in the notifications.
  *
  */
-@Singleton
-class NotificationHelper @Inject constructor(
-    @ApplicationContext context: Context
+class NotificationHelper(
+    context: Context,
 ) {
     companion object {
         const val WORKOUT_CHANNEL_ID = "WORKOUT_CHANNEL_ID"

@@ -10,10 +10,6 @@ package org.librefit.ui.screens.infoWorkout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,7 +23,6 @@ import kotlinx.coroutines.launch
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
-import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.WorkoutState
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
@@ -41,18 +36,13 @@ import org.librefit.ui.models.mappers.toUi
 import org.librefit.util.Formatter
 import kotlin.random.Random
 
-@HiltViewModel(assistedFactory = InfoWorkoutScreenViewModel.Factory::class)
-class InfoWorkoutScreenViewModel @AssistedInject constructor(
-    @Assisted route: Route.InfoWorkoutScreen,
+class InfoWorkoutScreenViewModel(
+    route: Route.InfoWorkoutScreen,
     private val workoutRepository: WorkoutRepository,
     dataHelper: DataHelper,
-    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    userPreferencesRepository: UserPreferencesRepository
+    private val ioDispatcher: CoroutineDispatcher,
+    userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
-    @AssistedFactory
-    interface Factory {
-        fun create(route: Route.InfoWorkoutScreen): InfoWorkoutScreenViewModel
-    }
 
     val showExercisesImages = userPreferencesRepository.showExercisesImages
 

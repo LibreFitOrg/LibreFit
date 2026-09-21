@@ -10,10 +10,6 @@ package org.librefit.ui.screens.editExercise
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -36,16 +32,11 @@ import org.librefit.ui.models.mappers.toEntity
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-@HiltViewModel(assistedFactory = EditExerciseScreenViewModel.Factory::class)
-class EditExerciseScreenViewModel @AssistedInject constructor(
-    @Assisted route: Route.EditExerciseScreen,
+class EditExerciseScreenViewModel(
+    route: Route.EditExerciseScreen,
     private val datasetRepository: DatasetRepository,
-    userPreferencesRepository: UserPreferencesRepository
+    userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
-    @AssistedFactory
-    interface Factory {
-        fun create(route: Route.EditExerciseScreen): EditExerciseScreenViewModel
-    }
 
     val showExercisesImages = userPreferencesRepository.showExercisesImages
 
