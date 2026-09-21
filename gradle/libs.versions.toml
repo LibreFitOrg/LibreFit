@@ -2,7 +2,6 @@
 agp = "9.4.0"
 datastore = "1.2.1"
 kotlin = "2.4.20"
-junit = "4.13.2"
 espressoCore = "3.7.0"
 composeBom = "2026.09.00"
 roomVersion = "2.8.5"
@@ -14,7 +13,6 @@ composeM3 = "3.3.1"
 aboutLibraries = "15.2.0"
 aboutlibrariesComposeM3 = "15.2.0"
 kotlinxCoroutinesTest = "1.11.0"
-truth = "1.7.0"
 turbine = "1.2.1"
 mockk = "1.14.11"
 kotlinxCollectionsImmutable = "0.5.2"
@@ -31,7 +29,6 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version = "2.8.5" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version = "1.3.0" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.11.0" }
@@ -54,8 +51,8 @@ lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", versio
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "composeM3" }
 aboutlibraries-compose-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibrariesComposeM3" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
-androidx-truth = { group = "androidx.test.ext", name = "truth", version.ref = "truth" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockk" }

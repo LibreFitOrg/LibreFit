@@ -9,7 +9,6 @@
 package org.librefit.ui.screens.measurements
 
 import app.cash.turbine.test
-import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -17,9 +16,6 @@ import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
 import org.librefit.MainDispatcherRule
 import org.librefit.db.entity.Measurement
 import org.librefit.db.repository.MeasurementRepository
@@ -29,12 +25,18 @@ import org.librefit.enums.chart.MeasurementChart
 import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.models.Weight
 import java.time.LocalDateTime
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MeasurementScreenViewModelTest {
     // MainDispatcherRule to control coroutine execution
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
+    private val mainDispatcherRule = MainDispatcherRule()
 
     // The mock repository
     private lateinit var measurementRepository: MeasurementRepository
@@ -74,7 +76,17 @@ class MeasurementScreenViewModelTest {
         )
     )
 
-    @Before
+    @BeforeTest
+    fun setUpMainDispatcher() {
+        mainDispatcherRule.setUp()
+    }
+
+    @AfterTest
+    fun tearDownMainDispatcher() {
+        mainDispatcherRule.tearDown()
+    }
+
+    @BeforeTest
     fun setUp() {
         // Arrange: Create a mock for the repository
         measurementRepository = mockk()
@@ -122,42 +134,42 @@ class MeasurementScreenViewModelTest {
 
     @Test
     fun `initial state - measurements list is empty `() = runTest {
-        assertThat(viewModel.measurements.value).isEmpty()
+        assertTrue(viewModel.measurements.value.isEmpty())
     }
 
     @Test
     fun `initial state - points list is empty `() = runTest {
-        assertThat(viewModel.points.value).isEmpty()
+        assertTrue(viewModel.points.value.isEmpty())
     }
 
     @Test
     fun `initial state - measurement chart is set to bodyweight `() = runTest {
-        assertThat(viewModel.measurementChart.value).isEqualTo(MeasurementChart.BODY_WEIGHT)
+        assertEquals(MeasurementChart.BODY_WEIGHT, viewModel.measurementChart.value)
     }
 
     @Test
     fun `initial state - id measurement is 0 `() = runTest {
-        assertThat(viewModel.idMeasurement.value).isEqualTo(0L)
+        assertEquals(0L, viewModel.idMeasurement.value)
     }
 
     @Test
     fun `initial state - fat mass is null `() = runTest {
-        assertThat(viewModel.fatMass.value).isNull()
+        assertNull(viewModel.fatMass.value)
     }
 
     @Test
     fun `initial state - lean mass is null `() = runTest {
-        assertThat(viewModel.leanMass.value).isNull()
+        assertNull(viewModel.leanMass.value)
     }
 
     @Test
     fun `initial state - notes are empty `() = runTest {
-        assertThat(viewModel.notes.value).isEmpty()
+        assertTrue(viewModel.notes.value.isEmpty())
     }
 
     @Test
     fun `initial state - body weight defaults to 60 kg when there are no measurements`() = runTest {
-        assertThat(viewModel.bodyWeight.value).isEqualTo(Weight.kilograms(60.0))
+        assertEquals(Weight.kilograms(60.0), viewModel.bodyWeight.value)
     }
 
     @Test
@@ -169,12 +181,12 @@ class MeasurementScreenViewModelTest {
         )
 
         // Assert: the seeding follows the measurement date, not the list order
-        assertThat(viewModel.bodyWeight.value).isEqualTo(Weight.kilograms(90.0))
+        assertEquals(Weight.kilograms(90.0), viewModel.bodyWeight.value)
     }
 
     @Test
     fun `initial state - measurement card state is new `() = runTest {
-        assertThat(viewModel.measurementCardState.value).isEqualTo(MeasurementCardState.NEW)
+        assertEquals(MeasurementCardState.NEW, viewModel.measurementCardState.value)
     }
 
     @Test
@@ -189,7 +201,7 @@ class MeasurementScreenViewModelTest {
                 val actual = awaitItem().map { it.yValues.first() }
                 val expected = allMeasurements.map { it.bodyWeight.inKilograms }
 
-                assertThat(actual).isEqualTo(expected)
+                assertEquals(expected, actual)
             }
         }
 
@@ -205,7 +217,7 @@ class MeasurementScreenViewModelTest {
                 var actual = awaitItem().map { it.yValues.first() }
                 var expected = allMeasurements.map { it.bodyWeight.inKilograms }
 
-                assertThat(actual).isEqualTo(expected)
+                assertEquals(expected, actual)
 
 
                 // Act: update measurements
@@ -217,7 +229,7 @@ class MeasurementScreenViewModelTest {
                 actual = awaitItem().map { it.yValues.first() }
                 expected = newMeasurements.map { it.bodyWeight.inKilograms }
 
-                assertThat(actual).isEqualTo(expected)
+                assertEquals(expected, actual)
             }
         }
 
@@ -237,7 +249,7 @@ class MeasurementScreenViewModelTest {
                 val expected =
                     allMeasurements.map { it.bodyFatPercentage.toDouble() }.filter { it != 0.0 }
 
-                assertThat(actual).isEqualTo(expected)
+                assertEquals(expected, actual)
             }
         }
 
@@ -256,7 +268,7 @@ class MeasurementScreenViewModelTest {
 
             viewModel.measurements.test {
                 // Assert: The first item emitted should be the initial list of measurements.
-                assertThat(awaitItem()).isEqualTo(allMeasurements)
+                assertEquals(allMeasurements, awaitItem())
 
                 // Act: Simulate the user entering data and saving a new measurement.
                 viewModel.updateNotes(insertedMeasurement.notes)
@@ -265,10 +277,10 @@ class MeasurementScreenViewModelTest {
                 viewModel.upsertMeasurementToDB()
 
                 // Assert: Await the new emission and verify its contents are correct
-                assertThat(awaitItem()).isEqualTo(updatedMeasurements)
+                assertEquals(updatedMeasurements, awaitItem())
 
                 // Assert: Verify the captured object
-                assertThat(upsertedMeasurementSlot.captured).isEqualTo(insertedMeasurement)
+                assertEquals(insertedMeasurement, upsertedMeasurementSlot.captured)
             }
         }
 
@@ -288,7 +300,7 @@ class MeasurementScreenViewModelTest {
 
         viewModel.measurements.test {
             // Assert: The first item emitted should be the initial list of measurements.
-            assertThat(awaitItem()).isEqualTo(allMeasurements)
+            assertEquals(allMeasurements, awaitItem())
 
             // Act: Simulate the user entering data and save the measurement
             viewModel.updateMeasurementCardState(MeasurementCardState.EDIT)
@@ -301,10 +313,10 @@ class MeasurementScreenViewModelTest {
             viewModel.upsertMeasurementToDB()
 
             // Assert: Verify the captured object
-            assertThat(upsertedMeasurementSlot.captured).isEqualTo(updatedMeasurement)
+            assertEquals(updatedMeasurement, upsertedMeasurementSlot.captured)
 
             // Assert: Await the new emission and verify its contents are correct
-            assertThat(awaitItem()).isEqualTo(updatedMeasurements)
+            assertEquals(updatedMeasurements, awaitItem())
         }
     }
 
@@ -325,7 +337,7 @@ class MeasurementScreenViewModelTest {
 
             viewModel.measurements.test {
                 // Assert: The first item emitted should be the initial list of measurements.
-                assertThat(awaitItem()).isEqualTo(allMeasurements)
+                assertEquals(allMeasurements, awaitItem())
 
                 // Act: Simulate the user entering data and saving a new measurement (instead of updating it).
                 viewModel.updateMeasurementCardState(MeasurementCardState.NEW)
@@ -338,10 +350,10 @@ class MeasurementScreenViewModelTest {
                 viewModel.upsertMeasurementToDB()
 
                 // Assert: Verify the captured object
-                assertThat(upsertedMeasurementSlot.captured).isNotEqualTo(updatedMeasurement)
+                assertNotEquals(updatedMeasurement, upsertedMeasurementSlot.captured)
 
                 // Assert: Await the new emission and verify its contents are correct
-                assertThat(awaitItem()).isNotEqualTo(updatedMeasurements)
+                assertNotEquals(updatedMeasurements, awaitItem())
             }
         }
 
@@ -359,16 +371,16 @@ class MeasurementScreenViewModelTest {
         viewModel.measurements.test {
 
             // Assert: The first item emitted should be the initial list of measurements.
-            assertThat(awaitItem()).isEqualTo(allMeasurements)
+            assertEquals(allMeasurements, awaitItem())
 
             // Act: Delete measurement by id
             viewModel.deleteMeasurementById(expectedId)
 
             // Assert: Verify the captured object
-            assertThat(idMeasurementToDelete.captured).isEqualTo(expectedId)
+            assertEquals(expectedId, idMeasurementToDelete.captured)
 
             // Assert: Await the new emission and verify its contents are correct
-            assertThat(awaitItem()).isEqualTo(updatedMeasurements)
+            assertEquals(updatedMeasurements, awaitItem())
 
         }
     }
@@ -384,7 +396,7 @@ class MeasurementScreenViewModelTest {
 
         viewModel.measurements.test {
             // Assert: The first item emitted should be the initial list.
-            assertThat(awaitItem()).isEqualTo(allMeasurements)
+            assertEquals(allMeasurements, awaitItem())
 
             // Act: Attempt to delete a measurement with the non-existent ID.
             viewModel.deleteMeasurementById(invalidId)
@@ -400,7 +412,7 @@ class MeasurementScreenViewModelTest {
         measurementsFlow.value = allMeasurements
 
         // Assert: The card should be pre-filled with the most recent weight (id = 1, 90 kg)
-        assertThat(viewModel.bodyWeight.value).isEqualTo(Weight.kilograms(90.0))
+        assertEquals(Weight.kilograms(90.0), viewModel.bodyWeight.value)
     }
 
     @Test
@@ -408,14 +420,14 @@ class MeasurementScreenViewModelTest {
         runTest {
             // Arrange: Set the initial value for the flow.
             measurementsFlow.value = allMeasurements
-            assertThat(viewModel.bodyWeight.value).isEqualTo(Weight.kilograms(90.0))
+            assertEquals(Weight.kilograms(90.0), viewModel.bodyWeight.value)
 
             // Act: A new measurement with a more recent date becomes the last saved weight
             measurementsFlow.value = allMeasurements +
                 Measurement(id = 4, bodyWeight = Weight.kilograms(95.0), date = now.plusDays(1))
 
             // Assert: The card re-seeds with the new last saved weight
-            assertThat(viewModel.bodyWeight.value).isEqualTo(Weight.kilograms(95.0))
+            assertEquals(Weight.kilograms(95.0), viewModel.bodyWeight.value)
         }
 
     @Test
@@ -428,7 +440,7 @@ class MeasurementScreenViewModelTest {
             )
 
             // Assert: Zero-weight entries are ignored and the default is used instead
-            assertThat(viewModel.bodyWeight.value).isEqualTo(Weight.kilograms(60.0))
+            assertEquals(Weight.kilograms(60.0), viewModel.bodyWeight.value)
         }
 
     @Test
@@ -442,7 +454,7 @@ class MeasurementScreenViewModelTest {
             viewModel.updateIdMeasurement(2L)
 
             // Assert: The card shows the edited measurement's weight, not the last saved one
-            assertThat(viewModel.bodyWeight.value).isEqualTo(Weight.kilograms(88.0))
+            assertEquals(Weight.kilograms(88.0), viewModel.bodyWeight.value)
         }
 
     @Test
@@ -451,13 +463,13 @@ class MeasurementScreenViewModelTest {
         measurementsFlow.value = allMeasurements
         viewModel.updateMeasurementCardState(MeasurementCardState.EDIT)
         viewModel.updateIdMeasurement(2L)
-        assertThat(viewModel.bodyWeight.value).isEqualTo(Weight.kilograms(88.0))
+        assertEquals(Weight.kilograms(88.0), viewModel.bodyWeight.value)
 
         // Act: Cancel the edit (the UI resets the id and returns to the NEW card state)
         viewModel.updateIdMeasurement(0L)
         viewModel.updateMeasurementCardState(MeasurementCardState.NEW)
 
         // Assert: The card re-seeds with the last saved weight (id = 1, 90 kg)
-        assertThat(viewModel.bodyWeight.value).isEqualTo(Weight.kilograms(90.0))
+        assertEquals(Weight.kilograms(90.0), viewModel.bodyWeight.value)
     }
 }

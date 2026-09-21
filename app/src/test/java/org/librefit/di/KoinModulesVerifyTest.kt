@@ -10,10 +10,7 @@ package org.librefit.di
 
 import android.app.Application
 import android.content.Context
-import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
-import org.junit.Assert.assertThrows
-import org.junit.Test
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -29,6 +26,9 @@ import org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel
 import org.librefit.ui.screens.infoExercise.InfoExerciseScreenViewModel
 import org.librefit.ui.screens.infoWorkout.InfoWorkoutScreenViewModel
 import org.librefit.ui.screens.workout.WorkoutScreenViewModel
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertFailsWith
 
 /**
  * Build-time guard for the Koin dependency graph: type-checks every definition in
@@ -84,9 +84,9 @@ class KoinModulesVerifyTest {
         }
 
         val exception =
-            assertThrows(MissingKoinDefinitionException::class.java) { brokenModule.verify() }
+            assertFailsWith<MissingKoinDefinitionException> { brokenModule.verify() }
 
-        assertThat(exception).hasMessageThat().contains("CoroutineDispatcher")
+        assertContains(exception.message.orEmpty(), "CoroutineDispatcher")
     }
 }
 

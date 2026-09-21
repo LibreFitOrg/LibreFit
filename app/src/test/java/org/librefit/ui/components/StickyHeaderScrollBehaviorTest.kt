@@ -11,9 +11,11 @@ package org.librefit.ui.components
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.unit.Velocity
-import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class StickyHeaderScrollBehaviorTest {
 
@@ -36,8 +38,8 @@ class StickyHeaderScrollBehaviorTest {
 
         val consumed = state.consumeScrollDelta(-120f)
 
-        assertThat(consumed).isEqualTo(-120f)
-        assertThat(state.collapsedPx).isEqualTo(120f)
+        assertEquals(-120f, consumed)
+        assertEquals(120f, state.collapsedPx)
     }
 
     @Test
@@ -46,8 +48,8 @@ class StickyHeaderScrollBehaviorTest {
 
         val consumed = state.consumeScrollDelta(-300f)
 
-        assertThat(consumed).isEqualTo(-HEADER_HEIGHT)
-        assertThat(state.collapsedPx).isEqualTo(HEADER_HEIGHT)
+        assertEquals(-HEADER_HEIGHT, consumed)
+        assertEquals(HEADER_HEIGHT, state.collapsedPx)
     }
 
     @Test
@@ -56,8 +58,8 @@ class StickyHeaderScrollBehaviorTest {
 
         val consumed = state.consumeScrollDelta(150f)
 
-        assertThat(consumed).isEqualTo(150f)
-        assertThat(state.collapsedPx).isEqualTo(50f)
+        assertEquals(150f, consumed)
+        assertEquals(50f, state.collapsedPx)
     }
 
     @Test
@@ -66,8 +68,8 @@ class StickyHeaderScrollBehaviorTest {
 
         val consumed = state.consumeScrollDelta(150f)
 
-        assertThat(consumed).isEqualTo(100f)
-        assertThat(state.collapsedPx).isEqualTo(0f)
+        assertEquals(100f, consumed)
+        assertEquals(0f, state.collapsedPx)
     }
 
     @Test
@@ -76,8 +78,8 @@ class StickyHeaderScrollBehaviorTest {
 
         val consumed = state.consumeScrollDelta(-50f)
 
-        assertThat(consumed).isEqualTo(0f)
-        assertThat(state.collapsedPx).isEqualTo(HEADER_HEIGHT)
+        assertEquals(0f, consumed)
+        assertEquals(HEADER_HEIGHT, state.collapsedPx)
     }
 
     @Test
@@ -86,8 +88,8 @@ class StickyHeaderScrollBehaviorTest {
 
         val consumed = state.consumeScrollDelta(50f)
 
-        assertThat(consumed).isEqualTo(0f)
-        assertThat(state.collapsedPx).isEqualTo(0f)
+        assertEquals(0f, consumed)
+        assertEquals(0f, state.collapsedPx)
     }
 
     @Test
@@ -96,8 +98,8 @@ class StickyHeaderScrollBehaviorTest {
 
         val consumed = state.consumeScrollDelta(-50f)
 
-        assertThat(consumed).isEqualTo(0f)
-        assertThat(state.collapsedPx).isEqualTo(0f)
+        assertEquals(0f, consumed)
+        assertEquals(0f, state.collapsedPx)
     }
 
     @Test
@@ -106,9 +108,9 @@ class StickyHeaderScrollBehaviorTest {
 
         state.onHeaderSizeChanged(100)
 
-        assertThat(state.headerHeightPx).isEqualTo(100f)
-        assertThat(state.collapsedPx).isEqualTo(100f)
-        assertThat(state.isFullyCollapsed).isTrue()
+        assertEquals(100f, state.headerHeightPx)
+        assertEquals(100f, state.collapsedPx)
+        assertTrue(state.isFullyCollapsed)
     }
 
     @Test
@@ -119,7 +121,7 @@ class StickyHeaderScrollBehaviorTest {
             flingVelocityY = 500f,
         )
 
-        assertThat(target).isEqualTo(0f)
+        assertEquals(0f, target)
     }
 
     @Test
@@ -130,7 +132,7 @@ class StickyHeaderScrollBehaviorTest {
             flingVelocityY = -500f,
         )
 
-        assertThat(target).isEqualTo(HEADER_HEIGHT)
+        assertEquals(HEADER_HEIGHT, target)
     }
 
     @Test
@@ -141,7 +143,7 @@ class StickyHeaderScrollBehaviorTest {
             flingVelocityY = 0f,
         )
 
-        assertThat(target).isEqualTo(HEADER_HEIGHT)
+        assertEquals(HEADER_HEIGHT, target)
     }
 
     @Test
@@ -152,7 +154,7 @@ class StickyHeaderScrollBehaviorTest {
             flingVelocityY = 0f,
         )
 
-        assertThat(target).isEqualTo(0f)
+        assertEquals(0f, target)
     }
 
     @Test
@@ -163,7 +165,7 @@ class StickyHeaderScrollBehaviorTest {
             flingVelocityY = -500f,
         )
 
-        assertThat(target).isEqualTo(0f)
+        assertEquals(0f, target)
     }
 
     @Test
@@ -173,14 +175,14 @@ class StickyHeaderScrollBehaviorTest {
         val consumedEnabled = connection(state)
             .onPreScroll(Offset(0f, -120f), NestedScrollSource.SideEffect)
 
-        assertThat(consumedEnabled).isEqualTo(Offset(0f, -120f))
-        assertThat(state.collapsedPx).isEqualTo(120f)
+        assertEquals(Offset(0f, -120f), consumedEnabled)
+        assertEquals(120f, state.collapsedPx)
 
         val consumedDisabled = connection(state, isEnabled = false)
             .onPreScroll(Offset(0f, -50f), NestedScrollSource.SideEffect)
 
-        assertThat(consumedDisabled).isEqualTo(Offset.Zero)
-        assertThat(state.collapsedPx).isEqualTo(120f)
+        assertEquals(Offset.Zero, consumedDisabled)
+        assertEquals(120f, state.collapsedPx)
     }
 
     @Test
@@ -193,15 +195,17 @@ class StickyHeaderScrollBehaviorTest {
             updateScrollPosition(isAtTop = false, 0)
         }
 
-        assertThat(
+        assertEquals(
+            Offset.Zero,
             connection(fullyCollapsed)
-                .onPreScroll(Offset(0f, -10f), NestedScrollSource.SideEffect),
-        ).isEqualTo(Offset.Zero)
+                .onPreScroll(Offset(0f, -10f), NestedScrollSource.SideEffect)
+        )
 
-        assertThat(
+        assertEquals(
+            Offset.Zero,
             connection(fullyExpanded)
-                .onPreScroll(Offset(0f, 10f), NestedScrollSource.SideEffect),
-        ).isEqualTo(Offset.Zero)
+                .onPreScroll(Offset(0f, 10f), NestedScrollSource.SideEffect)
+        )
     }
 
     @Test
@@ -211,8 +215,8 @@ class StickyHeaderScrollBehaviorTest {
         val result = connection(state, isEnabled = false)
             .onPostFling(Velocity.Zero, Velocity(x = 0f, y = -500f))
 
-        assertThat(result).isEqualTo(Velocity.Zero)
-        assertThat(state.collapsedPx).isEqualTo(100f)
+        assertEquals(Velocity.Zero, result)
+        assertEquals(100f, state.collapsedPx)
     }
 
     @Test
@@ -220,25 +224,28 @@ class StickyHeaderScrollBehaviorTest {
         val state = measuredState()
 
         // Initially at top (isAtTop = true by default)
-        assertThat(state.isAtTop).isTrue()
-        assertThat(state.translationY).isEqualTo(0f)
+        assertTrue(state.isAtTop)
+        assertEquals(0f, state.translationY)
 
         // At top with scroll offset
         state.updateScrollPosition(isAtTop = true, firstVisibleItemScrollOffset = 50)
-        assertThat(state.isAtTop).isTrue()
-        assertThat(state.collapsedPx).isEqualTo(50f)
-        assertThat(state.translationY).isEqualTo(0f) // translationY is 0f when at top
+        assertTrue(state.isAtTop)
+        assertEquals(50f, state.collapsedPx)
+        assertEquals(0f, state.translationY) // translationY is 0f when at top
 
         // Scroll offset clamped to header height
         state.updateScrollPosition(isAtTop = true, firstVisibleItemScrollOffset = 300)
-        assertThat(state.isAtTop).isTrue()
-        assertThat(state.collapsedPx).isEqualTo(HEADER_HEIGHT)
-        assertThat(state.translationY).isEqualTo(0f)
+        assertTrue(state.isAtTop)
+        assertEquals(HEADER_HEIGHT, state.collapsedPx)
+        assertEquals(0f, state.translationY)
 
         // Not at top anymore
         state.updateScrollPosition(isAtTop = false, firstVisibleItemScrollOffset = 100)
-        assertThat(state.isAtTop).isFalse()
-        assertThat(state.translationY).isEqualTo(-HEADER_HEIGHT) // translationY is -collapsedPx when not at top
+        assertFalse(state.isAtTop)
+        assertEquals(
+            -HEADER_HEIGHT,
+            state.translationY
+        ) // translationY is -collapsedPx when not at top
     }
 
     @Test
@@ -250,7 +257,7 @@ class StickyHeaderScrollBehaviorTest {
         val consumed = connection(state)
             .onPreScroll(Offset(0f, -50f), NestedScrollSource.SideEffect)
 
-        assertThat(consumed).isEqualTo(Offset.Zero)
+        assertEquals(Offset.Zero, consumed)
     }
 
     @Test
@@ -262,7 +269,7 @@ class StickyHeaderScrollBehaviorTest {
         val consumed = connection(state)
             .onPreScroll(Offset(0f, -50f), NestedScrollSource.SideEffect)
 
-        assertThat(consumed).isEqualTo(Offset(0f, -50f))
-        assertThat(state.collapsedPx).isEqualTo(50f)
+        assertEquals(Offset(0f, -50f), consumed)
+        assertEquals(50f, state.collapsedPx)
     }
 }
