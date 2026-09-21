@@ -380,4 +380,6 @@
     <string name="settings_location">Standort</string>
     <string name="show">Einblenden</string>
     <string name="imperial">Imperial</string>
+    <string name="show_images">Bilder anzeigen</string>
+    <string name="unit_system">Einheitensystem</string>
 </resources>
