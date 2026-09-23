@@ -64,6 +64,7 @@ import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
+import org.librefit.enums.userPreferences.RoutineUpdateMode
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.models.Weight
 import org.librefit.nav.Route
@@ -111,6 +112,8 @@ fun SharedTransitionScope.BeforeSavingScreen(
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
 
     val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
+
+    val routineUpdateMode by viewModel.routineUpdateMode.collectAsStateWithLifecycle()
 
 
     val showUnlikeRoutineDialog = remember { mutableStateOf(false) }
@@ -173,6 +176,27 @@ fun SharedTransitionScope.BeforeSavingScreen(
     }
 
 
+    val showUpdateRoutineDialog = remember { mutableStateOf(false) }
+
+    if (showUpdateRoutineDialog.value) {
+        ConfirmDialog(
+            title = stringResource(R.string.update_routine_question),
+            text = stringResource(R.string.update_routine_text),
+            dismissText = stringResource(R.string.dont_update),
+            onConfirm = {
+                viewModel.saveExercisesWithWorkout(updateRoutine = true)
+                showUpdateRoutineDialog.value = false
+                onNavigateToSuccessScreen()
+            },
+            onDismiss = {
+                viewModel.saveExercisesWithWorkout(updateRoutine = false)
+                showUpdateRoutineDialog.value = false
+                onNavigateToSuccessScreen()
+            }
+        )
+    }
+
+
     BeforeSavingScreenContent(
         onNavigateBack = onNavigateBack,
         onNavigateToInfoWorkout = onNavigateToInfoWorkout,
@@ -185,15 +209,21 @@ fun SharedTransitionScope.BeforeSavingScreen(
         volumeExercises = volume,
         animatedVisibilityScope = animatedVisibilityScope,
         useScrollWheelForInput = useScrollWheelForInput,
+        askToUpdateRoutine = routineUpdateMode == RoutineUpdateMode.ASK && routine.title != "",
         isTitleTooLong = viewModel.isTitleTooLong(),
         isTitleEmpty = viewModel.isTitleEmpty(),
         updateWorkoutTitle = viewModel::updateWorkoutTitle,
         updateWorkoutNotes = viewModel::updateWorkoutNotes,
-        saveExercisesWithWorkout = viewModel::saveExercisesWithWorkout,
+        saveExercisesWithWorkout = {
+            viewModel.saveExercisesWithWorkout(
+                updateRoutine = routineUpdateMode == RoutineUpdateMode.ALWAYS
+            )
+        },
         setTimeElapsed = viewModel::setTimeElapsed,
         onInputModalBottomSheetRequest = {
             inputModalBottomSheetState = it
-        }
+        },
+        showUpdateRoutineDialog = { showUpdateRoutineDialog.value = true }
     )
 }
 
@@ -213,11 +243,13 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
     isTitleEmpty: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope,
     useScrollWheelForInput: Boolean,
+    askToUpdateRoutine: Boolean,
     updateWorkoutTitle: (String) -> Unit,
     updateWorkoutNotes: (String) -> Unit,
     saveExercisesWithWorkout: () -> Unit,
     setTimeElapsed: (Int) -> Unit,
     onInputModalBottomSheetRequest: (InputModalBottomSheetState) -> Unit,
+    showUpdateRoutineDialog: () -> Unit,
 ) {
     val timeTextFieldState = rememberTextFieldState(
         initialText = Formatter.formatTime(workout.timeElapsed).filter { it != ':' }
@@ -255,8 +287,12 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
         title = AnnotatedString(stringResource(R.string.overview)),
         navigateBack = onNavigateBack,
         actions = persistentListOf({
-            saveExercisesWithWorkout()
-            onNavigateToSuccessScreen()
+            if (askToUpdateRoutine) {
+                showUpdateRoutineDialog()
+            } else {
+                saveExercisesWithWorkout()
+                onNavigateToSuccessScreen()
+            }
         }),
         actionsDescription = persistentListOf(stringResource(R.string.save)),
         actionsEnabled = persistentListOf(!isTitleEmpty && !isTitleTooLong)
@@ -633,12 +669,14 @@ private fun BeforeSavingScreenPreview() {
                     isTitleTooLong = false,
                     isTitleEmpty = false,
                     useScrollWheelForInput = true,
+                    askToUpdateRoutine = false,
                     updateWorkoutTitle = {},
                     updateWorkoutNotes = {},
                     saveExercisesWithWorkout = {},
                     setTimeElapsed = {},
                     animatedVisibilityScope = this,
-                    onInputModalBottomSheetRequest = {}
+                    onInputModalBottomSheetRequest = {},
+                    showUpdateRoutineDialog = {}
                 )
             }
         }

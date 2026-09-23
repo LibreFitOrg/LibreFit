@@ -30,6 +30,7 @@ import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
+import org.librefit.ui.models.withValuesOfCompletedSets
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -49,6 +50,8 @@ class BeforeSavingScreenViewModel(
 
     val dismissScrollWheelInputAutomatically =
         userPreferencesRepository.dismissScrollWheelInputAutomatically
+
+    val routineUpdateMode = userPreferencesRepository.routineUpdateMode
 
     private val runningWorkoutId = route.runningWorkoutId
 
@@ -155,7 +158,7 @@ class BeforeSavingScreenViewModel(
 
 
 
-    fun saveExercisesWithWorkout() {
+    fun saveExercisesWithWorkout(updateRoutine: Boolean) {
         workoutServiceManager.stopService()
 
         viewModelScope.launch(ioDispatcher) {
@@ -184,6 +187,20 @@ class BeforeSavingScreenViewModel(
                     }
                 )
             )
+
+            if (updateRoutine && routine.value.id != 0L) {
+                val routineWithExercisesAndSets =
+                    workoutRepository.getWorkoutWithExercisesAndSets(routine.value.id)
+
+                workoutRepository.addWorkoutWithExercisesAndSets(
+                    WorkoutWithExercisesAndSets(
+                        workout = routineWithExercisesAndSets.workout.toEntity(),
+                        exercisesWithSets = routineWithExercisesAndSets.exercisesWithSets
+                            .withValuesOfCompletedSets(exercises.value)
+                            .map { it.toEntity() }
+                    )
+                )
+            }
         }
     }
 }

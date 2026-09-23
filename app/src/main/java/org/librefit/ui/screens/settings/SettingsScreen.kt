@@ -49,6 +49,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.librefit.R
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
+import org.librefit.enums.userPreferences.RoutineUpdateMode
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.ui.components.HeadlineText
@@ -67,6 +68,8 @@ fun SettingsScreen(
     onNavigateToSupportScreen: () -> Unit,
     viewModel: SettingsScreenViewModel = koinViewModel()
 ) {
+    val routineUpdateMode by viewModel.routineUpdateMode.collectAsStateWithLifecycle()
+
     val unitSystem by viewModel.unitSystem.collectAsStateWithLifecycle()
 
     val selectedLanguage by viewModel.language.collectAsStateWithLifecycle()
@@ -138,6 +141,7 @@ fun SettingsScreen(
         isWorkoutHeaderSticky = isWorkoutHeaderSticky,
         dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
         unitSystem = unitSystem,
+        routineUpdateMode = routineUpdateMode,
         updatePreferences = viewModel::updatePreferences,
         onMaterialModeChange = viewModel::saveMaterialMode,
         onKeepWorkoutScreenOnChange = viewModel::saveWorkoutScreenOn,
@@ -168,6 +172,7 @@ private fun SettingsScreenContent(
     showExercisesImages: Boolean?,
     dismissScrollWheelInputAutomatically: Boolean,
     unitSystem: UnitSystem,
+    routineUpdateMode: RoutineUpdateMode,
     updatePreferences: (List<DialogPreference>) -> Unit,
     onMaterialModeChange: (Boolean) -> Unit,
     onKeepWorkoutScreenOnChange: (Boolean) -> Unit,
@@ -295,6 +300,17 @@ private fun SettingsScreenContent(
 
             item {
                 SettingItem(
+                    onClick = { updatePreferences(RoutineUpdateMode.entries) },
+                    icon = painterResource(R.drawable.ic_refresh),
+                    settingName = stringResource(id = R.string.update_routine_after_workout),
+                    settingDesc = stringResource(
+                        id = Formatter.preferenceToStringId(routineUpdateMode)
+                    )
+                )
+            }
+
+            item {
+                SettingItem(
                     isChecked = useScrollWheelForInput,
                     onClick = { onUseScrollWheelForInputChange(!useScrollWheelForInput) },
                     icon = painterResource(R.drawable.ic_scroll_vertical),
@@ -415,6 +431,7 @@ fun SettingsScreenPreview() {
             showExercisesImages = displayExercisesImages,
             dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
             unitSystem = UnitSystem.entries.random(),
+            routineUpdateMode = RoutineUpdateMode.entries.random(),
             onMaterialModeChange = { materialModeOn = it },
             onKeepWorkoutScreenOnChange = { keepWorkoutScreenOn = it },
             onRestTimerSoundOnChange = { restTimerSoundOn = it },

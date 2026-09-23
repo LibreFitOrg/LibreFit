@@ -18,6 +18,7 @@ import kotlinx.coroutines.test.runTest
 import org.librefit.MainDispatcherRule
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.Language
+import org.librefit.enums.userPreferences.RoutineUpdateMode
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
 import kotlin.test.AfterTest
@@ -52,6 +53,7 @@ class SettingsScreenViewModelTest {
     private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
     private lateinit var showExercisesImages: MutableStateFlow<Boolean?>
     private lateinit var unitSystem: MutableStateFlow<UnitSystem>
+    private lateinit var routineUpdateMode: MutableStateFlow<RoutineUpdateMode>
 
     @BeforeTest
     fun setUpMainDispatcher() {
@@ -78,6 +80,7 @@ class SettingsScreenViewModelTest {
         dismissScrollWheelAutomatically = MutableStateFlow(false)
         showExercisesImages = MutableStateFlow(null)
         unitSystem = MutableStateFlow(UnitSystem.METRIC)
+        routineUpdateMode = MutableStateFlow(RoutineUpdateMode.NEVER)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.language } returns language
@@ -91,6 +94,7 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
         every { userPreferencesRepository.showExercisesImages } returns showExercisesImages
         every { userPreferencesRepository.unitSystem } returns unitSystem
+        every { userPreferencesRepository.routineUpdateMode } returns routineUpdateMode
 
         every { userPreferencesRepository.saveLanguage(any()) } answers {
             language.value = firstArg()

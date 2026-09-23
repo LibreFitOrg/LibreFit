@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import org.librefit.enums.userPreferences.Language
+import org.librefit.enums.userPreferences.RoutineUpdateMode
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.util.configurationChanges
@@ -51,6 +52,7 @@ private val DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY =
 private val SHOW_EXERCISES_IMAGES_KEY = booleanPreferencesKey("show_exercises_images_key")
 private val UNIT_SYSTEM_KEY = stringPreferencesKey("unit_system")
 private val DEFAULT_BAR_WEIGHT_KEY = doublePreferencesKey("default_bar_weight")
+private val ROUTINE_UPDATE_MODE_KEY = stringPreferencesKey("routine_update_mode")
 /**
  * Central repository managing application-level preferences, including theme, unit systems, and language.
  *
@@ -206,6 +208,18 @@ class UserPreferencesRepository(
             initialValue = null
         )
 
+    val routineUpdateMode: StateFlow<RoutineUpdateMode> = dataStore.data
+        .map { preferences ->
+            runCatching {
+                RoutineUpdateMode.valueOf(preferences[ROUTINE_UPDATE_MODE_KEY]!!)
+            }.getOrDefault(RoutineUpdateMode.NEVER)
+        }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = RoutineUpdateMode.NEVER
+        )
+
 
     private fun resolveDefaultUnitSystem(): UnitSystem {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -337,5 +351,9 @@ class UserPreferencesRepository(
 
     suspend fun saveDefaultBarWeight(value: Double) {
         dataStore.edit { preferences -> preferences[DEFAULT_BAR_WEIGHT_KEY] = value }
+    }
+
+    suspend fun saveRoutineUpdateMode(mode: RoutineUpdateMode) {
+        dataStore.edit { preferences -> preferences[ROUTINE_UPDATE_MODE_KEY] = mode.name }
     }
 }
