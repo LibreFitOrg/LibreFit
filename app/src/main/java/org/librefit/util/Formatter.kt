@@ -25,6 +25,7 @@ import org.librefit.enums.exercise.Mechanic
 import org.librefit.enums.exercise.Muscle
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
+import org.librefit.enums.userPreferences.RoutineUpdateMode
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
 import java.time.LocalDateTime
@@ -136,6 +137,9 @@ object Formatter {
             ThemeMode.SYSTEM -> R.string.follow_system
             UnitSystem.METRIC -> R.string.metric
             UnitSystem.IMPERIAL -> R.string.imperial
+            RoutineUpdateMode.NEVER -> R.string.dont_update
+            RoutineUpdateMode.ALWAYS -> R.string.always_update
+            RoutineUpdateMode.ASK -> R.string.always_ask
         }
     }
 
