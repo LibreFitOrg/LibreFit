@@ -306,4 +306,5 @@
     <string name="create_routine">Создать программу</string>
     <string name="start_routine">Начать программу</string>
     <string name="start_creating_routine">Начните с создания новой программы</string>
+    <string name="delete_running_workout_text">Вы уверены, что хотите удалить эту несохраненную, незавершенную тренировку? Это действие нельзя отменить.</string>
 </resources>
