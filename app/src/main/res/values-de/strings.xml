@@ -380,4 +380,13 @@
     <string name="settings_location">Standort</string>
     <string name="show">Einblenden</string>
     <string name="imperial">Imperial</string>
+    <string name="show_images">Bilder anzeigen</string>
+    <string name="unit_system">Einheitensystem</string>
+    <string name="target_weight">Zielgewicht</string>
+    <string name="language_portuguese">Portugiesisch</string>
+    <string name="barbell_weight">Langhantelgewicht</string>
+    <string name="plates_per_side">Scheiben pro Seite</string>
+    <string name="no_plates_needed">Keine Scheiben notwendig</string>
+    <string name="chip_selected">Ausgewählt</string>
+    <string name="chip_not_selected">Nicht ausgewählt</string>
 </resources>

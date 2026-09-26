@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile">Profil</string>
+    <string name="settings">Ayarlar</string>
+    <string name="about">Hakkında</string>
+    <string name="library">Kütüphane</string>
+    <string name="open">Aç</string>
+    <string name="copy">Kopyala</string>
+    <string name="support_project">Projeyi destekle</string>
+    <string name="info">Bilgi</string>
+    <string name="privacy_policy">Gizlilik politikası</string>
+    <string name="source_code">Kaynak kodu</string>
+    <string name="license">Lisans</string>
+    <string name="contributors">Katkıda bulunanlar</string>
+    <string name="founder">Kurucu</string>
+    <string name="contributed_to">Katkıda bulunulanlar:</string>
+    <string name="view_online_version">Çevrimiçi versiyonunu gör</string>
+    <string name="version">Versiyon</string>
+    <string name="lets_build_it_together">Beraber inşa edelim</string>
+    <string name="tutorial_desc">Nasıl rutin yaratacağını ve antremanlarını takip edeceğini öğren</string>
+    <string name="donators">Bağışçılar</string>
+    <string name="unlink_routine_question">Rutinin bağlantısını kaldır?</string>
+    <string name="statistics">İstatistikler</string>
+    <string name="volume">Hacim</string>
+    <string name="total_sets">Toplam set sayısı</string>
+    <string name="completed_sets">Bitmiş setler</string>
+    <string name="exercises">egzersizler</string>
+    <string name="routine">Rutin</string>
+    <string name="creation_date">Oluşturma günü</string>
+    <string name="label_when">Ne zaman</string>
+    <string name="select_date">Tarih seç</string>
+    <string name="create_exercise">Egzersiz oluştur</string>
+    <string name="edit_exercise">egzersizi düzenle</string>
+</resources>
