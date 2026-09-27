@@ -98,4 +98,9 @@
     <string name="tutorial_desc">了解如何使用训练计划并追踪训练。</string>
     <string name="fat_mass">脂肪重量</string>
     <string name="contributed_to">贡献到:</string>
+    <string name="unlink_routine_question">除链接例程？</string>
+    <string name="label_when">什么时候</string>
+    <string name="edit_exercise">编辑锻炼</string>
+    <string name="start_adding_exercises">首先，在你的日常锻炼计划中加入一项运动</string>
+    <string name="load_only">仅限重物</string>
 </resources>
