@@ -103,4 +103,8 @@
     <string name="edit_exercise">编辑锻炼</string>
     <string name="start_adding_exercises">首先，在你的日常锻炼计划中加入一项运动</string>
     <string name="load_only">仅限重物</string>
+    <string name="unlink_routine_text">将训练关联到计划后，可追踪长期锻炼进展。若取消此训练与计划的关联，原计划不会被删除，已关联该计划的其他训练也保持不变。取消关联仅影响当前训练。</string>
+    <string name="overview">概览</string>
+    <string name="statistics">数据统计</string>
+    <string name="exit_create_routine">确认退出？未保存的计划将丢失</string>
 </resources>
