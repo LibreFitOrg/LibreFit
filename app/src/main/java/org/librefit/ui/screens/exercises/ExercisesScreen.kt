@@ -21,11 +21,16 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ButtonDefaults
@@ -69,6 +74,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -197,8 +203,6 @@ private fun SharedTransitionScope.ExercisesScreenContent(
     navigateToInfoExercise: (ExerciseDC) -> Unit,
     navigateToEditExercise: () -> Unit
 ) {
-
-
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.exercises)),
         navigateBack = navigateBack,
@@ -209,192 +213,230 @@ private fun SharedTransitionScope.ExercisesScreenContent(
         fabText = stringResource(R.string.create_exercise),
         fabIcon = painterResource(R.drawable.ic_add),
     ) { innerPadding ->
-        LibreFitLazyColumn(
-            innerPadding = innerPadding
-        ) {
-            // search bar + filters
-            item {
-                val searchBarState = rememberSearchBarState()
-                val textFieldState = rememberTextFieldState(query)
-                val interactionSource = remember { MutableInteractionSource() }
-                val isFocused by interactionSource.collectIsFocusedAsState()
+        val layoutDirection = LocalLayoutDirection.current
 
-                // Context controllers for clearing focus and dismissing the keyboard
-                val focusManager = LocalFocusManager.current
-                val keyboardController = LocalSoftwareKeyboardController.current
-
-                val hasQuery = textFieldState.text.isNotEmpty()
-                val isSearchActive = isFocused || hasQuery
-
-                // Central exit search action
-                val onExitSearch: () -> Unit = {
-                    textFieldState.edit { replace(0, length, "") }
-                    focusManager.clearFocus()
-                    keyboardController?.hide()
-                }
-
-                // Intercept system back gesture when searching
-                BackHandler(enabled = isSearchActive) {
-                    onExitSearch()
-                }
-
-                // Width animation for search bar
-                val animatedHorizontalPadding by animateDpAsState(
-                    targetValue = if (isSearchActive) 4.dp else 16.dp,
-                    label = "SearchBarWidthAnimation"
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    start = innerPadding.calculateStartPadding(layoutDirection),
+                    end = innerPadding.calculateEndPadding(layoutDirection)
                 )
+        ) {
+            // Header lives OUTSIDE the list: resizing it shrinks the list's viewport
+            // instead of shifting item offsets, so no placement animations are triggered.
+            ExerciseSearchHeader(
+                query = query,
+                filterValue = filterValue,
+                updateQuery = updateQuery,
+                updateFilter = updateFilter,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
 
-                // The input is the single writer of the query; the ViewModel deduplicates and debounces it.
-                LaunchedEffect(textFieldState) {
-                    snapshotFlow { textFieldState.text }
-                        .collect { text -> updateQuery(text.toString()) }
-                }
-
-
-                var isFilterExpanded by rememberSaveable { mutableStateOf(false) }
-
-
-
-                ElevatedCard(
-                    modifier = Modifier.padding(horizontal = animatedHorizontalPadding),
-                    shape = MaterialTheme.shapes.extraLarge,
-                ) {
-                    // search bar
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Surface(
-                            shape = SearchBarDefaults.inputFieldShape,
-                            color = SearchBarDefaults.colors().containerColor,
-                            tonalElevation = SearchBarDefaults.TonalElevation,
-                            shadowElevation = SearchBarDefaults.ShadowElevation,
-                            modifier = Modifier.fillMaxWidth()
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                // Bottom padding stays as content padding so items can scroll under the FAB/nav bar
+                contentPadding = PaddingValues(
+                    bottom = innerPadding.calculateBottomPadding(),
+                    start = 8.dp,
+                    end = 8.dp,
+                    top = 8.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                if (filteredExerciseList.isEmpty()) {
+                    item(key = "empty_state") {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .animateItem(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            SearchBarDefaults.InputField(
-                                textFieldState = textFieldState,
-                                searchBarState = searchBarState,
-                                interactionSource = interactionSource,
-                                onSearch = {
-                                    // Hide keyboard when IME search action is tapped
-                                    focusManager.clearFocus()
-                                    keyboardController?.hide()
-                                },
-                                placeholder = { Text(stringResource(R.string.search_exercise_field)) },
-                                leadingIcon = {
-                                    // Animated transition between Search icon and Back button
-                                    AnimatedContent(
-                                        targetState = hasQuery,
-                                        label = "LeadingIconCrossfade"
-                                    ) { showBackArrow ->
-                                        if (showBackArrow) {
-                                            IconButton(onClick = onExitSearch) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.ic_arrow_back),
-                                                    contentDescription = stringResource(R.string.navigate_back)
-                                                )
-                                            }
-                                        } else {
-                                            Icon(
-                                                painter = painterResource(R.drawable.ic_search),
-                                                contentDescription = stringResource(R.string.search_exercise_field)
-                                            )
-                                        }
-                                    }
-                                },
-                                trailingIcon = {
-                                    IconToggleButton(
-                                        checked = isFilterExpanded,
-                                        onCheckedChange = { isFilterExpanded = it },
-                                        colors = IconButtonDefaults.iconToggleButtonVibrantColors()
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.ic_filter),
-                                            contentDescription = stringResource(R.string.filters)
-                                        )
-                                    }
-                                }
+                            NoResultLottie()
+                            Text(
+                                text = stringResource(id = R.string.no_exercise_found),
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                         }
-                        // Filters
-                        AnimatedVisibility(
-                            visible = isFilterExpanded,
-                            label = "FiltersAnimation"
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(all = 10.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(20.dp)
-                            ) {
-                                FlowRow(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                                    horizontalArrangement = Arrangement.SpaceAround
-                                ) {
-                                    ExerciseProperty.propertiesPairsByEnum.forEach { propertiesPair ->
-                                        ItemFilter(
-                                            pair = propertiesPair,
-                                            update = updateFilter,
-                                            value = filterValue
-                                        )
-                                    }
-                                }
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(all = 15.dp)
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.show_only_custom_exercises),
-                                        modifier = Modifier.weight(1f),
+                    }
+                }
+
+                // Filtered list of exercises sorted by matching score
+                itemsIndexed(
+                    items = filteredExerciseList,
+                    key = { _, exercise -> exercise.id }
+                ) { _, exercise ->
+                    ItemExerciseDC(
+                        modifier = Modifier.animateItem(), // full default: fade + placement
+                        addExercises = addExercises,
+                        exercise = exercise,
+                        showExercisesImages = showExercisesImages,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        onAddToggle = { toggleSelectedExercise(exercise.id) },
+                        isSelected = exercise.id in selectedExercisesIdList,
+                        onInfo = { navigateToInfoExercise(exercise.toEntity()) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExerciseSearchHeader(
+    query: String,
+    filterValue: FilterValue,
+    updateQuery: (String) -> Unit,
+    updateFilter: (FilterValue) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val searchBarState = rememberSearchBarState()
+    val textFieldState = rememberTextFieldState(query)
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val hasQuery = textFieldState.text.isNotEmpty()
+    val isSearchActive = isFocused || hasQuery
+
+    var isFilterExpanded by rememberSaveable { mutableStateOf(false) }
+
+    val onExitSearch: () -> Unit = {
+        textFieldState.edit { replace(0, length, "") }
+        focusManager.clearFocus()
+        keyboardController?.hide()
+    }
+
+    BackHandler(enabled = isSearchActive) { onExitSearch() }
+
+    val animatedHorizontalPadding by animateDpAsState(
+        targetValue = if (isSearchActive) 4.dp else 16.dp,
+        label = "SearchBarWidthAnimation"
+    )
+
+    // The input is the single writer of the query; the ViewModel deduplicates and debounces it.
+    LaunchedEffect(textFieldState) {
+        snapshotFlow { textFieldState.text }
+            .collect { text -> updateQuery(text.toString()) }
+    }
+
+    ElevatedCard(
+        modifier = modifier.padding(horizontal = animatedHorizontalPadding),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Surface(
+                shape = SearchBarDefaults.inputFieldShape,
+                color = SearchBarDefaults.colors().containerColor,
+                tonalElevation = SearchBarDefaults.TonalElevation,
+                shadowElevation = SearchBarDefaults.ShadowElevation,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                SearchBarDefaults.InputField(
+                    textFieldState = textFieldState,
+                    searchBarState = searchBarState,
+                    interactionSource = interactionSource,
+                    onSearch = {
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                    },
+                    placeholder = { Text(stringResource(R.string.search_exercise_field)) },
+                    leadingIcon = {
+                        AnimatedContent(
+                            targetState = hasQuery,
+                            label = "LeadingIconCrossfade"
+                        ) { showBackArrow ->
+                            if (showBackArrow) {
+                                IconButton(onClick = onExitSearch) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_arrow_back),
+                                        contentDescription = stringResource(R.string.navigate_back)
                                     )
-                                    Switch(
-                                        checked = filterValue.showOnlyCustomExercises,
-                                        onCheckedChange = {
-                                            updateFilter(filterValue.copy(showOnlyCustomExercises = it))
-                                        }
-                                    )
                                 }
+                            } else {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_search),
+                                    contentDescription = stringResource(R.string.search_exercise_field)
+                                )
                             }
                         }
+                    },
+                    trailingIcon = {
+                        IconToggleButton(
+                            checked = isFilterExpanded,
+                            onCheckedChange = { isFilterExpanded = it },
+                            colors = IconButtonDefaults.iconToggleButtonVibrantColors()
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_filter),
+                                contentDescription = stringResource(R.string.filters)
+                            )
+                        }
                     }
-                }
-            }
-
-            if (filteredExerciseList.isEmpty()) {
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        NoResultLottie()
-                        Text(
-                            text = stringResource(id = R.string.no_exercise_found),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-            }
-
-            //Filtered list of exercises sorted by matching score
-            itemsIndexed(
-                items = filteredExerciseList,
-                key = { _, exercise -> exercise.id }
-            ) { _, exercise ->
-                ItemExerciseDC(
-                    modifier = Modifier.animateItem(),
-                    addExercises = addExercises,
-                    exercise = exercise,
-                    showExercisesImages = showExercisesImages,
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    onAddToggle = { toggleSelectedExercise(exercise.id) },
-                    isSelected = exercise.id in selectedExercisesIdList,
-                    onInfo = { navigateToInfoExercise(exercise.toEntity()) }
                 )
             }
+
+            AnimatedVisibility(
+                visible = isFilterExpanded,
+                label = "FiltersAnimation"
+            ) {
+                ExerciseFilters(
+                    filterValue = filterValue,
+                    updateFilter = updateFilter
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExerciseFilters(
+    filterValue: FilterValue,
+    updateFilter: (FilterValue) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(all = 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            ExerciseProperty.propertiesPairsByEnum.forEach { propertiesPair ->
+                ItemFilter(
+                    pair = propertiesPair,
+                    update = updateFilter,
+                    value = filterValue
+                )
+            }
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(all = 15.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.show_only_custom_exercises),
+                modifier = Modifier.weight(1f),
+            )
+            Switch(
+                checked = filterValue.showOnlyCustomExercises,
+                onCheckedChange = {
+                    updateFilter(filterValue.copy(showOnlyCustomExercises = it))
+                }
+            )
         }
     }
 }
