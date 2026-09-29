@@ -8,23 +8,97 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 -
 
 ### Changed
+
 -
 
 ### Deprecated
+
 -
 
 ### Removed
+
 -
 
 ### Fixed
+
 -
 
-> [!TIP]
-> `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
-> For normal use, download `LibreFit.apk`
+## [0.5.0] - 2026-09-18
+
+This release focuses on streamlining the workout experience with faster data entry tools and a modernized, more intuitive interface. Hope you enjoy
+it!
+
+|                                                           Scroll Wheel Buttons                                                           |                                                                  Search & Menus                                                                  |                                                         Welcome Screen                                                          |                                                            Barbell Calc                                                             |
+|:----------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------:|
+| <img width="100%" alt="buttons in scroll whell" src="https://github.com/user-attachments/assets/ef1a6206-e07d-4155-be9d-ba571bfdd6d6" /> | <img width="100%" alt="expressive search bar and menus" src="https://github.com/user-attachments/assets/3c3bfec1-cf11-473b-8edd-e03feeddb0c4" /> | <img width="100%" alt="welcome screen" src="https://github.com/user-attachments/assets/0d87df9a-01df-491f-9a80-6d168ddecf76" /> | <img width="100%" alt="barbell calculator" src="https://github.com/user-attachments/assets/fafafb48-efa1-4d0f-92c2-0bdb841f3c02" /> |
+
+### Added
+
+- French language support 🇫🇷 [#180](https://github.com/LibreFitOrg/LibreFit/pull/180)
+- New buttons for faster scroll wheel input [#181](https://github.com/LibreFitOrg/LibreFit/pull/181)
+- Barbell plate calculator to quickly determine plate loads based on target weight [#15](https://github.com/LibreFitOrg/LibreFit/issues/15)
+- Quick setup in welcome screen [#185](https://github.com/LibreFitOrg/LibreFit/pull/185)
+- Reordering of routines in home screen [#68](https://github.com/LibreFitOrg/LibreFit/issues/68)
+- Smart auto-fill for weight inputs based on the last saved measurement [#164](https://github.com/LibreFitOrg/LibreFit/issues/164)
+- Option to open settings from the Android system Settings app [#184](https://github.com/LibreFitOrg/LibreFit/pull/184)
+
+### Changed
+
+- Modernize search bar design in exercises screen to Material Expressive [#191](https://github.com/LibreFitOrg/LibreFit/pull/191)
+- Modernize dropdown menus to Material Expressive [#192](https://github.com/LibreFitOrg/LibreFit/pull/192)
+- Sticky header disappears on scroll down and reappears immediately on scroll up [#189](https://github.com/LibreFitOrg/LibreFit/pull/189)
+- Modernize bottom navigation bar to Material Expressive [#172](https://github.com/LibreFitOrg/LibreFit/pull/172)
+
+### Fixed
+
+- Fixed a crash occurring when switching the app language to Chinese [#154](https://github.com/LibreFitOrg/LibreFit/issues/154)
+- Corrected weight display issues on the exercise details screen [#176](https://github.com/LibreFitOrg/LibreFit/pull/176)
+- Fixed edge-to-edge display issues for a true full-screen experience [#100](https://github.com/LibreFitOrg/LibreFit/issues/100)
+
+## [0.4.1] - 2026-07-28
+
+This release contains fix for a bug noticed shortly after release v0.4.0. The bug was only visual so no data was affected.
+
+### Fixed
+
+- Visual bug in previous set of workout screen [#140](https://github.com/LibreFitOrg/LibreFit/pull/140)
+
+## [0.4.0] - 2026-07-26
+
+### Added
+
+- Support for imperial system (pounds) [#18](https://github.com/LibreFitOrg/LibreFit/issues/18)
+- Russian 🇷🇺 [#124](https://github.com/LibreFitOrg/LibreFit/pull/124)
+- Add 5 new exercises [#111](https://github.com/LibreFitOrg/LibreFit/pull/111):
+  - Wall Sit (Isometric squat against the wall)
+  - Plank Shoulder Taps
+  - Bottom Push-Up Hold
+  - Cobra Stretch
+  - Jumping Jacks
+
+### Changed
+
+- A new toggle to show images was introduced (off by default). [#29](https://github.com/LibreFitOrg/LibreFit/issues/29)
+- Quicker input for weights with scroll wheel [#74](https://github.com/LibreFitOrg/LibreFit/issues/74)
+
+### Fixed
+
+- Buttons in rest timer notification by refactoring logic [#117](https://github.com/LibreFitOrg/LibreFit/pull/117)
+- Fix language handling and display [#122](https://github.com/LibreFitOrg/LibreFit/pull/122)
+
+## [0.3.1] - 2026-05-31
+
+This is a hotfix for a bug in the weight value of a set: the underlying data were correctly updated, so the issue was only in the visualization.
+
+### Fixed
+
+- Visual bug causing weight field to not show current value [#90](https://github.com/LibreFitOrg/LibreFit/issues/90)
+- Initial state of input sheet [#88](https://github.com/LibreFitOrg/LibreFit/pull/88)
+
 
 ## [0.3.0] - 2026-05-23
 
@@ -53,10 +127,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rare crash in info workout screen [#64](https://github.com/LibreFitOrg/LibreFit/issues/64)
 - Parsing logic when typing weight [#43](https://github.com/LibreFitOrg/LibreFit/issues/43)
 - Typing time logic and parsing [#66](https://github.com/LibreFitOrg/LibreFit/issues/66)
-
-> [!TIP]
-> `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
-> For normal use, download `LibreFit.apk`
 
 ## [0.2.0] - 2026-04-26
 
@@ -89,15 +159,19 @@ Thank you for your support!
 - Incorrect date handling in different time
   zones [#14](https://github.com/LibreFitOrg/LibreFit/issues/14)
 
-> [!TIP]
-> `LibreFit-unsigned.apk` should be used **only** for [verification](https://github.com/LibreFitOrg/LibreFit/blob/main/REPRODUCIBLE.md).
-> For normal use, download `LibreFit.apk`
-
 ## [0.1.5] - 2026-02-23
 
 First public release. Bugs are expected! Report them so they can be fixed.
 
-[Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/LibreFitOrg/LibreFit/compare/v0.5.0...HEAD
+
+[0.5.0]: https://github.com/LibreFitOrg/LibreFit/compare/v0.4.1...v0.5.0
+
+[0.4.1]: https://github.com/LibreFitOrg/LibreFit/compare/v0.4.0...v0.4.1
+
+[0.4.0]: https://github.com/LibreFitOrg/LibreFit/compare/v0.3.1...v0.4.0
+
+[0.3.1]: https://github.com/LibreFitOrg/LibreFit/compare/v0.3.0...v0.3.1
 
 [0.3.0]: https://github.com/LibreFitOrg/LibreFit/compare/v0.2.0...v0.3.0
 

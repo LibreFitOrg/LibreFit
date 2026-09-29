@@ -10,7 +10,6 @@ package org.librefit.ui.screens.measurements
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,19 +24,25 @@ import kotlinx.coroutines.launch
 import org.librefit.db.entity.Measurement
 import org.librefit.db.repository.MeasurementRepository
 import org.librefit.db.repository.UserPreferencesRepository
-import org.librefit.di.qualifiers.DefaultDispatcher
 import org.librefit.enums.MeasurementCardState
 import org.librefit.enums.chart.MeasurementChart
+import org.librefit.enums.userPreferences.UnitSystem
+import org.librefit.models.Weight
 import org.librefit.ui.components.charts.Point
+import org.librefit.ui.models.doubleValue
 import org.librefit.util.Formatter
 import java.time.LocalDateTime
-import javax.inject.Inject
 
-@HiltViewModel
-class MeasurementScreenViewModel @Inject constructor(
+/**
+ * Default body weight (in kilograms) used to pre-fill the new-measurement card when no valid
+ * saved weight exists.
+ */
+private const val DEFAULT_BODY_WEIGHT_KG = 60.0
+
+class MeasurementScreenViewModel(
     private val measurementRepository: MeasurementRepository,
-    @param:DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
-    userPreferencesRepository: UserPreferencesRepository
+    defaultDispatcher: CoroutineDispatcher,
+    userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
     val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
 
@@ -70,7 +75,7 @@ class MeasurementScreenViewModel @Inject constructor(
             measurements
                 .filter {
                     when (measurementChart) {
-                        MeasurementChart.BODY_WEIGHT -> it.bodyWeight != 0.0
+                        MeasurementChart.BODY_WEIGHT -> it.bodyWeight.doubleValue(unitSystem.value) != 0.0
                         MeasurementChart.FAT_MASS -> it.bodyFatPercentage != 0
                         MeasurementChart.LEAN_MASS -> it.muscleMassPercentage != 0
                     }
@@ -79,7 +84,7 @@ class MeasurementScreenViewModel @Inject constructor(
                     Point(
                         yValues = listOf(
                             when (measurementChart) {
-                                MeasurementChart.BODY_WEIGHT -> it.bodyWeight
+                                MeasurementChart.BODY_WEIGHT -> it.bodyWeight.doubleValue(unitSystem.value)
                                 MeasurementChart.FAT_MASS -> it.bodyFatPercentage
                                 MeasurementChart.LEAN_MASS -> it.muscleMassPercentage
                             }.toDouble()
@@ -104,13 +109,19 @@ class MeasurementScreenViewModel @Inject constructor(
         _idMeasurement.update { newValue }
     }
 
+    val unitSystem = userPreferencesRepository.unitSystem
 
-    private val _bodyweight = MutableStateFlow<Double?>(null)
+    private val _bodyweight = MutableStateFlow<Weight?>(null)
     val bodyWeight = _bodyweight.asStateFlow()
 
     fun updateBodyweight(newValue: String) {
         _bodyweight.update {
-            Formatter.parseDoubleFromString(newValue)
+            Formatter.parseDoubleFromString(newValue)?.let { value ->
+                when (unitSystem.value) {
+                    UnitSystem.METRIC -> Weight.kilograms(value)
+                    UnitSystem.IMPERIAL -> Weight.pounds(value)
+                }
+            }
         }
     }
 
@@ -159,11 +170,22 @@ class MeasurementScreenViewModel @Inject constructor(
     }
 
 
+    /**
+     * The measurement currently backing the add/edit card.
+     *
+     * In [MeasurementCardState.EDIT] it resolves the measurement with the selected
+     * [Measurement.id], falling back to a default one when it cannot be found; in
+     * [MeasurementCardState.NEW] it pre-fills the card with the last saved body weight,
+     * or [DEFAULT_BODY_WEIGHT_KG] when no valid measurement exists.
+     */
     private val currentMeasurement: StateFlow<Measurement> =
         combine(idMeasurement, measurements, measurementCardState) { id, m, mcs ->
-            if (mcs == MeasurementCardState.EDIT) {
-                m.find { it.id == id } ?: Measurement()
-            } else Measurement()
+            when (mcs) {
+                MeasurementCardState.EDIT -> m.find { it.id == id } ?: Measurement()
+                MeasurementCardState.NEW -> Measurement(
+                    bodyWeight = m.lastSavedBodyWeight() ?: Weight.kilograms(DEFAULT_BODY_WEIGHT_KG)
+                )
+            }
         }
             .distinctUntilChanged()
             .stateIn(
@@ -192,7 +214,7 @@ class MeasurementScreenViewModel @Inject constructor(
                 Measurement(
                     id = if (measurementCardState.value == MeasurementCardState.EDIT)
                         idMeasurement.value else 0L,
-                    bodyWeight = bodyWeight.value ?: 0.0,
+                    bodyWeight = bodyWeight.value ?: Weight.zero(),
                     notes = notes.value,
                     muscleMassPercentage = leanMass.value ?: 0,
                     bodyFatPercentage = fatMass.value ?: 0,
@@ -212,3 +234,13 @@ class MeasurementScreenViewModel @Inject constructor(
         }
     }
 }
+
+/**
+ * Returns the body weight of the most recently recorded measurement (by [Measurement.date]),
+ * or `null` when no measurement with a valid (non-zero) weight exists.
+ *
+ * Zero-weight entries are ignored so degenerate rows cannot pre-fill the form with a value
+ * that would keep the save action disabled.
+ */
+private fun List<Measurement>.lastSavedBodyWeight(): Weight? =
+    maxByOrNull { it.date }?.bodyWeight?.takeIf { it.inKilograms != 0.0 }

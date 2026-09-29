@@ -55,7 +55,7 @@ We will then take care of the question as soon as possible.
 
 When contributing to this project, you must agree that you have authored 100% of the content, that
 you have the necessary rights to the content and that the content you contribute may be provided
-under the project licence.
+under the project license.
 
 ### License
 
@@ -78,7 +78,7 @@ possible.
 - To see if other users have experienced (and potentially already solved) the same issue you are
   having, check if there is not already a bug report existing for your bug or error in
   the [bug tracker](https://github.com/LibreFitOrg/LibreFit/issues?q=label%3Abug).
-- Also make sure to search the internet to see if users outside of the GitHub community have
+- Also make sure to search the internet to see if users outside the GitHub community have
   discussed the issue.
 
 #### How Do I Submit a Good Bug Report?
@@ -158,15 +158,12 @@ the latest Android toolkit:
 - [MVVM](https://developer.android.com/topic/architecture/recommendations) – [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) + [StateFlow](https://developer.android.com/kotlin/flow/stateflow-and-sharedflow)
   for UI state.
 - [Jetpack Compose](https://developer.android.com/compose) for UI.
-- [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) for dependency
-  injection.
+- [Koin](https://insert-koin.io/) for dependency injection.
 - [Room](https://developer.android.com/training/data-storage/room) for storage of workouts,
   exercises, sets and dataset.
 - [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) for user
   preferences storage.
 - [Coil](https://github.com/coil-kt/coil) for asynchronous loading of images.
-- [Accompanist](https://github.com/google/accompanist) for the handling of user permissions in
-  Jetpack Compose.
 - [Vico](https://github.com/patrykandpatrick/vico) for charts.
 - [Lottie Compose](https://github.com/airbnb/lottie-android) for animations.
 
@@ -191,22 +188,55 @@ the latest Android toolkit:
 
 ### Translations
 
-> [!CAUTION]
-> All Weblate translators who **logged in with GitHub**, can just receive code just as Contributors
-> by logging in here: https://librefit.org/donate.
->
-> If that is not the case, unfortunately, there isn't the automatic reward system for translators
-> yet! To get the supporter code, send a message by visiting contact
-> page: https://librefit.org/contact.
+> [!IMPORTANT]
+> To get the supporter code as Weblate translator, follow procedure in the following page: https://librefit.org/translators/login.
 
 We want LibreFit to be accessible to everyone!
 
 - We use **Weblate** for translations. Join our project here: https://hosted.weblate.org/projects/librefit/librefit/
 - Please, **do not blindly accept machine or AI translations** as they do not understand the
   context. Always double check all translations and their use in LibreFit.
-- A language will be added once it is **completed at least 70%**.
+- A language will be added once it is **completed at least 80%**.
 
 > Thanks to [Weblate](https://weblate.org) for hosting LibreFit's translations!
+
+#### 🗺️ Supported Languages for Translation
+
+You can contribute if your target language is on this list:
+
+| Language             |
+|----------------------|
+| 🇸🇦 Arabic          |
+| 🇧🇩 Bengali         |
+| 🇨🇳 Chinese         |
+| 🇨🇿 Czech           |
+| 🇳🇱 Dutch           |
+| 🇬🇧 English         |
+| 🇫🇷 French          |
+| 🇩🇪 German          |
+| 🇳🇬 Hausa           |
+| 🇮🇳 Hindi           |
+| 🇮🇩 Indonesian      |
+| 🇮🇹 Italian         |
+| 🇯🇵 Japanese        |
+| 🇮🇩 Javanese        |
+| 🇰🇷 Korean          |
+| 🇮🇳 Marathi         |
+| 🇮🇷 Persian (Farsi) |
+| 🇵🇱 Polish          |
+| 🇵🇹 Portuguese      |
+| 🇵🇰 Punjabi         |
+| 🇷🇺 Russian         |
+| 🇪🇸 Spanish         |
+| 🇰🇪 Swahili         |
+| 🇸🇪 Swedish         |
+| 🇮🇳 Tamil           |
+| 🇮🇳 Telugu          |
+| 🇹🇭 Thai            |
+| 🇹🇷 Turkish         |
+| 🇺🇦 Ukrainian       |
+| 🇵🇰 Urdu            |
+| 🇻🇳 Vietnamese      |
 
 ### Improving exercises' dataset
 
@@ -219,24 +249,50 @@ these guidelines when adding or modifying exercises:
 * **Format:** Images must have `webp` format, a white background and be consistent with existing
   exercise imagery.
 * **Quality**: Instructions must be clear, step-by-step, and coherent with the provided images.
-* **Asset Organization:** Images must be stored in `app/src/main/res/raw/`. Create a folder for each
-  exercise named exactly as the `id` in your JSON. Reference these in the JSON using the relative
-  path.
-* **Consistency:** Ensure the `id` is unique and follows kebab-case. Verify there are no duplicate
-  entries in the JSON array and that all JSON syntax is valid (no trailing commas).
+* **Asset Organization:**
+    - Images must be stored in `app/src/main/assets/`. Create a folder for each exercise named exactly as the `id` in your JSON. Reference these in
+      the JSON using the relative path.
+    - The JSON file is located at `app/src/main/res/raw`
+* **Consistency:**
+    - Ensure the `id` is unique and follows `Pascal_Snake_Case`.
+    - The exercises must be ordered alphabetically by ID. The Python script (`validate_exercises_json.py`) provides the correct JSON as
+      `ordered_exercises.json`
+    - Verify there are no duplicate entries in the JSON array and that all JSON syntax is valid (no trailing commas).
+  - Ensure values are allowed by `schemas/exercises-schema.json`
 
 #### Data Validation
 
-All exercises are validated against a JSON Schema. Please ensure your contributions meet these
-standards:
+Before committing, validate your changes locally with Python:
 
-1. **Schema Location:** The data contract is defined in `schemas/exercise-schema.json`.
-2. **IDE Setup:** A schema catalog is used to enable real-time linting in Android Studio.
-3. **Validation:** Before committing, validate your changes locally with this simple command:
+1. From root directory of the project, create virtual environment:
+    ```shell
+    python -m venv .venv
+    ```
 
-```shell
-npx ajv-cli validate -s schemas/exercises-schema.json -d "app/src/main/res/raw/exercises.json"
+2. Activate virtual environment:
+    ```bash
+   source ./.venv/bin/activate    # For MacOS/Linux
+   .\.venv\Scripts\Activate.ps1   # Windows (PowerShell)
+    ```
+3. Install dependencies:
+    ```shell
+    pip install -r requirements.txt
+    ```
+4. Run script:
+   ```shell
+   python validate_exercises_json.py
+   ```
+
+If errors are encountered, the script will stop and print them on screen so they can be fixed.
+When JSON file is correct, validation will pass and script will output:
+```text
+✅ JSON file is valid.
 ```
+
+> [!IMPORTANT]
+> This check will be executed also by CI in a pull request or push to every change in JSON file or images.
+> If JSON is not ordered, the CI will upload the ordered JSON as artifact.
+> See more [here](https://github.com/LibreFitOrg/LibreFit/blob/main/.github/workflows/validate-exercises-json.yml)
 
 #### Pull Request Process
 

@@ -31,7 +31,7 @@
     <string name="tutorial_desc">रूटीन बनाना और अपनी कसरतें ट्रैक करना सीखें।</string>
     <string name="donators">दानकर्ता</string>
     <string name="overview">ओवरव्यू</string>
-    <string name="app_name">LibreFit</string>
+    <string name="app_name">लिब्रे फ़िट</string>
     <string name="volume">वॉल्यूम</string>
     <string name="total_sets">कुल कसरत सेट</string>
     <string name="completed_sets">पूरा किए गए सेट</string>
@@ -43,7 +43,7 @@
     <string name="create_exercise">व्यायाम बनाएं</string>
     <string name="edit_exercise">व्यायाम संपादित करें</string>
     <string name="start_adding_exercises">शुरू करने के लिए अपनी रूटीन में एक व्यायाम जोड़ें</string>
-    <string name="exit_create_routine">क्या आप सुनिश्चित हैं कि आप बाहर निकलना चाहते हैं? आपकी रूटीन सेव नहीं होगी।</string>
+    <string name="exit_create_routine">क्या आप सुनिश्चित हैं कि आप बाहर निकलना चाहते हैं? आपकी रूटीन सेव नहीं होगी</string>
     <string name="title">शीर्षक</string>
     <string name="set">सेट</string>
     <string name="reps">रेप्स</string>
@@ -62,4 +62,12 @@
     <string name="application_encountered_error">एप्लिकेशन में एक अप्रत्याशित त्रुटि आ गई है</string>
     <string name="restart_app">पुनः आरंभ करें</string>
     <string name="crash_log">क्रैश लॉग</string>
+    <string name="app_name_first_part">लिब्रे</string>
+    <string name="app_name_second_part">फिट</string>
+    <string name="unlink_routine_text">रूटीन को एक साथ जोड़ने से समय के साथ वर्कआउट की प्रोग्रेस को मापा जा सकता है। अगर आप इस वर्कआउट को रूटीन से अलग करते हैं, तो रूटीन बना रहेगा और उस रूटीन से जुड़ा कोई भी वर्कआउट वैसा ही रहेगा। रूटीन को अलग करने का असर सिर्फ़ मौजूदा वर्कआउट पर ही पड़ेगा।</string>
+    <string name="bodyweight_with_load">शरीर का वज़न और भार</string>
+    <string name="add_set">वर्कआउट सेट जोड़ें</string>
+    <string name="warning_delete_exercise_from_routine">सावधान! पहले से मौजूद रूटीन से एक्सरसाइज़ हटाने पर, उस रूटीन से जुड़े वर्कआउट की सभी एक्सरसाइज़ का लिंक टूट जाएगा।</string>
+    <string name="report_github">गिटहब पर रिपोर्ट करें</string>
+    <string name="quit_adding_exercises_question">क्या आप अपनी एक्सरसाइज़ में नई एक्सरसाइज़ जोड़ना बंद कर रहे हैं?</string>
 </resources>

@@ -7,7 +7,9 @@
   -->
 
 <resources>
-    <string name="app_name">LibreFit</string>
+    <string name="app_name" translatable="false">LibreFit</string>
+    <string name="app_name_first_part" translatable="false">Libre</string>
+    <string name="app_name_second_part" translatable="false">Fit</string>
 
     <!--Navigation-->
     <string name="home">Home</string>
@@ -51,7 +53,7 @@
     <string name="tutorial_desc">Learn how to create routines and track your workouts.</string>
     <string name="donators">Donators</string>
     <string name="codeberg" translatable="false">Codeberg</string>
-    <string name="url_source_code_codeberg">https://codeberg.org/LibreFitOrg/LibreFit</string>
+    <string name="url_source_code_codeberg" translatable="false">https://codeberg.org/LibreFitOrg/LibreFit</string>
 
     <!-- username and url of donators, contributors and translators -->
     <string name="doen1el" translatable="false">doen1el</string>
@@ -90,6 +92,62 @@
     <string name="SilentCoderHere" translatable="false">SilentCoderHere</string>
     <string name="url_SilentCoderHere" translatable="false">https://github.com/SilentCoderHere</string>
     <string name="UnknownLi" translatable="false">UnknownLi</string>
+    <string name="xorodev" translatable="false">xorodev</string>
+    <string name="url_xorodev" translatable="false">https://github.com/xorodev</string>
+    <string name="johncorea580_crypto" translatable="false">johncorea580-crypto</string>
+    <string name="url_johncorea580_crypto" translatable="false">https://github.com/johncorea580-crypto</string>
+    <string name="theswordsgame" translatable="false">theswordsgame</string>
+    <string name="ylconion" translatable="false">ylconion</string>
+    <string name="url_ylconion" translatable="false">https://github.com/ylconion</string>
+    <string name="zei_dan" translatable="false">zei dan</string>
+    <string name="url_zei_dan" translatable="false">https://github.com/bakamake</string>
+    <string name="Robin_Schanbacher" translatable="false">Robin Schanbacher</string>
+    <string name="url_Robin_Schanbacher" translatable="false">https://github.com/RobinS-T470s</string>
+    <string name="sprivaq" translatable="false">sprivaq</string>
+    <string name="url_sprivaq" translatable="false">https://github.com/sprivaq</string>
+    <string name="Safi_Ullah" translatable="false">Safi Ullah</string>
+    <string name="url_Safi_Ullah" translatable="false">https://github.com/Safi-Ullah-1060</string>
+    <string name="dzjulis" translatable="false">джулис</string>
+    <string name="url_dzjulis" translatable="false">https://github.com/vuichka</string>
+    <string name="Jae_Hyuk_Lee" translatable="false">Jae Hyuk Lee</string>
+    <string name="Semprista" translatable="false">Semprista</string>
+    <string name="url_Semprista" translatable="false">https://github.com/Semprista</string>
+    <string name="mister_bum" translatable="false">mister-bum</string>
+    <string name="url_mister_bum" translatable="false">https://github.com/mister-bum</string>
+    <string name="BigP0tato" translatable="false">BigP0tato</string>
+    <string name="url_BigP0tato" translatable="false">https://github.com/B1gP0tato</string>
+    <string name="Jent1357" translatable="false">Jent1357</string>
+    <string name="url_Jent1357" translatable="false">https://github.com/Jent1357</string>
+    <string name="Ahmedbd23" translatable="false">Ahmedbd23</string>
+    <string name="url_Ahmedbd23" translatable="false">https://github.com/Ahmedbd23</string>
+    <string name="tomel51733" translatable="false">tomel51733</string>
+    <string name="T_Silverspoon" translatable="false">T-Silverspoon</string>
+    <string name="url_T_Silverspoon" translatable="false">https://github.com/T-Silverspoon</string>
+    <string name="ByYeah" translatable="false">ByYeah</string>
+    <string name="url_ByYeah" translatable="false">https://github.com/ByYeah</string>
+    <string name="VanemKrAu" translatable="false">VanemKrAu</string>
+    <string name="url_VanemKrAu" translatable="false">https://github.com/VanemKrAu</string>
+    <string name="UbioZur" translatable="false">UbioZur</string>
+    <string name="url_UbioZur" translatable="false">https://github.com/UbioZur</string>
+    <string name="malespiaut" translatable="false">malespiaut</string>
+    <string name="url_malespiaut" translatable="false">https://github.com/malespiaut</string>
+    <string name="zhx000" translatable="false">zhx000</string>
+    <string name="url_zhx000" translatable="false">https://github.com/zhx000</string>
+    <string name="Miles_Espadoto" translatable="false">Miles Espadoto</string>
+    <string name="vinitdrk" translatable="false">vinitdrk</string>
+    <string name="url_vinitdrk" translatable="false">https://github.com/vinitdrk</string>
+    <string name="Jahn_Andreas" translatable="false">Jahn Andreas</string>
+    <string name="hyperion51" translatable="false">hyperion</string>
+    <string name="url_hyperion51" translatable="false">https://github.com/hyperioncodes</string>
+    <string name="joncasagrande" translatable="false">joncasagrande</string>
+    <string name="url_joncasagrande" translatable="false">https://github.com/joncasagrande</string>
+    <string name="lotation" translatable="false">lotation</string>
+    <string name="url_lotation" translatable="false">https://github.com/lotation</string>
+    <string name="WinnerWind" translatable="false">WinnerWind</string>
+    <string name="url_WinnerWind" translatable="false">https://github.com/WinnerWind</string>
+    <string name="Rajesh_Ranmara" translatable="false">Rajesh Ranmara</string>
+    <string name="alexis_charp" translatable="false">alexischarp</string>
+    <string name="url_alexis_charp" translatable="false">https://github.com/alexischarp</string>
 
 
     <!--Before saving screen-->
@@ -199,6 +257,8 @@
     <string name="delete_exercise_from_dataset">Delete exercise from dataset?</string>
     <string name="delete_exercise_from_dataset_desc">Warning: all associated exercises will be deleted! This action cannot be reversed.</string>
     <string name="ai_images_warning">⚠️ AI generated images are continuously reviewed but may contain inaccuracies and/or artifacts. For a more accurate exercise description, see the relative instructions.</string>
+    <string name="hide">Hide</string>
+    <string name="show">Show</string>
 
 
     <!--Measurement screen-->
@@ -221,6 +281,8 @@
     <string name="dont_ask_again">Don\'t ask again</string>
     <string name="skip_for_now">Skip for now</string>
     <string name="label_continue">Continue</string>
+    <string name="notifications_permission_permanently_denied_desc">Notifications are blocked. Please enable them in system settings to receive workout updates.</string>
+    <string name="open_settings">Open Settings</string>
 
 
     <!--Profile screen-->
@@ -282,6 +344,14 @@
     <string name="dismiss_scroll_wheel_automatically">Dismiss scroll wheel automatically</string>
     <string name="dismiss_scroll_wheel_automatically_desc">The scroll wheel will be dismissed automatically.</string>
     <string name="dismiss_scroll_wheel_manually_desc">The scroll wheel will have to be dismissed manually.</string>
+    <string name="show_images">Show images</string>
+    <string name="hide_images_desc">Images of exercises will be hidden</string>
+    <string name="show_images_desc">Images of exercises will be shown</string>
+    <string name="settings_location">Location</string>
+    <string name="unit_system">Unit system</string>
+    <string name="metric">Metric</string>
+    <string name="imperial">Imperial</string>
+    <string name="data_management">Data management</string>
     <string name="export_data">Export data</string>
     <string name="export_data_desc">Export the current database</string>
     <string name="export_data_success">Data exported successfully</string>
@@ -290,6 +360,7 @@
     <string name="import_data_desc">Import backed up data</string>
     <string name="import_data_success">Data imported successfully</string>
     <string name="import_data_failed">Data import failed</string>
+    <string name="export_file_name">librefit-backup.json</string>
 
     <!--- Languages -->
     <string name="language">Language</string>
@@ -307,8 +378,6 @@
     <string name="language_spanish">Spanish</string>
     <string name="language_chinese_simplified_nt" translatable="false">简体中文</string>
     <string name="language_chinese_simplified">Chinese simplified</string>
-    <string name="language_galician_nt" translatable="false">Galego</string>
-    <string name="language_galician">Galician</string>
     <string name="language_brazilian_portuguese_nt" translatable="false">Português (Brasil)</string>
     <string name="language_brazilian_portuguese">Brazilian portuguese</string>
     <string name="language_arabic_nt" translatable="false">العربية</string>
@@ -323,6 +392,18 @@
     <string name="language_indonesian">Indonesian</string>
     <string name="language_ukrainian_nt" translatable="false">українська</string>
     <string name="language_ukrainian">Ukrainian</string>
+    <string name="language_polish_nt" translatable="false">Polski</string>
+    <string name="language_polish">Polish</string>
+    <string name="language_urdu_nt" translatable="false">اُردُو</string>
+    <string name="language_urdu">Urdu</string>
+    <string name="language_russian_nt" translatable="false">Русский</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_korean_nt" translatable="false">한국어</string>
+    <string name="language_korean">Korean</string>
+    <string name="language_swedish_nt" translatable="false">Svenska</string>
+    <string name="language_swedish">Swedish</string>
+    <string name="language_portuguese_nt" translatable="false">Português</string>
+    <string name="language_portuguese">Portuguese</string>
 
     <!-- Statistics screen-->
     <string name="past">Past</string>
@@ -354,7 +435,7 @@
     <string name="to_verify">To verify</string>
     <string name="verify_code">Verify code</string>
     <string name="code_desc">Paste the code and click the button below.</string>
-    <string name="verify_companion_or_code">Verify or the companion app or the code.</string>
+    <string name="verify_companion_or_code">Verify the companion app or the code.</string>
     <string name="exercise_saved">Exercise saved</string>
 
     <string name="valid_companion_app_signature">Valid companion app</string>
@@ -408,6 +489,7 @@
 
     <!-- Welcome screen-->
     <string name="welcome_to">Welcome to</string>
+    <string name="make_it_yours">Make it yours</string>
 
 
     <!--Info modal bottom sheet-->
@@ -427,6 +509,7 @@
     <!--Exercise card-->
     <string name="rest_time">Rest time</string>
     <string name="kg" translatable="false">kg</string>
+    <string name="lb" translatable="false">lb</string>
     <string name="type_of_set">Type of set</string>
     <string name="previous">Previous</string>
 
@@ -446,6 +529,20 @@
     <!--Notification and channels-->
     <string name="workout_info_channel_title">Real-time workout information</string>
     <string name="workout_info_channel_desc">This channel is used to provide real-time updates on the ongoing workout.</string>
+
+
+    <!--Barbell calculator-->
+    <string name="barbell_calculator">Barbell Calculator</string>
+    <string name="target_weight">Target weight</string>
+    <string name="barbell_weight">Barbell weight</string>
+    <string name="plates_per_side">Plates per side</string>
+    <string name="no_plates_needed">No plates needed</string>
+    <string name="weight_le_bar">Weight is less than or equal to the bar</string>
+    <string name="include_small_plates">Include small plates</string>
+    <string name="closest_achievable">Closest achievable: %1$s</string>
+    <string name="plate_weight_description">%1$s plate</string>
+    <string name="chip_selected">Selected</string>
+    <string name="chip_not_selected">Not selected</string>
     <string name="rest_timer_channel_title">Rest time alerts</string>
     <string name="rest_timer_channel_desc">This channel is used to provide alerts when the rest time ends.</string>
     <string name="rest_time_is_over">Rest time is over!</string>
@@ -533,6 +630,13 @@
     <string name="do_not_show_again">Do not show again</string>
     <string name="undo">Undo</string>
     <string name="clear">Clear</string>
-    <string name="unsupported_schema_version">Unsupported schema version</string>
+
+    <!-- Input modal bottom sheet -->
+    <string name="decrease_weight_by_10">Decrease weight by 10</string>
+    <string name="increase_weight_by_10">Increase weight by 10</string>
+    <string name="decrease_reps_by_5">Decrease reps by 5</string>
+    <string name="increase_reps_by_5">Increase reps by 5</string>
+    <string name="decrease_time_by_30_seconds">Decrease time by 30 seconds</string>
+    <string name="increase_time_by_30_seconds">Increase time by 30 seconds</string>
 
 </resources>

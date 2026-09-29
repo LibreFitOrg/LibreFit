@@ -13,6 +13,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
+import org.librefit.models.Weight
 import kotlin.random.Random
 
 /**
@@ -52,7 +53,7 @@ import kotlin.random.Random
 @Serializable
 data class Set(
     @PrimaryKey(true) val id: Long = Random.nextLong(),
-    val load: Double = 0.0,
+    val load: Weight = Weight.zero(),
     val reps: Int = 0,
     val elapsedTime: Int = 0,
     val completed: Boolean = false,

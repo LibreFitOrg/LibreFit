@@ -1,131 +1,77 @@
 package org.librefit.db.repository
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import androidx.room.Database
-import androidx.room.withTransaction
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import org.librefit.R
-import org.librefit.db.AppDatabase
-import org.librefit.db.Schema
+import org.librefit.db.ExportSchema
 import org.librefit.db.dao.MeasurementDao
 import org.librefit.db.dao.WorkoutDao
-import javax.inject.Inject
 import org.librefit.db.importExport.dto.ExportData
-import org.librefit.db.importExport.dto.ExportExercise
 import org.librefit.db.importExport.dto.ExportPayload
+import org.librefit.db.importExport.mapper.ExportPayloadMigrator
+import org.librefit.db.importExport.mapper.importIdentity
 import org.librefit.db.importExport.mapper.toExport
 import org.librefit.db.importExport.mapper.toRelation
-import org.librefit.di.qualifiers.IoDispatcher
-import org.librefit.di.stringProvider.StringProvider
+import org.librefit.db.importExport.mapper.toEntity
+import java.nio.charset.StandardCharsets
 import java.io.InputStream
 import java.io.OutputStream
 
-class ImportExportRepository @Inject constructor(
+class ImportExportRepository(
     private val workoutDao: WorkoutDao,
     private val measurementDao: MeasurementDao,
-    private val stringProvider: StringProvider,
-    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) {
-    suspend fun exportTo(outputStream: OutputStream) = withContext(ioDispatcher) {
-        val workouts = workoutDao.getAllWorkoutsWithExercisesAndSetsOnce()
-        val exportWorkouts = workouts.map {
-            it.toExport()
-        }
-
-        val measurements = measurementDao.getAllMeasurementsOnce()
-
-        val payload = ExportPayload(
-            schemaVersion = 3,
-            data = ExportData(
-                workouts = exportWorkouts,
-                measurements = measurements
+    suspend fun exportTo(outputStream: OutputStream) = outputStream.use { output ->
+        withContext(ioDispatcher) {
+            val payload = ExportPayload(
+                schemaVersion = ExportSchema.VERSION,
+                data = ExportData(
+                    workouts = workoutDao.getAllWorkoutsWithExercisesAndSetsOnce().map {
+                        it.toExport()
+                    },
+                    measurements = measurementDao.getAllMeasurementsOnce().map {
+                        it.toExport()
+                    },
+                ),
             )
-        )
 
-        outputStream.use { output ->
             val json = Json {
                 prettyPrint = true
                 ignoreUnknownKeys = true
                 encodeDefaults = true
             }
-            output.write(json.encodeToString(payload).toByteArray())
+            output.write(json.encodeToString(payload).toByteArray(StandardCharsets.UTF_8))
         }
     }
 
     suspend fun importFrom(inputStream: InputStream) = withContext(ioDispatcher) {
         val json = Json { ignoreUnknownKeys = true }
-
         val rawPayload = inputStream.use { input ->
-            val text = input.bufferedReader().readText()
+            val text = input.bufferedReader(StandardCharsets.UTF_8).readText()
             json.decodeFromString<ExportPayload>(text)
         }
+        val payload = ExportPayloadMigrator.migrate(rawPayload)
 
-        val payload = migratePayload(rawPayload)
+        val existingWorkouts = workoutDao.getAllWorkoutsWithExercisesAndSetsOnce()
+            .asSequence()
+            .map { it.toExport().importIdentity() }
+            .toMutableSet()
 
-        // 1. CONVERT INTO ENTITIES AND UPSERT WORKOUTS
-        val relations = payload.data.workouts.map {
-            it.toRelation()
-        }
-        relations.forEach {
-            workoutDao.addWorkoutWithExercisesAndSets(it)
-        }
-
-        // 2. UPSERT MEASUREMENTS
-        payload.data.measurements.forEach {
-            measurementDao.upsertMeasurement(it)
-        }
-    }
-
-    private val currentSchemaVersion = Schema.VERSION
-
-    private fun migratePayload(payload: ExportPayload): ExportPayload {
-        var current = payload
-
-        while (current.schemaVersion < currentSchemaVersion) {
-            current = when (current.schemaVersion) {
-                1 -> migrateV1ToV2(current)
-                2 -> migrateV2ToV3(current)
-                else -> error("${stringProvider.unsupportedSchemaVersion}: ${current.schemaVersion}")
+        payload.data.workouts.forEach { workout ->
+            if (existingWorkouts.add(workout.importIdentity())) {
+                workoutDao.addWorkoutWithExercisesAndSets(workout.toRelation())
             }
         }
 
-        return current
-    }
-
-    private fun migrateV1ToV2(payload: ExportPayload): ExportPayload {
-        return payload.copy(schemaVersion = 2)
-    }
-
-    private fun migrateV2ToV3(payload: ExportPayload): ExportPayload {
-        fun isValidOrder(list: List<ExportExercise>): Boolean {
-            val pos = list.map { it.position }
-            if (pos.size != pos.distinct().size) return false
-            val sortedPos = pos.sorted()
-            return sortedPos == (0 until pos.size).toList()
+        val existingMeasurements = measurementDao.getAllMeasurementsOnce()
+            .asSequence()
+            .map { it.toExport().importIdentity() }
+            .toMutableSet()
+        payload.data.measurements.forEach { measurement ->
+            if (existingMeasurements.add(measurement.importIdentity())) {
+                measurementDao.upsertMeasurement(measurement.toEntity())
+            }
         }
-
-        return payload.copy(
-            schemaVersion = Schema.VERSION,
-            data = payload.data.copy(
-                workouts = payload.data.workouts.map { workout ->
-                    val exercises = workout.exercises
-
-                    val reordered = if (isValidOrder(exercises)) {
-                        exercises
-                    } else {
-                        exercises
-                            .sortedBy { it.id }
-                            .mapIndexed { index, ex -> ex.copy(position = index) }
-                    }
-
-                    workout.copy(exercises = reordered)
-                }
-            )
-        )
     }
 }

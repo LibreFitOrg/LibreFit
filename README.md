@@ -6,7 +6,7 @@
 
 [![GitHub Downloads](https://img.shields.io/github/downloads/LibreFitOrg/LibreFit/total?style=for-the-badge&logo=github&labelColor=20232A&color=82D3E3)](https://tooomm.github.io/github-release-stats/?username=LibreFitOrg&repository=LibreFit)
 [![F-droid Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Forg.librefit.app.json&query=%24.total_downloads&style=for-the-badge&label=Downloads&logo=fdroid&labelColor=20232A&color=82D3E3)](https://f-droid.org/packages/org.librefit.app)
-[![GitHub Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/stargazers)
+![GitHub Stars](https://img.shields.io/github/stars/LibreFitOrg/LibreFit?style=for-the-badge&logo=github&logoColor=white&labelColor=20232A&color=82D3E3)
 [![GitHub Release](https://img.shields.io/github/v/release/LibreFitOrg/LibreFit?style=for-the-badge&labelColor=20232A&color=82D3E3)](https://github.com/LibreFitOrg/LibreFit/releases)
 [![Codeberg Mirror](https://img.shields.io/badge/Codeberg-Mirror-black?style=for-the-badge&logo=codeberg&labelColor=20232A&color=82D3E3)](https://codeberg.org/LibreFitOrg/LibreFit)
 [![Codeberg Stars](https://img.shields.io/gitea/stars/LibreFitOrg/LibreFit?gitea_url=https%3A%2F%2Fcodeberg.org%2F&style=for-the-badge&logo=codeberg&labelColor=20232A&color=82D3E3)](https://codeberg.org/LibreFitOrg/LibreFit/stars)
@@ -15,10 +15,10 @@
 
 LibreFit is a **free** and **open-source** _workout tracker_ designed with **privacy** in mind.
 
-Create fully **personalized workouts** assembled from a **rich dataset** of hundreds of exercises — each
-exercise paired with **images** and step-by-step **instructions** covering setup and execution.
+Create fully **personalized workouts** using a **rich dataset** of hundreds of exercises—each paired with *images* and step-by-step *instructions* for
+setup and execution.
 
-Schedule single **sessions**, filter **exercises** by equipment, **muscle** group or difficulty with one tap.
+Easily schedule **sessions** and filter exercises by **equipment**, **muscle group**, or **difficulty** with a single tap.
 During workouts, **track** every set, rep, rest interval, and load in **real time**.
 
 </div>
@@ -47,7 +47,7 @@ During workouts, **track** every set, rep, rest interval, and load in **real tim
 
 ## 💡 Motivation
 
-Hey, it's [IamDg](https://github.com/IamDg) here, the **creator** of LibreFit. Here’s the **motivation** for why I started building it in the first place:
+Hey, I'm [IamDg](https://github.com/IamDg), the **creator** of LibreFit. Here is why I started building this project:
 
 LibreFit is a passion project, built by one person who believes **software** should be **open**, **simple**, **beautiful**, and above all, **respectful of your privacy**.
 
@@ -89,16 +89,15 @@ You can actively contribute to the project and become a **supporter** in one of 
 - 🌐 [Translations](README.md#-translations)
 - 🏋️ [Improvements to the exercise dataset](README.md#-improve-the-exercise-dataset)
 
-Every **supporter** will be _credited_ in the about page of the app and in
-[credits section](README.md#-credits), and it will be able to request [here](https://librefit.org/donate) the **supporter version** of
-LibreFit
-which includes:
+Every **supporter** (whether a donor, contributor, or translator) will be _credited_ in the about page of the app and in
+[credits section](README.md#-credits). As a token of our appreciation, supporters can request the supporter version of LibreFit
+[here](https://librefit.org/donate), which includes:
 
-- 📝 **Custom exercises**: The option to create and use custom exercises as they were in the dataset.
-- 🎨 **Material You**: The app's theme will match the colors of system wallpaper.
+- 📝 **Custom exercises**: The ability to create and use your own custom exercises.
+- 🎨 **Material You**: A theme that automatically matches your system wallpaper colors.
 
-> These features are either cosmetic or obtainable by giving back to the project but by no means
-> this lowers the user experience
+> These additions are our way of giving back to those who help the project. They provide extra personalization and flexibility, while
+> the core LibreFit experience remains fully featured for everyone.
 
 ### 💖 Donate
 
@@ -107,15 +106,15 @@ Donations are the main way to:
 - **Cover costs** (e.g. domain, paid plans for emails, etc.).
 - **Thank and incentivize the creator** to invest more time in the project.
 
-To donate, you can either send use the Monero address below or visit the [donation page](https://librefit.org/donate).
+To donate, you can either send to the Monero address below or visit the [donation page](https://librefit.org/donate).
 
 ```text
 842RPDZ851EitDZZxCEp1sjjyDpsaV74xAJBTPU6X7TrDAbpDrjq5rRfaF3Q8PnXyQeUYs2xLoxFpZb7ZpSJxBvdDgFVpww
 ```
 
 > [!IMPORTANT]
-> If you wish the **supporter version**, ensure to donate
-> using the **integrated processor** at [donation page](https://librefit.org/donate)
+> If you would like the **supporter version**, please ensure you donate using the **integrated processor** on the
+> [donation page](https://librefit.org/donate)
 
 ### 🏗 Contribute to source code
 
@@ -127,7 +126,7 @@ You can also follow the development on [Codeberg mirror](https://codeberg.org/Li
 
 See [Contributing to translations](CONTRIBUTING.md#translations) to discover how to contribute.
 
-[![Translation status](https://hosted.weblate.org/widget/librefit/librefit/horizontal-auto.svg)](https://hosted.weblate.org/engage/librefit/)
+[![Translation status](https://hosted.weblate.org/widget/librefit/librefit/matrix-auto.svg)](https://hosted.weblate.org/engage/librefit/)
 
 > Thanks to [Weblate](https://weblate.org) for hosting the LibreFit's translations!
 
@@ -218,16 +217,20 @@ Thanks to everyone who helped the project!
 ### 🏗 Contributors
 
 - [dpusceddu](https://github.com/dpusceddu) : [#25](https://github.com/LibreFitOrg/LibreFit/pull/25)
+- [VanemKrAu](https://github.com/VanemKrAu) : [#163](https://github.com/LibreFitOrg/LibreFit/pull/163)
 
 > [Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be listed here.
 
 ### 🏋 Dataset contributors
 
 - [b3nj5m1n](https://github.com/b3nj5m1n) : [#28](https://github.com/LibreFitOrg/LibreFit/pull/28)
+- [ByYeah](https://github.com/ByYeah) : [#111](https://github.com/LibreFitOrg/LibreFit/pull/111)
 
 > [Contribute to dataset](CONTRIBUTING.md#improving-exercises-dataset) to be listed here.
 
 ### 🌐 Translators
+
+> [Contribute to translations](CONTRIBUTING.md#translations) to be listed here.
 
 #### Arabic 🇸🇦
 
@@ -237,53 +240,95 @@ Thanks to everyone who helped the project!
 #### Brazilian Portuguese 🇧🇷
 
 - [miguelsoaresouza8-droid](https://github.com/miguelsoaresouza8-droid) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
-
-#### Catalan 🇪🇸
-
-- [DoubleCheddarBurger](https://github.com/DoubleCheddarBurger) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- Miles Espadoto [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
+- [vinitdrk](https://github.com/vinitdrk) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### Czech 🇨🇿
 
-- Odweta
+- Odweta [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
 
 #### Dutch 🇳🇱
 
-- [mwesten](https://github.com/mwesten)
+- [mwesten](https://github.com/mwesten) [#19](https://github.com/LibreFitOrg/LibreFit/pull/19)
 
 #### French 🇫🇷
 
 - [Spartang-117](https://github.com/Spartang-117) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
-
-#### Galician 🇪🇸
-
-- josé m [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- [Semprista](https://github.com/Semprista) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+- [BigP0tato](https://github.com/B1gP0tato) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+- [UbioZur](https://github.com/UbioZur) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
+- [malespiaut](https://github.com/malespiaut) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
+- [alexischarp](https://github.com/alexischarp) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### German 🇩🇪
 
 - [doen1el](https://github.com/doen1el)
+- [Robin Schanbacher](https://github.com/RobinS-T470s) [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
+- [sprivaq](https://github.com/sprivaq) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+- [mister-bum](https://github.com/mister-bum) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+- [Jent1357](https://github.com/Jent1357) [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
+- [zhx000](https://github.com/zhx000) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### Hindi 🇮🇳
 
 - [SilentCoderHere](https://github.com/SilentCoderHere) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- [WinnerWind](https://github.com/WinnerWind) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
+- Rajesh Ranmara [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### Indonesian 🇮🇩
 
 - [raihankr](https://github.com/raihankr) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
 
+#### Italian 🇮🇹
+
+- [lotation](https://github.com/lotation) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
+
+#### Korean 🇰🇷
+
+- Jae Hyuk Lee [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+
+#### Polish 🇵🇱
+
+- theswordsgame [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+
+#### Portuguese 🇵🇹
+
+- [joncasagrande](https://github.com/joncasagrande) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
+
+#### Russian 🇷🇺
+
+- [vuichka](https://github.com/vuichka) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+
 #### Simplified Chinese 🇨🇳
 
-- [kid1412621](https://github.com/kid1412621)
+- [kid1412621](https://github.com/kid1412621) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- [ylconion](https://github.com/ylconion) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+- [zei dan](https://github.com/bakamake) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
+- [Ahmedbd23](https://github.com/Ahmedbd23) [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
 
 #### Spanish 🇪🇸
 
 - [SelwynDO](https://github.com/SelwynDO) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
-- [VA5H-One](https://github.com/VA5H-One)
+- [VA5H-One](https://github.com/VA5H-One) [#83](https://github.com/LibreFitOrg/LibreFit/pull/83)
+- josé m [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- [DoubleCheddarBurger](https://github.com/DoubleCheddarBurger) [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
+- [johncorea580-crypto](https://github.com/johncorea580-crypto) [#83](https://github.com/LibreFitOrg/LibreFit/pull/83)
+- [xorodev](https://github.com/xorodev) [#83](https://github.com/LibreFitOrg/LibreFit/pull/83)
+- tomel51733 [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
+- [hyperion](https://github.com/hyperioncodes) [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
+
+#### Swedish 🇸🇪
+
+- [T-Silverspoon](https://github.com/T-Silverspoon) [#105](https://github.com/LibreFitOrg/LibreFit/pull/105)
+- Jahn Andreas [#143](https://github.com/LibreFitOrg/LibreFit/pull/143)
 
 #### Ukrainian 🇺🇦
 
 - UnknownLi [#32](https://github.com/LibreFitOrg/LibreFit/pull/32)
 
-> [Contribute to translations](CONTRIBUTING.md#translations) to be listed here.
+#### Urdu 🇵🇰
+
+- [Safi Ullah](https://github.com/Safi-Ullah-1060) [#97](https://github.com/LibreFitOrg/LibreFit/pull/97)
 
 ---
 

@@ -1,0 +1,17 @@
+✨ Added
+- Support for imperial system (pounds)
+- Russian 🇷🇺
+- Add 5 new exercises:
+  - Wall Sit (Isometric squat against the wall)
+  - Plank Shoulder Taps
+  - Bottom Push-Up Hold
+  - Cobra Stretch
+  - Jumping Jacks
+
+🔧 Changed
+- A new toggle to show images was introduced (off by default).
+- Quicker input for weights with scroll wheel
+
+🐛 Fixed
+- Buttons in rest timer notification by refactoring logic
+- Fix language handling and display

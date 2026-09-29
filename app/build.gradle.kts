@@ -13,7 +13,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.about.libraries)
 }
@@ -21,7 +20,13 @@ plugins {
 
 android {
     namespace = "org.librefit"
-    compileSdk = 37
+
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 2
+        }
+    }
+
 
     buildFeatures {
         buildConfig = true
@@ -39,16 +44,17 @@ android {
         minSdk = 26
         targetSdk = 37
 
-        versionName = "0.3.0"
-        versionCode = 30001
+        versionName = "0.5.0"
+        versionCode = 50001
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
         androidResources {
+            generateLocaleConfig = true
             localeFilters += setOf(
-                "en", "it", "de", "nl", "es", "cs", "zh-rCN", "pt-rBR", "gl"
+                "en", "it", "de", "nl", "es", "cs", "zh-rCN", "pt-rBR", "ru", "fr"
             )
         }
 
@@ -141,14 +147,19 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     // Unit test
-    testImplementation(libs.junit)
+    // kotlin-test-junit: multiplatform kotlin-test API compiled onto the JUnit 4 runner;
+    // brings kotlin-test + junit transitively. Explicit artifact because AGP built-in Kotlin
+    // does not drive kotlin-test's framework-variant auto-selection.
+    testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.androidx.truth)
     testImplementation(libs.turbine)
     testImplementation(libs.mockk.android)
     testImplementation(libs.mockk.agent)
+    testImplementation(libs.koin.test)
 
     // Instrumented test
+    // kotlin-test-junit compiles kotlin.test annotations to JUnit 4 for AndroidJUnitRunner
+    androidTestImplementation(libs.kotlin.test.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -158,8 +169,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Navigation
-    implementation(libs.navigation.compose)
+    // Navigation 3
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+
+    // Scopes a ViewModelStore to each NavEntry (required for koinViewModel() per destination)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
     // Room
     implementation(libs.androidx.room.runtime)
@@ -173,9 +188,6 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.androidx.datastore.preferences)
 
-    // Google accompanist to handle permissions in jetpack compose
-    implementation(libs.accompanist.permissions)
-
     // Lottie animations for jetpack compose
     implementation(libs.lottie.compose)
 
@@ -185,10 +197,9 @@ dependencies {
     // M3 Compose vico charts
     implementation(libs.compose.m3)
 
-    // Dagger - Hilt for dependency injection
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
+    // Koin for dependency injection
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
 
     // AboutLibraries to show used dependencies in jetpack compose

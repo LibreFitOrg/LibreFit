@@ -11,20 +11,21 @@ package org.librefit.ui.screens.calendar
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import app.cash.turbine.test
-import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Test
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.models.mappers.toEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalMaterial3Api::class)
 class CalendarScreenViewModelTest {
@@ -50,7 +51,7 @@ class CalendarScreenViewModelTest {
     private val allWorkouts = listOf(workout1, workout2, workout3)
 
 
-    @Before
+    @BeforeTest
     fun setUp() {
         // Arrange: Create a mock for the repository
         workoutRepository = mockk()
@@ -66,17 +67,17 @@ class CalendarScreenViewModelTest {
     @Test
     fun `initial state - workoutsFromDate is empty when no date is selected`() = runTest {
         // Assert
-        assertThat(viewModel.workoutsFromDate.value).isEmpty()
+        assertTrue(viewModel.workoutsFromDate.value.isEmpty())
     }
 
     @Test
     fun `initial state - year range has no bounds`() = runTest {
-        assertThat(viewModel.yearRange.value).isEqualTo(DatePickerDefaults.YearRange)
+        assertEquals(DatePickerDefaults.YearRange, viewModel.yearRange.value)
     }
 
     @Test
     fun `initial state - all dates are selectable`() = runTest {
-        assertThat(viewModel.selectableDates.value).isEqualTo(DatePickerDefaults.AllDates)
+        assertEquals(DatePickerDefaults.AllDates, viewModel.selectableDates.value)
     }
 
     @Test
@@ -89,14 +90,14 @@ class CalendarScreenViewModelTest {
         // Use Turbine to test the flow
         viewModel.workoutsFromDate.test {
             // The initial emission is always empty because date is null
-            assertThat(awaitItem()).isEmpty()
+            assertTrue(awaitItem().isEmpty())
 
             // Act: Update the selected date
             viewModel.updateSelectedDateInMillis(date1InMillis)
 
             // Assert: The flow should emit the list of workouts filtered for the selected date
             val expectedWorkouts = listOf(workout3)
-            assertThat(awaitItem()).isEqualTo(expectedWorkouts)
+            assertEquals(expectedWorkouts, awaitItem())
         }
     }
 
@@ -112,20 +113,20 @@ class CalendarScreenViewModelTest {
 
             viewModel.workoutsFromDate.test {
                 // Consume the initial empty list (because no date is selected yet)
-                assertThat(awaitItem()).isEmpty()
+                assertTrue(awaitItem().isEmpty())
 
                 // Act: Select a date that *has* workouts to establish a non-empty state
                 viewModel.updateSelectedDateInMillis(dateWithWorkoutsInMillis)
 
                 // Assert & Consume: Confirm the workouts are received. The state is now non-empty.
                 val expectedWorkouts = listOf(workout1, workout2)
-                assertThat(awaitItem()).isEqualTo(expectedWorkouts)
+                assertEquals(expectedWorkouts, awaitItem())
 
                 // Act: Now, select the date with *no* workouts. This is the real action to test.
                 viewModel.updateSelectedDateInMillis(dateWithNoWorkoutsInMillis)
 
                 // Assert: The flow should now transition from the list of workouts to an empty list.
-                assertThat(awaitItem()).isEmpty()
+                assertTrue(awaitItem().isEmpty())
             }
         }
 
@@ -137,7 +138,7 @@ class CalendarScreenViewModelTest {
             date1morning.toLocalDate().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
         viewModel.workoutsFromDate.test {
-            assertThat(awaitItem()).isEmpty() // Initial state
+            assertTrue(awaitItem().isEmpty()) // Initial state
 
             // Select a date first
             viewModel.updateSelectedDateInMillis(date1InMillis)
@@ -149,7 +150,7 @@ class CalendarScreenViewModelTest {
             viewModel.updateSelectedDateInMillis(null)
 
             // Assert: The flow should emit an empty list again
-            assertThat(awaitItem()).isEmpty()
+            assertTrue(awaitItem().isEmpty())
         }
     }
 
@@ -163,14 +164,14 @@ class CalendarScreenViewModelTest {
 
             viewModel.workoutsFromDate.test {
                 // Initial emission is empty as repo is empty
-                assertThat(awaitItem()).isEmpty()
+                assertTrue(awaitItem().isEmpty())
 
                 // Act: Repository emits the first list of workouts
                 completedWorkoutsFlow.value = allWorkouts
 
                 // Assert: The flow updates with filtered workouts
                 val expectedWorkouts1 = listOf(workout1, workout2)
-                assertThat(awaitItem()).isEqualTo(expectedWorkouts1)
+                assertEquals(expectedWorkouts1, awaitItem())
 
                 // Act: Repository emits an updated list (e.g., a new workout was completed)
                 val newWorkout = UiWorkout(id = 4, title = "Late walk", completed = date1morning)
@@ -178,7 +179,7 @@ class CalendarScreenViewModelTest {
 
                 // Assert: The flow updates again with the new filtered list
                 val expectedWorkouts2 = listOf(workout1, workout2, newWorkout)
-                assertThat(awaitItem()).isEqualTo(expectedWorkouts2)
+                assertEquals(expectedWorkouts2, awaitItem())
             }
         }
 
@@ -186,7 +187,7 @@ class CalendarScreenViewModelTest {
     fun `when workout list updates - year range reflect the max and min years`() = runTest {
         viewModel.yearRange.test {
             // Initial emission
-            assertThat(awaitItem()).isEqualTo(DatePickerDefaults.YearRange)
+            assertEquals(DatePickerDefaults.YearRange, awaitItem())
 
             // Act: Provide workouts from the repository
             completedWorkoutsFlow.value = allWorkouts + UiWorkout(
@@ -194,7 +195,7 @@ class CalendarScreenViewModelTest {
             )
 
             // Assert: year range reflects the max and min years in the provided workouts
-            assertThat(awaitItem()).isEqualTo((2023..2025))
+            assertEquals((2023..2025), awaitItem())
         }
     }
 }

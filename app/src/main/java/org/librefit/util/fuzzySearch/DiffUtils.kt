@@ -35,13 +35,10 @@ object DiffUtils {
 
         val matrix: IntArray
 
-        val c1 = s1
-        val c2 = s2
-
         var p1 = 0
         var p2 = 0
 
-        while (len1Copy > 0 && len2Copy > 0 && c1[p1] == c2[p2]) {
+        while (len1Copy > 0 && len2Copy > 0 && s1[p1] == s2[p2]) {
             len1Copy--
             len2Copy--
 
@@ -54,7 +51,7 @@ object DiffUtils {
         val len2o: Int = len1o
 
         /* strip common suffix */
-        while (len1Copy > 0 && len2Copy > 0 && c1[p1 + len1Copy - 1] == c2[p2 + len2Copy - 1]) {
+        while (len1Copy > 0 && len2Copy > 0 && s1[p1 + len1Copy - 1] == s2[p2 + len2Copy - 1]) {
             len1Copy--
             len2Copy--
         }
@@ -90,7 +87,7 @@ object DiffUtils {
             var ptrC = i * len2Copy
             val ptrEnd = ptrC + len2Copy - 1
 
-            val char1 = c1[p1 + i - 1]
+            val char1 = s1[p1 + i - 1]
             var ptrChar2 = p2
 
             var x = i
@@ -99,7 +96,7 @@ object DiffUtils {
 
             while (ptrC <= ptrEnd) {
 
-                var c3 = matrix[ptrPrev++] + if (char1 != c2[ptrChar2++]) 1 else 0
+                var c3 = matrix[ptrPrev++] + if (char1 != s2[ptrChar2++]) 1 else 0
                 x++
 
                 if (x > c3) {
@@ -120,7 +117,7 @@ object DiffUtils {
         }
 
 
-        return editOpsFromCostMatrix(len1Copy, c1, p1, len1o, len2Copy, c2, p2, len2o, matrix)
+        return editOpsFromCostMatrix(len1Copy, s1, p1, len1o, len2Copy, s2, p2, len2o, matrix)
     }
 
     private fun editOpsFromCostMatrix(

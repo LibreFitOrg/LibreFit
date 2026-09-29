@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LibreFit</string>
+    <string name="profile">Profil</string>
+    <string name="settings">Ustawienia</string>
+    <string name="add_exercise">Dodaj ćwiczenie</string>
+    <string name="more_options">Więcej opcji</string>
+    <string name="home">Główna</string>
+</resources>

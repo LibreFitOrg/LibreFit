@@ -17,8 +17,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.ShortNavigationBar
+import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -26,12 +26,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.navigation.NavHostController
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import org.librefit.R
 import org.librefit.enums.pages.MainScreenPages
-import org.librefit.nav.Route
 import org.librefit.ui.components.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.screens.home.HomeScreen
@@ -42,16 +40,23 @@ import org.librefit.ui.screens.profile.ProfileScreen
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SharedTransitionScope.MainScreen(
-    navController: NavHostController,
+    onNavigateToSupportScreen: () -> Unit,
+    onNavigateToAboutScreen: () -> Unit,
+    onNavigateToSettingsScreen: () -> Unit,
+    onNavigateToEditWorkout: () -> Unit,
+    // Home page navigation
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    onNavigateToRequestPermissionScreen: (Long) -> Unit,
+    onNavigateToWorkout: (Long) -> Unit,
+    onNavigateToTutorialScreen: () -> Unit,
+    // Profile page navigation
+    onNavigateToCompleteWorkoutTutorial: () -> Unit,
+    onNavigateToExercisesScreen: () -> Unit,
+    onNavigateToStatisticsScreen: () -> Unit,
+    onNavigateToMeasurementsScreen: () -> Unit,
+    onNavigateToCalendarScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
-    val fabAction: () -> Unit = remember {
-        {
-            navController.navigate(Route.EditWorkoutScreen(0L)) {
-                launchSingleTop = true
-            }
-        }
-    }
 
     val pagerState = rememberPagerState(
         initialPage = MainScreenPages.HOME.ordinal,
@@ -74,9 +79,9 @@ fun SharedTransitionScope.MainScreen(
             GetAppNameInAnnotatedBuilder(MaterialTheme.typography.titleLargeEmphasized)
         },
         actions = persistentListOf(
-            { navController.navigate(Route.SupportScreen()) { launchSingleTop = true } },
-            { navController.navigate(Route.AboutScreen) { launchSingleTop = true } },
-            { navController.navigate(Route.SettingsScreen) { launchSingleTop = true } }
+            onNavigateToSupportScreen,
+            onNavigateToAboutScreen,
+            onNavigateToSettingsScreen
         ),
         actionsIcons = persistentListOf(
             painterResource(R.drawable.ic_favorite),
@@ -84,23 +89,26 @@ fun SharedTransitionScope.MainScreen(
             painterResource(R.drawable.ic_settings)
         ),
         actionsElevated = persistentListOf(true, false, false),
-        fabAction = if (pagerState.currentPage == MainScreenPages.HOME.ordinal) fabAction else null,
+        fabAction = if (pagerState.currentPage == MainScreenPages.HOME.ordinal) {
+            onNavigateToEditWorkout
+        } else null,
         fabIcon = painterResource(R.drawable.ic_add),
         fabDescription = stringResource(R.string.create_routine),
         fabText = stringResource(R.string.create_routine),
         bottomBar = {
-            NavigationBar {
+            ShortNavigationBar {
                 MainScreenPages.entries.forEach { page ->
-                    NavigationBarItem(
-                        selected = pagerState.currentPage == page.ordinal,
+                    val selected = pagerState.currentPage == page.ordinal
+                    ShortNavigationBarItem(
+                        selected = selected,
                         onClick = { goToPage(page.ordinal) },
                         icon = {
                             Icon(
                                 painter = painterResource(
                                     id = when (page) {
-                                        MainScreenPages.LIBRARY -> R.drawable.ic_library
-                                        MainScreenPages.HOME -> R.drawable.ic_home
-                                        MainScreenPages.PROFILE -> R.drawable.ic_person
+                                        MainScreenPages.LIBRARY -> if (selected) R.drawable.ic_library_filled else R.drawable.ic_library
+                                        MainScreenPages.HOME -> if (selected) R.drawable.ic_home_filled else R.drawable.ic_home
+                                        MainScreenPages.PROFILE -> if (selected) R.drawable.ic_person_filled else R.drawable.ic_person
                                     }
                                 ),
                                 contentDescription = stringResource(
@@ -135,8 +143,23 @@ fun SharedTransitionScope.MainScreen(
         ) { pageIndex ->
             when (pageIndex) {
                 0 -> LibraryScreen()
-                1 -> HomeScreen(navController, animatedVisibilityScope)
-                2 -> ProfileScreen(navController, animatedVisibilityScope)
+                1 -> HomeScreen(
+                    onNavigateToInfoWorkout = onNavigateToInfoWorkout,
+                    onNavigateToRequestPermissionScreen = onNavigateToRequestPermissionScreen,
+                    onNavigateToWorkout = onNavigateToWorkout,
+                    onNavigateToTutorialScreen = onNavigateToTutorialScreen,
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
+
+                2 -> ProfileScreen(
+                    onNavigateToExercisesScreen = onNavigateToExercisesScreen,
+                    onNavigateToStatisticsScreen = onNavigateToStatisticsScreen,
+                    onNavigateToMeasurementsScreen = onNavigateToMeasurementsScreen,
+                    onNavigateToCalendarScreen = onNavigateToCalendarScreen,
+                    onNavigateToInfoWorkout = onNavigateToInfoWorkout,
+                    onNavigateToTutorialScreen = onNavigateToCompleteWorkoutTutorial,
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
                 else -> error("Invalid page index in main screen: $pageIndex. Number of pages: ${pagerState.pageCount}")
             }
         }

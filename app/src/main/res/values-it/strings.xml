@@ -85,8 +85,8 @@
     <string name="new_workout">Nuovo allenamento</string>
     <string name="type_of_set_desc">- **Carico**: Un certo numero di ripetizioni eseguite con una resistenza esterna. *Esempi: panca piana, curls con manubri.*\n- **Corpo libero**: Un certo numero di ripetizioni eseguite usando il corpo come resistenza. *Esempi: trazioni, piegamenti, addominali.*\n- **Corpo libero con carico**: Un certo numero di ripetizioni eseguite usando il corpo e del carico come resistenza. *Esempi: trazioni zavorrate, dips zavorrati.*\n- **Durata**: Misura il tempo d\'esecuzione della serie. *Esempi: plank, riscaldamento, stretching.*</string>
     <string name="statistics_desc">- **Tempo trascorso**: indica la durata totale della sessione di allenamento.\n- **Data**: indica la data nella quale l\'allenamento è stato completato.\n- **Esercizi**: rappresentano il numero totale di esercizi inclusi in questo allenamento.\n- **Volume**: La quantità totale di peso sollevato durante un allenamento, calcolato moltiplicando per ogni serie completata il numero di ripetizioni eseguite per il peso sollevato. Un alto volume è associato a una maggiore ipertrofia muscolare e a un aumento della forza nel tempo.\n- **Serie totali**: Il numero cumulativo di serie previsti per ogni esercizio in un allenamento. Una serie è un gruppo di ripetizioni consecutive eseguite senza riposo.\n- **Serie completate**: il numero di serie portate a termine come programmato dall\'allenamento.</string>
-    <string name="muscle_distribution_desc">- Questo grafico mostra la **performance media di ogni muscolo in certi periodi di tempo**, basato sul parametro selezionato.\n- La legenda indica il periodo temporale rappresentato da ogni colonna.\n- La **colonna "Storico"** comprende tutti gli allenamenti completati prima di ogni periodo temporale mostrato.\n- Il parametro può essere cambiato selezionando uno nuovo sopra il grafico.</string>
-    <string name="exercises_distribution_desc">- Questo grafico mostra la **performance media di ogni esercizio in certi periodi di tempo**, basato sul parametro selezionato.\n- La legenda indica il periodo temporale rappresentato da ogni colonna.\n- La **colonna "Storico"** comprende tutti gli allenamenti completati prima di ogni periodo temporale mostrato.\n- Il parametro può essere cambiato selezionando uno nuovo sopra il grafico.</string>
+    <string name="muscle_distribution_desc">- Questo grafico mostra la **performance media di ogni muscolo in certi periodi di tempo**, basato sul parametro selezionato.\n- La legenda indica il periodo temporale rappresentato da ogni colonna.\n- La **colonna Storico** comprende tutti gli allenamenti completati prima di ogni periodo temporale mostrato.\n- Il parametro può essere cambiato selezionando uno nuovo sopra il grafico.</string>
+    <string name="exercises_distribution_desc">- Questo grafico mostra la **performance media di ogni esercizio in certi periodi di tempo**, basato sul parametro selezionato.\n- La legenda indica il periodo temporale rappresentato da ogni colonna.\n- La **colonna Storico** comprende tutti gli allenamenti completati prima di ogni periodo temporale mostrato.\n- Il parametro può essere cambiato selezionando uno nuovo sopra il grafico.</string>
     <string name="details">Dettagli</string>
     <string name="force">Forza</string>
     <string name="level">Livello</string>
@@ -181,7 +181,7 @@
     <string name="quit_workout_text">Sei sicuro di voler abbandonare? Il tuo allenamento non sarà salvato</string>
     <string name="resume">Riprendi</string>
     <string name="pause">Pausa</string>
-    <string name="title_length_exceeded_30">"Il titolo non può superare i 30 caratteri"</string>
+    <string name="title_length_exceeded_30">Il titolo non può superare i 30 caratteri</string>
     <string name="title_cannot_be_empty">Il titolo non può essere vuoto</string>
     <string name="language_english">Inglese</string>
     <string name="start_routine">Inizia routine</string>
@@ -356,4 +356,8 @@
     <string name="clear">Pulisci</string>
     <string name="equipment_rings">Anelli</string>
     <string name="equipment_pull_up_bar">Sbarra per trazioni</string>
+    <string name="show">Mostra</string>
+    <string name="notifications_permission_permanently_denied_desc">Le notifiche sono bloccate. Per favore abilita le notifiche nelle impostazioni di sistema per ricevere aggiornamenti sugli allenamenti.</string>
+    <string name="open_settings">Apri le impostazioni</string>
+    <string name="hide">Nascondi</string>
 </resources>

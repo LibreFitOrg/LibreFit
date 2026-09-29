@@ -8,16 +8,20 @@
 
 package org.librefit.di.qualifiers
 
-import javax.inject.Qualifier
+/**
+ * Type-safe Koin qualifier for the IO coroutine dispatcher
+ * (see [kotlinx.coroutines.Dispatchers.IO]).
+ */
+object IoDispatcher
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class IoDispatcher
+/**
+ * Type-safe Koin qualifier for the default (CPU-bound) coroutine dispatcher
+ * (see [kotlinx.coroutines.Dispatchers.Default]).
+ */
+object DefaultDispatcher
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class DefaultDispatcher
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class MainDispatcher
+/**
+ * Type-safe Koin qualifier for the main (UI) coroutine dispatcher
+ * (see [kotlinx.coroutines.Dispatchers.Main]).
+ */
+object MainDispatcher

@@ -8,11 +8,8 @@
 
 package org.librefit.ui.screens.infoExercise
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,6 +24,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.repository.DatasetRepository
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.enums.chart.BodyweightChart
 import org.librefit.enums.chart.ExerciseChart
@@ -42,17 +40,33 @@ import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
-import javax.inject.Inject
 
-@HiltViewModel
-class InfoExerciseScreenViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+class InfoExerciseScreenViewModel(
+    route: Route.InfoExerciseScreen,
     workoutRepository: WorkoutRepository,
     dataHelper: DataHelper,
-    private val datasetRepository: DatasetRepository
+    private val datasetRepository: DatasetRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
-    private val idExerciseDC = savedStateHandle.toRoute<Route.InfoExerciseScreen>().idExerciseDC
+    val showExercisesImages = userPreferencesRepository.showExercisesImages
+
+    fun setTrueShowExercisesImages() {
+        onShowExercisesImagesChange(true)
+    }
+
+    fun setFalseShowExercisesImages() {
+        onShowExercisesImagesChange(false)
+    }
+
+    fun onShowExercisesImagesChange(value: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveShowExercisesImages(value)
+        }
+    }
+
+
+    private val idExerciseDC = route.idExerciseDC
 
     // Keeps track of changes (e.g. the user edits the exercise)
     val uiExerciseDC = datasetRepository.getExerciseFlowFromId(idExerciseDC)

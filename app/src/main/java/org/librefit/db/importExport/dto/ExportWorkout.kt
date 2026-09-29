@@ -13,6 +13,7 @@ data class ExportWorkout(
     val title: String,
     val state: WorkoutState,
     val timeElapsed: Int,
+    val position: Int = 0,
     @Serializable(with = LocalDateTimeSerializer::class)
     val created: LocalDateTime,
     @Serializable(with = LocalDateTimeSerializer::class)

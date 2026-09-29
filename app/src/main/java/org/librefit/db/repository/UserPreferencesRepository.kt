@@ -9,38 +9,36 @@
 package org.librefit.db.repository
 
 import android.app.Application
-import android.content.ComponentCallbacks
-import android.content.res.Configuration
+import android.icu.util.LocaleData
+import android.icu.util.ULocale
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import org.librefit.di.qualifiers.ApplicationScope
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
+import org.librefit.util.configurationChanges
 import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Singleton
 
 private val THEME_MODE_KEY = intPreferencesKey("theme_mode")
 private val MATERIAL_MODE_KEY = booleanPreferencesKey("material_mode")
 private val KEEP_ON_WORKOUT_SCREEN_KEY = booleanPreferencesKey("workout_screen_on")
 private val REQUEST_PERMISSIONS_NEXT_TIME_KEY = booleanPreferencesKey("ask_permission_again")
-private val LANGUAGE_KEY = stringPreferencesKey("language")
 private val REST_TIMER_SOUND_KEY = booleanPreferencesKey("alert_sound")
 private val SHOW_WELCOME_SCREEN_KEY = booleanPreferencesKey("show_welcome_screen")
 private val IS_SUPPORTER_KEY = booleanPreferencesKey("is_supporter")
@@ -50,16 +48,34 @@ private val SHOW_KEEP_ANDROID_OPEN_KEY = booleanPreferencesKey("showKeepAndroidO
 private val USE_SCROLL_WHEEL_FOR_INPUT_KEY = booleanPreferencesKey("use_number_picker")
 private val DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY =
     booleanPreferencesKey("dismiss_input_modal_bottom_sheet_automatically_key")
-
+private val SHOW_EXERCISES_IMAGES_KEY = booleanPreferencesKey("show_exercises_images_key")
+private val UNIT_SYSTEM_KEY = stringPreferencesKey("unit_system")
+private val DEFAULT_BAR_WEIGHT_KEY = doublePreferencesKey("default_bar_weight")
 /**
- * A repository to handle user preferences using [androidx.datastore.core.DataStore].
+ * Central repository managing application-level preferences, including theme, unit systems, and language.
  *
+ * It utilizes [DataStore] for persistent storage of user settings and integrates with [AppCompatDelegate]
+ * for reactive, system-compliant per-app language management. For unit systems, it leverages
+ * [android.icu.util.LocaleData.MeasurementSystem] to infer the user's preferred standard (Metric/Imperial)
+ * based on their locale.
+ *
+ * ### Language Management
+ * - **Persistence**: Language tags are managed via [AppCompatDelegate.setApplicationLocales], which
+ *   automatically syncs with Android's per-app language system settings.
+ * - **Observation**: Current language state is monitored reactively through the [currentLocale]
+ *   [Flow], triggered by configuration changes.
+ * - **Timing**: [AppCompatDelegate.getApplicationLocales] is only valid after
+ *   `Activity.onCreate()`, so [language] must not be read eagerly; it is collected only
+ *   while a screen is observing it.
+ *
+ * @see <a href="https://developer.android.com/reference/android/icu/util/LocaleData.MeasurementSystem">LocaleData.MeasurementSystem</a>
+ * @see <a href="https://developer.android.com/guide/topics/resources/app-languages">Per-app languages in system settings</a>
+ * @see <a href="https://developer.android.com/reference/androidx/appcompat/app/AppCompatDelegate">AppCompatDelegate</a>
  */
-@Singleton
-class UserPreferencesRepository @Inject constructor(
+class UserPreferencesRepository(
     private val dataStore: DataStore<Preferences>,
-    @param:ApplicationScope private val applicationScope: CoroutineScope,
-    private val application: Application
+    applicationScope: CoroutineScope,
+    application: Application,
 ) {
 
     val themeMode: StateFlow<ThemeMode> = dataStore.data
@@ -152,6 +168,14 @@ class UserPreferencesRepository @Inject constructor(
             initialValue = true
         )
 
+    val showExercisesImages: StateFlow<Boolean?> = dataStore.data
+        .map { preferences -> preferences[SHOW_EXERCISES_IMAGES_KEY] }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
+
     val dismissScrollWheelInputAutomatically: StateFlow<Boolean> = dataStore.data
         .map { preferences -> preferences[DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY] == true }
         .stateIn(
@@ -160,44 +184,90 @@ class UserPreferencesRepository @Inject constructor(
             initialValue = false
         )
 
-    /**
-     * A Flow that emits the new Locale whenever the app's configuration changes.
-     */
-    private val currentLocale: Flow<Locale?> = callbackFlow {
-        // Emit current state
-        trySend(AppCompatDelegate.getApplicationLocales()[0])
-
-        val callback = object : ComponentCallbacks {
-            override fun onConfigurationChanged(newConfig: Configuration) {
-                // It's null when no app-specific locales are set so LANGUAGE.SYSTEM is chosen
-                val currentLocale = AppCompatDelegate.getApplicationLocales()[0]
-                // Offer the new locale to the channel
-                trySend(currentLocale)
-            }
-
-            override fun onLowMemory() {}
-        }
-
-        // Register the callback
-        application.registerComponentCallbacks(callback)
-
-        // Unregister the callback when the flow is canceled
-        awaitClose {
-            application.unregisterComponentCallbacks(callback)
-        }
-    }.conflate()
-
-
-    val language: StateFlow<Language> = currentLocale
-        .map { newLocale ->
-            // If newLanguage is null, follow system otherwise find the associated enum
-            newLocale?.language?.let { newLanguage ->
-                Language.entries.find { it.code == newLanguage }
-            } ?: Language.SYSTEM
+    val unitSystem: StateFlow<UnitSystem> = dataStore.data
+        .map { preferences ->
+            runCatching {
+                UnitSystem.valueOf(preferences[UNIT_SYSTEM_KEY]!!)
+            }.getOrDefault(resolveDefaultUnitSystem())
         }
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
+            initialValue = resolveDefaultUnitSystem()
+        )
+
+    val defaultBarWeight: StateFlow<Double?> = dataStore.data
+        .map { preferences ->
+            preferences[DEFAULT_BAR_WEIGHT_KEY]
+        }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
+
+
+    private fun resolveDefaultUnitSystem(): UnitSystem {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // Use the ICU LocaleData API to get the measurement system for this locale
+            when (LocaleData.getMeasurementSystem(ULocale.getDefault())) {
+                LocaleData.MeasurementSystem.US -> UnitSystem.IMPERIAL
+                LocaleData.MeasurementSystem.UK -> UnitSystem.IMPERIAL
+                LocaleData.MeasurementSystem.SI -> UnitSystem.METRIC
+                else -> UnitSystem.METRIC
+            }
+        } else {
+            // These countries are the primary users of the Imperial system.
+            // US: United States
+            // UK: United Kingdom
+            // MM: Myanmar
+            // LR: Liberia
+            val imperialCountries = setOf("US", "UK", "MM", "LR")
+
+            if (Locale.getDefault().country in imperialCountries) {
+                UnitSystem.IMPERIAL
+            } else {
+                UnitSystem.METRIC
+            }
+        }
+    }
+
+    /**
+     * Resolves the current Application Locale into our [Language] enum.
+     */
+    private fun resolveLanguage(locale: Locale?): Language {
+        if (locale == null) return Language.SYSTEM
+
+        val tag = locale.toLanguageTag()
+        return Language.entries.find { it.code.equals(tag, ignoreCase = true) }
+            ?: Language.entries.find { it.code.equals(locale.language, ignoreCase = true) }
+            ?: Language.SYSTEM
+    }
+
+    /**
+     * A Flow that emits the new Locale whenever the app's configuration changes.
+     */
+    private val currentLocale: Flow<Locale?> = application.configurationChanges()
+        .map { AppCompatDelegate.getApplicationLocales().get(0) }
+        .onStart { emit(AppCompatDelegate.getApplicationLocales().get(0)) }
+
+    /**
+     * The user-selected application language.
+     *
+     * The upstream reads [AppCompatDelegate.getApplicationLocales], which per the official
+     * contract must only be called after `Activity.onCreate()`: before any `AppCompatActivity`
+     * has attached its delegate (e.g., while [org.librefit.MainApplication] is creating this
+     * singleton via `GlobalExceptionHandler`), it resolves no context and returns an empty
+     * locale list. For that reason this state is collected lazily (`WhileSubscribed`), so the
+     * first read happens once a screen is collecting it — i.e., after an activity exists —
+     * and every re-subscription re-reads fresh. Do not read `value` without an active
+     * collector.
+     */
+    val language: StateFlow<Language> = currentLocale
+        .map { resolveLanguage(it) }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = Language.SYSTEM
         )
 
@@ -217,9 +287,8 @@ class UserPreferencesRepository @Inject constructor(
         dataStore.edit { preferences -> preferences[REQUEST_PERMISSIONS_NEXT_TIME_KEY] = shouldAsk }
     }
 
-    suspend fun saveLanguage(languageCode: String) {
-        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageCode))
-        dataStore.edit { preferences -> preferences[LANGUAGE_KEY] = languageCode }
+    fun saveLanguage(language: Language) {
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(language.code))
     }
 
     suspend fun saveRestTimerSoundOn(isOn: Boolean) {
@@ -250,9 +319,23 @@ class UserPreferencesRepository @Inject constructor(
         dataStore.edit { preferences -> preferences[USE_SCROLL_WHEEL_FOR_INPUT_KEY] = useScroll }
     }
 
+    suspend fun saveShowExercisesImages(show: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[SHOW_EXERCISES_IMAGES_KEY] = show
+        }
+    }
+
     suspend fun saveDismissScrollWheelInputAutomatically(dismissAutomatically: Boolean) {
         dataStore.edit { preferences ->
             preferences[DISMISS_SCROLL_WHELL_INPUT_AUTOMATICALLY] = dismissAutomatically
         }
+    }
+
+    suspend fun saveUnitSystem(system: UnitSystem) {
+        dataStore.edit { preferences -> preferences[UNIT_SYSTEM_KEY] = system.name }
+    }
+
+    suspend fun saveDefaultBarWeight(value: Double) {
+        dataStore.edit { preferences -> preferences[DEFAULT_BAR_WEIGHT_KEY] = value }
     }
 }

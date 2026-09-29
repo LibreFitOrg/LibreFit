@@ -54,19 +54,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
-import org.librefit.enums.SuccessMessage
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.models.Weight
 import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
@@ -80,6 +79,10 @@ import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.UiWorkout
+import org.librefit.ui.models.autoUnitSuffix
+import org.librefit.ui.models.doubleValue
+import org.librefit.ui.models.doubleValueAsString
+import org.librefit.ui.models.toWeight
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.textFieldTransformations.TimeInputTransformation
@@ -89,9 +92,12 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.BeforeSavingScreen(
-    navController: NavHostController,
-    viewModel: BeforeSavingScreenViewModel = hiltViewModel(),
-    animatedVisibilityScope: AnimatedVisibilityScope
+    onNavigateBack: () -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    onNavigateToSuccessScreen: () -> Unit,
+    route: Route.BeforeSavingScreen,
+    viewModel: BeforeSavingScreenViewModel = koinViewModel { parametersOf(route) },
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
 
     val volume by viewModel.volume.collectAsStateWithLifecycle()
@@ -168,7 +174,9 @@ fun SharedTransitionScope.BeforeSavingScreen(
 
 
     BeforeSavingScreenContent(
-        navController = navController,
+        onNavigateBack = onNavigateBack,
+        onNavigateToInfoWorkout = onNavigateToInfoWorkout,
+        onNavigateToSuccessScreen = onNavigateToSuccessScreen,
         showUnlikeRoutineDialog = { showUnlikeRoutineDialog.value = true },
         showDatePickerDialog = { showDatePickerDialog.value = true },
         exercises = exercises,
@@ -192,13 +200,15 @@ fun SharedTransitionScope.BeforeSavingScreen(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SharedTransitionScope.BeforeSavingScreenContent(
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    onNavigateToSuccessScreen: () -> Unit,
     showUnlikeRoutineDialog: () -> Unit,
     showDatePickerDialog: () -> Unit,
     exercises: List<UiExerciseWithSets>,
     workout: UiWorkout,
     routine: UiWorkout,
-    volumeExercises: String,
+    volumeExercises: Weight,
     isTitleTooLong: Boolean,
     isTitleEmpty: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -243,18 +253,15 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.overview)),
-        navigateBack = navController::navigateUp,
+        navigateBack = onNavigateBack,
         actions = persistentListOf({
             saveExercisesWithWorkout()
-            navController.navigate(Route.SuccessScreen(SuccessMessage.WORKOUT_SAVED)) {
-                launchSingleTop = true
-                popUpTo(Route.MainScreen) { inclusive = false }
-            }
+            onNavigateToSuccessScreen()
         }),
         actionsDescription = persistentListOf(stringResource(R.string.save)),
         actionsEnabled = persistentListOf(!isTitleEmpty && !isTitleTooLong)
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding = innerPadding) {
             item {
                 OutlinedTextField(
                     shape = MaterialTheme.shapes.large,
@@ -363,9 +370,9 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                     OutlinedTextField(
                         shape = MaterialTheme.shapes.large,
                         modifier = Modifier.weight(0.5f),
-                        value = volumeExercises,
+                        value = volumeExercises.doubleValueAsString(),
                         label = { Text(stringResource(R.string.volume)) },
-                        suffix = { Text(stringResource(R.string.kg)) },
+                        suffix = { Text(autoUnitSuffix()) },
                         onValueChange = {},
                         readOnly = true,
                         singleLine = true,
@@ -419,11 +426,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                 item {
                     ElevatedCard(
                         shape = MaterialTheme.shapes.extraLargeIncreased,
-                        onClick = {
-                            navController.navigate(Route.InfoWorkoutScreen(routine.id)) {
-                                launchSingleTop = true
-                            }
-                        },
+                        onClick = { onNavigateToInfoWorkout(routine.id) },
                         modifier = Modifier
                             .sharedBounds(
                                 sharedContentState = rememberSharedContentState(routine.id),
@@ -474,11 +477,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                                 elevated = false,
                                 text = stringResource(R.string.open_this_routine),
                                 icon = painterResource(R.drawable.ic_open_new)
-                            ) {
-                                navController.navigate(Route.InfoWorkoutScreen(routine.id)) {
-                                    launchSingleTop = true
-                                }
-                            }
+                            ) { onNavigateToInfoWorkout(routine.id) }
                         }
                     }
                 }
@@ -561,21 +560,21 @@ private fun BeforeSavingScreenPreview() {
                 category = Category.STRENGTH
             ),
             sets = persistentListOf(
-                UiSet(load = 80.0, reps = 8, completed = true),
-                UiSet(load = 80.0, reps = 9, completed = true),
-                UiSet(load = 80.0, reps = 9, completed = true),
-                UiSet(load = 50.0, reps = 8, completed = true),
-                UiSet(load = 50.0, reps = 9, completed = true),
-                UiSet(load = 50.0, reps = 9, completed = true),
-                UiSet(load = 50.0, reps = 8, completed = true),
-                UiSet(load = 50.0, reps = 9, completed = true),
-                UiSet(load = 50.0, reps = 9, completed = true),
-                UiSet(load = 50.0, reps = 8, completed = true),
-                UiSet(load = 50.0, reps = 9, completed = true),
-                UiSet(load = 50.0, reps = 9, completed = true),
-                UiSet(load = 50.0, reps = 8, completed = true),
-                UiSet(load = 50.0, reps = 9, completed = true),
-                UiSet(load = 50.0, reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(80.0), reps = 8, completed = true),
+                UiSet(load = Weight.kilograms(80.0), reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(80.0), reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 8, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 8, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 8, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 8, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 9, completed = true),
+                UiSet(load = Weight.kilograms(50.0), reps = 9, completed = true),
             )
         ),
         UiExerciseWithSets(
@@ -612,13 +611,15 @@ private fun BeforeSavingScreenPreview() {
         )
     )
 
-    val volume = e.sumOf { eWs -> eWs.sets.sumOf { it.load * it.reps } }
+    val volume = e.sumOf { eWs -> eWs.sets.sumOf { it.load.doubleValue() * it.reps } }.toWeight()
 
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
                 BeforeSavingScreenContent(
-                    navController = rememberNavController(),
+                    onNavigateBack = {},
+                    onNavigateToInfoWorkout = {},
+                    onNavigateToSuccessScreen = {},
                     showUnlikeRoutineDialog = {},
                     showDatePickerDialog = {},
                     exercises = e,
@@ -628,7 +629,7 @@ private fun BeforeSavingScreenPreview() {
                         timeElapsed = 3689
                     ),
                     routine = UiWorkout(title = "\uD83C\uDFCB Upper body"),
-                    volumeExercises = "$volume",
+                    volumeExercises = volume,
                     isTitleTooLong = false,
                     isTitleEmpty = false,
                     useScrollWheelForInput = true,

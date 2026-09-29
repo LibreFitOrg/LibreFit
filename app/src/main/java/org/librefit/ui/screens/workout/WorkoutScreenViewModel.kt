@@ -8,11 +8,8 @@
 
 package org.librefit.ui.screens.workout
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
@@ -35,14 +32,13 @@ import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.DatasetRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
-import org.librefit.di.qualifiers.IoDispatcher
-import org.librefit.di.qualifiers.MainDispatcher
 import org.librefit.enums.PreviousPerformanceSet
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.helpers.SoundPlayer
+import org.librefit.models.Weight
 import org.librefit.nav.Route
 import org.librefit.services.WorkoutService
 import org.librefit.services.WorkoutServiceManager
@@ -55,21 +51,21 @@ import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import org.librefit.ui.models.moveExercise
 import org.librefit.ui.models.withNormalizedExercisePositions
-import javax.inject.Inject
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
-@HiltViewModel
-class WorkoutScreenViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+class WorkoutScreenViewModel(
+    route: Route.WorkoutScreen,
     private val userPreferences: UserPreferencesRepository,
     private val workoutServiceManager: WorkoutServiceManager,
     private val workoutRepository: WorkoutRepository,
     private val datasetRepository: DatasetRepository,
     private val soundPlayer: SoundPlayer,
-    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @param:MainDispatcher private val mainDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
+    private val mainDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
+
     private val _idsOfSetsWithStopwatchNotStartedAtLeastOnce =
         MutableStateFlow<Set<Long>>(emptySet())
     val idsOfSetsWithStopwatchNotStartedAtLeastOnce =
@@ -101,11 +97,11 @@ class WorkoutScreenViewModel @Inject constructor(
 
             updateSetTime(newElapsedTime.toInt(), set.id)
 
-            delay(1000)
+            delay(1000.milliseconds)
         }
     }
 
-    private val workoutId = savedStateHandle.toRoute<Route.WorkoutScreen>().workoutId
+    private val workoutId = route.workoutId
 
 
     private val _workout = MutableStateFlow(UiWorkout())
@@ -132,7 +128,7 @@ class WorkoutScreenViewModel @Inject constructor(
                 List(eWs.sets.size) { index ->
                     val previousSet = previousEWS?.sets?.getOrNull(index)
                     val reps = previousSet?.reps ?: 0
-                    val load = previousSet?.load ?: 0.0
+                    val load = previousSet?.load ?: Weight.zero()
                     val time = previousSet?.elapsedTime ?: 0
 
 
@@ -191,11 +187,6 @@ class WorkoutScreenViewModel @Inject constructor(
 
     // A Job to hold the running set's stopwatch coroutine
     private var stopwatchJob: Job? = null
-
-    override fun onCleared() {
-        super.onCleared()
-        stopwatchJob?.cancel()
-    }
 
     init {
         viewModelScope.launch {
@@ -336,7 +327,7 @@ class WorkoutScreenViewModel @Inject constructor(
         syncToRepository()
     }
 
-    fun updateSetLoad(load: Double, id: Long) {
+    fun updateSetLoad(load: Weight, id: Long) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
                 if (exercise.sets.any { it.id == id }) {
@@ -548,7 +539,7 @@ class WorkoutScreenViewModel @Inject constructor(
         viewModelScope.launch(ioDispatcher) {
             // Observe workout and exercises only, ignoring timeElapsed to avoid frequent resets
             combine(workout, exercises) { w, e -> w to e }
-                .debounce(2000L)
+                .debounce(2000.milliseconds)
                 .collect { (w, e) ->
                     // Do not save when user navigates away
                     if (isFocused) {
@@ -584,4 +575,14 @@ class WorkoutScreenViewModel @Inject constructor(
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
 
     val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
+
+    val displayExercisesImages = userPreferences.showExercisesImages
+
+    val defaultBarWeight = userPreferences.defaultBarWeight
+
+    fun saveDefaultBarWeight(value: Double) {
+        viewModelScope.launch {
+            userPreferences.saveDefaultBarWeight(value)
+        }
+    }
 }

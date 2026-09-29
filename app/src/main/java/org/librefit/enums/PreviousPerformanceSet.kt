@@ -8,11 +8,13 @@
 
 package org.librefit.enums
 
+import org.librefit.models.Weight
+
 /**
- * It is used to display the previous previous of a set in a [org.librefit.ui.components.ExerciseCard]
+ * It is used to display the previous of a set in a [org.librefit.ui.components.ExerciseCard]
  */
 data class PreviousPerformanceSet(
     val reps: Int = 0,
-    val load: Double = 0.0,
+    val load: Weight = Weight.zero(),
     val time: Int = 0
 )

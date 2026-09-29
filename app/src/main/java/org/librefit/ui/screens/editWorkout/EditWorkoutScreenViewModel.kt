@@ -8,11 +8,8 @@
 
 package org.librefit.ui.screens.editWorkout
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,11 +20,11 @@ import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
-import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.SetMode
 import org.librefit.enums.WorkoutState
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
+import org.librefit.models.Weight
 import org.librefit.nav.Route
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseWithSets
@@ -38,23 +35,30 @@ import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import org.librefit.ui.models.moveExercise
 import org.librefit.ui.models.withNormalizedExercisePositions
-import javax.inject.Inject
 import kotlin.random.Random
 
-@HiltViewModel
-class EditWorkoutScreenViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+class EditWorkoutScreenViewModel(
+    route: Route.EditWorkoutScreen,
     private val workoutRepository: WorkoutRepository,
-    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    userPreferencesRepository: UserPreferencesRepository
+    private val ioDispatcher: CoroutineDispatcher,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
+    val showExercisesImages = userPreferencesRepository.showExercisesImages
     val useScrollWheelForInput = userPreferencesRepository.useScrollWheelForInput
 
     val dismissScrollWheelInputAutomatically =
         userPreferencesRepository.dismissScrollWheelInputAutomatically
 
-    private val workoutId = savedStateHandle.toRoute<Route.EditWorkoutScreen>().workoutId
+    val defaultBarWeight = userPreferencesRepository.defaultBarWeight
+
+    fun saveDefaultBarWeight(value: Double) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveDefaultBarWeight(value)
+        }
+    }
+
+    private val workoutId = route.workoutId
 
 
     private val _isRoutine = MutableStateFlow(false)
@@ -189,7 +193,7 @@ class EditWorkoutScreenViewModel @Inject constructor(
         syncToRepository()
     }
 
-    fun updateSetLoad(load: Double, id: Long) {
+    fun updateSetLoad(load: Weight, id: Long) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
                 if (exercise.sets.any { it.id == id }) {

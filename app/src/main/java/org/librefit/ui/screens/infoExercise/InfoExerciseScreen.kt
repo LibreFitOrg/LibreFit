@@ -8,15 +8,21 @@
 
 package org.librefit.ui.screens.infoExercise
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -37,11 +43,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -76,15 +82,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.SetMode
 import org.librefit.enums.chart.BodyweightChart
@@ -102,6 +108,7 @@ import org.librefit.enums.pages.InfoExercisePages
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
+import org.librefit.ui.components.LibreFitButton
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.EmptyLottie
@@ -115,20 +122,27 @@ import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
+import org.librefit.ui.models.autoUnitSuffix
+import org.librefit.ui.models.doubleValueAsString
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatDetails
 import org.librefit.util.Formatter.formatTime
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.InfoExerciseScreen(
     id: Long,
+    onNavigateBack: () -> Unit,
+    onNavigateToEditExercise: (String) -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    navController: NavHostController,
-    viewModel: InfoExerciseScreenViewModel = hiltViewModel()
+    route: Route.InfoExerciseScreen,
+    viewModel: InfoExerciseScreenViewModel = koinViewModel { parametersOf(route) },
 ) {
+    val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
 
     val workoutsWithExercises by viewModel.workoutsWithExercises.collectAsStateWithLifecycle()
 
@@ -143,9 +157,14 @@ fun SharedTransitionScope.InfoExerciseScreen(
         exerciseDC = uiExerciseDC,
         animatedVisibilityScope = animatedVisibilityScope,
         workoutsWithExercises = workoutsWithExercises,
+        showExercisesImages = showExercisesImages,
         points = points,
         exerciseChart = exerciseChart,
-        navController = navController,
+        onNavigateBack = onNavigateBack,
+        onNavigateToEditExercise = onNavigateToEditExercise,
+        onNavigateToInfoWorkout = onNavigateToInfoWorkout,
+        setTrueShowExercisesImages = viewModel::setTrueShowExercisesImages,
+        setFalseShowExercisesImages = viewModel::setFalseShowExercisesImages,
         updateExerciseChart = viewModel::updateExerciseChart,
         deleteExercise = viewModel::deleteExercise
     )
@@ -157,11 +176,16 @@ fun SharedTransitionScope.InfoExerciseScreen(
 private fun SharedTransitionScope.InfoExerciseScreenContent(
     id: Long,
     exerciseDC: UiExerciseDC,
+    showExercisesImages: Boolean?,
     animatedVisibilityScope: AnimatedVisibilityScope,
     workoutsWithExercises: List<UiWorkoutWithExercisesAndSets>,
     points: List<Point>,
     exerciseChart: ExerciseChart,
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToEditExercise: (String) -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    setTrueShowExercisesImages: () -> Unit,
+    setFalseShowExercisesImages: () -> Unit,
     updateExerciseChart: (ExerciseChart) -> Unit,
     deleteExercise: () -> Unit
 ) {
@@ -178,7 +202,7 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
             text = stringResource(R.string.delete_exercise_from_dataset_desc),
             confirmText = stringResource(R.string.delete),
             onConfirm = {
-                navController.navigateUp()
+                onNavigateBack()
                 showConfirmDeleteDialog.value = false
                 deleteExercise()
             },
@@ -189,18 +213,11 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
     }
 
     LibreFitScaffold(
-        navigateBack = navController::navigateUp,
+        navigateBack = onNavigateBack,
         actions = if (exerciseDC.isCustomExercise) {
             persistentListOf(
                 {
-                    navController.navigate(
-                        Route.EditExerciseScreen(
-                            id = id,
-                            exerciseDCid = exerciseDC.id
-                        )
-                    ) {
-                        launchSingleTop = true
-                    }
+                    onNavigateToEditExercise(exerciseDC.id)
                 },
                 {
                     showConfirmDeleteDialog.value = true
@@ -220,7 +237,11 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
         actionsElevated = persistentListOf(false, false)
     ) { innerPadding ->
         BoxWithConstraints(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(
+                top = innerPadding.calculateTopPadding(),
+                start = innerPadding.calculateLeftPadding(LayoutDirection.Ltr),
+                end = innerPadding.calculateRightPadding(LayoutDirection.Ltr)
+            )
         ) {
             LibreFitLazyColumn(startEndPadding = 0.dp, bottomSpacer = false) {
                 item {
@@ -233,7 +254,20 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
                     )
                 }
                 item {
-                    AlternatingImages(stringId, exerciseDC, animatedVisibilityScope)
+                    AnimatedVisibility(
+                        visible = showExercisesImages != false,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        AlternatingImages(
+                            stringId = stringId,
+                            exercise = exerciseDC,
+                            showExercisesImages = showExercisesImages,
+                            setTrueShowExercisesImages = setTrueShowExercisesImages,
+                            setFalseShowExercisesImages = setFalseShowExercisesImages,
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                    }
                 }
                 stickyHeader {
                     PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
@@ -294,7 +328,7 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
                                 workoutsWithExercises = workoutsWithExercises,
                                 points = points,
                                 exerciseChart = exerciseChart,
-                                navController = navController,
+                                onNavigateToInfoWorkout = onNavigateToInfoWorkout,
                                 updateExerciseChart = updateExerciseChart,
                                 maxHeight = maxHeight,
                                 animatedVisibilityScope = animatedVisibilityScope
@@ -503,7 +537,7 @@ private fun SharedTransitionScope.HistoryPage(
     workoutsWithExercises: List<UiWorkoutWithExercisesAndSets>,
     points: List<Point>,
     exerciseChart: ExerciseChart,
-    navController: NavHostController,
+    onNavigateToInfoWorkout: (Long) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     maxHeight: Dp,
     updateExerciseChart: (ExerciseChart) -> Unit
@@ -525,7 +559,7 @@ private fun SharedTransitionScope.HistoryPage(
                     BodyweightChart.MOST_REPS, BodyweightChart.SESSION_REPS, LoadChart.TOTAL_REPS,
                     WeightedBodyweightChart.TOTAL_REPS -> null
                     TimeChart.BEST_TIME, TimeChart.TOTAL_TIME ->  stringResource(R.string.second_abbreviation)
-                    else -> stringResource(R.string.kg)
+                    else -> autoUnitSuffix()
                 },
                 points = points,
                 chartMode = exerciseChart,
@@ -536,9 +570,7 @@ private fun SharedTransitionScope.HistoryPage(
                     is TimeChart -> TimeChart.entries
                 },
                 updateChartMode = updateExerciseChart,
-                onEntrySelection = {
-                    navController.navigate(Route.InfoWorkoutScreen(it))
-                }
+                onEntrySelection = onNavigateToInfoWorkout
             )
         }
         item {
@@ -557,9 +589,7 @@ private fun SharedTransitionScope.HistoryPage(
         items(workoutsWithExercises, key = { it.workout.id }) { workoutWithExercisesAndSets ->
             val workout = workoutWithExercisesAndSets.workout
             ElevatedCard(
-                onClick = {
-                    navController.navigate(Route.InfoWorkoutScreen(workout.id))
-                },
+                onClick = { onNavigateToInfoWorkout(workout.id) },
                 shape = MaterialTheme.shapes.extraLarge,
                 modifier = Modifier.sharedBounds(
                     sharedContentState = rememberSharedContentState(workout.id),
@@ -591,9 +621,7 @@ private fun SharedTransitionScope.HistoryPage(
                         )
 
                         IconButton(
-                            onClick = {
-                                navController.navigate(Route.InfoWorkoutScreen(workout.id))
-                            }
+                            onClick = { onNavigateToInfoWorkout(workout.id) }
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_info),
@@ -662,9 +690,7 @@ private fun SharedTransitionScope.HistoryPage(
                                             Text(stringResource(R.string.reps))
                                             if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                                                 Text(
-                                                    stringResource(R.string.load) + " (" + stringResource(
-                                                        R.string.kg
-                                                    ) + ")"
+                                                    stringResource(R.string.load) + " (" + autoUnitSuffix() + ")"
                                                 )
                                             }
                                         }
@@ -725,7 +751,10 @@ private fun SharedTransitionScope.HistoryPage(
                                                 } else {
                                                     Text(text="${set.reps}", color=contentColor)
                                                     if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
-                                                        Text(text = "${set.load}", color = contentColor)
+                                                        Text(
+                                                            text = set.load.doubleValueAsString(),
+                                                            color = contentColor
+                                                        )
                                                     }
                                                 }
                                                 Checkbox(
@@ -750,13 +779,14 @@ private fun SharedTransitionScope.HistoryPage(
 private fun SharedTransitionScope.AlternatingImages(
     stringId: String,
     exercise: UiExerciseDC,
+    showExercisesImages: Boolean?,
+    setTrueShowExercisesImages: () -> Unit,
+    setFalseShowExercisesImages: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     var currentImageIndex by remember { mutableIntStateOf(0) }
 
     var isRunning by rememberSaveable { mutableStateOf(true) }
-
-    var showWarning by rememberSaveable { mutableStateOf(true) }
 
 
     LaunchedEffect(exercise.images) {
@@ -764,88 +794,127 @@ private fun SharedTransitionScope.AlternatingImages(
             if (isRunning) {
                 currentImageIndex = (currentImageIndex + 1) % exercise.images.size
             }
-            delay(1000)
+            delay(1000.milliseconds)
         }
     }
 
-    Column {
-        Box(
-            modifier = Modifier.padding(15.dp),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            val model = remember(currentImageIndex) { exercise.images.getOrNull(currentImageIndex) }
-            AsyncImage(
-                model = model?.let { "file:///android_asset/${it}" },
-                fallback = painterResource(R.drawable.no_image),
-                contentDescription = exercise.name,
-                contentScale = ContentScale.Crop,
-                colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
-                filterQuality = FilterQuality.High,
-                modifier = Modifier
-                    .sharedElement(
-                        sharedContentState = rememberSharedContentState(stringId + exercise.id),
-                        animatedVisibilityScope = animatedVisibilityScope
-                    )
-                    .aspectRatio(
-                        ratio = rememberAssetAspectRatio(model, 16f / 9)
-                    )
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.extraLarge)
-                    .border(
-                        width = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant,
-                        MaterialTheme.shapes.extraLarge
-                    ),
-            )
-
-            if (exercise.images.isNotEmpty()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+    AnimatedContent(showExercisesImages) { show ->
+        Column {
+            if (show == true) {
+                Box(
+                    modifier = Modifier.padding(15.dp),
+                    contentAlignment = Alignment.BottomEnd
                 ) {
-                    FilledTonalIconToggleButton(
-                        checked = showWarning,
-                        modifier = Modifier.padding(10.dp),
-                        onCheckedChange = { showWarning = it },
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_warning),
-                            contentDescription = stringResource(R.string.warning),
-                        )
-                    }
-
-                    ToggleButton(
-                        checked = isRunning,
-                        modifier = Modifier.padding(10.dp),
-                        onCheckedChange = { isRunning = it },
-                        shapes = ToggleButtonDefaults.shapes()
-                    ) {
-                        Icon(
-                            painter = painterResource(
-                                if (isRunning) R.drawable.ic_pause else R.drawable.ic_play_arrow
+                    val model =
+                        remember(currentImageIndex) { exercise.images.getOrNull(currentImageIndex) }
+                    AsyncImage(
+                        model = model?.let { "file:///android_asset/${it}" },
+                        fallback = painterResource(R.drawable.no_image),
+                        contentDescription = exercise.name,
+                        contentScale = ContentScale.Crop,
+                        colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
+                        filterQuality = FilterQuality.High,
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedContentState = rememberSharedContentState(stringId + exercise.id),
+                                animatedVisibilityScope = animatedVisibilityScope
+                            )
+                            .aspectRatio(
+                                ratio = rememberAssetAspectRatio(model, 16f / 9)
+                            )
+                            .fillMaxWidth()
+                            .clip(MaterialTheme.shapes.extraLarge)
+                            .border(
+                                width = 0.5.dp,
+                                color = MaterialTheme.colorScheme.outlineVariant,
+                                MaterialTheme.shapes.extraLarge
                             ),
-                            contentDescription = stringResource(if (isRunning) R.string.pause else R.string.resume),
-                        )
+                    )
+
+                    if (exercise.images.isNotEmpty()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+
+                            ToggleButton(
+                                checked = isRunning,
+                                modifier = Modifier.padding(10.dp),
+                                onCheckedChange = { isRunning = it },
+                                shapes = ToggleButtonDefaults.shapesFor(ToggleButtonDefaults.size)
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        if (isRunning) R.drawable.ic_pause else R.drawable.ic_play_arrow
+                                    ),
+                                    contentDescription = stringResource(if (isRunning) R.string.pause else R.string.resume),
+                                )
+                            }
+                        }
                     }
                 }
-            }
-        }
-        if (exercise.images.isNotEmpty()) {
-            AnimatedVisibility(visible = showWarning) {
-                OutlinedCard(
-                    modifier = Modifier.padding(start= 15.dp, end= 15.dp),
-                    shape = MaterialTheme.shapes.large
-                ){
-                    Column(Modifier.padding(10.dp)) {
+
+            } else {
+                ElevatedCard(
+                    shape = MaterialTheme.shapes.largeIncreased,
+                    modifier = Modifier.padding(15.dp),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
                         Text(
+                            modifier = Modifier.padding(15.dp),
                             text = stringResource(R.string.ai_images_warning),
-                            style = MaterialTheme.typography.labelSmall
+                            textAlign = TextAlign.Center
                         )
+                        val interactionSources = remember { List(2) { MutableInteractionSource() } }
+
+                        ButtonGroup(
+                            overflowIndicator = {}
+                        ) {
+                            customItem(
+                                menuContent = {},
+                                buttonGroupContent = {
+                                    LibreFitButton(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .animateWidth(interactionSources[0]),
+                                        text = stringResource(R.string.show),
+                                        icon = painterResource(R.drawable.ic_image),
+                                        interactionSource = interactionSources[0]
+                                    ) {
+                                        setTrueShowExercisesImages()
+                                    }
+                                }
+                            )
+                            customItem(
+                                menuContent = {},
+                                buttonGroupContent = {
+                                    LibreFitButton(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .animateWidth(interactionSources[1]),
+                                        text = stringResource(R.string.hide),
+                                        icon = painterResource(R.drawable.ic_hide_image),
+                                        interactionSource = interactionSources[1],
+                                        elevated = false
+                                    ) {
+                                        setFalseShowExercisesImages()
+                                    }
+                                }
+                            )
+                        }
+
                     }
                 }
             }
         }
     }
+
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -875,6 +944,7 @@ private fun InfoExercisePreview() {
                         category = Category.STRENGTH,
                         images = persistentListOf("3_4_Sit-Up/0.jpg", "3_4_Sit-Up/1.jpg")
                     ),
+                    showExercisesImages = false,
                     animatedVisibilityScope = this,
                     workoutsWithExercises = listOf(
                         UiWorkoutWithExercisesAndSets(
@@ -911,7 +981,11 @@ private fun InfoExercisePreview() {
                         )
                     ),
                     points = emptyList(),
-                    navController = rememberNavController(),
+                    onNavigateBack = {},
+                    onNavigateToEditExercise = {},
+                    onNavigateToInfoWorkout = {},
+                    setTrueShowExercisesImages = {},
+                    setFalseShowExercisesImages = {},
                     updateExerciseChart = {},
                     deleteExercise = {}
                 )

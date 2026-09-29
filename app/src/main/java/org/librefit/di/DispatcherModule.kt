@@ -8,29 +8,24 @@
 
 package org.librefit.di
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 import org.librefit.di.qualifiers.DefaultDispatcher
 import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.di.qualifiers.MainDispatcher
 
-@Module
-@InstallIn(SingletonComponent::class)
-object DispatcherModule {
-
-    @Provides
-    @IoDispatcher
-    fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
-
-    @Provides
-    @DefaultDispatcher
-    fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
-
-    @Provides
-    @MainDispatcher
-    fun provideMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
+/**
+ * Provides the standard coroutine dispatchers under type-safe qualifiers
+ * (see [org.librefit.di.qualifiers]).
+ */
+val dispatcherModule = module {
+    // Type parameters are explicit on purpose: Koin's runtime registry resolves by EXACT
+    // (type, qualifier) key, and `Dispatchers.Main`'s inferred type is the subtype
+    // MainCoroutineDispatcher — without the explicit CoroutineDispatcher type the definition
+    // would be registered under a key no consumer looks up (see KoinRuntimeResolutionTest).
+    single<CoroutineDispatcher>(named<IoDispatcher>()) { Dispatchers.IO }
+    single<CoroutineDispatcher>(named<DefaultDispatcher>()) { Dispatchers.Default }
+    single<CoroutineDispatcher>(named<MainDispatcher>()) { Dispatchers.Main }
 }

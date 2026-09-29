@@ -8,10 +8,8 @@
 
 package org.librefit.activities
 
-import android.app.PendingIntent
 import android.content.ClipData
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -61,18 +59,24 @@ import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.WarningLottie
 import org.librefit.ui.theme.LibreFitTheme
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 class ErrorActivity : ComponentActivity() {
 
-    private val restartIntent: PendingIntent? by lazy {
-        IntentCompat.getParcelableExtra(intent,EXTRA_RESTART_PENDING_INTENT, PendingIntent::class.java)
-    }
-
     companion object {
         const val EXTRA_STACK_TRACE = "EXTRA_STACK_TRACE"
-        const val EXTRA_RESTART_PENDING_INTENT = "EXTRA_RESTART_PENDING_INTENT"
         const val EXTRA_THEME_MODE = "EXTRA_THEME_MODE"
         const val EXTRA_MATERIAL_MODE = "EXTRA_MATERIAL_MODE"
+    }
+
+    /**
+     * Builds an explicit intent that relaunches the app's main entry point and clears the
+     * current task. The restart action is constructed locally at click time instead of being
+     * received through an intent extra, so that no foreign PendingIntent token can ever be
+     * executed with this app's identity (intent redirection mitigation).
+     */
+    private fun createRestartIntent(): Intent = Intent(this, MainActivity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,11 +87,9 @@ class ErrorActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val stackTrace = intent.getStringExtra(EXTRA_STACK_TRACE) ?: ""
-        val theme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getSerializableExtra(EXTRA_THEME_MODE, ThemeMode::class.java)
-        } else {
-            intent.getSerializableExtra(EXTRA_THEME_MODE) as? ThemeMode
-        } ?: ThemeMode.SYSTEM
+        val theme =
+            IntentCompat.getSerializableExtra(intent, EXTRA_THEME_MODE, ThemeMode::class.java)
+                ?: ThemeMode.SYSTEM
         val dynamicColor = intent.getBooleanExtra(EXTRA_MATERIAL_MODE, false)
 
         setContent {
@@ -98,7 +100,7 @@ class ErrorActivity : ComponentActivity() {
                 ErrorScreen(
                     stackTrace = stackTrace,
                     onRestart = {
-                        restartIntent?.send()
+                        startActivity(createRestartIntent())
                     },
                 )
             }
@@ -123,7 +125,7 @@ private fun ErrorScreen(
     LaunchedEffect(copied) {
         if(copied) {
             // Display check icon instead of copy icon for 3 seconds after stack trace is copied
-            delay(3000)
+            delay(3000.milliseconds)
             copied = false
         }
     }

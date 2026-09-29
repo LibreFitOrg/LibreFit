@@ -8,34 +8,46 @@
 
 package org.librefit.ui.screens.settings
 
-import android.content.Context
+import android.net.Uri
 import app.cash.turbine.test
-import com.google.common.truth.Truth.assertThat
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
 import org.librefit.MainDispatcherRule
 import org.librefit.db.repository.ImportExportRepository
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.di.streamProvider.StreamProvider
+import org.librefit.di.uriAccess.UriAccess
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
+import java.io.ByteArrayInputStream
+import java.io.IOException
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertIs
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsScreenViewModelTest {
     // MainDispatcherRule to control coroutine execution
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
+    private val mainDispatcherRule = MainDispatcherRule()
 
     // The mock repository
-    private lateinit var context: Context
     private lateinit var userPreferencesRepository: UserPreferencesRepository
     private lateinit var importExportRepository: ImportExportRepository
+    private lateinit var streamProvider: StreamProvider
+    private lateinit var uriAccess: UriAccess
 
     // The class under test
     private lateinit var viewModel: SettingsScreenViewModel
@@ -50,12 +62,26 @@ class SettingsScreenViewModelTest {
     private lateinit var isWorkoutHeaderSticky: MutableStateFlow<Boolean>
     private lateinit var useScrollWheelForInput: MutableStateFlow<Boolean>
     private lateinit var dismissScrollWheelAutomatically: MutableStateFlow<Boolean>
+    private lateinit var showExercisesImages: MutableStateFlow<Boolean?>
+    private lateinit var unitSystem: MutableStateFlow<UnitSystem>
 
-    @Before
+    @BeforeTest
+    fun setUpMainDispatcher() {
+        mainDispatcherRule.setUp()
+    }
+
+    @AfterTest
+    fun tearDownMainDispatcher() {
+        mainDispatcherRule.tearDown()
+    }
+
+    @BeforeTest
     fun setUp() {
         // Arrange: Create a mock for the repository
         userPreferencesRepository = mockk()
-        importExportRepository = mockk()
+        importExportRepository = mockk(relaxed = true)
+        streamProvider = mockk(relaxed = true)
+        uriAccess = mockk(relaxed = true)
         language = MutableStateFlow(Language.SYSTEM)
         themeMode = MutableStateFlow(ThemeMode.SYSTEM)
         keepScreenOn = MutableStateFlow(true)
@@ -65,6 +91,8 @@ class SettingsScreenViewModelTest {
         isWorkoutHeaderSticky = MutableStateFlow(true)
         useScrollWheelForInput = MutableStateFlow(true)
         dismissScrollWheelAutomatically = MutableStateFlow(false)
+        showExercisesImages = MutableStateFlow(null)
+        unitSystem = MutableStateFlow(UnitSystem.METRIC)
 
         // Arrange: Tell the mock what to return when these are accessed
         every { userPreferencesRepository.language } returns language
@@ -76,9 +104,11 @@ class SettingsScreenViewModelTest {
         every { userPreferencesRepository.isWorkoutHeaderSticky } returns isWorkoutHeaderSticky
         every { userPreferencesRepository.useScrollWheelForInput } returns useScrollWheelForInput
         every { userPreferencesRepository.dismissScrollWheelInputAutomatically } returns dismissScrollWheelAutomatically
+        every { userPreferencesRepository.showExercisesImages } returns showExercisesImages
+        every { userPreferencesRepository.unitSystem } returns unitSystem
 
-        coEvery { userPreferencesRepository.saveLanguage(any()) } answers {
-            language.value = Language.entries.find { it.code == firstArg() }!!
+        every { userPreferencesRepository.saveLanguage(any()) } answers {
+            language.value = firstArg()
         }
         coEvery { userPreferencesRepository.saveThemeMode(any()) } answers {
             themeMode.value = firstArg()
@@ -104,58 +134,114 @@ class SettingsScreenViewModelTest {
         coEvery { userPreferencesRepository.saveDismissScrollWheelInputAutomatically(any()) } answers {
             dismissScrollWheelAutomatically.value = firstArg()
         }
+        coEvery { userPreferencesRepository.saveShowExercisesImages(any()) } answers {
+            showExercisesImages.value = firstArg()
+        }
 
         // Arrange: Create the ViewModel instance with the mock repository
-        viewModel = SettingsScreenViewModel(context = context, userPreferences = userPreferencesRepository, importExportRepository = importExportRepository)
+        viewModel = SettingsScreenViewModel(
+            userPreferences = userPreferencesRepository,
+            importExportRepository = importExportRepository,
+            streamProvider = streamProvider,
+            uriAccess = uriAccess,
+        )
     }
 
     @Test
     fun `initial state - language follows system`() = runTest {
-        assertThat(viewModel.language.value).isEqualTo(Language.SYSTEM)
+        assertEquals(Language.SYSTEM, viewModel.language.value)
     }
 
     @Test
     fun `initial state - theme follows system`() = runTest {
-        assertThat(viewModel.themeMode.value).isEqualTo(ThemeMode.SYSTEM)
+        assertEquals(ThemeMode.SYSTEM, viewModel.themeMode.value)
     }
 
     @Test
     fun `initial state - keep screen is on`() = runTest {
-        assertThat(viewModel.keepScreenOn.value).isTrue()
+        assertTrue(viewModel.keepScreenOn.value)
     }
 
     @Test
     fun `initial state - material mode is off`() = runTest {
-        assertThat(viewModel.materialMode.value).isFalse()
+        assertFalse(viewModel.materialMode.value)
     }
 
     @Test
     fun `initial state - rest timer is is on`() = runTest {
-        assertThat(viewModel.restTimerSoundOn.value).isTrue()
+        assertTrue(viewModel.restTimerSoundOn.value)
     }
 
     @Test
     fun `initial state - is supporter is is false`() = runTest {
-        assertThat(viewModel.isSupporter.value).isFalse()
+        assertFalse(viewModel.isSupporter.value)
     }
 
     @Test
     fun `initial state - dismiss scroll wheel automatically is off`() = runTest {
-        assertThat(viewModel.dismissScrollWheelInputAutomatically.value).isFalse()
+        assertFalse(viewModel.dismissScrollWheelInputAutomatically.value)
+    }
+
+    @Test
+    fun `initial state - show images is null`() = runTest {
+        assertNull(viewModel.showExercisesImages.value)
+    }
+
+    @Test
+    fun `successful backup import emits success and resets loading state`() = runTest {
+        val uri = mockk<Uri>()
+        every { uriAccess.takePersistableReadPermission(uri) } just Runs
+        every { streamProvider.getInputStream(uri) } returns ByteArrayInputStream(byteArrayOf())
+        coEvery { importExportRepository.importFrom(any()) } just Runs
+
+        viewModel.events.test {
+            viewModel.backupImport(uri)
+
+            assertEquals(SettingsEvent.ImportSuccess, awaitItem())
+            runCurrent()
+            assertFalse(viewModel.isImporting.value)
+        }
+    }
+
+    @Test
+    fun `failed backup import emits failure and resets loading state`() = runTest {
+        val uri = mockk<Uri>()
+        every { uriAccess.takePersistableReadPermission(uri) } just Runs
+        every { streamProvider.getInputStream(uri) } returns ByteArrayInputStream(byteArrayOf())
+        coEvery { importExportRepository.importFrom(any()) } throws IOException()
+
+        viewModel.events.test {
+            viewModel.backupImport(uri)
+
+            assertEquals(SettingsEvent.ImportFailed, awaitItem())
+            runCurrent()
+            assertFalse(viewModel.isImporting.value)
+        }
+    }
+
+    @Test
+    fun `show exercises images updates correctly`() = runTest {
+        val expected = true
+
+        viewModel.showExercisesImages.test {
+            assertNull(awaitItem())
+            viewModel.saveShowExercisesImages(expected)
+            assertEquals(expected, awaitItem())
+        }
     }
 
     @Test
     fun `when updating preferences - preferences must match the update input`() = runTest {
         viewModel.preferences.test {
             // Initial emission
-            assertThat(awaitItem()).isNull()
+            assertNull(awaitItem())
 
             // Act: update preferences
             val newPreferences = Language.entries
             viewModel.updatePreferences(newPreferences)
 
             // Assert: preferences has the correct value
-            assertThat(awaitItem()).isEqualTo(newPreferences)
+            assertEquals(newPreferences, awaitItem())
         }
     }
 
@@ -163,7 +249,7 @@ class SettingsScreenViewModelTest {
     fun `when updating preferences - current preference must also update`() = runTest {
         viewModel.currentPreference.test {
             // Initial emission
-            assertThat(awaitItem()).isNull()
+            assertNull(awaitItem())
 
             // Act: update preferences, it triggers current preference update
             val newPreferences = Language.entries
@@ -171,8 +257,8 @@ class SettingsScreenViewModelTest {
 
             // Assert: current preference reflects the correct preference and its value
             val value = awaitItem()
-            assertThat(value).isInstanceOf(Language::class.java)
-            assertThat(value).isEqualTo(Language.SYSTEM)
+            assertIs<Language>(value)
+            assertEquals(Language.SYSTEM, value)
         }
     }
 
@@ -184,10 +270,10 @@ class SettingsScreenViewModelTest {
 
             viewModel.currentPreference.test {
                 // Initial emission
-                assertThat(awaitItem()).isNull()
+                assertNull(awaitItem())
                 viewModel.saveLanguage(expected)
                 viewModel.updatePreferences(Language.entries)
-                assertThat(awaitItem()).isEqualTo(expected)
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -196,7 +282,7 @@ class SettingsScreenViewModelTest {
         runTest {
             viewModel.currentPreference.test {
                 // Initial emission
-                assertThat(awaitItem()).isNull()
+                assertNull(awaitItem())
                 viewModel.saveLanguage(Language.ENGLISH)
                 expectNoEvents()
             }
@@ -209,9 +295,9 @@ class SettingsScreenViewModelTest {
 
         viewModel.language.test {
             // Initial emission
-            assertThat(awaitItem()).isEqualTo(Language.SYSTEM)
+            assertEquals(Language.SYSTEM, awaitItem())
             viewModel.saveLanguage(expected)
-            assertThat(awaitItem()).isEqualTo(expected)
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -222,9 +308,9 @@ class SettingsScreenViewModelTest {
 
         viewModel.themeMode.test {
             // Initial emission
-            assertThat(awaitItem()).isEqualTo(ThemeMode.SYSTEM)
+            assertEquals(ThemeMode.SYSTEM, awaitItem())
             viewModel.saveThemeMode(expected)
-            assertThat(awaitItem()).isEqualTo(expected)
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -235,9 +321,9 @@ class SettingsScreenViewModelTest {
 
         viewModel.materialMode.test {
             // Initial emission
-            assertThat(awaitItem()).isEqualTo(false)
+            assertEquals(false, awaitItem())
             viewModel.saveMaterialMode(expected)
-            assertThat(awaitItem()).isEqualTo(expected)
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -248,9 +334,9 @@ class SettingsScreenViewModelTest {
 
         viewModel.keepScreenOn.test {
             // Initial emission
-            assertThat(awaitItem()).isEqualTo(true)
+            assertEquals(true, awaitItem())
             viewModel.saveWorkoutScreenOn(expected)
-            assertThat(awaitItem()).isEqualTo(expected)
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -261,9 +347,9 @@ class SettingsScreenViewModelTest {
 
         viewModel.restTimerSoundOn.test {
             // Initial emission
-            assertThat(awaitItem()).isEqualTo(true)
+            assertEquals(true, awaitItem())
             viewModel.saveRestTimerSoundOn(expected)
-            assertThat(awaitItem()).isEqualTo(expected)
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -272,9 +358,9 @@ class SettingsScreenViewModelTest {
         val expected = false
 
         viewModel.isWorkoutHeaderSticky.test {
-            assertThat(awaitItem()).isEqualTo(true)
+            assertEquals(true, awaitItem())
             viewModel.saveIsWorkoutHeaderSticky(expected)
-            assertThat(awaitItem()).isEqualTo(expected)
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -283,9 +369,9 @@ class SettingsScreenViewModelTest {
         val expected = false
 
         viewModel.useScrollWheelForInput.test {
-            assertThat(awaitItem()).isEqualTo(true)
+            assertEquals(true, awaitItem())
             viewModel.saveUseScrollWheelForInput(expected)
-            assertThat(awaitItem()).isEqualTo(expected)
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -294,9 +380,9 @@ class SettingsScreenViewModelTest {
         val expected = true
 
         viewModel.dismissScrollWheelInputAutomatically.test {
-            assertThat(awaitItem()).isFalse()
+            assertFalse(awaitItem())
             viewModel.saveDismissScrollWheelInputAutomatically(expected)
-            assertThat(awaitItem()).isEqualTo(expected)
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -305,9 +391,9 @@ class SettingsScreenViewModelTest {
         val expected = Language.ENGLISH
 
         viewModel.language.test {
-            assertThat(awaitItem()).isEqualTo(Language.SYSTEM)
+            assertEquals(Language.SYSTEM, awaitItem())
             viewModel.updateDialogPreference(expected)
-            assertThat(awaitItem()).isEqualTo(expected)
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -316,9 +402,9 @@ class SettingsScreenViewModelTest {
         val expected = ThemeMode.DARK
 
         viewModel.themeMode.test {
-            assertThat(awaitItem()).isEqualTo(ThemeMode.SYSTEM)
+            assertEquals(ThemeMode.SYSTEM, awaitItem())
             viewModel.updateDialogPreference(expected)
-            assertThat(awaitItem()).isEqualTo(expected)
+            assertEquals(expected, awaitItem())
         }
     }
 }

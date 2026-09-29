@@ -13,23 +13,24 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CheckableDropdownMenuItem
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,8 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.FilterQuality
@@ -53,14 +52,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.db.entity.ExerciseDC
-import org.librefit.enums.SuccessMessage
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.exercise.ExerciseProperty
@@ -78,14 +76,17 @@ import org.librefit.util.Formatter.exerciseEnumToStringId
 
 @Composable
 fun SharedTransitionScope.EditExerciseScreen(
-    navController: NavHostController,
     animatedVisibilityScope: AnimatedVisibilityScope,
     id: Long, // Used only for transition animation
-    exerciseDCid: String,
-    viewModel: EditExerciseScreenViewModel = hiltViewModel()
+    onNavigateBack: () -> Unit,
+    onNavigateToSuccessScreen: () -> Unit,
+    route: Route.EditExerciseScreen,
+    viewModel: EditExerciseScreenViewModel = koinViewModel { parametersOf(route) }
 ) {
 
     val exerciseDC by viewModel.exerciseDC.collectAsStateWithLifecycle()
+
+    val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
 
     val isCreateMode = exerciseDC.id.isBlank()
 
@@ -103,7 +104,8 @@ fun SharedTransitionScope.EditExerciseScreen(
         instructions = exerciseDC.instructions,
         category = exerciseDC.category,
         images = exerciseDC.images,
-        navigateBack = navController::navigateUp,
+        showExercisesImages = showExercisesImages,
+        navigateBack = onNavigateBack,
         animatedVisibilityScope = animatedVisibilityScope,
         updateValue = viewModel::updateValue,
         updatePrimaryMuscles = viewModel::updatePrimaryMuscles,
@@ -111,17 +113,7 @@ fun SharedTransitionScope.EditExerciseScreen(
         saveExercise = viewModel::saveExercise,
         updateName = viewModel::updateName,
         updateInstructions = viewModel::updateInstructions,
-        navigateToSuccessScreen = {
-            navController.navigate(Route.SuccessScreen(SuccessMessage.EXERCISE_SAVED)) {
-                launchSingleTop = true
-                popUpTo(
-                    Route.EditExerciseScreen(
-                        id = id,
-                        exerciseDCid = exerciseDCid
-                    )
-                ) { inclusive = true }
-            }
-        }
+        navigateToSuccessScreen = onNavigateToSuccessScreen
     )
 }
 
@@ -141,6 +133,7 @@ private fun SharedTransitionScope.EditExerciseScreenContent(
     instructions: List<String>,
     images: List<String>,
     category: Category,
+    showExercisesImages: Boolean?,
     animatedVisibilityScope: AnimatedVisibilityScope,
     navigateBack: () -> Unit,
     updateValue: (ExerciseProperty) -> Unit,
@@ -191,26 +184,28 @@ private fun SharedTransitionScope.EditExerciseScreenContent(
             item {
                 // TODO: implement display all images (like in a horizontal pager)
                 val model = remember(images) { images.firstOrNull() }
-                AsyncImage(
-                    model = model?.let { "file:///android_asset/${it}" },
-                    fallback = painterResource(R.drawable.no_image),
-                    contentDescription = name,
-                    contentScale = ContentScale.Crop,
-                    filterQuality = FilterQuality.High,
-                    colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState(stringId + exerciseDcId),
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.extraLarge)
-                        .border(
-                            0.5.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant,
-                            shape = MaterialTheme.shapes.extraLarge
-                        ),
-                )
+                if (showExercisesImages == true) {
+                    AsyncImage(
+                        model = model?.let { "file:///android_asset/${it}" },
+                        fallback = painterResource(R.drawable.no_image),
+                        contentDescription = name,
+                        contentScale = ContentScale.Crop,
+                        filterQuality = FilterQuality.High,
+                        colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedContentState = rememberSharedContentState(stringId + exerciseDcId),
+                                animatedVisibilityScope = animatedVisibilityScope
+                            )
+                            .fillMaxWidth()
+                            .clip(MaterialTheme.shapes.extraLarge)
+                            .border(
+                                0.5.dp,
+                                color = MaterialTheme.colorScheme.outlineVariant,
+                                shape = MaterialTheme.shapes.extraLarge
+                            ),
+                    )
+                }
             }
             item {
             }
@@ -323,8 +318,6 @@ private fun RowScope.EditExercisePropertyItem(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    val focusRequester = remember { FocusRequester() }
-
     val resources = LocalResources.current
 
     Column(
@@ -335,13 +328,6 @@ private fun RowScope.EditExercisePropertyItem(
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = it },
-            modifier = Modifier
-                .clickable {
-                    expanded = !expanded
-                    focusRequester.requestFocus()
-                }
-                .focusRequester(focusRequester)
-                .focusable()
         ) {
             OutlinedTextField(
                 shape = MaterialTheme.shapes.largeIncreased,
@@ -363,32 +349,42 @@ private fun RowScope.EditExercisePropertyItem(
             )
             ExposedDropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                // Allow DropdownMenuGroup to control styling, shape, and elevation
+                containerColor = Color.Transparent,
+                shadowElevation = 0.dp,
+                border = null
             ) {
-                options.forEach { enum ->
-                    DropdownMenuItem(
-                        onClick = {
-                            updateValue(enum)
-                            expanded = false
-                        },
-                        text = {
-                            Text(
-                                text = stringResource(exerciseEnumToStringId(enum))
-                            )
-                        },
-                        trailingIcon = if (enum in values) {
-                            {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_check),
-                                    contentDescription = stringResource(R.string.checkbox)
-                                )
-                            }
-                        } else null,
-                        modifier = Modifier.background(
-                            if (enum in values) MaterialTheme.colorScheme.inversePrimary
-                                .copy(0.3f) else Color.Unspecified
+                // Wrap items inside Expressive DropdownMenuGroup
+                DropdownMenuGroup(
+                    shapes = MenuDefaults.groupShape(0, 1)
+                ) {
+                    val itemCount = options.size
+                    options.forEachIndexed { index, enum ->
+                        val isSelected = enum in values
+
+                        CheckableDropdownMenuItem(
+                            checked = isSelected,
+                            onCheckedChange = {
+                                updateValue(enum)
+                                expanded = false
+                            },
+                            text = {
+                                Text(text = stringResource(exerciseEnumToStringId(enum)))
+                            },
+                            // Expressive rounded shapes per item position in group
+                            shapes = MenuDefaults.itemShape(index, itemCount),
+                            trailingContent = if (isSelected) {
+                                {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_check),
+                                        contentDescription = stringResource(R.string.checkbox),
+                                        modifier = Modifier.size(MenuDefaults.TrailingIconSize)
+                                    )
+                                }
+                            } else null
                         )
-                    )
+                    }
                 }
             }
         }
@@ -420,6 +416,7 @@ private fun EditExerciseScreenContentPreview() {
                     instructions = e.instructions,
                     category = e.category,
                     images = e.images,
+                    showExercisesImages = null,
                     animatedVisibilityScope = this,
                     saveExercise = {},
                     updatePrimaryMuscles = {},

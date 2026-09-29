@@ -8,15 +8,19 @@
 
 package org.librefit.enums.userPreferences
 
+/**
+ * Based on standard BCP-47 tags
+ */
 enum class Language(val code: String) : DialogPreference {
     SYSTEM(""),
-    ENGLISH("en"),
-    ITALIAN("it"),
-    GERMAN("de"),
-    DUTCH("nl"),
     CZECH("cs"),
-    SIMPLIFIED_CHINESE("zh-rCN"),
-    SPANISH("es"),
+    DUTCH("nl"),
+    ENGLISH("en"),
+    GERMAN("de"),
+    ITALIAN("it"),
     PORTUGUESE_BRAZIL("pt-BR"),
-    GALICIAN("gl")
+    RUSSIAN("ru"),
+    SIMPLIFIED_CHINESE("zh-CN"),
+    SPANISH("es"),
+    FRENCH("fr")
 }

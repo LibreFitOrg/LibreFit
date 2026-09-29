@@ -16,9 +16,10 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,7 +37,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CheckableDropdownMenuItem
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
@@ -44,6 +47,7 @@ import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -54,6 +58,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
@@ -61,12 +66,12 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -76,8 +81,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -100,13 +103,20 @@ import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.PreviousPerformanceSet
 import org.librefit.enums.SetMode
+import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.models.Weight
+import org.librefit.nav.LocalUnitSystem
+import org.librefit.ui.components.modalBottomSheets.BarbellCalculatorModalBottomSheet
 import org.librefit.ui.components.modalBottomSheets.InputModalBottomSheet
 import org.librefit.ui.models.InputModalBottomSheetState
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
+import org.librefit.ui.models.autoUnitSuffix
+import org.librefit.ui.models.doubleValue
+import org.librefit.ui.models.formatToText
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.getDecimalDigitsAsInteger
@@ -137,6 +147,7 @@ import kotlin.time.Duration.Companion.seconds
  * @param isDragging when `true`, it applies a shadow to further emphasize with a shadow that the card is dragged.
  * @param useScrollWheelForInput If `true`, [InputModalBottomSheet] appears instead of keyboard
  * @param dismissScrollWheelInputAutomatically If both this and [useScrollWheelForInput] are `true`, the [InputModalBottomSheet] will be dismissed automatically after first edit.
+ * @param showExercisesImages If `true`, it shows image of exercise
  * @param updateExerciseNotes A function to update notes based on [UiExercise.id]. For more details, refer to
  * [org.librefit.ui.screens.workout.WorkoutScreenViewModel.updateExerciseNotes] and
  * [org.librefit.ui.screens.editWorkout.EditWorkoutScreenViewModel.updateExerciseNotes].
@@ -191,6 +202,8 @@ fun SharedTransitionScope.ExerciseCard(
     isDragging: Boolean,
     useScrollWheelForInput: Boolean,
     dismissScrollWheelInputAutomatically: Boolean,
+    showExercisesImages: Boolean?,
+    defaultBarWeight: Double?,
     onReorderRequest: () -> Unit,
     deleteSet: (Long) -> Unit,
     updateExerciseNotes: (String, Long) -> Unit,
@@ -198,20 +211,26 @@ fun SharedTransitionScope.ExerciseCard(
     updateExerciseSetMode: (SetMode, Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
-    updateSetLoad: (Double, Long) -> Unit,
+    updateSetLoad: (Weight, Long) -> Unit,
     updateSetCompleted: (Boolean, Long) -> Unit,
     showInfo: (InfoMode) -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit = {},
-    applyPreviousSetPerformance: (Long) -> Unit = {}
+    applyPreviousSetPerformance: (Long) -> Unit = {},
+    saveDefaultBarWeight: (Double) -> Unit,
 ) {
+    val unit = autoUnitSuffix()
+
+    val elevation by animateDpAsState(
+        targetValue = if (isDragging) 10.dp else 0.dp,
+        label = "drag_elevation"
+    )
+
     var showMenu by rememberSaveable { mutableStateOf(false) }
     val shape = MaterialTheme.shapes.extraLarge
     ElevatedCard(
-        modifier = modifier.then(
-            if (isDragging) Modifier.shadow(
-                10.dp,
-                shape = shape
-            ) else Modifier
+        modifier = modifier.shadow(
+            elevation = elevation,
+            shape = shape
         ),
         shape = shape
     ) {
@@ -238,23 +257,25 @@ fun SharedTransitionScope.ExerciseCard(
                 ) {
                     val model =
                         remember(exerciseWithSets.exerciseDC.images) { exerciseWithSets.exerciseDC.images.firstOrNull() }
-                    AsyncImage(
-                        model = model?.let { "file:///android_asset/${it}" },
-                        fallback = painterResource(R.drawable.no_image),
-                        contentDescription = exerciseWithSets.exerciseDC.name,
-                        contentScale = ContentScale.Crop,
-                        colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .sharedElement(
-                                sharedContentState = rememberSharedContentState(
-                                    key = exerciseWithSets.exercise.id.toString() + exerciseWithSets.exerciseDC.id
-                                ),
-                                animatedVisibilityScope = animatedVisibilityScope
-                            )
-                            .size(50.dp)
-                            .clip(MaterialTheme.shapes.medium)
-                    )
+                    if (showExercisesImages == true) {
+                        AsyncImage(
+                            model = model?.let { "file:///android_asset/${it}" },
+                            fallback = painterResource(R.drawable.no_image),
+                            contentDescription = exerciseWithSets.exerciseDC.name,
+                            contentScale = ContentScale.Crop,
+                            colorFilter = if (model == null) ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant) else null,
+                            modifier = Modifier
+                                .padding(end = 10.dp)
+                                .sharedElement(
+                                    sharedContentState = rememberSharedContentState(
+                                        key = exerciseWithSets.exercise.id.toString() + exerciseWithSets.exerciseDC.id
+                                    ),
+                                    animatedVisibilityScope = animatedVisibilityScope
+                                )
+                                .size(50.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                        )
+                    }
                     Text(
                         text = exerciseWithSets.exerciseDC.name,
                         style = MaterialTheme.typography.headlineSmall,
@@ -344,9 +365,29 @@ fun SharedTransitionScope.ExerciseCard(
 
                     //Rest timer slider
                     Column {
+                        // Hoist the slider state as single source of truth
+                        val sliderState = rememberSliderState(
+                            value = exerciseWithSets.exercise.restTime.toFloat(),
+                            trackRange = 0f..300f,
+                            steps = 19 // 20 intervals -> exact multiples of 15 natively
+                        )
+
+                        // Keep state synced if restTime is modified externally (e.g., from the ViewModel)
+                        LaunchedEffect(exerciseWithSets.exercise.restTime) {
+                            if (!sliderState.isDragging) {
+                                sliderState.value = exerciseWithSets.exercise.restTime.toFloat()
+                            }
+                        }
+
                         var showSlider by rememberSaveable { mutableStateOf(false) }
-                        var restTime by remember { mutableIntStateOf(exerciseWithSets.exercise.restTime) }
                         val haptic = LocalHapticFeedback.current
+
+                        // Manually trigger haptics when the discrete step changes during a drag
+                        LaunchedEffect(sliderState.value) {
+                            if (sliderState.isDragging) {
+                                haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+                            }
+                        }
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceAround,
@@ -366,8 +407,9 @@ fun SharedTransitionScope.ExerciseCard(
                                     )
                                 }
                                 Text(
-                                    stringResource(R.string.rest_time) + ": " + restTime
-                                            + " " + stringResource(R.string.seconds).replaceFirstChar { it.lowercase() })
+                                    stringResource(R.string.rest_time) + ": " + sliderState.value.roundToInt()
+                                            + " " + stringResource(R.string.seconds).replaceFirstChar { it.lowercase() }
+                                )
                             }
                             IconToggleButton(
                                 checked = showSlider,
@@ -384,21 +426,14 @@ fun SharedTransitionScope.ExerciseCard(
                         }
                         AnimatedVisibility(visible = showSlider) {
                             Slider(
-                                value = restTime.toFloat(),
-                                onValueChange = {
-                                    // By dividing first and then multiplying by 5, it rounds to the closest number multiple of 5
-                                    restTime = (it / 5).roundToInt() * 5
-                                    haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
-                                },
+                                state = sliderState,
                                 onValueChangeFinished = {
+                                    // Only hit the ViewModel when the user finishes dragging/clicking
                                     updateExerciseRestTime(
-                                        restTime,
+                                        sliderState.value.roundToInt(),
                                         exerciseWithSets.exercise.id
                                     )
-                                },
-                                valueRange = 0f..300f,
-                                // 19 steps means values multiple of 5
-                                steps = 19
+                                }
                             )
                         }
                     }
@@ -431,7 +466,6 @@ fun SharedTransitionScope.ExerciseCard(
 
                         var expanded by remember { mutableStateOf(false) }
 
-                        val focusRequester = remember { FocusRequester() }
 
                         // Type of set selector
                         ExposedDropdownMenuBox(
@@ -440,12 +474,6 @@ fun SharedTransitionScope.ExerciseCard(
                             modifier = Modifier
                                 .padding(start = 10.dp, end = 10.dp)
                                 .weight(0.5f)
-                                .clickable {
-                                    expanded = !expanded
-                                    focusRequester.requestFocus()
-                                }
-                                .focusRequester(focusRequester)
-                                .focusable()
                         ) {
                             OutlinedTextField(
                                 shape = MaterialTheme.shapes.large,
@@ -461,33 +489,52 @@ fun SharedTransitionScope.ExerciseCard(
                             )
                             ExposedDropdownMenu(
                                 expanded = expanded,
-                                onDismissRequest = { expanded = false }
+                                onDismissRequest = { expanded = false },
+                                // Allow DropdownMenuGroup to control styling, shape, and elevation
+                                containerColor = Color.Transparent,
+                                shadowElevation = 0.dp,
+                                border = null
                             ) {
-                                SetMode.entries.forEachIndexed { _, mode ->
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            updateExerciseSetMode(mode, exerciseWithSets.exercise.id)
-                                            expanded = false
-                                        },
-                                        text = {
-                                            Text(
-                                                text = stringResource(Formatter.setModeToStringId(mode))
-                                            )
-                                        },
-                                        trailingIcon = if (exerciseWithSets.exercise.setMode == mode) {
-                                            {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.ic_check),
-                                                    contentDescription = stringResource(R.string.checkbox)
+                                // Wrap items inside Expressive DropdownMenuGroup
+                                DropdownMenuGroup(
+                                    shapes = MenuDefaults.groupShape(0, 1)
+                                ) {
+                                    val itemCount = SetMode.entries.size
+
+                                    SetMode.entries.forEachIndexed { index, mode ->
+                                        val isSelected = mode == exerciseWithSets.exercise.setMode
+
+                                        CheckableDropdownMenuItem(
+                                            checked = isSelected,
+                                            onCheckedChange = {
+                                                updateExerciseSetMode(
+                                                    mode,
+                                                    exerciseWithSets.exercise.id
                                                 )
-                                            }
-                                        } else null,
-                                        modifier = Modifier.background(
-                                            if (exerciseWithSets.exercise.setMode == mode) MaterialTheme.colorScheme.inversePrimary.copy(
-                                                0.3f
-                                            ) else Color.Unspecified
+                                                expanded = false
+                                            },
+                                            text = {
+                                                Text(
+                                                    text = stringResource(
+                                                        Formatter.setModeToStringId(
+                                                            mode
+                                                        )
+                                                    )
+                                                )
+                                            },
+                                            trailingContent = if (exerciseWithSets.exercise.setMode == mode) {
+                                                {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.ic_check),
+                                                        contentDescription = stringResource(R.string.checkbox)
+                                                    )
+                                                }
+                                            } else null,
+                                            // Expressive rounded shapes per item position in group
+                                            shapes = MenuDefaults.itemShape(index, itemCount),
                                         )
-                                    )
+                                    }
+
                                 }
                             }
                         }
@@ -524,7 +571,7 @@ fun SharedTransitionScope.ExerciseCard(
                                     exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
                                 ) {
                                     Text(
-                                        text = stringResource(R.string.load) + " (" + stringResource(R.string.kg) + ")",
+                                        text = stringResource(R.string.load) + " (" + unit + ")",
                                         color = MaterialTheme.colorScheme.secondary
                                     )
                                 }
@@ -569,13 +616,72 @@ fun SharedTransitionScope.ExerciseCard(
                         }
                     }
 
-                    //Add set button
-                    LibreFitButton(
-                        text = stringResource(id = R.string.add_set),
-                        icon = painterResource(R.drawable.ic_add_circle),
-                        onClick = { addSet(exerciseWithSets.exercise.id) },
-                        elevated = false
-                    )
+                    //Add set button + barbell calculator (if exercise requires barbell)
+
+                    if (exerciseWithSets.exerciseDC.equipment != Equipment.BARBELL) {
+                        LibreFitButton(
+                            text = stringResource(id = R.string.add_set),
+                            icon = painterResource(R.drawable.ic_add_circle),
+                            onClick = { addSet(exerciseWithSets.exercise.id) },
+                            elevated = false
+                        )
+                    } else {
+                        var showBarbellCalculator by rememberSaveable { mutableStateOf(false) }
+
+                        if (showBarbellCalculator) {
+                            val lastSet = exerciseWithSets.sets.lastOrNull { !it.completed }
+                                ?: exerciseWithSets.sets.lastOrNull()
+
+                            BarbellCalculatorModalBottomSheet(
+                                initialTargetWeight = lastSet?.load ?: Weight.auto(50.0),
+                                defaultBarWeight = defaultBarWeight,
+                                onSaveDefaultBarWeight = saveDefaultBarWeight
+                            ) {
+                                showBarbellCalculator = false
+                            }
+                        }
+
+                        val interactionSources = remember { List(2) { MutableInteractionSource() } }
+                        ButtonGroup(
+                            overflowIndicator = {}
+                        ) {
+                            customItem(
+                                buttonGroupContent = {
+                                    OutlinedIconButton(
+                                        onClick = {
+                                            showBarbellCalculator = true
+                                        },
+                                        shapes = IconButtonDefaults.shapes(),
+                                        interactionSource = interactionSources[0],
+                                        modifier = Modifier.animateWidth(interactionSources[0])
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_barbell),
+                                            contentDescription = stringResource(R.string.barbell_calculator)
+                                        )
+                                    }
+                                },
+                                menuContent = {}
+                            )
+                            customItem(
+                                buttonGroupContent = {
+                                    LibreFitButton(
+                                        text = stringResource(id = R.string.add_set),
+                                        icon = painterResource(R.drawable.ic_add_circle),
+                                        onClick = { addSet(exerciseWithSets.exercise.id) },
+                                        elevated = false,
+                                        interactionSource = interactionSources[1],
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .animateWidth(interactionSources[1])
+                                    )
+                                },
+                                menuContent = {}
+                            )
+                        }
+                    }
+
+
                 }
             }
         }
@@ -598,17 +704,23 @@ private fun Set(
     deleteSet: (Long) -> Unit,
     updateSetTime: (Int, Long) -> Unit,
     updateSetReps: (Int, Long) -> Unit,
-    updateSetLoad: (Double, Long) -> Unit,
+    updateSetLoad: (Weight, Long) -> Unit,
     updateSetCompleted: (Boolean, Long) -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
     applyPreviousSet: (Long) -> Unit
 ) {
+    val unitSystem = LocalUnitSystem.current
+
     val timeTextFieldState = rememberTextFieldState(
         initialText = Formatter.formateSecondsInMinutesAndSeconds(set.elapsedTime)
             .filter { it != ':' }
     )
     var repValue by rememberSaveable(set.reps) { mutableStateOf(set.reps.toString()) }
-    var weightValue by rememberSaveable { mutableStateOf(set.load.toString()) }
+    var weightValue by rememberSaveable(set.load) {
+        mutableStateOf(
+            set.load.doubleValue(unitSystem).toString()
+        )
+    }
 
     // Sync elapsed time with time text field
     LaunchedEffect(set.elapsedTime) {
@@ -648,7 +760,7 @@ private fun Set(
                     when (newState) {
                         is InputModalBottomSheetState.Weight -> {
                             updateSetLoad(
-                                newState.totalWeight,
+                                Weight.auto(newState.totalWeight, unitSystem),
                                 id
                             )
                         }
@@ -684,21 +796,19 @@ private fun Set(
         state = swipeToDismissBoxState,
         onDismiss = { deleteSet(set.id) },
         backgroundContent = {
+            val cornerShape = remember(i, lastIndex) {
+                RoundedCornerShape(
+                    topStart = CornerSize(if (i == 0) 50 else 0),
+                    topEnd = CornerSize(if (i == 0) 50 else 0),
+                    bottomEnd = CornerSize(if (i == lastIndex) 50 else 0),
+                    bottomStart = CornerSize(if (i == lastIndex) 50 else 0),
+                )
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = CornerSize(if (i == 0) 45 else 0),
-                            topEnd = CornerSize(if (i == 0) 45 else 0),
-                            bottomEnd = CornerSize(
-                                if (i == lastIndex) 45 else 0
-                            ),
-                            bottomStart = CornerSize(
-                                if (i == lastIndex) 45 else 0
-                            ),
-                        )
-                    )
+                    .clip(cornerShape)
                     .background(
                         when (swipeToDismissBoxState.dismissDirection) {
                             SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.errorContainer
@@ -770,9 +880,9 @@ private fun Set(
                 ) {
                     val (previousReps, previousLoad, previousTime) = values
                     val text = when (setMode) {
-                        SetMode.LOAD -> "$previousLoad" + stringResource(R.string.kg) + "\n* $previousReps"
+                        SetMode.LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
                         SetMode.BODYWEIGHT -> "$previousReps"
-                        SetMode.BODYWEIGHT_WITH_LOAD -> "$previousLoad" + stringResource(R.string.kg) + "\n* $previousReps"
+                        SetMode.BODYWEIGHT_WITH_LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
                         SetMode.DURATION -> Formatter.formateSecondsInMinutesAndSeconds(previousTime)
                     }
                     Text(
@@ -859,7 +969,10 @@ private fun Set(
                                 weightValue = Formatter.normalizeNumericString(string)
 
                                 updateSetLoad(
-                                    Formatter.parseDoubleFromString(weightValue) ?: 0.0,
+                                    Weight.auto(
+                                        Formatter.parseDoubleFromString(weightValue) ?: 0.0,
+                                        unitSystem
+                                    ),
                                     set.id
                                 )
                             },
@@ -880,10 +993,11 @@ private fun Set(
                                     .matchParentSize()
                                     .clip(MaterialTheme.shapes.extraLarge)
                                     .clickable {
+                                        val value = set.load.doubleValue(unitSystem)
                                         inputModalBottomSheetState =
-                                            InputModalBottomSheetState.Weight(
-                                                integerWeight = set.load.toInt(),
-                                                decimalWeight = set.load.getDecimalDigitsAsInteger()
+                                            InputModalBottomSheetState.Weight.create(
+                                                integerWeight = value.toInt(),
+                                                decimalWeight = value.getDecimalDigitsAsInteger()
                                             )
                                         inputSetId = set.id
                                     }
@@ -959,12 +1073,13 @@ private fun ExerciseCardPreview() {
                 exercise = UiExercise(
                     notes = "This is a note!",
                     restTime = 90,
-                    setMode = SetMode.DURATION
+                    setMode = SetMode.LOAD
                 ),
                 sets = persistentListOf(UiSet(completed = true), UiSet(elapsedTime = 100)),
                 exerciseDC = UiExerciseDC(
                     name = "Exercise name",
-                    images = persistentListOf("3_4_Sit-Up/0.jpg")
+                    images = persistentListOf("3_4_Sit-Up/0.jpg"),
+                    equipment = Equipment.BARBELL
                 )
             )
         )
@@ -974,8 +1089,12 @@ private fun ExerciseCardPreview() {
         when (e.value.exercise.setMode) {
             SetMode.BODYWEIGHT -> PreviousPerformanceSet(reps = 10)
             SetMode.DURATION -> PreviousPerformanceSet(time = 124)
-            SetMode.BODYWEIGHT_WITH_LOAD -> PreviousPerformanceSet(reps = 10, load = 12.0)
-            SetMode.LOAD -> PreviousPerformanceSet(reps = 10, load = 12.0)
+            SetMode.BODYWEIGHT_WITH_LOAD -> PreviousPerformanceSet(
+                reps = 10,
+                load = Weight.kilograms(12.0)
+            )
+
+            SetMode.LOAD -> PreviousPerformanceSet(reps = 10, load = Weight.kilograms(12.0))
         }
     }
 
@@ -1005,6 +1124,8 @@ private fun ExerciseCardPreview() {
                     isDragging = false,
                     useScrollWheelForInput = false,
                     dismissScrollWheelInputAutomatically = false,
+                    showExercisesImages = false,
+                    defaultBarWeight = null,
                     updateExerciseNotes = { notes, _ ->
                         e.value = e.value.copy(exercise = e.value.exercise.copy(notes = notes))
                     },
@@ -1064,6 +1185,7 @@ private fun ExerciseCardPreview() {
                         }
                     },
                     onReorderRequest = {},
+                    saveDefaultBarWeight = {},
                 )
             }
         }

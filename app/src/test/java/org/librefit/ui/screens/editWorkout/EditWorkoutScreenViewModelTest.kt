@@ -8,12 +8,13 @@
 
 package org.librefit.ui.screens.editWorkout
 
-import com.google.common.truth.Truth.assertThat
-import org.junit.Test
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.moveExercise
 import org.librefit.ui.models.withNormalizedExercisePositions
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 class EditWorkoutScreenViewModelTest {
 
@@ -27,15 +28,15 @@ class EditWorkoutScreenViewModelTest {
     fun `moveExercise reorders list and rewrites positions`() {
         val reordered = exercises.moveExercise(fromIndex = 0, toIndex = 2)
 
-        assertThat(reordered.map { it.exercise.id }).containsExactly(22L, 33L, 11L).inOrder()
-        assertThat(reordered.map { it.exercise.position }).containsExactly(0, 1, 2).inOrder()
+        assertContentEquals(listOf(22L, 33L, 11L), reordered.map { it.exercise.id })
+        assertContentEquals(listOf(0, 1, 2), reordered.map { it.exercise.position })
     }
 
     @Test
     fun `moveExercise ignores invalid indices`() {
         val reordered = exercises.moveExercise(fromIndex = -1, toIndex = 2)
 
-        assertThat(reordered).isEqualTo(exercises)
+        assertEquals(exercises, reordered)
     }
 
     @Test
@@ -45,7 +46,7 @@ class EditWorkoutScreenViewModelTest {
             UiExerciseWithSets(exercise = UiExercise(id = 11L, position = 44))
         ).withNormalizedExercisePositions()
 
-        assertThat(normalized.map { it.exercise.id }).containsExactly(22L, 11L).inOrder()
-        assertThat(normalized.map { it.exercise.position }).containsExactly(0, 1).inOrder()
+        assertContentEquals(listOf(22L, 11L), normalized.map { it.exercise.id })
+        assertContentEquals(listOf(0, 1), normalized.map { it.exercise.position })
     }
 }

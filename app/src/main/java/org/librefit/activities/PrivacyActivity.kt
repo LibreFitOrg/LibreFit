@@ -15,20 +15,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.android.ext.android.inject
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.ui.screens.about.PrivacyScreen
 import org.librefit.ui.theme.LibreFitTheme
-import javax.inject.Inject
 
 /**
  * Invoked if and only if the user taps the info icon next to a permission in the app system settings.
  * See `AndroidManifest.xml` and [this](https://developer.android.com/training/permissions/explaining-access#privacy-dashboard-show-rationale)
  */
-@AndroidEntryPoint
 class PrivacyActivity : ComponentActivity() {
-    @Inject
-    lateinit var userPreferences: UserPreferencesRepository
+    private val userPreferences: UserPreferencesRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()

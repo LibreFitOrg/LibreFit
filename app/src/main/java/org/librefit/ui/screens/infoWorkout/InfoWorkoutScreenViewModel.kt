@@ -8,11 +8,8 @@
 
 package org.librefit.ui.screens.infoWorkout
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,11 +21,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
+import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
-import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.WorkoutState
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
+import org.librefit.models.Weight
 import org.librefit.nav.Route
 import org.librefit.ui.components.charts.Point
 import org.librefit.ui.models.UiExerciseWithSets
@@ -36,21 +34,21 @@ import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import org.librefit.util.Formatter
-import java.util.Locale
-import javax.inject.Inject
 import kotlin.random.Random
 
-@HiltViewModel
-class InfoWorkoutScreenViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+class InfoWorkoutScreenViewModel(
+    route: Route.InfoWorkoutScreen,
     private val workoutRepository: WorkoutRepository,
     dataHelper: DataHelper,
-    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
+    userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
-    private val workoutId = savedStateHandle.toRoute<Route.InfoWorkoutScreen>().workoutId
+    val showExercisesImages = userPreferencesRepository.showExercisesImages
 
-    private val _volume = MutableStateFlow("")
+    private val workoutId = route.workoutId
+
+    private val _volume = MutableStateFlow(Weight.zero())
     val volume = _volume.asStateFlow()
 
     private val _workout = MutableStateFlow(UiWorkout())
@@ -98,7 +96,7 @@ class InfoWorkoutScreenViewModel @Inject constructor(
             )
 
             _volume.update {
-                String.format(Locale.getDefault(), "%.2f", volumeValue)
+                volumeValue
             }
         }
     }

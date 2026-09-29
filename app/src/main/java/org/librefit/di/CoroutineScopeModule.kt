@@ -8,25 +8,20 @@
 
 package org.librefit.di
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 import org.librefit.di.qualifiers.ApplicationScope
-import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
-object CoroutineScopeModule {
-
-    @Singleton
-    @Provides
-    @ApplicationScope
-    fun provideApplicationScope(): CoroutineScope {
+/**
+ * Provides the application-wide [CoroutineScope] under a type-safe qualifier
+ * (see [ApplicationScope]).
+ */
+val coroutineScopeModule = module {
+    single(named<ApplicationScope>()) {
         // SupervisorJob means if one child coroutine fails, the others are not cancelled.
-        return CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        CoroutineScope(SupervisorJob() + Dispatchers.Default)
     }
 }
