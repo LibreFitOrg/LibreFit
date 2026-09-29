@@ -8,25 +8,36 @@
 
 package org.librefit.ui.screens.settings
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerializationException
+import org.librefit.db.repository.ImportExportRepository
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.di.streamProvider.StreamProvider
+import org.librefit.di.uriAccess.UriAccess
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
+import java.io.IOException
 
 class SettingsScreenViewModel(
     private val userPreferences: UserPreferencesRepository,
+    private val importExportRepository: ImportExportRepository,
+    private val streamProvider: StreamProvider,
+    private val uriAccess: UriAccess,
 ) : ViewModel() {
     val themeMode = userPreferences.themeMode
     val materialMode = userPreferences.materialMode
@@ -39,6 +50,68 @@ class SettingsScreenViewModel(
     val showExercisesImages = userPreferences.showExercisesImages
     val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
     val unitSystem = userPreferences.unitSystem
+
+    private val _isImporting = MutableStateFlow(false)
+    val isImporting = _isImporting.asStateFlow()
+
+    private val _dialogMessage = MutableStateFlow<String?>(null)
+    val dialogMessage = _dialogMessage.asStateFlow()
+
+    private val _events = MutableSharedFlow<SettingsEvent>()
+    val events = _events.asSharedFlow()
+
+    fun showDialog(message: String) {
+        _dialogMessage.value = message
+    }
+
+    fun dismissDialog() {
+        _dialogMessage.value = null
+    }
+
+    fun backupExport(uri: Uri) {
+        viewModelScope.launch {
+            try {
+                val outputStream = streamProvider.getOutputStream(uri)
+                if (outputStream == null) {
+                    _events.emit(SettingsEvent.ExportFailed)
+                    return@launch
+                }
+                importExportRepository.exportTo(outputStream)
+                _events.emit(SettingsEvent.ExportSuccess)
+            } catch (_: IOException) {
+                _events.emit(SettingsEvent.ExportFailed)
+            } catch (_: SecurityException) {
+                _events.emit(SettingsEvent.ExportFailed)
+            }
+        }
+    }
+
+    fun backupImport(uri: Uri) {
+        viewModelScope.launch {
+            _isImporting.value = true
+            try {
+                uriAccess.takePersistableReadPermission(uri)
+                val inputStream = streamProvider.getInputStream(uri)
+                if (inputStream == null) {
+                    _events.emit(SettingsEvent.ImportFailed)
+                    return@launch
+                }
+
+                importExportRepository.importFrom(inputStream)
+                _events.emit(SettingsEvent.ImportSuccess)
+            } catch (_: IOException) {
+                _events.emit(SettingsEvent.ImportFailed)
+            } catch (_: SecurityException) {
+                _events.emit(SettingsEvent.ImportFailed)
+            } catch (_: SerializationException) {
+                _events.emit(SettingsEvent.ImportFailed)
+            } catch (_: IllegalArgumentException) {
+                _events.emit(SettingsEvent.ImportFailed)
+            } finally {
+                _isImporting.value = false
+            }
+        }
+    }
 
     fun saveThemeMode(mode: ThemeMode) {
         viewModelScope.launch { userPreferences.saveThemeMode(mode) }

@@ -322,7 +322,7 @@ class MeasurementScreenViewModelTest {
 
 
     @Test
-    fun `when updating a measurement without measurement card state as NEW - measurements flow should NOT emit the right updated list`() =
+    fun `updating without the NEW state does not emit measurements`() =
         runTest {
             // Arrange: Define the initial and expected states
             val newNotes = "This is a edited measurement"
