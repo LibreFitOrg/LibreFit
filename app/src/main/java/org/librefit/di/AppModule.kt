@@ -16,6 +16,7 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.librefit.db.repository.DatasetRepository
+import org.librefit.db.repository.ImportExportRepository
 import org.librefit.db.repository.MeasurementRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
@@ -23,6 +24,10 @@ import org.librefit.di.qualifiers.ApplicationScope
 import org.librefit.di.qualifiers.DefaultDispatcher
 import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.di.qualifiers.MainDispatcher
+import org.librefit.di.streamProvider.StreamProvider
+import org.librefit.di.streamProvider.StreamProviderImpl
+import org.librefit.di.uriAccess.UriAccess
+import org.librefit.di.uriAccess.UriAccessImpl
 import org.librefit.helpers.DataHelper
 import org.librefit.helpers.NotificationHelper
 import org.librefit.helpers.SoundPlayer
@@ -64,6 +69,9 @@ val libreFitModules = module {
     // Data layer — explicit lambdas where a qualifier-decorated dependency exists
     single { WorkoutRepository(get()) }
     single { MeasurementRepository(get()) }
+    single { ImportExportRepository(get(), get(), get(named<IoDispatcher>())) }
+    single<StreamProvider> { StreamProviderImpl(androidContext()) }
+    single<UriAccess> { UriAccessImpl(androidContext()) }
     single {
         DatasetRepository(get(), get(named<ApplicationScope>()), get(), androidContext())
     }

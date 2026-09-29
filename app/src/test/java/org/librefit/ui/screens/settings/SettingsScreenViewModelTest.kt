@@ -8,18 +8,27 @@
 
 package org.librefit.ui.screens.settings
 
+import android.net.Uri
 import app.cash.turbine.test
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.librefit.MainDispatcherRule
+import org.librefit.db.repository.ImportExportRepository
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.di.streamProvider.StreamProvider
+import org.librefit.di.uriAccess.UriAccess
 import org.librefit.enums.userPreferences.Language
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
+import java.io.ByteArrayInputStream
+import java.io.IOException
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -36,6 +45,9 @@ class SettingsScreenViewModelTest {
 
     // The mock repository
     private lateinit var userPreferencesRepository: UserPreferencesRepository
+    private lateinit var importExportRepository: ImportExportRepository
+    private lateinit var streamProvider: StreamProvider
+    private lateinit var uriAccess: UriAccess
 
     // The class under test
     private lateinit var viewModel: SettingsScreenViewModel
@@ -67,6 +79,9 @@ class SettingsScreenViewModelTest {
     fun setUp() {
         // Arrange: Create a mock for the repository
         userPreferencesRepository = mockk()
+        importExportRepository = mockk(relaxed = true)
+        streamProvider = mockk(relaxed = true)
+        uriAccess = mockk(relaxed = true)
         language = MutableStateFlow(Language.SYSTEM)
         themeMode = MutableStateFlow(ThemeMode.SYSTEM)
         keepScreenOn = MutableStateFlow(true)
@@ -124,7 +139,12 @@ class SettingsScreenViewModelTest {
         }
 
         // Arrange: Create the ViewModel instance with the mock repository
-        viewModel = SettingsScreenViewModel(userPreferencesRepository)
+        viewModel = SettingsScreenViewModel(
+            userPreferences = userPreferencesRepository,
+            importExportRepository = importExportRepository,
+            streamProvider = streamProvider,
+            uriAccess = uriAccess,
+        )
     }
 
     @Test
@@ -165,6 +185,38 @@ class SettingsScreenViewModelTest {
     @Test
     fun `initial state - show images is null`() = runTest {
         assertNull(viewModel.showExercisesImages.value)
+    }
+
+    @Test
+    fun `successful backup import emits success and resets loading state`() = runTest {
+        val uri = mockk<Uri>()
+        every { uriAccess.takePersistableReadPermission(uri) } just Runs
+        every { streamProvider.getInputStream(uri) } returns ByteArrayInputStream(byteArrayOf())
+        coEvery { importExportRepository.importFrom(any()) } just Runs
+
+        viewModel.events.test {
+            viewModel.backupImport(uri)
+
+            assertEquals(SettingsEvent.ImportSuccess, awaitItem())
+            runCurrent()
+            assertFalse(viewModel.isImporting.value)
+        }
+    }
+
+    @Test
+    fun `failed backup import emits failure and resets loading state`() = runTest {
+        val uri = mockk<Uri>()
+        every { uriAccess.takePersistableReadPermission(uri) } just Runs
+        every { streamProvider.getInputStream(uri) } returns ByteArrayInputStream(byteArrayOf())
+        coEvery { importExportRepository.importFrom(any()) } throws IOException()
+
+        viewModel.events.test {
+            viewModel.backupImport(uri)
+
+            assertEquals(SettingsEvent.ImportFailed, awaitItem())
+            runCurrent()
+            assertFalse(viewModel.isImporting.value)
+        }
     }
 
     @Test

@@ -9,6 +9,9 @@
 package org.librefit.ui.screens.settings
 
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
@@ -17,18 +20,24 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,6 +76,8 @@ fun SettingsScreen(
     onNavigateToSupportScreen: () -> Unit,
     viewModel: SettingsScreenViewModel = koinViewModel()
 ) {
+    val isImporting by viewModel.isImporting.collectAsStateWithLifecycle()
+    val dialogMessage by viewModel.dialogMessage.collectAsStateWithLifecycle()
     val unitSystem by viewModel.unitSystem.collectAsStateWithLifecycle()
 
     val selectedLanguage by viewModel.language.collectAsStateWithLifecycle()
@@ -92,6 +103,33 @@ fun SettingsScreen(
     val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
 
     val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
+
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json"),
+        onResult = { uri -> uri?.let(viewModel::backupExport) },
+    )
+    val importLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri -> uri?.let(viewModel::backupImport) },
+    )
+
+    val importSuccessMessage = stringResource(R.string.import_data_success)
+    val importFailedMessage = stringResource(R.string.import_data_failed)
+    val exportSuccessMessage = stringResource(R.string.export_data_success)
+    val exportFailedMessage = stringResource(R.string.export_data_failed)
+    val exportFileName = stringResource(R.string.export_file_name)
+
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            val message = when (event) {
+                SettingsEvent.ImportSuccess -> importSuccessMessage
+                SettingsEvent.ImportFailed -> importFailedMessage
+                SettingsEvent.ExportSuccess -> exportSuccessMessage
+                SettingsEvent.ExportFailed -> exportFailedMessage
+            }
+            viewModel.showDialog(message)
+        }
+    }
 
     preferences?.let {
         PreferenceDialog(
@@ -148,8 +186,25 @@ fun SettingsScreen(
         showConfirmDialogShowExerciseImages = {
             showConfirmDialogDisplayExerciseImages = true
         },
-        onDismissScrollWhellInputAutomaticallyChange = viewModel::saveDismissScrollWheelInputAutomatically
+        onDismissScrollWhellInputAutomaticallyChange = viewModel::saveDismissScrollWheelInputAutomatically,
+        onExportClicked = {
+            exportLauncher.launch(exportFileName)
+        },
+        onImportClicked = { importLauncher.launch(arrayOf("application/json")) },
+        isImporting = isImporting,
     )
+
+    dialogMessage?.let { message ->
+        AlertDialog(
+            onDismissRequest = viewModel::dismissDialog,
+            title = { Text(message) },
+            confirmButton = {
+                TextButton(onClick = viewModel::dismissDialog) {
+                    Text(stringResource(R.string.ok_dialog))
+                }
+            },
+        )
+    }
 }
 
 
@@ -177,12 +232,26 @@ private fun SettingsScreenContent(
     onShowExercisesImagesChange: (Boolean) -> Unit,
     showConfirmDialogShowExerciseImages: () -> Unit,
     onDismissScrollWhellInputAutomaticallyChange: (Boolean) -> Unit,
+    onExportClicked: () -> Unit,
+    onImportClicked: () -> Unit,
+    isImporting: Boolean,
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.settings)),
         navigateBack = onNavigateBack
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding = innerPadding) {
+        AnimatedContent(
+            targetState = isImporting,
+            label = "import_progress",
+        ) { importing ->
+            if (importing) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else LibreFitLazyColumn(innerPadding = innerPadding) {
             item { HeadlineText(text = stringResource(id = R.string.appearance)) }
 
             item {
@@ -319,8 +388,29 @@ private fun SettingsScreenContent(
                     )
                 }
             }
+
+            item { HeadlineText(text = stringResource(R.string.data_management)) }
+
+            item {
+                SettingItem(
+                    onClick = onExportClicked,
+                    icon = painterResource(R.drawable.ic_backup),
+                    settingName = stringResource(R.string.export_data),
+                    settingDesc = stringResource(R.string.export_data_desc),
+                )
+            }
+
+            item {
+                SettingItem(
+                    onClick = onImportClicked,
+                    icon = painterResource(R.drawable.ic_restore),
+                    settingName = stringResource(R.string.import_data),
+                    settingDesc = stringResource(R.string.import_data_desc),
+                )
+            }
         }
     }
+}
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -424,7 +514,10 @@ fun SettingsScreenPreview() {
             showConfirmDialogShowExerciseImages = {},
             onDismissScrollWhellInputAutomaticallyChange = {
                 dismissScrollWheelInputAutomatically = it
-            }
+            },
+            onExportClicked = {},
+            onImportClicked = {},
+            isImporting = false,
         )
     }
 }
