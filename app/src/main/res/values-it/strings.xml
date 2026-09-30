@@ -360,4 +360,26 @@
     <string name="notifications_permission_permanently_denied_desc">Le notifiche sono bloccate. Per favore abilita le notifiche nelle impostazioni di sistema per ricevere aggiornamenti sugli allenamenti.</string>
     <string name="open_settings">Apri le impostazioni</string>
     <string name="hide">Nascondi</string>
+    <string name="dismiss_scroll_wheel_automatically">Disattiva automaticamente la rotellina di scorrimento</string>
+    <string name="dismiss_scroll_wheel_automatically_desc">La rotellina del mouse verrà chiusa automaticamente.</string>
+    <string name="dismiss_scroll_wheel_manually_desc">La rotellina di scorrimento dovrà essere chiusa manualmente.</string>
+    <string name="show_images">Mostra immagini</string>
+    <string name="hide_images_desc">Le immagini degli esercizi verranno nascoste</string>
+    <string name="show_images_desc">Le immagini degli esercizi verranno mostrate</string>
+    <string name="settings_location">Posizione</string>
+    <string name="unit_system">Sistema di misura</string>
+    <string name="metric">Metrico</string>
+    <string name="imperial">Imperiale</string>
+    <string name="language_brazilian_portuguese">Portoghese brasiliano</string>
+    <string name="language_arabic">Arabo</string>
+    <string name="language_catalan">Catalano</string>
+    <string name="language_french">Francese</string>
+    <string name="language_hindi">Hindi</string>
+    <string name="language_indonesian">Indonesiano</string>
+    <string name="language_ukrainian">Ucraino</string>
+    <string name="language_polish">Polacco</string>
+    <string name="language_urdu">Urdu</string>
+    <string name="language_russian">Russo</string>
+    <string name="language_korean">Coreano</string>
+    <string name="language_swedish">Svedese</string>
 </resources>
