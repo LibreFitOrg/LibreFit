@@ -342,4 +342,6 @@
     <string name="hide">隐藏</string>
     <string name="show">显示</string>
     <string name="notifications_permission_permanently_denied_desc">通知已被阻止。请在系统设置中开启以接受锻炼更新。</string>
+    <string name="equipment_foam_roll">泡沫轴</string>
+    <string name="equipment_barbell">杠铃</string>
 </resources>
