@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--
+- Option to update routines with the values of completed sets at the end of a workout [#44](https://github.com/LibreFitOrg/LibreFit/issues/44)
 
 ### Changed
 

@@ -37,6 +37,7 @@ import kotlinx.coroutines.delay
 import org.librefit.R
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
+import org.librefit.enums.userPreferences.RoutineUpdateMode
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
 import org.librefit.util.Formatter
@@ -71,6 +72,7 @@ fun PreferenceDialog(
                         is Language -> R.string.language
                         is ThemeMode -> R.string.theme
                         is UnitSystem -> R.string.unit_system
+                        is RoutineUpdateMode -> R.string.update_routine_after_workout
                     }
                 )
             )
@@ -82,6 +84,7 @@ fun PreferenceDialog(
                         is Language -> R.drawable.ic_translate
                         is ThemeMode -> R.drawable.ic_dark_mode
                         is UnitSystem -> R.drawable.ic_weight
+                        is RoutineUpdateMode -> R.drawable.ic_refresh
                     }
                 ),
                 contentDescription = null
@@ -162,4 +165,5 @@ private val DialogPreference.isSystemDefault: Boolean
         is Language -> this == Language.SYSTEM
         is ThemeMode -> this == ThemeMode.SYSTEM
         is UnitSystem -> false
+        is RoutineUpdateMode -> false
     }

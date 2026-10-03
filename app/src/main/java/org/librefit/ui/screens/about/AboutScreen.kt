@@ -335,6 +335,13 @@ fun AboutScreen(
             }
 
             item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.N4ü)
+                )
+            }
+
+            item {
                 HeadlineText(stringResource(R.string.contributors))
             }
 
@@ -374,6 +381,16 @@ fun AboutScreen(
                     text = stringResource(R.string.VanemKrAu),
                     onClick = {
                         url.value = resources.getString(R.string.url_VanemKrAu)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.allddd),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_allddd)
                     }
                 )
             }
