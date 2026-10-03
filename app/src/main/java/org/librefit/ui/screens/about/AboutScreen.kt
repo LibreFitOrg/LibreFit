@@ -335,6 +335,13 @@ fun AboutScreen(
             }
 
             item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.N4ü)
+                )
+            }
+
+            item {
                 HeadlineText(stringResource(R.string.contributors))
             }
 
