@@ -218,6 +218,7 @@ Thanks to everyone who helped the project!
 
 - [dpusceddu](https://github.com/dpusceddu) : [#25](https://github.com/LibreFitOrg/LibreFit/pull/25)
 - [VanemKrAu](https://github.com/VanemKrAu) : [#163](https://github.com/LibreFitOrg/LibreFit/pull/163)
+- [allddd](https://github.com/allddd) : [#198](https://github.com/LibreFitOrg/LibreFit/pull/198)
 
 > [Contribute to source code](CONTRIBUTING.md#your-first-code-contribution) to be listed here.
 

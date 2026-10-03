@@ -379,6 +379,16 @@ fun AboutScreen(
             }
 
             item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.allddd),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_allddd)
+                    }
+                )
+            }
+
+            item {
                 HeadlineText(stringResource(R.string.translators))
             }
 
