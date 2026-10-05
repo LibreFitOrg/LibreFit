@@ -17,6 +17,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.librefit.db.repository.DatasetRepository
 import org.librefit.db.repository.MeasurementRepository
+import org.librefit.db.repository.RoutineTemplateRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
 import org.librefit.di.qualifiers.ApplicationScope
@@ -36,6 +37,7 @@ import org.librefit.ui.screens.exercises.ExercisesScreenViewModel
 import org.librefit.ui.screens.home.HomeScreenViewModel
 import org.librefit.ui.screens.infoExercise.InfoExerciseScreenViewModel
 import org.librefit.ui.screens.infoWorkout.InfoWorkoutScreenViewModel
+import org.librefit.ui.screens.library.LibraryScreenViewModel
 import org.librefit.ui.screens.measurements.MeasurementScreenViewModel
 import org.librefit.ui.screens.profile.ProfileScreenViewModel
 import org.librefit.ui.screens.settings.SettingsScreenViewModel
@@ -70,6 +72,7 @@ val libreFitModules = module {
     single {
         UserPreferencesRepository(get(), get(named<ApplicationScope>()), androidApplication())
     }
+    single { RoutineTemplateRepository(get(), get(), androidContext()) }
 
     // Helpers / services / util
     singleOf(::DataHelper)
@@ -89,6 +92,11 @@ val libreFitModules = module {
 
     // ViewModels with qualifier-decorated dependencies — explicit lambdas
     viewModel { MeasurementScreenViewModel(get(), get(named<DefaultDispatcher>()), get()) }
+    viewModel {
+        LibraryScreenViewModel(
+            get(), get(), get(), androidApplication(), get(named<IoDispatcher>())
+        )
+    }
 
     // Route-assisted ViewModels — route supplied by the caller via parametersOf
     viewModel { (route: Route.BeforeSavingScreen) ->

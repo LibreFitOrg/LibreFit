@@ -22,6 +22,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -53,6 +54,7 @@ private val SHOW_EXERCISES_IMAGES_KEY = booleanPreferencesKey("show_exercises_im
 private val UNIT_SYSTEM_KEY = stringPreferencesKey("unit_system")
 private val DEFAULT_BAR_WEIGHT_KEY = doublePreferencesKey("default_bar_weight")
 private val ROUTINE_UPDATE_MODE_KEY = stringPreferencesKey("routine_update_mode")
+private val HIDDEN_ROUTINE_TEMPLATE_IDS_KEY = stringSetPreferencesKey("hiddenRoutineTemplateIds")
 /**
  * Central repository managing application-level preferences, including theme, unit systems, and language.
  *
@@ -355,5 +357,26 @@ class UserPreferencesRepository(
 
     suspend fun saveRoutineUpdateMode(mode: RoutineUpdateMode) {
         dataStore.edit { preferences -> preferences[ROUTINE_UPDATE_MODE_KEY] = mode.name }
+    }
+
+    /**
+     * Ids of the library routine templates the user chose to hide. The templates themselves live in
+     * [org.librefit.models.RoutineCatalog] and are never persisted, so this set is the only trace of
+     * a per-user library choice.
+     */
+    val hiddenRoutineTemplateIds: StateFlow<Set<String>> = dataStore.data
+        .map { preferences -> preferences[HIDDEN_ROUTINE_TEMPLATE_IDS_KEY] ?: emptySet() }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = emptySet()
+        )
+
+    suspend fun setRoutineTemplateHidden(templateId: String, isHidden: Boolean) {
+        dataStore.edit { preferences ->
+            val current = preferences[HIDDEN_ROUTINE_TEMPLATE_IDS_KEY] ?: emptySet()
+            preferences[HIDDEN_ROUTINE_TEMPLATE_IDS_KEY] =
+                if (isHidden) current + templateId else current - templateId
+        }
     }
 }
