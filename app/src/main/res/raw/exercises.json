@@ -5036,7 +5036,7 @@
     "force": "push",
     "level": "intermediate",
     "mechanic": "compound",
-    "equipment": null,
+    "equipment": body only,
     "primaryMuscles": [
       "quadriceps",
       "adductors"
