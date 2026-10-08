@@ -14896,7 +14896,7 @@
     "force": "push",
     "level": "beginner",
     "mechanic": "compound",
-    "equipment": null,
+    "equipment": body only,
     "primaryMuscles": [
       "calves"
     ],
