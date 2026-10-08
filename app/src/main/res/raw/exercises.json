@@ -9002,7 +9002,7 @@
     "force": "static",
     "level": "intermediate",
     "mechanic": "compound",
-    "equipment": null,
+    "equipment": body only,
     "primaryMuscles": [
       "abdominals"
     ],
