@@ -2475,7 +2475,7 @@
     "force": "static",
     "level": "beginner",
     "mechanic": "compound",
-    "equipment": null,
+    "equipment": body only,
     "primaryMuscles": [
       "abdominals",
       "lower back"
