@@ -22262,7 +22262,7 @@
     "force": "pull",
     "level": "beginner",
     "mechanic": "isolation",
-    "equipment": null,
+    "equipment": body only,
     "primaryMuscles": [
       "calves"
     ],
