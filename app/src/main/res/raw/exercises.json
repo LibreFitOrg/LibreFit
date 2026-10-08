@@ -2475,7 +2475,7 @@
     "force": "static",
     "level": "beginner",
     "mechanic": "compound",
-    "equipment": body only,
+    "equipment": "body only",
     "primaryMuscles": [
       "abdominals",
       "lower back"
@@ -4977,7 +4977,7 @@
     "force": "static",
     "level": "intermediate",
     "mechanic": "compound",
-    "equipment": body only,
+    "equipment": "body only",
     "primaryMuscles": [
       "adductors"
     ],
@@ -5007,7 +5007,7 @@
     "force": "push",
     "level": "intermediate",
     "mechanic": "compound",
-    "equipment": body only,
+    "equipment": "body only",
     "primaryMuscles": [
       "quadriceps",
       "adductors"
@@ -8973,7 +8973,7 @@
     "force": "static",
     "level": "intermediate",
     "mechanic": "compound",
-    "equipment": body only,
+    "equipment": "body only",
     "primaryMuscles": [
       "abdominals"
     ],
@@ -14867,7 +14867,7 @@
     "force": "push",
     "level": "beginner",
     "mechanic": "compound",
-    "equipment": body only,
+    "equipment": "body only",
     "primaryMuscles": [
       "calves"
     ],
@@ -19491,7 +19491,7 @@
     "force": "push",
     "level": "beginner",
     "mechanic": "compound",
-    "equipment": body only,
+    "equipment": "body only",
     "primaryMuscles": [
       "quadriceps",
       "glutes"
@@ -22235,7 +22235,7 @@
     "force": "pull",
     "level": "beginner",
     "mechanic": "isolation",
-    "equipment": body only,
+    "equipment": "body only",
     "primaryMuscles": [
       "calves"
     ],
