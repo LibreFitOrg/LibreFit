@@ -9001,7 +9001,7 @@
     "name": "Hollow Hold",
     "force": "static",
     "level": "intermediate",
-    "mechanic": "isolation",
+    "mechanic": "compound",
     "equipment": null,
     "primaryMuscles": [
       "abdominals"
