@@ -36,9 +36,9 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.ShortNavigationBar
+import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,19 +63,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import org.koin.androidx.compose.koinViewModel
 import org.librefit.R
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.enums.pages.MainScreenPages
-import org.librefit.enums.pages.TutorialContent
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.nav.Route
 import org.librefit.ui.components.GetAppNameInAnnotatedBuilder
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
@@ -100,9 +96,14 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.ProfileScreen(
-    navController: NavHostController,
+    onNavigateToExercisesScreen: () -> Unit,
+    onNavigateToStatisticsScreen: () -> Unit,
+    onNavigateToMeasurementsScreen: () -> Unit,
+    onNavigateToCalendarScreen: () -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    onNavigateToTutorialScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: ProfileScreenViewModel = hiltViewModel()
+    viewModel: ProfileScreenViewModel = koinViewModel(),
 ) {
 
     val points by viewModel.points.collectAsStateWithLifecycle()
@@ -116,7 +117,12 @@ fun SharedTransitionScope.ProfileScreen(
 
     ProfileScreenContent(
         animatedVisibilityScope = animatedVisibilityScope,
-        navController = navController,
+        onNavigateToExercisesScreen = onNavigateToExercisesScreen,
+        onNavigateToStatisticsScreen = onNavigateToStatisticsScreen,
+        onNavigateToMeasurementsScreen = onNavigateToMeasurementsScreen,
+        onNavigateToCalendarScreen = onNavigateToCalendarScreen,
+        onNavigateToInfoWorkout = onNavigateToInfoWorkout,
+        onNavigateToTutorialScreen = onNavigateToTutorialScreen,
         weekStreak = weekStreak,
         points = points,
         workoutsWithExercises = workoutsWithExercises,
@@ -129,7 +135,12 @@ fun SharedTransitionScope.ProfileScreen(
 @Composable
 private fun SharedTransitionScope.ProfileScreenContent(
     animatedVisibilityScope: AnimatedVisibilityScope,
-    navController: NavHostController,
+    onNavigateToExercisesScreen: () -> Unit,
+    onNavigateToStatisticsScreen: () -> Unit,
+    onNavigateToMeasurementsScreen: () -> Unit,
+    onNavigateToCalendarScreen: () -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    onNavigateToTutorialScreen: () -> Unit,
     weekStreak: Int,
     points: List<Point>,
     workoutChart: WorkoutChart,
@@ -158,11 +169,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                                 .animateWidth(interactionSources[1]),
                             elevated = false,
                             interactionSource = interactionSources[1]
-                        ) {
-                            navController.navigate(Route.ExercisesScreen(addExercises = false)) {
-                                launchSingleTop = true
-                            }
-                        }
+                        ) { onNavigateToExercisesScreen() }
                     },
                     menuContent = {}
                 )
@@ -176,11 +183,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                                 .animateWidth(interactionSources[0]),
                             elevated = false,
                             interactionSource = interactionSources[0]
-                        ) {
-                            navController.navigate(Route.StatisticsScreen) {
-                                launchSingleTop = true
-                            }
-                        }
+                        ) { onNavigateToStatisticsScreen() }
                     },
                     menuContent = {}
                 )
@@ -202,11 +205,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                                 .animateWidth(interactionSources[0]),
                             elevated = false,
                             interactionSource = interactionSources[0]
-                        ) {
-                            navController.navigate(Route.MeasurementScreen) {
-                                launchSingleTop = true
-                            }
-                        }
+                        ) { onNavigateToMeasurementsScreen() }
                     },
                     menuContent = {}
                 )
@@ -220,9 +219,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                                 .animateWidth(interactionSources[1]),
                             elevated = false,
                             interactionSource = interactionSources[1]
-                        ) {
-                            navController.navigate(Route.CalendarScreen) { launchSingleTop = true }
-                        }
+                        ) { onNavigateToCalendarScreen() }
                     },
                     menuContent = {}
                 )
@@ -248,9 +245,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                 chartModes = WorkoutChart.entries,
                 chartMode = workoutChart,
                 updateChartMode = updateChartMode,
-                onEntrySelection = {
-                    navController.navigate(Route.InfoWorkoutScreen(it))
-                }
+                onEntrySelection = onNavigateToInfoWorkout
             )
         }
 
@@ -275,11 +270,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                             textAlign = TextAlign.Center,
                         )
                         IconButton(
-                            onClick = {
-                                navController.navigate(Route.TutorialScreen(TutorialContent.COMPLETE_WORKOUT)) {
-                                    launchSingleTop = true
-                                }
-                            }
+                            onClick = onNavigateToTutorialScreen
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_help),
@@ -296,11 +287,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
             key = { it.id }
         ) { workout ->
             ElevatedCard(
-                onClick = {
-                    navController.navigate(Route.InfoWorkoutScreen(workoutId = workout.id)) {
-                        launchSingleTop = true
-                    }
-                },
+                onClick = { onNavigateToInfoWorkout(workout.id) },
                 shape = MaterialTheme.shapes.extraLargeIncreased,
                 modifier = Modifier
                     .sharedBounds(
@@ -350,11 +337,7 @@ private fun SharedTransitionScope.ProfileScreenContent(
                             )
                         }
                         IconButton(
-                            onClick = {
-                                navController.navigate(Route.InfoWorkoutScreen(workoutId = workout.id)) {
-                                    launchSingleTop = true
-                                }
-                            },
+                            onClick = { onNavigateToInfoWorkout(workout.id) },
                         ) {
                             Icon(
                                 painterResource(R.drawable.ic_info),
@@ -575,9 +558,9 @@ private fun ProfileScreenPreview() {
             actionsElevated = persistentListOf(false, false, false),
             fabIcon = painterResource(R.drawable.ic_add),
             bottomBar = {
-                NavigationBar {
+                ShortNavigationBar {
                     MainScreenPages.entries.forEach { page ->
-                        NavigationBarItem(
+                        ShortNavigationBarItem(
                             selected = pagerState.currentPage == page.ordinal,
                             onClick = { },
                             icon = {
@@ -621,7 +604,12 @@ private fun ProfileScreenPreview() {
                 SharedTransitionLayout {
                     AnimatedVisibility(visible = true) {
                         ProfileScreenContent(
-                            navController = rememberNavController(),
+                            onNavigateToExercisesScreen = {},
+                            onNavigateToStatisticsScreen = {},
+                            onNavigateToMeasurementsScreen = {},
+                            onNavigateToCalendarScreen = {},
+                            onNavigateToInfoWorkout = {},
+                            onNavigateToTutorialScreen = {},
                             weekStreak = 0,
                             points = listChartData,
                             workoutChart = WorkoutChart.DURATION,

@@ -8,8 +8,6 @@
 
 package org.librefit.ui.screens.workout
 
-import android.app.Activity
-import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -55,25 +53,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.PreviousPerformanceSet
@@ -89,6 +91,8 @@ import org.librefit.ui.components.LibreFitScaffold
 import org.librefit.ui.components.animations.DumbbellLottie
 import org.librefit.ui.components.dialogs.ConfirmDialog
 import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
+import org.librefit.ui.components.rememberStickyHeaderScrollConnection
+import org.librefit.ui.components.rememberStickyHeaderScrollState
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
@@ -102,10 +106,14 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.WorkoutScreen(
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToBeforeSavingScreen: (Long) -> Unit,
+    onNavigateToAddExercises: () -> Unit,
+    onNavigateToInfoExercise: (Long, String) -> Unit,
     sharedViewModel: SharedViewModel,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: WorkoutScreenViewModel = hiltViewModel()
+    route: Route.WorkoutScreen,
+    viewModel: WorkoutScreenViewModel = koinViewModel { parametersOf(route) }
 ) {
 
     LaunchedEffect(Unit) {
@@ -141,19 +149,18 @@ fun SharedTransitionScope.WorkoutScreen(
 
     val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
 
+    val defaultBarWeight by viewModel.defaultBarWeight.collectAsStateWithLifecycle()
+
 
     //It keeps the screen turned on
-    if (keepWorkoutScreenOn) {
-        val context = LocalContext.current
+    val currentView = LocalView.current
 
-        DisposableEffect(key1 = Unit) {
-            val window = (context as Activity).window
-
-            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-            onDispose {
-                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            }
+    DisposableEffect(keepWorkoutScreenOn) {
+        if (keepWorkoutScreenOn) {
+            currentView.keepScreenOn = true
+        }
+        onDispose {
+            currentView.keepScreenOn = false
         }
     }
 
@@ -183,35 +190,37 @@ fun SharedTransitionScope.WorkoutScreen(
 
     BackHandler {
         viewModel.stopWorkoutService()
-        navController.navigateUp()
+        onNavigateBack()
     }
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.workout)),
         navigateBack = {
             viewModel.stopWorkoutService()
-            navController.navigateUp()
+            onNavigateBack()
         },
         actions = persistentListOf({
-            navController.navigate(
-                Route.BeforeSavingScreen(
-                    runningWorkoutId = runningWorkoutId
-                ),
-            ) { launchSingleTop = true }
+            onNavigateToBeforeSavingScreen(runningWorkoutId)
         }),
         actionsEnabled = persistentListOf(!exercisesWithSets.isEmpty()),
         actionsDescription = persistentListOf(stringResource(R.string.done)),
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
+        Box(
+            modifier = Modifier
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    start = innerPadding.calculateLeftPadding(LayoutDirection.Ltr),
+                    end = innerPadding.calculateRightPadding(LayoutDirection.Ltr)
+                )
+                // Clips the list translated by the sticky header scroll behavior, so the
+                // hidden header disappears underneath the app bar instead of drawing over it
+                .clipToBounds()
+        ) {
             FloatingWorkoutActionBar(
                 restTimerProgress = restTimerProgress,
                 restTime = restTime,
                 modifyRestTime = viewModel::modifyRestTime,
-                fabAction = {
-                    navController.navigate(Route.ExercisesScreen(addExercises = true)) {
-                        launchSingleTop = true
-                    }
-                }
+                fabAction = onNavigateToAddExercises
             )
             WorkoutScreenContent(
                 animatedVisibilityScope = animatedVisibilityScope,
@@ -225,15 +234,11 @@ fun SharedTransitionScope.WorkoutScreen(
                 useScrollWheelForInput = useScrollWheelForInput,
                 dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                 showExercisesImages = showExercisesImages,
+                defaultBarWeight = defaultBarWeight,
                 toggleStopwatch = viewModel::toggleStopwatch,
                 updateIdSetWithRunningStopwatch = viewModel::updateIdSetWithRunningStopwatch,
                 onSelectedExerciseIdChange = { id, idExerciseDC ->
-                    navController.navigate(
-                        Route.InfoExerciseScreen(
-                            id,
-                            idExerciseDC
-                        )
-                    ) { launchSingleTop = true }
+                    onNavigateToInfoExercise(id, idExerciseDC)
                 },
                 updateSetTime = viewModel::updateSetTime,
                 updateSetReps = viewModel::updateSetReps,
@@ -249,7 +254,8 @@ fun SharedTransitionScope.WorkoutScreen(
                 },
                 moveExercise = viewModel::moveExercise,
                 showInfo = { infoMode.value = it },
-                applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance
+                applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance,
+                saveDefaultBarWeight = viewModel::saveDefaultBarWeight
             )
         }
     }
@@ -258,17 +264,10 @@ fun SharedTransitionScope.WorkoutScreen(
 
 
     // Keep track of focus to play alter sound or not
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> viewModel.updateFocus(isFocused = true)
-                else -> viewModel.updateFocus(isFocused = false)
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
+    LifecycleResumeEffect(Unit) {
+        viewModel.updateFocus(isFocused = true)
+        onPauseOrDispose {
+            viewModel.updateFocus(isFocused = false)
         }
     }
 }
@@ -288,6 +287,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     useScrollWheelForInput: Boolean,
     showExercisesImages: Boolean?,
     dismissScrollWheelInputAutomatically: Boolean,
+    defaultBarWeight: Double?,
     toggleStopwatch: () -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
     addSetToExercise: (Long) -> Unit,
@@ -303,29 +303,64 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     moveExercise: (Int, Int) -> Unit,
     onSelectedExerciseIdChange: (Long, String) -> Unit,
     showInfo: (InfoMode) -> Unit,
-    applyPreviousSetPerformance: (Long) -> Unit
+    applyPreviousSetPerformance: (Long) -> Unit,
+    saveDefaultBarWeight: (Double) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
     val hapticFeedback = LocalHapticFeedback.current
 
+    // Appear/disappear behavior of the sticky header while the list is scrolled
+    val headerScrollState = rememberStickyHeaderScrollState()
+    val headerScrollConnection = rememberStickyHeaderScrollConnection(
+        state = headerScrollState,
+        isEnabled = isHeaderSticky
+    )
+
+    // Synchronizes the list scroll position with the header scroll state so that when
+    // positioned at the top of the list, the header item scrolls naturally without lagging.
+    LaunchedEffect(lazyListState, headerScrollState) {
+        snapshotFlow { lazyListState.firstVisibleItemIndex to lazyListState.firstVisibleItemScrollOffset }
+            .collect { (index, offset) ->
+                headerScrollState.updateScrollPosition(
+                    isAtTop = index == 0,
+                    firstVisibleItemScrollOffset = offset
+                )
+            }
+    }
+
+    // Ensures the header is fully re-appeared whenever the sticky preference is disabled
+    LaunchedEffect(isHeaderSticky) {
+        if (!isHeaderSticky) headerScrollState.expand()
+    }
+
     var isReorderingEnabled by rememberSaveable { mutableStateOf(false) }
 
-    val exerciseSectionStartIndex = 1
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
-        val fromExerciseIndex = from.index - exerciseSectionStartIndex
-        val toExerciseIndex = (to.index - exerciseSectionStartIndex)
-            .coerceIn(0, exercisesWithSets.lastIndex)
+        // Get IDs from the dragged keys
+        val fromId = from.key as? Long ?: return@rememberReorderableLazyListState
+        val toId = to.key as? Long ?: return@rememberReorderableLazyListState
 
-        hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+        // Find their actual positions in your domain list
+        val fromIndex = exercisesWithSets.indexOfFirst { it.exercise.id == fromId }
+        val toIndex = exercisesWithSets.indexOfFirst { it.exercise.id == toId }
 
-        if (fromExerciseIndex in exercisesWithSets.indices && toExerciseIndex in exercisesWithSets.indices) {
-            moveExercise(fromExerciseIndex, toExerciseIndex)
+        if (fromIndex != -1 && toIndex != -1) {
+            moveExercise(fromIndex, toIndex)
+            hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
         }
     }
 
-    LibreFitLazyColumn(lazyListState = lazyListState) {
+    LibreFitLazyColumn(
+        modifier = Modifier.nestedScroll(headerScrollConnection),
+        lazyListState = lazyListState
+    ) {
         val headerContent: @Composable LazyItemScope.() -> Unit = {
-            ElevatedCard(shape = MaterialTheme.shapes.extraLargeIncreased) {
+            ElevatedCard(
+                modifier = Modifier
+                    .graphicsLayer { translationY = headerScrollState.translationY }
+                    .onSizeChanged { headerScrollState.onHeaderSizeChanged(it.height) },
+                shape = MaterialTheme.shapes.extraLargeIncreased
+            ) {
                 Column(
                     modifier = Modifier.padding(15.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -360,7 +395,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                         ElevatedToggleButton(
                             checked = !isStopwatchPaused,
                             onCheckedChange = { toggleStopwatch() },
-                            shapes = ToggleButtonDefaults.shapes()
+                            shapes = ToggleButtonDefaults.shapesFor(ToggleButtonDefaults.size)
                         ) {
                             Icon(
                                 painter = painterResource(if (isStopwatchPaused) R.drawable.ic_play_arrow else R.drawable.ic_pause),
@@ -405,6 +440,8 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                 key = { _, exercise -> exercise.exercise.id }
             ) { i, exerciseWithSets ->
                 ReorderableItem(reorderableLazyListState, key = exerciseWithSets.exercise.id) { isDragging ->
+
+                    val interactionSource = remember { MutableInteractionSource() }
                     ExerciseCard(
                         modifier = Modifier.animateItem(),
                         animatedVisibilityScope = animatedVisibilityScope,
@@ -419,6 +456,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                         showExercisesImages = showExercisesImages,
                         isCollapsed = isReorderingEnabled,
                         dragHandleModifier = Modifier.draggableHandle(
+                            interactionSource = interactionSource,
                             onDragStarted = {
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
                             },
@@ -428,6 +466,7 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                             }
                         ),
                         isDragging = isDragging,
+                        defaultBarWeight = defaultBarWeight,
                         dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                         onReorderRequest = { isReorderingEnabled = true },
                         deleteSet = deleteSet,
@@ -440,7 +479,8 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                         updateSetReps = updateSetReps,
                         updateSetLoad = updateSetLoad,
                         updateSetCompleted = updateSetCompleted,
-                        applyPreviousSetPerformance = applyPreviousSetPerformance
+                        applyPreviousSetPerformance = applyPreviousSetPerformance,
+                        saveDefaultBarWeight = saveDefaultBarWeight
                     )
                 }
             }
@@ -655,6 +695,7 @@ private fun WorkoutScreenPreview() {
                             useScrollWheelForInput = true,
                             showExercisesImages = null,
                             dismissScrollWheelInputAutomatically = false,
+                            defaultBarWeight = null,
                             toggleStopwatch = {},
                             addSetToExercise = {},
                             updateSetTime = { _, _ -> },
@@ -669,7 +710,8 @@ private fun WorkoutScreenPreview() {
                             moveExercise = { _, _ -> },
                             onSelectedExerciseIdChange = { _, _ -> },
                             showInfo = {},
-                            applyPreviousSetPerformance = {}
+                            applyPreviousSetPerformance = {},
+                            saveDefaultBarWeight = {}
                         )
                         FloatingWorkoutActionBar(
                             restTimerProgress = 97f / 120,

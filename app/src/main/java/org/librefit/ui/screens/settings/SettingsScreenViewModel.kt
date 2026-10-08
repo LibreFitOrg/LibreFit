@@ -10,7 +10,6 @@ package org.librefit.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,13 +22,12 @@ import kotlinx.coroutines.launch
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.userPreferences.DialogPreference
 import org.librefit.enums.userPreferences.Language
+import org.librefit.enums.userPreferences.RoutineUpdateMode
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.enums.userPreferences.UnitSystem
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingsScreenViewModel @Inject constructor(
-    private val userPreferences: UserPreferencesRepository
+class SettingsScreenViewModel(
+    private val userPreferences: UserPreferencesRepository,
 ) : ViewModel() {
     val themeMode = userPreferences.themeMode
     val materialMode = userPreferences.materialMode
@@ -42,6 +40,7 @@ class SettingsScreenViewModel @Inject constructor(
     val showExercisesImages = userPreferences.showExercisesImages
     val dismissScrollWheelInputAutomatically = userPreferences.dismissScrollWheelInputAutomatically
     val unitSystem = userPreferences.unitSystem
+    val routineUpdateMode = userPreferences.routineUpdateMode
 
     fun saveThemeMode(mode: ThemeMode) {
         viewModelScope.launch { userPreferences.saveThemeMode(mode) }
@@ -87,6 +86,10 @@ class SettingsScreenViewModel @Inject constructor(
         viewModelScope.launch { userPreferences.saveUnitSystem(unitSystem) }
     }
 
+    fun saveRoutineUpdateMode(routineUpdateMode: RoutineUpdateMode) {
+        viewModelScope.launch { userPreferences.saveRoutineUpdateMode(routineUpdateMode) }
+    }
+
     private val _preferences = MutableStateFlow<List<DialogPreference>?>(null)
     val preferences = _preferences.asStateFlow()
 
@@ -100,13 +103,15 @@ class SettingsScreenViewModel @Inject constructor(
         preferences,
         language,
         themeMode,
-        unitSystem
-    ) { p, l, t, u ->
+        unitSystem,
+        routineUpdateMode
+    ) { p, l, t, u, r ->
         p?.let {
             when (p.first()) {
                 is Language -> l
                 is ThemeMode -> t
                 is UnitSystem -> u
+                is RoutineUpdateMode -> r
             }
         }
     }
@@ -122,6 +127,7 @@ class SettingsScreenViewModel @Inject constructor(
             is Language -> saveLanguage(newPreference)
             is ThemeMode -> saveThemeMode(newPreference)
             is UnitSystem -> saveUnitSystem(newPreference)
+            is RoutineUpdateMode -> saveRoutineUpdateMode(newPreference)
         }
     }
 }

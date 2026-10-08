@@ -56,12 +56,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.nav.Route
 import org.librefit.ui.components.AppNameText
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitButton
@@ -74,7 +71,14 @@ import org.librefit.ui.theme.LibreFitTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AboutScreen(navController: NavHostController) {
+fun AboutScreen(
+    onNavigateBack: () -> Unit,
+    onNavigateToSupportScreen: () -> Unit,
+    onNavigateToTutorialScreen: () -> Unit,
+    onNavigateToPrivacyScreen: () -> Unit,
+    onNavigateToLicenseScreen: () -> Unit,
+    onNavigateToDependenciesScreen: () -> Unit
+) {
 
     val context = LocalContext.current
 
@@ -100,9 +104,9 @@ fun AboutScreen(navController: NavHostController) {
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.about)),
-        navigateBack = navController::navigateUp,
+        navigateBack = onNavigateBack,
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding = innerPadding) {
             item {
                 Image(
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
@@ -153,11 +157,7 @@ fun AboutScreen(navController: NavHostController) {
                 val isPressed by interactionSource.collectIsPressedAsState()
 
                 Button(
-                    onClick = {
-                        navController.navigate(Route.SupportScreen()) {
-                            launchSingleTop = true
-                        }
-                    },
+                    onClick = onNavigateToSupportScreen,
                     shapes = ButtonDefaults.shapes(),
                     contentPadding = ButtonDefaults.MediumContentPadding,
                     interactionSource = interactionSource,
@@ -225,9 +225,7 @@ fun AboutScreen(navController: NavHostController) {
                     icon = painterResource(R.drawable.ic_help),
                     text = stringResource(R.string.tutorial),
                     description = stringResource(R.string.tutorial_desc),
-                    onClick = {
-                        navController.navigate(Route.TutorialScreen()) { launchSingleTop = true }
-                    }
+                    onClick = onNavigateToTutorialScreen
                 )
             }
 
@@ -236,9 +234,7 @@ fun AboutScreen(navController: NavHostController) {
                     icon = painterResource(R.drawable.ic_policy),
                     text = stringResource(R.string.privacy),
                     description = stringResource(R.string.privacy_policy_desc),
-                    onClick = {
-                        navController.navigate(Route.PrivacyScreen) { launchSingleTop = true }
-                    }
+                    onClick = onNavigateToPrivacyScreen
                 )
             }
 
@@ -258,9 +254,7 @@ fun AboutScreen(navController: NavHostController) {
                     icon = painterResource(R.drawable.ic_license),
                     text = stringResource(R.string.license),
                     description = stringResource(R.string.license_desc),
-                    onClick = {
-                        navController.navigate(Route.LicenseScreen) { launchSingleTop = true }
-                    }
+                    onClick = onNavigateToLicenseScreen
                 )
             }
 
@@ -290,9 +284,7 @@ fun AboutScreen(navController: NavHostController) {
                 AboutItem(
                     icon = painterResource(R.drawable.ic_contract),
                     text = stringResource(R.string.dependencies),
-                    onClick = {
-                        navController.navigate(Route.LibrariesScreen) { launchSingleTop = true }
-                    }
+                    onClick = onNavigateToDependenciesScreen
                 )
             }
 
@@ -343,6 +335,13 @@ fun AboutScreen(navController: NavHostController) {
             }
 
             item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.N4ü)
+                )
+            }
+
+            item {
                 HeadlineText(stringResource(R.string.contributors))
             }
 
@@ -372,6 +371,26 @@ fun AboutScreen(navController: NavHostController) {
                     text = stringResource(R.string.ByYeah),
                     onClick = {
                         url.value = resources.getString(R.string.url_ByYeah)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.VanemKrAu),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_VanemKrAu)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.allddd),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_allddd)
                     }
                 )
             }
@@ -714,6 +733,129 @@ fun AboutScreen(navController: NavHostController) {
                 )
             }
 
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.zhx000),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_german),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_zhx000)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.UbioZur),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_UbioZur)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.malespiaut),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_malespiaut)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.alexis_charp),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_alexis_charp)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.Miles_Espadoto),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_brazilian_portuguese)
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.vinitdrk),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_brazilian_portuguese),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_vinitdrk)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.Jahn_Andreas),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_swedish)
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.hyperion51),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_spanish),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_hyperion51)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.lotation),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_italian),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_lotation)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.joncasagrande),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_portuguese),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_joncasagrande)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.WinnerWind),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_hindi),
+                    onClick = {
+                        url.value = resources.getString(R.string.url_WinnerWind)
+                    }
+                )
+            }
+
+            item {
+                AboutItem(
+                    icon = painterResource(R.drawable.ic_person),
+                    text = stringResource(R.string.Rajesh_Ranmara),
+                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_hindi)
+                )
+            }
+
         }
     }
 }
@@ -769,6 +911,13 @@ private fun AboutItem(
 @Composable
 private fun AboutScreenPreview() {
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
-        AboutScreen(rememberNavController())
+        AboutScreen(
+            onNavigateBack = {},
+            onNavigateToSupportScreen = {},
+            onNavigateToTutorialScreen = {},
+            onNavigateToPrivacyScreen = {},
+            onNavigateToLicenseScreen = {},
+            onNavigateToDependenciesScreen = {}
+        )
     }
 }

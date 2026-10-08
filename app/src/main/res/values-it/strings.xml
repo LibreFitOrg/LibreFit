@@ -356,4 +356,8 @@
     <string name="clear">Pulisci</string>
     <string name="equipment_rings">Anelli</string>
     <string name="equipment_pull_up_bar">Sbarra per trazioni</string>
+    <string name="show">Mostra</string>
+    <string name="notifications_permission_permanently_denied_desc">Le notifiche sono bloccate. Per favore abilita le notifiche nelle impostazioni di sistema per ricevere aggiornamenti sugli allenamenti.</string>
+    <string name="open_settings">Apri le impostazioni</string>
+    <string name="hide">Nascondi</string>
 </resources>

@@ -8,11 +8,8 @@
 
 package org.librefit.ui.screens.infoWorkout
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,7 +23,6 @@ import kotlinx.coroutines.launch
 import org.librefit.db.relations.WorkoutWithExercisesAndSets
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.db.repository.WorkoutRepository
-import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.enums.WorkoutState
 import org.librefit.enums.chart.WorkoutChart
 import org.librefit.helpers.DataHelper
@@ -38,21 +34,19 @@ import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import org.librefit.util.Formatter
-import javax.inject.Inject
 import kotlin.random.Random
 
-@HiltViewModel
-class InfoWorkoutScreenViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+class InfoWorkoutScreenViewModel(
+    route: Route.InfoWorkoutScreen,
     private val workoutRepository: WorkoutRepository,
     dataHelper: DataHelper,
-    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    userPreferencesRepository: UserPreferencesRepository
+    private val ioDispatcher: CoroutineDispatcher,
+    userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
     val showExercisesImages = userPreferencesRepository.showExercisesImages
 
-    private val workoutId = savedStateHandle.toRoute<Route.InfoWorkoutScreen>().workoutId
+    private val workoutId = route.workoutId
 
     private val _volume = MutableStateFlow(Weight.zero())
     val volume = _volume.asStateFlow()

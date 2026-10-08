@@ -9,12 +9,12 @@
 package org.librefit.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -22,6 +22,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -41,10 +43,13 @@ import androidx.compose.ui.unit.dp
  * @param startEndPadding The padding applied in the start and in the end of [LazyColumn]
  * @param lazyListState A [LazyListState] to manage the list scroll
  * @param bottomSpacer If `true`, this lazy column will have a [Spacer] of `100.dp` at the bottom.
+ * @param modifier The modifier applied to the inner [LazyColumn], e.g. to attach a
+ * [androidx.compose.ui.input.nestedscroll.NestedScrollConnection] to it.
  * @param content A lambda with receiver of type [LazyListScope] used to populate the lazy list.
  */
 @Composable
 fun LibreFitLazyColumn(
+    modifier: Modifier = Modifier,
     innerPadding: PaddingValues = PaddingValues(),
     verticalSpacing: Dp = 15.dp,
     startEndPadding: Dp = 15.dp,
@@ -52,37 +57,41 @@ fun LibreFitLazyColumn(
     bottomSpacer: Boolean = true,
     content: LazyListScope.() -> Unit
 ) {
-    BoxWithConstraints(
+    // Get exact container size in pixels and the current density
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+
+    // Safely convert the pixel width to Dp
+    val screenWidthDp = with(density) { windowInfo.containerSize.width.toDp() }
+
+    val thresholdDp = 600.dp
+
+    // Calculate optional padding
+    val optionalPadding = if (screenWidthDp < thresholdDp) {
+        0.dp
+    } else {
+        (screenWidthDp - thresholdDp) / 2f
+    }
+
+    val extraBottomSpace = if (bottomSpacer) 100.dp else 0.dp
+
+    Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter
     ) {
-        val threshold = 600
-        //Apply padding only when width is greater than 600.dp (so when screen orientation is landscape)
-        val optionalPadding = if (maxWidth < threshold.dp) 0f else (maxWidth.value - threshold) / 2
         LazyColumn(
-            modifier = Modifier.padding(
-                bottom = innerPadding.calculateBottomPadding()
-            ),
+            modifier = modifier.consumeWindowInsets(innerPadding),
             contentPadding = PaddingValues(
                 top = innerPadding.calculateTopPadding(),
-                start = innerPadding.calculateLeftPadding(LayoutDirection.Ltr) + optionalPadding.dp
-                        + startEndPadding,
-                end = innerPadding.calculateRightPadding(LayoutDirection.Ltr) + optionalPadding.dp
-                        + startEndPadding,
+                start = innerPadding.calculateLeftPadding(LayoutDirection.Ltr) + optionalPadding + startEndPadding,
+                end = innerPadding.calculateRightPadding(LayoutDirection.Ltr) + optionalPadding + startEndPadding,
+                bottom = innerPadding.calculateBottomPadding() + extraBottomSpace
             ),
             verticalArrangement = Arrangement.spacedBy(verticalSpacing),
             horizontalAlignment = Alignment.CenterHorizontally,
             state = lazyListState
         ) {
             content()
-            if (bottomSpacer) {
-                item {
-                    /**
-                     * Is provides a standard blank space in the bottom of all the necessary lazy columns
-                     */
-                    Spacer(Modifier.height(100.dp))
-                }
-            }
         }
     }
 }

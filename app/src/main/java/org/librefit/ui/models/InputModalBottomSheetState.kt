@@ -18,11 +18,27 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
+private const val SECONDS_PER_MINUTE = 60
+
+private const val SECONDS_PER_HOUR = 3_600
+
 /**
  * Represents the state of various input modal bottom sheets used throughout the application,
  * such as for time, weight, or repetitions.
  */
 sealed class InputModalBottomSheetState {
+
+    /**
+     * Returns a copy of this state stepped by [delta], clamped to the mode's configured ranges.
+     *
+     * The meaning of [delta] depends on the concrete input mode: seconds for the time-based
+     * modes, repetitions for [Reps] and integer units for [Weight].
+     *
+     * @param delta The signed amount to step by.
+     * @return A new state stepped by [delta], never violating the mode's range invariants.
+     */
+    abstract fun steppedBy(delta: Int): InputModalBottomSheetState
+
     /**
      * State holder for inputs requiring minutes and seconds.
      *
@@ -52,6 +68,19 @@ sealed class InputModalBottomSheetState {
 
         /** Convenience property returning the total duration in whole seconds. */
         val totalSeconds: Int get() = toIntExact(duration.inWholeSeconds)
+
+        /** Returns a copy of this state with [delta] seconds added, clamped to the configured ranges. */
+        override fun steppedBy(delta: Int): MinutesSeconds {
+            val maxTotalSeconds = minutesRange.last() * SECONDS_PER_MINUTE + secondsRange.last()
+            val steppedTotalSeconds = (totalSeconds + delta).coerceIn(0, maxTotalSeconds)
+
+            return copy(
+                minutes = (steppedTotalSeconds / SECONDS_PER_MINUTE)
+                    .coerceIn(minutesRange.first(), minutesRange.last()),
+                seconds = (steppedTotalSeconds % SECONDS_PER_MINUTE)
+                    .coerceIn(secondsRange.first(), secondsRange.last())
+            )
+        }
     }
 
     /**
@@ -135,6 +164,10 @@ sealed class InputModalBottomSheetState {
 
         /** Convenience property returning the total weight as a combined floating-point value. */
         val totalWeight: Double get() = integerWeight + (decimalWeight / divisor)
+
+        /** Returns a copy of this state with [delta] integer units added, snapped and clamped to the configured ranges. */
+        override fun steppedBy(delta: Int): Weight =
+            safeCopy(integerWeight = integerWeight + delta)
     }
 
     /**
@@ -152,6 +185,10 @@ sealed class InputModalBottomSheetState {
                 "reps $reps must be in repsRange: $repsRange"
             }
         }
+
+        /** Returns a copy of this state with [delta] repetitions added, clamped to the configured range. */
+        override fun steppedBy(delta: Int): Reps =
+            copy(reps = (reps + delta).coerceIn(repsRange.first(), repsRange.last()))
     }
 
     /**
@@ -189,5 +226,23 @@ sealed class InputModalBottomSheetState {
 
         /** Convenience property returning the total duration in whole seconds. */
         val totalSeconds: Int get() = toIntExact(duration.inWholeSeconds)
+
+        /** Returns a copy of this state with [delta] seconds added, clamped to the configured ranges. */
+        override fun steppedBy(delta: Int): HoursMinutesSeconds {
+            val maxTotalSeconds =
+                hoursRange.last() * SECONDS_PER_HOUR +
+                        minutesRange.last() * SECONDS_PER_MINUTE +
+                        secondsRange.last()
+            val steppedTotalSeconds = (totalSeconds + delta).coerceIn(0, maxTotalSeconds)
+
+            return copy(
+                hours = (steppedTotalSeconds / SECONDS_PER_HOUR)
+                    .coerceIn(hoursRange.first(), hoursRange.last()),
+                minutes = (steppedTotalSeconds / SECONDS_PER_MINUTE % SECONDS_PER_MINUTE)
+                    .coerceIn(minutesRange.first(), minutesRange.last()),
+                seconds = (steppedTotalSeconds % SECONDS_PER_MINUTE)
+                    .coerceIn(secondsRange.first(), secondsRange.last())
+            )
+        }
     }
 }

@@ -22,6 +22,7 @@ fun ConfirmDialog(
     title: String,
     text: String,
     confirmText: String? = null,
+    dismissText: String? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -46,7 +47,7 @@ fun ConfirmDialog(
                 haptic.performHapticFeedback(HapticFeedbackType.Reject)
                 onDismiss()
             }) {
-                Text(text = stringResource(id = R.string.cancel_dialog))
+                Text(text = dismissText ?: stringResource(id = R.string.cancel_dialog))
             }
         }
     )

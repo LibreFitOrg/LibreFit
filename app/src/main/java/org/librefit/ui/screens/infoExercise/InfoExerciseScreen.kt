@@ -82,15 +82,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.SetMode
 import org.librefit.enums.chart.BodyweightChart
@@ -123,6 +123,7 @@ import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
 import org.librefit.ui.models.autoUnitSuffix
+import org.librefit.ui.models.doubleValueAsString
 import org.librefit.ui.theme.LibreFitTheme
 import org.librefit.util.Formatter
 import org.librefit.util.Formatter.formatDetails
@@ -134,9 +135,12 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun SharedTransitionScope.InfoExerciseScreen(
     id: Long,
+    onNavigateBack: () -> Unit,
+    onNavigateToEditExercise: (String) -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    navController: NavHostController,
-    viewModel: InfoExerciseScreenViewModel = hiltViewModel()
+    route: Route.InfoExerciseScreen,
+    viewModel: InfoExerciseScreenViewModel = koinViewModel { parametersOf(route) },
 ) {
     val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
 
@@ -156,7 +160,9 @@ fun SharedTransitionScope.InfoExerciseScreen(
         showExercisesImages = showExercisesImages,
         points = points,
         exerciseChart = exerciseChart,
-        navController = navController,
+        onNavigateBack = onNavigateBack,
+        onNavigateToEditExercise = onNavigateToEditExercise,
+        onNavigateToInfoWorkout = onNavigateToInfoWorkout,
         setTrueShowExercisesImages = viewModel::setTrueShowExercisesImages,
         setFalseShowExercisesImages = viewModel::setFalseShowExercisesImages,
         updateExerciseChart = viewModel::updateExerciseChart,
@@ -175,7 +181,9 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
     workoutsWithExercises: List<UiWorkoutWithExercisesAndSets>,
     points: List<Point>,
     exerciseChart: ExerciseChart,
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToEditExercise: (String) -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
     setTrueShowExercisesImages: () -> Unit,
     setFalseShowExercisesImages: () -> Unit,
     updateExerciseChart: (ExerciseChart) -> Unit,
@@ -194,7 +202,7 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
             text = stringResource(R.string.delete_exercise_from_dataset_desc),
             confirmText = stringResource(R.string.delete),
             onConfirm = {
-                navController.navigateUp()
+                onNavigateBack()
                 showConfirmDeleteDialog.value = false
                 deleteExercise()
             },
@@ -205,18 +213,11 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
     }
 
     LibreFitScaffold(
-        navigateBack = navController::navigateUp,
+        navigateBack = onNavigateBack,
         actions = if (exerciseDC.isCustomExercise) {
             persistentListOf(
                 {
-                    navController.navigate(
-                        Route.EditExerciseScreen(
-                            id = id,
-                            exerciseDCid = exerciseDC.id
-                        )
-                    ) {
-                        launchSingleTop = true
-                    }
+                    onNavigateToEditExercise(exerciseDC.id)
                 },
                 {
                     showConfirmDeleteDialog.value = true
@@ -236,7 +237,11 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
         actionsElevated = persistentListOf(false, false)
     ) { innerPadding ->
         BoxWithConstraints(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(
+                top = innerPadding.calculateTopPadding(),
+                start = innerPadding.calculateLeftPadding(LayoutDirection.Ltr),
+                end = innerPadding.calculateRightPadding(LayoutDirection.Ltr)
+            )
         ) {
             LibreFitLazyColumn(startEndPadding = 0.dp, bottomSpacer = false) {
                 item {
@@ -323,7 +328,7 @@ private fun SharedTransitionScope.InfoExerciseScreenContent(
                                 workoutsWithExercises = workoutsWithExercises,
                                 points = points,
                                 exerciseChart = exerciseChart,
-                                navController = navController,
+                                onNavigateToInfoWorkout = onNavigateToInfoWorkout,
                                 updateExerciseChart = updateExerciseChart,
                                 maxHeight = maxHeight,
                                 animatedVisibilityScope = animatedVisibilityScope
@@ -532,7 +537,7 @@ private fun SharedTransitionScope.HistoryPage(
     workoutsWithExercises: List<UiWorkoutWithExercisesAndSets>,
     points: List<Point>,
     exerciseChart: ExerciseChart,
-    navController: NavHostController,
+    onNavigateToInfoWorkout: (Long) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     maxHeight: Dp,
     updateExerciseChart: (ExerciseChart) -> Unit
@@ -565,9 +570,7 @@ private fun SharedTransitionScope.HistoryPage(
                     is TimeChart -> TimeChart.entries
                 },
                 updateChartMode = updateExerciseChart,
-                onEntrySelection = {
-                    navController.navigate(Route.InfoWorkoutScreen(it))
-                }
+                onEntrySelection = onNavigateToInfoWorkout
             )
         }
         item {
@@ -586,9 +589,7 @@ private fun SharedTransitionScope.HistoryPage(
         items(workoutsWithExercises, key = { it.workout.id }) { workoutWithExercisesAndSets ->
             val workout = workoutWithExercisesAndSets.workout
             ElevatedCard(
-                onClick = {
-                    navController.navigate(Route.InfoWorkoutScreen(workout.id))
-                },
+                onClick = { onNavigateToInfoWorkout(workout.id) },
                 shape = MaterialTheme.shapes.extraLarge,
                 modifier = Modifier.sharedBounds(
                     sharedContentState = rememberSharedContentState(workout.id),
@@ -620,9 +621,7 @@ private fun SharedTransitionScope.HistoryPage(
                         )
 
                         IconButton(
-                            onClick = {
-                                navController.navigate(Route.InfoWorkoutScreen(workout.id))
-                            }
+                            onClick = { onNavigateToInfoWorkout(workout.id) }
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_info),
@@ -752,7 +751,10 @@ private fun SharedTransitionScope.HistoryPage(
                                                 } else {
                                                     Text(text="${set.reps}", color=contentColor)
                                                     if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
-                                                        Text(text = "${set.load}", color = contentColor)
+                                                        Text(
+                                                            text = set.load.doubleValueAsString(),
+                                                            color = contentColor
+                                                        )
                                                     }
                                                 }
                                                 Checkbox(
@@ -839,7 +841,7 @@ private fun SharedTransitionScope.AlternatingImages(
                                 checked = isRunning,
                                 modifier = Modifier.padding(10.dp),
                                 onCheckedChange = { isRunning = it },
-                                shapes = ToggleButtonDefaults.shapes()
+                                shapes = ToggleButtonDefaults.shapesFor(ToggleButtonDefaults.size)
                             ) {
                                 Icon(
                                     painter = painterResource(
@@ -979,7 +981,9 @@ private fun InfoExercisePreview() {
                         )
                     ),
                     points = emptyList(),
-                    navController = rememberNavController(),
+                    onNavigateBack = {},
+                    onNavigateToEditExercise = {},
+                    onNavigateToInfoWorkout = {},
                     setTrueShowExercisesImages = {},
                     setFalseShowExercisesImages = {},
                     updateExerciseChart = {},

@@ -28,14 +28,22 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.LibreFit"
+        android:windowSoftInputMode="adjustResize"
         tools:targetApi="tiramisu">
         <activity
             android:name=".activities.MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.LibreFit.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- Lets the system Settings app (App Info page) open the in-app Settings
+                 screen via Intent.ACTION_APPLICATION_PREFERENCES. See nav/DeepLinks.kt. -->
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -58,7 +66,7 @@
 
         <activity
             android:name=".activities.ErrorActivity"
-            android:exported="true"
+            android:exported="false"
             android:theme="@style/Theme.LibreFit.SplashScreen"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"

@@ -54,18 +54,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
-import org.librefit.enums.SuccessMessage
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
+import org.librefit.enums.userPreferences.RoutineUpdateMode
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.models.Weight
 import org.librefit.nav.Route
@@ -94,9 +93,12 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.BeforeSavingScreen(
-    navController: NavHostController,
-    viewModel: BeforeSavingScreenViewModel = hiltViewModel(),
-    animatedVisibilityScope: AnimatedVisibilityScope
+    onNavigateBack: () -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    onNavigateToSuccessScreen: () -> Unit,
+    route: Route.BeforeSavingScreen,
+    viewModel: BeforeSavingScreenViewModel = koinViewModel { parametersOf(route) },
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
 
     val volume by viewModel.volume.collectAsStateWithLifecycle()
@@ -110,6 +112,8 @@ fun SharedTransitionScope.BeforeSavingScreen(
     val useScrollWheelForInput by viewModel.useScrollWheelForInput.collectAsStateWithLifecycle()
 
     val dismissScrollWheelInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
+
+    val routineUpdateMode by viewModel.routineUpdateMode.collectAsStateWithLifecycle()
 
 
     val showUnlikeRoutineDialog = remember { mutableStateOf(false) }
@@ -172,8 +176,31 @@ fun SharedTransitionScope.BeforeSavingScreen(
     }
 
 
+    val showUpdateRoutineDialog = remember { mutableStateOf(false) }
+
+    if (showUpdateRoutineDialog.value) {
+        ConfirmDialog(
+            title = stringResource(R.string.update_routine_question),
+            text = stringResource(R.string.update_routine_text),
+            dismissText = stringResource(R.string.dont_update),
+            onConfirm = {
+                viewModel.saveExercisesWithWorkout(updateRoutine = true)
+                showUpdateRoutineDialog.value = false
+                onNavigateToSuccessScreen()
+            },
+            onDismiss = {
+                viewModel.saveExercisesWithWorkout(updateRoutine = false)
+                showUpdateRoutineDialog.value = false
+                onNavigateToSuccessScreen()
+            }
+        )
+    }
+
+
     BeforeSavingScreenContent(
-        navController = navController,
+        onNavigateBack = onNavigateBack,
+        onNavigateToInfoWorkout = onNavigateToInfoWorkout,
+        onNavigateToSuccessScreen = onNavigateToSuccessScreen,
         showUnlikeRoutineDialog = { showUnlikeRoutineDialog.value = true },
         showDatePickerDialog = { showDatePickerDialog.value = true },
         exercises = exercises,
@@ -182,22 +209,30 @@ fun SharedTransitionScope.BeforeSavingScreen(
         volumeExercises = volume,
         animatedVisibilityScope = animatedVisibilityScope,
         useScrollWheelForInput = useScrollWheelForInput,
+        askToUpdateRoutine = routineUpdateMode == RoutineUpdateMode.ASK && routine.title != "",
         isTitleTooLong = viewModel.isTitleTooLong(),
         isTitleEmpty = viewModel.isTitleEmpty(),
         updateWorkoutTitle = viewModel::updateWorkoutTitle,
         updateWorkoutNotes = viewModel::updateWorkoutNotes,
-        saveExercisesWithWorkout = viewModel::saveExercisesWithWorkout,
+        saveExercisesWithWorkout = {
+            viewModel.saveExercisesWithWorkout(
+                updateRoutine = routineUpdateMode == RoutineUpdateMode.ALWAYS
+            )
+        },
         setTimeElapsed = viewModel::setTimeElapsed,
         onInputModalBottomSheetRequest = {
             inputModalBottomSheetState = it
-        }
+        },
+        showUpdateRoutineDialog = { showUpdateRoutineDialog.value = true }
     )
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SharedTransitionScope.BeforeSavingScreenContent(
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    onNavigateToSuccessScreen: () -> Unit,
     showUnlikeRoutineDialog: () -> Unit,
     showDatePickerDialog: () -> Unit,
     exercises: List<UiExerciseWithSets>,
@@ -208,11 +243,13 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
     isTitleEmpty: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope,
     useScrollWheelForInput: Boolean,
+    askToUpdateRoutine: Boolean,
     updateWorkoutTitle: (String) -> Unit,
     updateWorkoutNotes: (String) -> Unit,
     saveExercisesWithWorkout: () -> Unit,
     setTimeElapsed: (Int) -> Unit,
     onInputModalBottomSheetRequest: (InputModalBottomSheetState) -> Unit,
+    showUpdateRoutineDialog: () -> Unit,
 ) {
     val timeTextFieldState = rememberTextFieldState(
         initialText = Formatter.formatTime(workout.timeElapsed).filter { it != ':' }
@@ -248,18 +285,19 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.overview)),
-        navigateBack = navController::navigateUp,
+        navigateBack = onNavigateBack,
         actions = persistentListOf({
-            saveExercisesWithWorkout()
-            navController.navigate(Route.SuccessScreen(SuccessMessage.WORKOUT_SAVED)) {
-                launchSingleTop = true
-                popUpTo(Route.MainScreen) { inclusive = false }
+            if (askToUpdateRoutine) {
+                showUpdateRoutineDialog()
+            } else {
+                saveExercisesWithWorkout()
+                onNavigateToSuccessScreen()
             }
         }),
         actionsDescription = persistentListOf(stringResource(R.string.save)),
         actionsEnabled = persistentListOf(!isTitleEmpty && !isTitleTooLong)
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding = innerPadding) {
             item {
                 OutlinedTextField(
                     shape = MaterialTheme.shapes.large,
@@ -424,11 +462,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                 item {
                     ElevatedCard(
                         shape = MaterialTheme.shapes.extraLargeIncreased,
-                        onClick = {
-                            navController.navigate(Route.InfoWorkoutScreen(routine.id)) {
-                                launchSingleTop = true
-                            }
-                        },
+                        onClick = { onNavigateToInfoWorkout(routine.id) },
                         modifier = Modifier
                             .sharedBounds(
                                 sharedContentState = rememberSharedContentState(routine.id),
@@ -479,11 +513,7 @@ fun SharedTransitionScope.BeforeSavingScreenContent(
                                 elevated = false,
                                 text = stringResource(R.string.open_this_routine),
                                 icon = painterResource(R.drawable.ic_open_new)
-                            ) {
-                                navController.navigate(Route.InfoWorkoutScreen(routine.id)) {
-                                    launchSingleTop = true
-                                }
-                            }
+                            ) { onNavigateToInfoWorkout(routine.id) }
                         }
                     }
                 }
@@ -623,7 +653,9 @@ private fun BeforeSavingScreenPreview() {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
                 BeforeSavingScreenContent(
-                    navController = rememberNavController(),
+                    onNavigateBack = {},
+                    onNavigateToInfoWorkout = {},
+                    onNavigateToSuccessScreen = {},
                     showUnlikeRoutineDialog = {},
                     showDatePickerDialog = {},
                     exercises = e,
@@ -637,12 +669,14 @@ private fun BeforeSavingScreenPreview() {
                     isTitleTooLong = false,
                     isTitleEmpty = false,
                     useScrollWheelForInput = true,
+                    askToUpdateRoutine = false,
                     updateWorkoutTitle = {},
                     updateWorkoutNotes = {},
                     saveExercisesWithWorkout = {},
                     setTimeElapsed = {},
                     animatedVisibilityScope = this,
-                    onInputModalBottomSheetRequest = {}
+                    onInputModalBottomSheetRequest = {},
+                    showUpdateRoutineDialog = {}
                 )
             }
         }

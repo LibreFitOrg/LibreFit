@@ -1,3 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    </resources>
+    <string name="profile">Perfil</string>
+    <string name="about">Sobre</string>
+    <string name="library">Biblioteca</string>
+    <string name="open">Abrir</string>
+    <string name="copy">Copiar</string>
+    <string name="donate">Doar</string>
+    <string name="license">Licença</string>
+    <string name="contributors">Contribuidores</string>
+    <string name="founder">Fundador</string>
+    <string name="translators">Tradutores</string>
+    <string name="contributed_to">Contribuiu para:</string>
+    <string name="version">Versão</string>
+    <string name="dependencies">Dependências</string>
+    <string name="donators">Doadores</string>
+</resources>

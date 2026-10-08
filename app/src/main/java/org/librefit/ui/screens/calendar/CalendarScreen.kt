@@ -47,14 +47,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import org.koin.androidx.compose.koinViewModel
 import org.librefit.R
-import org.librefit.enums.pages.TutorialContent
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
@@ -69,9 +65,11 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.CalendarScreen(
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    onNavigateToTutorialScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: CalendarScreenViewModel = hiltViewModel()
+    viewModel: CalendarScreenViewModel = koinViewModel()
 ) {
 
     val yearRange by viewModel.yearRange.collectAsStateWithLifecycle()
@@ -94,7 +92,9 @@ fun SharedTransitionScope.CalendarScreen(
         }
 
         CalendarScreenContent(
-            navController = navController,
+            onNavigateBack = onNavigateBack,
+            onNavigateToInfoWorkout = onNavigateToInfoWorkout,
+            onNavigateToTutorialScreen = onNavigateToTutorialScreen,
             datePickerState = datePickerState,
             workoutsFromDate = workoutsFromDate,
             animatedVisibilityScope = animatedVisibilityScope
@@ -108,16 +108,18 @@ fun SharedTransitionScope.CalendarScreen(
 )
 @Composable
 private fun SharedTransitionScope.CalendarScreenContent(
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToInfoWorkout: (Long) -> Unit,
+    onNavigateToTutorialScreen: () -> Unit,
     datePickerState: DatePickerState,
     workoutsFromDate: List<UiWorkout>,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.calendar)),
-        navigateBack = navController::navigateUp
+        navigateBack = onNavigateBack
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding) {
+        LibreFitLazyColumn(innerPadding = innerPadding) {
             item {
                 DatePicker(
                     modifier = Modifier.clip(MaterialTheme.shapes.large),
@@ -148,11 +150,7 @@ private fun SharedTransitionScope.CalendarScreenContent(
                                 textAlign = TextAlign.Center,
                             )
                             IconButton(
-                                onClick = {
-                                    navController.navigate(Route.TutorialScreen(TutorialContent.COMPLETE_WORKOUT)) {
-                                        launchSingleTop = true
-                                    }
-                                }
+                                onClick = onNavigateToTutorialScreen
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_help),
@@ -167,11 +165,7 @@ private fun SharedTransitionScope.CalendarScreenContent(
             items(workoutsFromDate) { workout ->
                 ElevatedCard(
                     shape = MaterialTheme.shapes.extraLarge,
-                    onClick = {
-                        navController.navigate(Route.InfoWorkoutScreen(workoutId = workout.id)) {
-                            launchSingleTop = true
-                        }
-                    },
+                    onClick = { onNavigateToInfoWorkout(workout.id) },
                     modifier = Modifier
                         .sharedBounds(
                             sharedContentState = rememberSharedContentState(workout.id),
@@ -223,11 +217,7 @@ private fun SharedTransitionScope.CalendarScreenContent(
                             }
                             IconButton(
                                 shapes = IconButtonDefaults.shapes(),
-                                onClick = {
-                                    navController.navigate(Route.InfoWorkoutScreen(workoutId = workout.id)) {
-                                        launchSingleTop = true
-                                    }
-                                },
+                                onClick = { onNavigateToInfoWorkout(workout.id) },
                             ) {
                                 Icon(
                                     painterResource(R.drawable.ic_info),
@@ -250,7 +240,9 @@ private fun CalendarScreenPreview() {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
                 CalendarScreenContent(
-                    navController = rememberNavController(),
+                    onNavigateBack = {},
+                    onNavigateToInfoWorkout = {},
+                    onNavigateToTutorialScreen = {},
                     datePickerState = rememberDatePickerState(),
                     workoutsFromDate = listOf(),
                     animatedVisibilityScope = this,

@@ -9,28 +9,29 @@
 package org.librefit.ui.screens.exercises
 
 import app.cash.turbine.test
-import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
 import org.librefit.MainDispatcherRule
 import org.librefit.db.repository.DatasetRepository
 import org.librefit.db.repository.UserPreferencesRepository
 import org.librefit.enums.exercise.FilterValue
 import org.librefit.enums.exercise.Force
 import org.librefit.ui.models.UiExerciseDC
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class ExercisesScreenViewModelTest {
 
     // MainDispatcherRule to control coroutine execution
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
+    private val mainDispatcherRule = MainDispatcherRule()
 
     // The mock repository
     private lateinit var datasetRepository: DatasetRepository
@@ -53,7 +54,17 @@ class ExercisesScreenViewModelTest {
 
     private lateinit var viewModel: ExercisesScreenViewModel
 
-    @Before
+    @BeforeTest
+    fun setUpMainDispatcher() {
+        mainDispatcherRule.setUp()
+    }
+
+    @AfterTest
+    fun tearDownMainDispatcher() {
+        mainDispatcherRule.tearDown()
+    }
+
+    @BeforeTest
     fun setUp() {
         // Arrange: Create a mock for the repository
         datasetRepository = mockk()
@@ -77,24 +88,24 @@ class ExercisesScreenViewModelTest {
 
     @Test
     fun `initial state - query is empty`() = runTest {
-        assertThat(viewModel.query.value).isEmpty()
+        assertTrue(viewModel.query.value.isEmpty())
     }
 
     @Test
     fun `initial state - debounced query is empty`() = runTest {
         viewModel.debouncedQuery.test {
-            assertThat(awaitItem()).isEmpty()
+            assertTrue(awaitItem().isEmpty())
         }
     }
 
     @Test
     fun `initial state - filter is empty`() = runTest {
-        assertThat(viewModel.filterValue.value).isEqualTo(FilterValue())
+        assertEquals(FilterValue(), viewModel.filterValue.value)
     }
 
     @Test
     fun `initial state - filtered exercise list is equal to dataset`() = runTest {
-        assertThat(viewModel.filteredExerciseList.value).containsExactlyElementsIn(dataset)
+        assertEquals(dataset, viewModel.filteredExerciseList.value)
     }
 
     @Test
@@ -104,7 +115,7 @@ class ExercisesScreenViewModelTest {
         viewModel.updateQuery(query)
 
         // Assert: The immediate query state is updated
-        assertThat(viewModel.query.value).isEqualTo(query)
+        assertEquals(query, viewModel.query.value)
     }
 
     @Test
@@ -113,7 +124,7 @@ class ExercisesScreenViewModelTest {
     ) {
         viewModel.filteredExerciseList.test {
             // Assert: The initial item is the full list
-            assertThat(awaitItem()).containsExactlyElementsIn(dataset)
+            assertEquals(dataset, awaitItem())
 
             // Arrange: The query is updated
             viewModel.updateQuery("Exercise")
@@ -123,11 +134,14 @@ class ExercisesScreenViewModelTest {
 
             // Assert: The new, filtered list is ordered by fuzzySearch
             val filteredList = awaitItem()
-            assertThat(filteredList).containsExactly(
-                UiExerciseDC(name = "Exercise", force = Force.PULL),
-                UiExerciseDC(name = "Pull exercise", force = Force.PULL),
-                UiExerciseDC(name = "Push exercise", force = Force.PUSH)
-            ).inOrder()
+            assertContentEquals(
+                listOf(
+                    UiExerciseDC(name = "Exercise", force = Force.PULL),
+                    UiExerciseDC(name = "Pull exercise", force = Force.PULL),
+                    UiExerciseDC(name = "Push exercise", force = Force.PUSH)
+                ),
+                filteredList
+            )
         }
     }
 
@@ -137,7 +151,7 @@ class ExercisesScreenViewModelTest {
     ) {
         viewModel.filteredExerciseList.test {
             // Assert: The initial item is the full list
-            assertThat(awaitItem()).containsExactlyElementsIn(dataset)
+            assertEquals(dataset, awaitItem())
 
             // Arrange: The query is updated multiple times and advance the virtual clock past the debounce timeout
             viewModel.updateQuery("Exe")
@@ -151,11 +165,14 @@ class ExercisesScreenViewModelTest {
 
             // Assert: The new, filtered list is ordered by fuzzySearch
             val filteredList = awaitItem()
-            assertThat(filteredList).containsExactly(
-                UiExerciseDC(name = "Exercise", force = Force.PULL),
-                UiExerciseDC(name = "Pull exercise", force = Force.PULL),
-                UiExerciseDC(name = "Push exercise", force = Force.PUSH)
-            ).inOrder()
+            assertContentEquals(
+                listOf(
+                    UiExerciseDC(name = "Exercise", force = Force.PULL),
+                    UiExerciseDC(name = "Pull exercise", force = Force.PULL),
+                    UiExerciseDC(name = "Push exercise", force = Force.PUSH)
+                ),
+                filteredList
+            )
         }
     }
 
@@ -165,18 +182,21 @@ class ExercisesScreenViewModelTest {
     ) {
         viewModel.filteredExerciseList.test {
             // Assert: The initial item is the full list
-            assertThat(awaitItem()).containsExactlyElementsIn(dataset)
+            assertEquals(dataset, awaitItem())
 
             // Arrange: The query is updated
             viewModel.updateQuery("Exercise")
 
             // Assert: The new, filtered list is ordered by fuzzySearch
             val filteredList = awaitItem()
-            assertThat(filteredList).containsExactly(
-                UiExerciseDC(name = "Exercise", force = Force.PULL),
-                UiExerciseDC(name = "Pull exercise", force = Force.PULL),
-                UiExerciseDC(name = "Push exercise", force = Force.PUSH)
-            ).inOrder()
+            assertContentEquals(
+                listOf(
+                    UiExerciseDC(name = "Exercise", force = Force.PULL),
+                    UiExerciseDC(name = "Pull exercise", force = Force.PULL),
+                    UiExerciseDC(name = "Push exercise", force = Force.PUSH)
+                ),
+                filteredList
+            )
         }
     }
 
@@ -184,17 +204,20 @@ class ExercisesScreenViewModelTest {
     fun `updateFilter updates the filtered list immediately`() = runTest {
         viewModel.filteredExerciseList.test {
             // Assert: Initial full list
-            assertThat(awaitItem()).containsExactlyElementsIn(dataset)
+            assertEquals(dataset, awaitItem())
 
             // Arrange: The filter is updated
             viewModel.updateFilter(FilterValue(force = Force.PULL))
 
             // Assert: The list is filtered immediately
             val filteredList = awaitItem()
-            assertThat(filteredList).containsExactly(
-                UiExerciseDC(name = "Pull exercise", force = Force.PULL),
-                UiExerciseDC(name = "Exercise", force = Force.PULL)
-            ).inOrder()
+            assertContentEquals(
+                listOf(
+                    UiExerciseDC(name = "Pull exercise", force = Force.PULL),
+                    UiExerciseDC(name = "Exercise", force = Force.PULL)
+                ),
+                filteredList
+            )
         }
     }
 
@@ -204,11 +227,11 @@ class ExercisesScreenViewModelTest {
     ) {
         viewModel.filteredExerciseList.test {
             // Assert: Initial full list
-            assertThat(awaitItem()).containsExactlyElementsIn(dataset)
+            assertEquals(dataset, awaitItem())
 
             // Arrange: A filter is applied first
             viewModel.updateFilter(FilterValue(force = Force.PULL))
-            assertThat(awaitItem()).hasSize(2) // Pull exercise
+            assertEquals(2, awaitItem().size) // Pull exercise
 
             // Arrange: A query is then applied
             viewModel.updateQuery("Exercise")
@@ -216,10 +239,13 @@ class ExercisesScreenViewModelTest {
 
             // Assert: The final list ordered by fuzzySearch
             val finalList = awaitItem()
-            assertThat(finalList).containsExactly(
-                UiExerciseDC(name = "Exercise", force = Force.PULL),
-                UiExerciseDC(name = "Pull exercise", force = Force.PULL),
-            ).inOrder()
+            assertContentEquals(
+                listOf(
+                    UiExerciseDC(name = "Exercise", force = Force.PULL),
+                    UiExerciseDC(name = "Pull exercise", force = Force.PULL),
+                ),
+                finalList
+            )
         }
     }
 
@@ -227,14 +253,14 @@ class ExercisesScreenViewModelTest {
     fun `when user queries a non present exercise - filtered exercises list is empty`() = runTest {
         viewModel.filteredExerciseList.test {
             // Assert: Initial full list
-            assertThat(awaitItem()).containsExactlyElementsIn(dataset)
+            assertEquals(dataset, awaitItem())
 
             // Arrange: A query is then applied
             viewModel.updateQuery("This query should produce an empty list")
 
             // Assert: List should be empty because fuzzySearch filters all exercises having a
             // name with a match score lower than 60 %
-            assertThat(awaitItem()).isEmpty()
+            assertTrue(awaitItem().isEmpty())
         }
     }
 
@@ -243,13 +269,13 @@ class ExercisesScreenViewModelTest {
         runTest {
             viewModel.filteredExerciseList.test {
                 // Assert: Initial full list
-                assertThat(awaitItem()).containsExactlyElementsIn(dataset)
+                assertEquals(dataset, awaitItem())
 
                 // Arrange: A filter is applied first
                 viewModel.updateFilter(FilterValue(force = Force.STATIC))
 
                 // Assert: List should be empty because there aren't exercises with such property
-                assertThat(awaitItem()).isEmpty()
+                assertTrue(awaitItem().isEmpty())
             }
         }
 }

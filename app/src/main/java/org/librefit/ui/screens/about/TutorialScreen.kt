@@ -27,14 +27,11 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,15 +43,12 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import org.librefit.R
 import org.librefit.enums.pages.TutorialContent
 import org.librefit.enums.userPreferences.ThemeMode
-import org.librefit.nav.Route
 import org.librefit.ui.components.HeadlineText
 import org.librefit.ui.components.LibreFitLazyColumn
 import org.librefit.ui.components.LibreFitScaffold
@@ -67,7 +61,8 @@ import kotlin.math.roundToInt
 fun TutorialScreen(
     tutorialContent: TutorialContent = TutorialContent.CREATE_ROUTINE,
     fromWelcomeScreen: Boolean = false,
-    navController: NavHostController
+    onNavigateBack: () -> Unit,
+    onNavigateToMainScreen: () -> Unit,
 ) {
     val coroutine = rememberCoroutineScope()
 
@@ -86,17 +81,14 @@ fun TutorialScreen(
         }
     )
 
-    val navigateBack: (() -> Unit)? = if (fromWelcomeScreen) null else navController::navigateUp
+    val navigateBack: (() -> Unit)? = if (fromWelcomeScreen) null else onNavigateBack
 
 
     LibreFitScaffold(
         title = AnnotatedString(stringResource(R.string.tutorial)),
         navigateBack = navigateBack,
         actions = if (fromWelcomeScreen) persistentListOf({
-            navController.navigate(Route.MainScreen) {
-                launchSingleTop = true
-                popUpTo(Route.TutorialScreen()) { inclusive = true }
-            }
+            onNavigateToMainScreen()
         }) else persistentListOf(),
         actionsDescription = persistentListOf(stringResource(R.string.done))
     ) { innerPadding ->
@@ -184,13 +176,17 @@ fun TutorialScreen(
 
                 Spacer(Modifier.height(10.dp))
 
-                var sliderPosition by rememberSaveable { mutableIntStateOf(pagerState.currentPage) }
+                val sliderPosition = rememberSliderState(
+                    value = pagerState.currentPage.toFloat(),
+                    trackRange = 0f..(pagerState.pageCount.toFloat() - 1),
+                    steps = pagerState.pageCount - 2
+                )
 
                 // Update slider when user swipe pages (instead of dragging the slider) and perform haptic feedback
                 LaunchedEffect(pagerState.targetPage) {
                     // The if statement avoids execution during first composition and when slider already is in the correct position
-                    if (sliderPosition != pagerState.targetPage) {
-                        sliderPosition = pagerState.targetPage
+                    if (sliderPosition.value.toInt() != pagerState.targetPage) {
+                        sliderPosition.value = pagerState.targetPage.toFloat()
                         haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                     }
                 }
@@ -205,9 +201,9 @@ fun TutorialScreen(
                     ) {
                         Text(stringResource(R.string.step) + ": ${pagerState.currentPage + 1}/${pagerState.pageCount}")
                         Slider(
-                            value = sliderPosition.toFloat(),
+                            state = sliderPosition,
                             onValueChange = {
-                                sliderPosition = it.roundToInt()
+                                sliderPosition.value = it
                                 if (it.roundToInt() != pagerState.targetPage) {
                                     coroutine.launch {
                                         pagerState.animateScrollToPage(
@@ -217,8 +213,6 @@ fun TutorialScreen(
                                     haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                 }
                             },
-                            valueRange = 0f..(pagerState.pageCount.toFloat() - 1),
-                            steps = pagerState.pageCount - 2,
                         )
                     }
                 }
@@ -306,13 +300,17 @@ fun TutorialScreen(
 
                 Spacer(Modifier.height(10.dp))
 
-                var sliderPosition by rememberSaveable { mutableIntStateOf(pagerState.currentPage) }
+                val sliderPosition = rememberSliderState(
+                    value = pagerState.currentPage.toFloat(),
+                    trackRange = 0f..(pagerState.pageCount.toFloat() - 1),
+                    steps = pagerState.pageCount - 2
+                )
 
                 // Update slider when user swipe pages (instead of dragging the slider) and perform haptic feedback
                 LaunchedEffect(pagerState.targetPage) {
                     // The if statement avoids execution during first composition and when slider already is in the correct position
-                    if (sliderPosition != pagerState.targetPage) {
-                        sliderPosition = pagerState.targetPage
+                    if (sliderPosition.value.toInt() != pagerState.targetPage) {
+                        sliderPosition.value = pagerState.targetPage.toFloat()
                         haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                     }
                 }
@@ -327,9 +325,9 @@ fun TutorialScreen(
                     ) {
                         Text(stringResource(R.string.step) + ": ${pagerState.currentPage + 1}/${pagerState.pageCount}")
                         Slider(
-                            value = sliderPosition.toFloat(),
+                            state = sliderPosition,
                             onValueChange = {
-                                sliderPosition = it.roundToInt()
+                                sliderPosition.value = it
                                 if (it.roundToInt() != pagerState.targetPage) {
                                     coroutine.launch {
                                         pagerState.animateScrollToPage(
@@ -339,8 +337,6 @@ fun TutorialScreen(
                                     haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                 }
                             },
-                            valueRange = 0f..(pagerState.pageCount.toFloat() - 1),
-                            steps = pagerState.pageCount - 2
                         )
                     }
                 }
@@ -353,6 +349,9 @@ fun TutorialScreen(
 @Composable
 private fun TutorialScreenPreview() {
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
-        TutorialScreen(navController = rememberNavController())
+        TutorialScreen(
+            onNavigateBack = {},
+            onNavigateToMainScreen = {}
+        )
     }
 }

@@ -9,21 +9,29 @@
 package org.librefit
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 import org.librefit.db.repository.DatasetRepository
+import org.librefit.di.libreFitModules
 import org.librefit.util.GlobalExceptionHandler
-import javax.inject.Inject
 
-@HiltAndroidApp
 class MainApplication : Application() {
-    @Inject
-    lateinit var globalExceptionHandler: GlobalExceptionHandler
-
-    @Inject
-    lateinit var datasetRepository: DatasetRepository
+    private val globalExceptionHandler: GlobalExceptionHandler by inject()
+    private val datasetRepository: DatasetRepository by inject()
 
     override fun onCreate() {
         super.onCreate()
+
+        // Initialize the Koin container first: every component (Activities, Services,
+        // Compose screens) resolves its dependencies from it.
+        startKoin {
+            androidLogger()
+            androidContext(this@MainApplication)
+            modules(libreFitModules)
+        }
+
         // Setup global exception handler
         globalExceptionHandler.initialize()
 

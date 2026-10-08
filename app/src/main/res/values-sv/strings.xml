@@ -1,3 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings">Inställningar</string>
+    <string name="add_exercise">Lägg till övning</string>
+    <string name="open">Öppna</string>
+    <string name="copy">Kopiera</string>
+    <string name="app_name">LibreFit</string>
+    <string name="profile">Profil</string>
+    <string name="source_code">Källkod</string>
+    <string name="license">Licens</string>
+    <string name="license_desc">LibreFit är licensierat under GNU General Public License v3.0 (GPL-3).</string>
+    <string name="founder">Grundare</string>
+    <string name="translators">Översättare</string>
+    <string name="home">Startsida</string>
+    <string name="about">Om</string>
+    <string name="more_options">Fler alternativ</string>
+    <string name="donate">Donera</string>
+    <string name="info">Info</string>
+    <string name="version">Version</string>
 </resources>

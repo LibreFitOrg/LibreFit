@@ -8,7 +8,6 @@
 
 package org.librefit.ui.screens.library
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
@@ -17,8 +16,8 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.ShortNavigationBar
+import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -120,9 +119,9 @@ private fun LibraryScreenPreview() {
             ),
             actionsElevated = persistentListOf(false, false, false),
             bottomBar = {
-                NavigationBar {
+                ShortNavigationBar {
                     MainScreenPages.entries.forEach { page ->
-                        NavigationBarItem(
+                        ShortNavigationBarItem(
                             selected = pagerState.currentPage == page.ordinal,
                             onClick = { },
                             icon = {

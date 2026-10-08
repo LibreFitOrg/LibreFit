@@ -8,11 +8,8 @@
 
 package org.librefit.ui.screens.infoExercise
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -43,15 +40,13 @@ import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
-import javax.inject.Inject
 
-@HiltViewModel
-class InfoExerciseScreenViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+class InfoExerciseScreenViewModel(
+    route: Route.InfoExerciseScreen,
     workoutRepository: WorkoutRepository,
     dataHelper: DataHelper,
     private val datasetRepository: DatasetRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
     val showExercisesImages = userPreferencesRepository.showExercisesImages
@@ -71,7 +66,7 @@ class InfoExerciseScreenViewModel @Inject constructor(
     }
 
 
-    private val idExerciseDC = savedStateHandle.toRoute<Route.InfoExerciseScreen>().idExerciseDC
+    private val idExerciseDC = route.idExerciseDC
 
     // Keeps track of changes (e.g. the user edits the exercise)
     val uiExerciseDC = datasetRepository.getExerciseFlowFromId(idExerciseDC)

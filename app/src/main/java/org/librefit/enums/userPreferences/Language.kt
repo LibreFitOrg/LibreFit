@@ -21,5 +21,6 @@ enum class Language(val code: String) : DialogPreference {
     PORTUGUESE_BRAZIL("pt-BR"),
     RUSSIAN("ru"),
     SIMPLIFIED_CHINESE("zh-CN"),
-    SPANISH("es")
+    SPANISH("es"),
+    FRENCH("fr")
 }

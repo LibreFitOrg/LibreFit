@@ -13,7 +13,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SelectableDates
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,11 +27,9 @@ import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.models.mappers.toUi
 import java.time.Instant
 import java.time.ZoneOffset
-import javax.inject.Inject
 
-@HiltViewModel
-class CalendarScreenViewModel @Inject constructor(
-    workoutRepository: WorkoutRepository
+class CalendarScreenViewModel(
+    workoutRepository: WorkoutRepository,
 ) : ViewModel() {
     private val workoutsList = workoutRepository.completedWorkouts
         .distinctUntilChanged()

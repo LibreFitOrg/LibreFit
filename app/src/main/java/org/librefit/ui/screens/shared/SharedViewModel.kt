@@ -10,18 +10,17 @@ package org.librefit.ui.screens.shared
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.librefit.db.entity.ExerciseDC
 import org.librefit.db.repository.UserPreferencesRepository
-import javax.inject.Inject
+import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.enums.userPreferences.UnitSystem
 import kotlin.time.Duration.Companion.milliseconds
 
-@HiltViewModel
-class SharedViewModel @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
+class SharedViewModel(
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
     // Used by ExercisesScreen and EditWorkout/WorkoutScreen
     private var selectedExercisesList = listOf<ExerciseDC>()
@@ -40,12 +39,27 @@ class SharedViewModel @Inject constructor(
     // Used by WelcomeScreen
     val showWelcomeScreen = userPreferencesRepository.showWelcomeScreen
 
+    val themeMode: StateFlow<ThemeMode> = userPreferencesRepository.themeMode
+
     fun doNotShowWelcomeScreenAgain() {
         viewModelScope.launch {
             userPreferencesRepository.saveShowWelcomeScreen(false)
         }
     }
 
+    /** Saves the unit system chosen on the welcome screen personalization card. */
+    fun saveUnitSystem(system: UnitSystem) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveUnitSystem(system)
+        }
+    }
+
+    /** Saves the theme mode chosen on the welcome screen personalization card. */
+    fun saveThemeMode(mode: ThemeMode) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveThemeMode(mode)
+        }
+    }
 
     // Used by RequestPermissionScreen
     val requestPermissionNextTime: StateFlow<Boolean> =

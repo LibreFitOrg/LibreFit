@@ -14,6 +14,7 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -39,15 +40,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.SetMode
-import org.librefit.enums.SuccessMessage
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
@@ -73,9 +72,14 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 fun SharedTransitionScope.EditWorkoutScreen(
     sharedViewModel: SharedViewModel,
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToInfoExercise: (Long, String) -> Unit,
+    onNavigateToAddExercises: () -> Unit,
+    onNavigateToBeforeSavingScreen: (Long) -> Unit,
+    onNavigateToSuccessScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: EditWorkoutScreenViewModel = hiltViewModel()
+    route: Route.EditWorkoutScreen,
+    viewModel: EditWorkoutScreenViewModel = koinViewModel { parametersOf(route) }
 ) {
 
     val workout by viewModel.workout.collectAsStateWithLifecycle()
@@ -87,6 +91,8 @@ fun SharedTransitionScope.EditWorkoutScreen(
     val showExercisesImages by viewModel.showExercisesImages.collectAsStateWithLifecycle()
 
     val dismissInputAutomatically by viewModel.dismissScrollWheelInputAutomatically.collectAsStateWithLifecycle()
+
+    val defaultBarWeight by viewModel.defaultBarWeight.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         sharedViewModel.getSelectedExercisesList().forEach(viewModel::addExerciseWithSets)
@@ -110,7 +116,11 @@ fun SharedTransitionScope.EditWorkoutScreen(
     }
 
     EditWorkoutScreenContent(
-        navController = navController,
+        onNavigateBack = onNavigateBack,
+        onNavigateToInfoExercise = onNavigateToInfoExercise,
+        onNavigateToAddExercises = onNavigateToAddExercises,
+        onNavigateToBeforeSavingScreen = onNavigateToBeforeSavingScreen,
+        onNavigateToSuccessScreen = onNavigateToSuccessScreen,
         animatedVisibilityScope = animatedVisibilityScope,
         typeOfEdit = viewModel.getTypeOfEdit(),
         exercisesWithSets = exercises,
@@ -120,6 +130,7 @@ fun SharedTransitionScope.EditWorkoutScreen(
         dismissInputAutomatically = dismissInputAutomatically,
         useScrollWheelForInput = useScrollWheelForInput,
         showExercisesImages = showExercisesImages,
+        defaultBarWeight = defaultBarWeight,
         updateTitle = viewModel::updateTitle,
         updateNotes = viewModel::updateNotes,
         updateSetTime = viewModel::updateSetTime,
@@ -136,6 +147,7 @@ fun SharedTransitionScope.EditWorkoutScreen(
         updateExerciseSetMode = viewModel::updateExerciseSetMode,
         moveExercise = viewModel::moveExercise,
         saveWorkoutWithExercisesInDB = viewModel::saveWorkoutWithExercisesInDB,
+        saveDefaultBarWeight = viewModel::saveDefaultBarWeight
     )
 
 }
@@ -143,7 +155,11 @@ fun SharedTransitionScope.EditWorkoutScreen(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedTransitionScope.EditWorkoutScreenContent(
-    navController: NavHostController,
+    onNavigateBack: () -> Unit,
+    onNavigateToInfoExercise: (Long, String) -> Unit,
+    onNavigateToAddExercises: () -> Unit,
+    onNavigateToBeforeSavingScreen: (Long) -> Unit,
+    onNavigateToSuccessScreen: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     typeOfEdit: Boolean?,
     exercisesWithSets: List<UiExerciseWithSets>,
@@ -153,6 +169,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     dismissInputAutomatically: Boolean,
     useScrollWheelForInput: Boolean,
     showExercisesImages: Boolean?,
+    defaultBarWeight: Double?,
     updateTitle: (String) -> Unit,
     updateNotes: (String) -> Unit,
     deleteSet: (Long) -> Unit,
@@ -166,7 +183,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     updateExerciseRestTime: (Int, Long) -> Unit,
     updateExerciseSetMode: (SetMode, Long) -> Unit,
     moveExercise: (Int, Int) -> Unit,
-    saveWorkoutWithExercisesInDB: () -> Unit
+    saveWorkoutWithExercisesInDB: () -> Unit,
+    saveDefaultBarWeight: (Double) -> Unit,
 ) {
 
     var showConfirmDialog by remember { mutableStateOf(false) }
@@ -188,7 +206,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                 if (typeOfEdit == null) R.string.quit_dialog else R.string.discard_dialog
             ),
             onConfirm = {
-                navController.navigateUp()
+                onNavigateBack()
                 showConfirmDialog = false
             },
             onDismiss = { showConfirmDialog = false }
@@ -211,15 +229,17 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
 
     var isReorderingEnabled by rememberSaveable { mutableStateOf(false) }
 
-    val exerciseSectionStartIndex = 3
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
-        val fromExerciseIndex = from.index - exerciseSectionStartIndex
-        val toExerciseIndex = (to.index - exerciseSectionStartIndex)
-            .coerceIn(0, exercisesWithSets.lastIndex)
+        // Get IDs from the dragged keys
+        val fromId = from.key as? Long ?: return@rememberReorderableLazyListState
+        val toId = to.key as? Long ?: return@rememberReorderableLazyListState
 
-        if (fromExerciseIndex in exercisesWithSets.indices && toExerciseIndex in exercisesWithSets.indices) {
-            moveExercise(fromExerciseIndex, toExerciseIndex)
+        // Find their actual positions in your domain list
+        val fromIndex = exercisesWithSets.indexOfFirst { it.exercise.id == fromId }
+        val toIndex = exercisesWithSets.indexOfFirst { it.exercise.id == toId }
 
+        if (fromIndex != -1 && toIndex != -1) {
+            moveExercise(fromIndex, toIndex)
             hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
         }
     }
@@ -234,24 +254,17 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
         ),
         navigateBack = {
             if (exercisesWithSets.isEmpty()) {
-                navController.navigateUp()
+                onNavigateBack()
             } else {
                 showConfirmDialog = true
             }
         },
         actions = persistentListOf({
             if (typeOfEdit == false) {
-                navController.navigate(
-                    Route.BeforeSavingScreen(
-                        workout.id
-                    )
-                ) { launchSingleTop = true }
+                onNavigateToBeforeSavingScreen(workout.id)
             } else {
                 saveWorkoutWithExercisesInDB()
-                navController.navigate(Route.SuccessScreen(SuccessMessage.ROUTINE_SAVED)) {
-                    launchSingleTop = true
-                    popUpTo(Route.MainScreen) { inclusive = false }
-                }
+                onNavigateToSuccessScreen()
             }
         }),
         actionsDescription = persistentListOf(
@@ -260,15 +273,11 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
         ),
         actionsEnabled = persistentListOf(!isTitleEmpty && !isTitleTooLong && if (typeOfEdit != false) true else exercisesWithSets.isNotEmpty()),
         fabIcon = painterResource(R.drawable.ic_add),
-        fabAction = {
-            navController.navigate(Route.ExercisesScreen(addExercises = true)) {
-                launchSingleTop = true
-            }
-        },
+        fabAction = onNavigateToAddExercises,
         fabDescription = stringResource(R.string.add_exercise),
         fabText = stringResource(R.string.add_exercise),
     ) { innerPadding ->
-        LibreFitLazyColumn(innerPadding, lazyListState = lazyListState) {
+        LibreFitLazyColumn(innerPadding = innerPadding, lazyListState = lazyListState) {
             item {
                 OutlinedTextField(
                     shape = MaterialTheme.shapes.large,
@@ -335,6 +344,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                     key = { _, e -> e.exercise.id }
                 ) { _, exerciseWithSets ->
                     ReorderableItem(reorderableLazyListState, key = exerciseWithSets.exercise.id) { isDragging ->
+
+                        val interactionSource = remember { MutableInteractionSource() }
                         ExerciseCard(
                             modifier = Modifier.animateItem(),
                             animatedVisibilityScope = animatedVisibilityScope,
@@ -345,17 +356,11 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                             useScrollWheelForInput = useScrollWheelForInput,
                             showExercisesImages = showExercisesImages,
                             dismissScrollWheelInputAutomatically = dismissInputAutomatically,
-                            onDetail = { id, idExerciseDC ->
-                                navController.navigate(
-                                    Route.InfoExerciseScreen(
-                                        id,
-                                        idExerciseDC
-                                    )
-                                ) { launchSingleTop = true }
-                            },
+                            onDetail = onNavigateToInfoExercise,
                             onDelete = deleteExercise,
                             isCollapsed = isReorderingEnabled,
                             dragHandleModifier = Modifier.draggableHandle(
+                                interactionSource = interactionSource,
                                 onDragStarted = {
                                     hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
                                 },
@@ -364,6 +369,7 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                                     hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
                                 }
                             ),
+                            defaultBarWeight = defaultBarWeight,
                             onReorderRequest = { isReorderingEnabled = true },
                             deleteSet = deleteSet,
                             updateExerciseNotes = updateExerciseNotes,
@@ -373,7 +379,8 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
                             updateSetTime = updateSetTime,
                             updateSetReps = updateSetReps,
                             updateSetLoad = updateSetLoad,
-                            updateSetCompleted = updateSetCompleted
+                            updateSetCompleted = updateSetCompleted,
+                            saveDefaultBarWeight = saveDefaultBarWeight
                         )
                     }
                 }
@@ -396,7 +403,11 @@ private fun EditWorkoutScreenPreview() {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
                 EditWorkoutScreenContent(
-                    navController = rememberNavController(),
+                    onNavigateBack = {},
+                    onNavigateToInfoExercise = { _, _ -> },
+                    onNavigateToAddExercises = {},
+                    onNavigateToBeforeSavingScreen = {},
+                    onNavigateToSuccessScreen = {},
                     animatedVisibilityScope = this,
                     typeOfEdit = typeOfEdit,
                     exercisesWithSets = persistentListOf(
@@ -431,6 +442,7 @@ private fun EditWorkoutScreenPreview() {
                     useScrollWheelForInput = false,
                     dismissInputAutomatically = false,
                     showExercisesImages = null,
+                    defaultBarWeight = null,
                     updateTitle = { _ -> },
                     updateNotes = { _ -> },
                     addSetToExercise = { _ -> },
@@ -444,7 +456,8 @@ private fun EditWorkoutScreenPreview() {
                     updateSetTime = { _, _ -> },
                     updateSetReps = { _, _ -> },
                     updateSetLoad = { _, _ -> },
-                    updateSetCompleted = { _, _ -> }
+                    updateSetCompleted = { _, _ -> },
+                    saveDefaultBarWeight = {}
                 )
             }
         }

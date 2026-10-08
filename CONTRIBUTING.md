@@ -158,8 +158,7 @@ the latest Android toolkit:
 - [MVVM](https://developer.android.com/topic/architecture/recommendations) – [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) + [StateFlow](https://developer.android.com/kotlin/flow/stateflow-and-sharedflow)
   for UI state.
 - [Jetpack Compose](https://developer.android.com/compose) for UI.
-- [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) for dependency
-  injection.
+- [Koin](https://insert-koin.io/) for dependency injection.
 - [Room](https://developer.android.com/training/data-storage/room) for storage of workouts,
   exercises, sets and dataset.
 - [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) for user
@@ -189,13 +188,8 @@ the latest Android toolkit:
 
 ### Translations
 
-> [!CAUTION]
-> All Weblate translators who **logged in with GitHub**, can just receive code just as Contributors
-> by logging in here: https://librefit.org/donate.
->
-> If that is not the case, unfortunately, there isn't the automatic reward system for translators
-> yet! To get the supporter code, send a message by visiting contact
-> page: https://librefit.org/contact.
+> [!IMPORTANT]
+> To get the supporter code as Weblate translator, follow procedure in the following page: https://librefit.org/translators/login.
 
 We want LibreFit to be accessible to everyone!
 

@@ -8,6 +8,7 @@
 
 package org.librefit.db.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
@@ -46,6 +47,8 @@ data class Workout(
     val title: String = "",
     val state: WorkoutState = WorkoutState.COMPLETED,
     val timeElapsed: Int = 0,
+    @ColumnInfo(defaultValue = "0")
+    val position: Int = 0,
     @Serializable(with = LocalDateTimeSerializer::class)
     val created: LocalDateTime = LocalDateTime.now(),
     @Serializable(with = LocalDateTimeSerializer::class)

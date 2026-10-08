@@ -13,7 +13,6 @@ import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.SoundPool
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -21,17 +20,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.librefit.R
-import org.librefit.di.qualifiers.MainDispatcher
-import javax.inject.Inject
-import javax.inject.Singleton
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Manages short, low-latency audio playback using [SoundPool].
  */
-@Singleton
-class SoundPlayer @Inject constructor(
-    @param:ApplicationContext private val context: Context,
-    @param:MainDispatcher private val mainDispatcher: CoroutineDispatcher
+class SoundPlayer(
+    context: Context,
+    mainDispatcher: CoroutineDispatcher,
 ) : AutoCloseable {
 
     private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -67,11 +63,11 @@ class SoundPlayer @Inject constructor(
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             scope.launch {
                 // A short delay allows the "ducking" transition to start, preventing other media from masking the sound
-                delay(300L)
+                delay(300.milliseconds)
                 soundPool.play(soundId, 1f, 1f, 1, 0, 1f)
 
                 // Hold focus for 1.5 seconds, which is sufficient for the sound (lasts 1 second) to finish.
-                delay(1500L)
+                delay(1500.milliseconds)
                 audioManager.abandonAudioFocusRequest(focusRequest)
             }
         }

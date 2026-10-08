@@ -7,7 +7,9 @@
   -->
 
 <resources>
-    <string name="app_name">LibreFit</string>
+    <string name="app_name" translatable="false">LibreFit</string>
+    <string name="app_name_first_part" translatable="false">Libre</string>
+    <string name="app_name_second_part" translatable="false">Fit</string>
 
     <!--Navigation-->
     <string name="home">Home</string>
@@ -123,6 +125,32 @@
     <string name="url_T_Silverspoon" translatable="false">https://github.com/T-Silverspoon</string>
     <string name="ByYeah" translatable="false">ByYeah</string>
     <string name="url_ByYeah" translatable="false">https://github.com/ByYeah</string>
+    <string name="VanemKrAu" translatable="false">VanemKrAu</string>
+    <string name="url_VanemKrAu" translatable="false">https://github.com/VanemKrAu</string>
+    <string name="UbioZur" translatable="false">UbioZur</string>
+    <string name="url_UbioZur" translatable="false">https://github.com/UbioZur</string>
+    <string name="malespiaut" translatable="false">malespiaut</string>
+    <string name="url_malespiaut" translatable="false">https://github.com/malespiaut</string>
+    <string name="zhx000" translatable="false">zhx000</string>
+    <string name="url_zhx000" translatable="false">https://github.com/zhx000</string>
+    <string name="Miles_Espadoto" translatable="false">Miles Espadoto</string>
+    <string name="vinitdrk" translatable="false">vinitdrk</string>
+    <string name="url_vinitdrk" translatable="false">https://github.com/vinitdrk</string>
+    <string name="Jahn_Andreas" translatable="false">Jahn Andreas</string>
+    <string name="hyperion51" translatable="false">hyperion</string>
+    <string name="url_hyperion51" translatable="false">https://github.com/hyperioncodes</string>
+    <string name="joncasagrande" translatable="false">joncasagrande</string>
+    <string name="url_joncasagrande" translatable="false">https://github.com/joncasagrande</string>
+    <string name="lotation" translatable="false">lotation</string>
+    <string name="url_lotation" translatable="false">https://github.com/lotation</string>
+    <string name="WinnerWind" translatable="false">WinnerWind</string>
+    <string name="url_WinnerWind" translatable="false">https://github.com/WinnerWind</string>
+    <string name="Rajesh_Ranmara" translatable="false">Rajesh Ranmara</string>
+    <string name="alexis_charp" translatable="false">alexischarp</string>
+    <string name="url_alexis_charp" translatable="false">https://github.com/alexischarp</string>
+    <string name="allddd" translatable="false">allddd</string>
+    <string name="url_allddd" translatable="false">https://github.com/allddd</string>
+    <string name="N4ü" translatable="false">N4ü</string>
 
 
     <!--Before saving screen-->
@@ -138,6 +166,8 @@
     <string name="creation_date">Creation date</string>
     <string name="label_when">When</string>
     <string name="select_date">Select date</string>
+    <string name="update_routine_question">Update routine?</string>
+    <string name="update_routine_text">The linked routine will be updated with the values of the completed sets of this workout, so you will find them the next time you start it.</string>
 
     <!--Edit exercise screen-->
     <string name="create_exercise">Create exercise</string>
@@ -322,6 +352,10 @@
     <string name="show_images">Show images</string>
     <string name="hide_images_desc">Images of exercises will be hidden</string>
     <string name="show_images_desc">Images of exercises will be shown</string>
+    <string name="update_routine_after_workout">Update routine after workout</string>
+    <string name="dont_update">Don\'t update</string>
+    <string name="always_update">Always update</string>
+    <string name="always_ask">Always ask</string>
     <string name="settings_location">Location</string>
     <string name="unit_system">Unit system</string>
     <string name="metric">Metric</string>
@@ -367,6 +401,8 @@
     <string name="language_korean">Korean</string>
     <string name="language_swedish_nt" translatable="false">Svenska</string>
     <string name="language_swedish">Swedish</string>
+    <string name="language_portuguese_nt" translatable="false">Português</string>
+    <string name="language_portuguese">Portuguese</string>
 
     <!-- Statistics screen-->
     <string name="past">Past</string>
@@ -398,7 +434,7 @@
     <string name="to_verify">To verify</string>
     <string name="verify_code">Verify code</string>
     <string name="code_desc">Paste the code and click the button below.</string>
-    <string name="verify_companion_or_code">Verify or the companion app or the code.</string>
+    <string name="verify_companion_or_code">Verify the companion app or the code.</string>
     <string name="exercise_saved">Exercise saved</string>
 
     <string name="valid_companion_app_signature">Valid companion app</string>
@@ -452,6 +488,7 @@
 
     <!-- Welcome screen-->
     <string name="welcome_to">Welcome to</string>
+    <string name="make_it_yours">Make it yours</string>
 
 
     <!--Info modal bottom sheet-->
@@ -491,6 +528,20 @@
     <!--Notification and channels-->
     <string name="workout_info_channel_title">Real-time workout information</string>
     <string name="workout_info_channel_desc">This channel is used to provide real-time updates on the ongoing workout.</string>
+
+
+    <!--Barbell calculator-->
+    <string name="barbell_calculator">Barbell Calculator</string>
+    <string name="target_weight">Target weight</string>
+    <string name="barbell_weight">Barbell weight</string>
+    <string name="plates_per_side">Plates per side</string>
+    <string name="no_plates_needed">No plates needed</string>
+    <string name="weight_le_bar">Weight is less than or equal to the bar</string>
+    <string name="include_small_plates">Include small plates</string>
+    <string name="closest_achievable">Closest achievable: %1$s</string>
+    <string name="plate_weight_description">%1$s plate</string>
+    <string name="chip_selected">Selected</string>
+    <string name="chip_not_selected">Not selected</string>
     <string name="rest_timer_channel_title">Rest time alerts</string>
     <string name="rest_timer_channel_desc">This channel is used to provide alerts when the rest time ends.</string>
     <string name="rest_time_is_over">Rest time is over!</string>
@@ -578,5 +629,13 @@
     <string name="do_not_show_again">Do not show again</string>
     <string name="undo">Undo</string>
     <string name="clear">Clear</string>
+
+    <!-- Input modal bottom sheet -->
+    <string name="decrease_weight_by_10">Decrease weight by 10</string>
+    <string name="increase_weight_by_10">Increase weight by 10</string>
+    <string name="decrease_reps_by_5">Decrease reps by 5</string>
+    <string name="increase_reps_by_5">Increase reps by 5</string>
+    <string name="decrease_time_by_30_seconds">Decrease time by 30 seconds</string>
+    <string name="increase_time_by_30_seconds">Increase time by 30 seconds</string>
 
 </resources>

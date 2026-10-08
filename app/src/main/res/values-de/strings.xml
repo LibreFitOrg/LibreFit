@@ -370,4 +370,14 @@
     <string name="language_urdu">Urdu</string>
     <string name="language_russian">Russisch</string>
     <string name="language_korean">Koreanisch</string>
+    <string name="open_settings">Einstellungen öffnen</string>
+    <string name="metric">Metrisch</string>
+    <string name="language_swedish">Schwedisch</string>
+    <string name="hide">Ausblenden</string>
+    <string name="notifications_permission_permanently_denied_desc">Benachrichtigungen sind blockiert. Bitte aktiviere sie in den Systemeinstellungen, um Trainings-Updates zu erhalten.</string>
+    <string name="hide_images_desc">Bilder von Übungen werden ausgeblendet</string>
+    <string name="show_images_desc">Bilder von Übungen werden eingeblendet</string>
+    <string name="settings_location">Standort</string>
+    <string name="show">Einblenden</string>
+    <string name="imperial">Imperial</string>
 </resources>

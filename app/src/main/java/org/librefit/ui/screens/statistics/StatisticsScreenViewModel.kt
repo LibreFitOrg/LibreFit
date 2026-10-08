@@ -10,7 +10,6 @@ package org.librefit.ui.screens.statistics
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,12 +26,10 @@ import org.librefit.ui.components.charts.Point
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import javax.inject.Inject
 
-@HiltViewModel
-class StatisticsScreenViewModel @Inject constructor(
+class StatisticsScreenViewModel(
     workoutRepository: WorkoutRepository,
-    dataHelper: DataHelper
+    dataHelper: DataHelper,
 ) : ViewModel() {
     private val _muscleDistributionStatisticsChart = MutableStateFlow(StatisticsChart.LOAD)
     val muscleDistributionStatisticsChart = _muscleDistributionStatisticsChart.asStateFlow()
