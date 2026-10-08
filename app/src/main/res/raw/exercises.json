@@ -3009,35 +3009,6 @@
     "id": "Bradford_Rocky_Presses"
   },
   {
-    "name": "Broad Jump",
-    "force": "push",
-    "level": "intermediate",
-    "mechanic": "compound",
-    "equipment": null,
-    "primaryMuscles": [
-      "glutes",
-      "quadriceps"
-    ],
-    "secondaryMuscles": [
-      "hamstrings",
-      "calves",
-      "abdominals"
-    ],
-    "instructions": [
-      "Stand with your feet about shoulder-width apart.",
-      "Lower into a quarter squat while swinging your arms behind you.",
-      "Explosively swing your arms forward and extend your hips, knees, and ankles to jump as far forward as possible.",
-      "Land softly with your knees and hips bent to absorb the impact.",
-      "Maintain balance in an athletic position before resetting for the next repetition."
-    ],
-    "category": "plyometrics",
-    "images": [
-      "Broad_Jump/0.webp",
-      "Broad_Jump/1.webp"
-    ],
-    "id": "Broad_Jump"
-  },
-  {
     "name": "Butt-Ups",
     "force": "pull",
     "level": "beginner",
