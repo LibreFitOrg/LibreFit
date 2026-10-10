@@ -31,4 +31,6 @@
     <string name="select_date">Tarih seç</string>
     <string name="create_exercise">Egzersiz oluştur</string>
     <string name="edit_exercise">egzersizi düzenle</string>
+    <string name="add_exercise">Egzersiz Ekle</string>
+    <string name="navigate_back">Önceki ekrana geri dön</string>
 </resources>
