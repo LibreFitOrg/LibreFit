@@ -382,4 +382,6 @@
     <string name="language_russian">Russo</string>
     <string name="language_korean">Coreano</string>
     <string name="language_swedish">Svedese</string>
+    <string name="language_portuguese">Portoghese</string>
+    <string name="target_weight">Peso target</string>
 </resources>
