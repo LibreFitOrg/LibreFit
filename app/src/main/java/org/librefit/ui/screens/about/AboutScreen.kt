@@ -27,12 +27,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,7 +48,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -56,6 +56,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.librefit.BuildConfig
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.userPreferences.ThemeMode
@@ -68,8 +69,17 @@ import org.librefit.ui.components.dialogs.UrlActionDialog
 import org.librefit.ui.components.modalBottomSheets.InfoModalBottomSheet
 import org.librefit.ui.theme.LibreFitTheme
 
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+/**
+ * About screen: app info header (logo, name, version, support and warning actions)
+ * followed by the data-driven credits defined in [aboutSections].
+ *
+ * @param onNavigateBack returns to the previous screen.
+ * @param onNavigateToSupportScreen opens the support screen.
+ * @param onNavigateToTutorialScreen opens the tutorial screen.
+ * @param onNavigateToPrivacyScreen opens the privacy policy screen.
+ * @param onNavigateToLicenseScreen opens the license screen.
+ * @param onNavigateToDependenciesScreen opens the dependencies screen.
+ */
 @Composable
 fun AboutScreen(
     onNavigateBack: () -> Unit,
@@ -77,11 +87,8 @@ fun AboutScreen(
     onNavigateToTutorialScreen: () -> Unit,
     onNavigateToPrivacyScreen: () -> Unit,
     onNavigateToLicenseScreen: () -> Unit,
-    onNavigateToDependenciesScreen: () -> Unit
+    onNavigateToDependenciesScreen: () -> Unit,
 ) {
-
-    val context = LocalContext.current
-
     val resources = LocalResources.current
 
     val url = rememberSaveable { mutableStateOf<String?>(null) }
@@ -102,810 +109,262 @@ fun AboutScreen(
         }
     }
 
+    val versionName = BuildConfig.VERSION_NAME
+
+    val resolveAction: (AboutAction) -> (() -> Unit)? = { action ->
+        when (action) {
+            AboutAction.None -> null
+            AboutAction.Tutorial -> onNavigateToTutorialScreen
+            AboutAction.Privacy -> onNavigateToPrivacyScreen
+            AboutAction.License -> onNavigateToLicenseScreen
+            AboutAction.Dependencies -> onNavigateToDependenciesScreen
+            is AboutAction.Url -> ({ url.value = resources.getString(action.urlRes) })
+        }
+    }
+
     LibreFitScaffold(
         title = AnnotatedString(stringResource(id = R.string.about)),
         navigateBack = onNavigateBack,
     ) { innerPadding ->
         LibreFitLazyColumn(innerPadding = innerPadding) {
-            item {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = stringResource(R.string.app_name),
-                    modifier = Modifier
-                        .size(220.dp)
-                        .clip(CircleShape)
-                        .background(colorResource(R.color.ic_launcher_background))
-                        .border(
-                            BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceContainer),
-                            CircleShape
-                        )
-                )
-            }
-            item {
-                AppNameText(MaterialTheme.typography.displayLargeEmphasized)
+            item(key = "header_logo") { AboutLogo() }
+            item(key = "header_app_name") { AppNameText(MaterialTheme.typography.displayLargeEmphasized) }
+
+            item(key = "header_version") {
+                Text(stringResource(R.string.version_name, versionName))
             }
 
-            val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            pInfo?.versionName?.let {
-                item {
-                    Text(stringResource(R.string.version) + ": $it")
+            item(key = "header_support") { AboutSupportButton(onClick = onNavigateToSupportScreen) }
+            item(key = "header_warning") {
+                AboutWarningButton(onClick = { infoMode.value = InfoMode.KEEP_ANDROID_OPEN })
+            }
+
+            aboutSections.forEach { (sectionTitle, entries) ->
+                item(key = "section_$sectionTitle") {
+                    HeadlineText(stringResource(sectionTitle))
                 }
-            }
 
-            item {
-                // Animated button
-                val infiniteTransition = rememberInfiniteTransition()
-                val animationProgress by infiniteTransition.animateFloat(
-                    initialValue = 0f,
-                    targetValue = 10f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(3000),
-                        repeatMode = RepeatMode.Restart
+                items(entries, key = { entry -> "$sectionTitle:${entry.title}" }) { entry ->
+                    AboutItem(
+                        icon = painterResource(entry.icon),
+                        text = stringResource(entry.title),
+                        description = resolveAboutDescription(entry.description),
+                        onClick = resolveAction(entry.action),
                     )
-                )
-
-                val color1 = MaterialTheme.colorScheme.primary
-                val color2 = MaterialTheme.colorScheme.inversePrimary
-                val colors = remember(color1, color2) {
-                    listOf(color1, color2, color1)
-                }
-
-                val shape = ButtonDefaults.shape
-                val pressedShape = ButtonDefaults.pressedShape
-
-                val interactionSource = remember { MutableInteractionSource() }
-                val isPressed by interactionSource.collectIsPressedAsState()
-
-                Button(
-                    onClick = onNavigateToSupportScreen,
-                    shapes = ButtonDefaults.shapes(),
-                    contentPadding = ButtonDefaults.MediumContentPadding,
-                    interactionSource = interactionSource,
-                    modifier = Modifier.drawWithCache {
-
-                        // Everything inside onDrawWithContent runs in the draw phase so reading 'animationProgress' here will not cause recomposition
-                        onDrawWithContent {
-                            drawContent() // Draw the button first
-
-                            // Calculate the radius using the exact size of the button
-                            val radius = (size.width * animationProgress).coerceAtLeast(0.1f)
-
-                            val brush = Brush.radialGradient(
-                                colors = colors,
-                                radius = radius,
-                                center = center
-                            )
-
-                            // Draw the animated border
-                            drawOutline(
-                                outline = (if(isPressed) pressedShape else shape).createOutline(size, layoutDirection, this),
-                                brush = brush,
-                                style = Stroke(width = 10f)
-                            )
-                        }
-                    }
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_favorite),
-                            contentDescription = null
-                        )
-                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                        Text(
-                            text = stringResource(R.string.lets_build_it_together),
-                            style = MaterialTheme.typography.headlineSmallEmphasized,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-
-            }
-
-            item {
-                LibreFitButton(
-                    text = stringResource(R.string.librefit_is_under_threat),
-                    elevated = false,
-                    icon = painterResource(R.drawable.ic_warning),
-                    iconDescription = stringResource(R.string.librefit_is_under_threat)
-                ) {
-                    infoMode.value = InfoMode.KEEP_ANDROID_OPEN
                 }
             }
-
-            item {
-                HeadlineText(stringResource(R.string.info))
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_help),
-                    text = stringResource(R.string.tutorial),
-                    description = stringResource(R.string.tutorial_desc),
-                    onClick = onNavigateToTutorialScreen
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_policy),
-                    text = stringResource(R.string.privacy),
-                    description = stringResource(R.string.privacy_policy_desc),
-                    onClick = onNavigateToPrivacyScreen
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_globe),
-                    text = stringResource(R.string.website),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_website)
-                    }
-                )
-            }
-
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_license),
-                    text = stringResource(R.string.license),
-                    description = stringResource(R.string.license_desc),
-                    onClick = onNavigateToLicenseScreen
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_github),
-                    text = stringResource(R.string.github),
-                    description = stringResource(R.string.source_code),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_source_code)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_codeberg),
-                    text = stringResource(R.string.codeberg),
-                    description = stringResource(R.string.source_code),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_source_code_codeberg)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_contract),
-                    text = stringResource(R.string.dependencies),
-                    onClick = onNavigateToDependenciesScreen
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.url_IamDg).split("/").last(),
-                    description = stringResource(R.string.founder),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_IamDg)
-                    }
-                )
-            }
-
-            item {
-                HeadlineText(stringResource(R.string.donators))
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.FlashyGhost)
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.jakedevs)
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.debianite65),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_debianite65)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.the_blue_blurr)
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.N4ü)
-                )
-            }
-
-            item {
-                HeadlineText(stringResource(R.string.contributors))
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.dpusceddu),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_dpusceddu)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.b3nj5m1n),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_b3nj5m1n)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.ByYeah),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_ByYeah)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.VanemKrAu),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_VanemKrAu)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.allddd),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_allddd)
-                    }
-                )
-            }
-
-            item {
-                HeadlineText(stringResource(R.string.translators))
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.doen1el),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_german),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_doen1el)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.kid1412621),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_chinese_simplified),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_kid1412621)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.mwesten),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_dutch),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_mwesten)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.Odweta),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_czech)
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.VA5H_One),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_spanish),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_VA5H_One)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.AhmedAwad7),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_arabic),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_AhmedAwad7)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.b0saleh),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_arabic),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_b0saleh)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.miguelsoaresouza8_droid),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_brazilian_portuguese),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_miguelsoaresouza8_droid)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.DoubleCheddarBurger),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_catalan),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_DoubleCheddarBurger)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.Spartang_117),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_Spartang_117)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.josé_m),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_spanish),
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.SilentCoderHere),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_hindi),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_SilentCoderHere)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.raihankr),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_indonesian),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_raihankr)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.SelwynDO),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_spanish),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_SelwynDO)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.UnknownLi),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_ukrainian),
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.xorodev),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_spanish),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_xorodev)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.johncorea580_crypto),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_spanish),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_johncorea580_crypto)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.theswordsgame),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_polish)
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.ylconion),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_chinese_simplified),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_ylconion)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.zei_dan),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_chinese_simplified),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_zei_dan)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.Robin_Schanbacher),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_german),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_Robin_Schanbacher)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.sprivaq),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_german),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_sprivaq)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.Safi_Ullah),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_urdu),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_Safi_Ullah)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.dzjulis),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_russian),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_dzjulis)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.Jae_Hyuk_Lee),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_korean)
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.Semprista),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_Semprista)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.mister_bum),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_german),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_mister_bum)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.BigP0tato),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_BigP0tato)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.T_Silverspoon),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_swedish),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_T_Silverspoon)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.tomel51733),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_spanish),
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.Ahmedbd23),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_chinese_simplified),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_Ahmedbd23)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.Jent1357),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_german),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_Jent1357)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.zhx000),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_german),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_zhx000)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.UbioZur),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_UbioZur)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.malespiaut),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_malespiaut)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.alexis_charp),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_french),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_alexis_charp)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.Miles_Espadoto),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_brazilian_portuguese)
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.vinitdrk),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_brazilian_portuguese),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_vinitdrk)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.Jahn_Andreas),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_swedish)
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.hyperion51),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_spanish),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_hyperion51)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.lotation),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_italian),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_lotation)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.joncasagrande),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_portuguese),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_joncasagrande)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.WinnerWind),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_hindi),
-                    onClick = {
-                        url.value = resources.getString(R.string.url_WinnerWind)
-                    }
-                )
-            }
-
-            item {
-                AboutItem(
-                    icon = painterResource(R.drawable.ic_person),
-                    text = stringResource(R.string.Rajesh_Ranmara),
-                    description = stringResource(R.string.contributed_to) + " " + stringResource(R.string.language_hindi)
-                )
-            }
-
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+/** App icon shown at the top of the About screen. */
 @Composable
-private fun AboutItem(
-    icon: Painter,
-    text: String,
-    description: String = "",
-    onClick: () -> Unit = {}
-) {
+private fun AboutLogo() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+        contentDescription = stringResource(R.string.app_name),
+        modifier = Modifier
+            .size(220.dp)
+            .clip(CircleShape)
+            .background(colorResource(R.color.ic_launcher_background))
+            .border(
+                BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceContainer),
+                CircleShape
+            )
+    )
+}
+
+/** Animated "let's build it together" support button with a pulsing radial-gradient border. */
+@Composable
+private fun AboutSupportButton(onClick: () -> Unit) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val animationProgress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 10f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    val color1 = MaterialTheme.colorScheme.primary
+    val color2 = MaterialTheme.colorScheme.inversePrimary
+    val colors = remember(color1, color2) {
+        listOf(color1, color2, color1)
+    }
+
+    val shape = ButtonDefaults.shape
+    val pressedShape = ButtonDefaults.pressedShape
+
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
 
     Button(
         onClick = onClick,
-        shapes = ButtonDefaults.shapes(
-            shape = MaterialTheme.shapes.extraLarge
-        ),
+        shapes = ButtonDefaults.shapes(),
         contentPadding = ButtonDefaults.MediumContentPadding,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
+        interactionSource = interactionSource,
+        modifier = Modifier.drawWithCache {
+
+            // Everything inside onDrawWithContent runs in the draw phase so reading 'animationProgress' here will not cause recomposition
+            onDrawWithContent {
+                drawContent() // Draw the button first
+
+                // Calculate the radius using the exact size of the button
+                val radius = (size.width * animationProgress).coerceAtLeast(0.1f)
+
+                val brush = Brush.radialGradient(
+                    colors = colors,
+                    radius = radius,
+                    center = center
+                )
+
+                // Draw the animated border
+                drawOutline(
+                    outline = (if (isPressed) pressedShape else shape).createOutline(
+                        size,
+                        layoutDirection,
+                        this
+                    ),
+                    brush = brush,
+                    style = Stroke(width = 10f)
+                )
+            }
+        }
     ) {
         Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            horizontalArrangement = Arrangement.Center
         ) {
             Icon(
-                painter = icon,
-                contentDescription = text,
-                modifier = Modifier.padding(end = 20.dp)
+                painter = painterResource(R.drawable.ic_favorite),
+                contentDescription = null
             )
-
-            Column {
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                if (description.isNotBlank()) {
-                    Text(
-                        text = description,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
+            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+            Text(
+                text = stringResource(R.string.lets_build_it_together),
+                style = MaterialTheme.typography.headlineSmallEmphasized,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
 
+/** Warning entry opening the "keep Android open" info sheet. */
+@Composable
+private fun AboutWarningButton(onClick: () -> Unit) {
+    LibreFitButton(
+        text = stringResource(R.string.librefit_is_under_threat),
+        elevated = false,
+        icon = painterResource(R.drawable.ic_warning),
+        iconDescription = stringResource(R.string.librefit_is_under_threat)
+    ) {
+        onClick()
+    }
+}
+
+/**
+ * Resolves [parts] into one subtitle: the first element is a format pattern,
+ * the remaining elements are its positional format arguments.
+ *
+ * @param parts string resources describing the row subtitle; empty renders as `""`.
+ * @return the resolved, formatted subtitle.
+ */
+@Composable
+private fun resolveAboutDescription(parts: List<Int>): String {
+    if (parts.isEmpty()) return ""
+    val pattern = parts.first()
+    val args = parts.drop(1)
+    // format only when there are arguments — never run a plain string through String.format,
+    // so a literal '%' in any single-part description cannot throw
+    if (args.isEmpty()) return stringResource(pattern)
+    val formatArgs = args.map { stringResource(it) }.toTypedArray()
+    return stringResource(pattern, *formatArgs)
+}
+
+/**
+ * A single About row: a [Button] when [onClick] is provided, otherwise a non-interactive
+ * [Surface] with the same shape, colors and content padding.
+ *
+ * @param modifier modifier applied to the row container.
+ * @param icon drawable shown at the start of the row.
+ * @param text row label.
+ * @param description optional row subtitle; rendered only when not blank.
+ * @param onClick activation handler, or `null` for a non-interactive row.
+ */
+@Composable
+private fun AboutItem(
+    modifier: Modifier = Modifier,
+    icon: Painter,
+    text: String,
+    description: String = "",
+    onClick: (() -> Unit)? = null
+) {
+    if (onClick != null) {
+        Button(
+            onClick = onClick,
+            modifier = modifier,
+            shapes = ButtonDefaults.shapes(
+                shape = MaterialTheme.shapes.extraLarge
+            ),
+            contentPadding = ButtonDefaults.MediumContentPadding,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+        ) {
+            AboutItemContent(icon = icon, text = text, description = description)
+        }
+    } else {
+        Surface(
+            modifier = modifier,
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ) {
+            AboutItemContent(
+                modifier = Modifier.padding(ButtonDefaults.MediumContentPadding),
+                icon = icon,
+                text = text,
+                description = description
+            )
+        }
+    }
+}
+
+/** Icon, label and optional description content shared by both [AboutItem] variants. */
+@Composable
+private fun AboutItemContent(
+    modifier: Modifier = Modifier,
+    icon: Painter,
+    text: String,
+    description: String = ""
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Icon(
+            painter = icon,
+            contentDescription = text,
+            modifier = Modifier.padding(end = 20.dp)
+        )
+
+        Column {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleMedium
+            )
+            if (description.isNotBlank()) {
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
+}
 
 @Preview(locale = "en")
 @Composable
@@ -917,7 +376,7 @@ private fun AboutScreenPreview() {
             onNavigateToTutorialScreen = {},
             onNavigateToPrivacyScreen = {},
             onNavigateToLicenseScreen = {},
-            onNavigateToDependenciesScreen = {}
+            onNavigateToDependenciesScreen = {},
         )
     }
 }
