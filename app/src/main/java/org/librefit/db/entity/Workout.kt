@@ -52,5 +52,6 @@ data class Workout(
     @Serializable(with = LocalDateTimeSerializer::class)
     val created: LocalDateTime = LocalDateTime.now(),
     @Serializable(with = LocalDateTimeSerializer::class)
-    val completed: LocalDateTime = LocalDateTime.now()
+    val completed: LocalDateTime = LocalDateTime.now(),
+    val healthConnectRecordVersion: Long = 0
 )

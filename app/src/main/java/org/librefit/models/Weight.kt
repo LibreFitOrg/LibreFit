@@ -18,7 +18,7 @@ import org.librefit.nav.LocalUnitSystem
 
 /**
  * A type-safe wrapper for weight values, represented in kilograms.
- * 
+ *
  * This class uses [JvmInline] to provide a zero-cost abstraction, meaning that at runtime,
  * it is represented by the underlying [Double] value, preventing unnecessary object allocations.
  * It enforces business constraints on weight range during both construction and factory-based instantiation.
@@ -85,7 +85,7 @@ value class Weight private constructor(
 
         /**
          * Factory method to create a [Weight] instance from a kilogram value.
-         * 
+         *
          * @param value The weight in kilograms.
          * @throws IllegalArgumentException if the provided [value] is outside the permitted [MIN_WEIGHT_IN_KILOGRAMS] and [MAX_WEIGHT_IN_KILOGRAMS] range.
          * @return A valid [Weight] instance.
@@ -102,7 +102,7 @@ value class Weight private constructor(
 
         /**
          * Factory method to create a [Weight] instance from a pound value.
-         * 
+         *
          * @param value The weight in pounds.
          * @throws IllegalArgumentException if the resulting kilogram conversion is outside the permitted range.
          * @return A valid [Weight] instance.

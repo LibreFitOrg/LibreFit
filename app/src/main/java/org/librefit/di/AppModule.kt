@@ -23,6 +23,9 @@ import org.librefit.di.qualifiers.ApplicationScope
 import org.librefit.di.qualifiers.DefaultDispatcher
 import org.librefit.di.qualifiers.IoDispatcher
 import org.librefit.di.qualifiers.MainDispatcher
+import org.librefit.health.ExerciseDataLayer
+import org.librefit.health.HealthConnectRepository
+import org.librefit.health.HealthConnectSyncManager
 import org.librefit.helpers.DataHelper
 import org.librefit.helpers.NotificationHelper
 import org.librefit.helpers.SoundPlayer
@@ -62,14 +65,19 @@ val libreFitModules = module {
     includes(databaseModule, dataStoreModule, dispatcherModule, coroutineScopeModule)
 
     // Data layer — explicit lambdas where a qualifier-decorated dependency exists
-    single { WorkoutRepository(get()) }
-    single { MeasurementRepository(get()) }
+    single { WorkoutRepository(get(), get(), get()) }
+    single { MeasurementRepository(get(), get(), get()) }
     single {
         DatasetRepository(get(), get(named<ApplicationScope>()), get(), androidContext())
     }
     single {
         UserPreferencesRepository(get(), get(named<ApplicationScope>()), androidApplication())
     }
+
+    // Health Connect
+    singleOf(::ExerciseDataLayer)
+    single { HealthConnectRepository(androidContext(), get()) }
+    singleOf(::HealthConnectSyncManager)
 
     // Helpers / services / util
     singleOf(::DataHelper)

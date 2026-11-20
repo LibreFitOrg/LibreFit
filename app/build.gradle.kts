@@ -86,6 +86,9 @@ android {
             versionNameSuffix = "-debug"
         }
         sourceSets {
+            named("androidTest") {
+                assets.directories += "$projectDir/schemas"
+            }
             named("release") {
                 kotlin.directories += "build/generated/ksp/release/kotlin"
                 kotlin.directories += "build/generated/ksp/release/java"
@@ -200,6 +203,9 @@ dependencies {
     // Koin for dependency injection
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+
+    // Health connect
+    implementation(libs.androidx.health.connect)
 
 
     // AboutLibraries to show used dependencies in jetpack compose

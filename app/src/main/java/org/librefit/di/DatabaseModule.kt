@@ -28,6 +28,7 @@ val databaseModule = module {
             AppDatabase.NAME,
         )
             .addMigrations(AppDatabase.MIGRATION_2_3)
+            .addMigrations(AppDatabase.MIGRATION_5_6)
             .build()
     }
 

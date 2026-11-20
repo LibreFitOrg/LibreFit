@@ -18,8 +18,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.librefit.db.repository.UserPreferencesRepository
+import org.librefit.health.HealthConnectSyncManager
 import org.librefit.nav.NavigationHost
 import org.librefit.nav.Route
 import org.librefit.nav.deepLinkKeyForAction
@@ -43,6 +46,8 @@ class MainActivity : AppCompatActivity() {
      * `onPendingDeepLinkConsumed`.
      */
     private val pendingDeepLink = mutableStateOf<Route?>(null)
+
+    private val healthConnectSyncManager: HealthConnectSyncManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -72,6 +77,12 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Health Connect does not notify LibreFit when another app adds new data.
+        lifecycleScope.launch { healthConnectSyncManager.syncEnabledData() }
     }
 
     override fun onNewIntent(intent: Intent) {

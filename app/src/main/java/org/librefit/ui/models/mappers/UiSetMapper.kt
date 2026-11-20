@@ -17,6 +17,8 @@ fun Set.toUi(): UiSet {
         load = this.load,
         reps = this.reps,
         elapsedTime = this.elapsedTime,
+        startedAt = this.startedAt,
+        completedAt = this.completedAt,
         completed = this.completed,
         exerciseId = this.exerciseId
     )
@@ -28,6 +30,8 @@ fun UiSet.toEntity(): Set {
         load = this.load,
         reps = this.reps,
         elapsedTime = this.elapsedTime,
+        startedAt = this.startedAt,
+        completedAt = this.completedAt,
         completed = this.completed,
         exerciseId = this.exerciseId
     )

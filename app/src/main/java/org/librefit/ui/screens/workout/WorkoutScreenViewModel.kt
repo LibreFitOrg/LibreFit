@@ -51,6 +51,7 @@ import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import org.librefit.ui.models.moveExercise
 import org.librefit.ui.models.withNormalizedExercisePositions
+import java.time.LocalDateTime
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -79,6 +80,7 @@ class WorkoutScreenViewModel(
     }
 
     private suspend fun startSetStopwatch(set: UiSet) {
+        markSetStarted(set.id)
         val startTime = System.currentTimeMillis()
         val id = set.id
         val initialElapsedTime = if (id in idsOfSetsWithStopwatchNotStartedAtLeastOnce.value) {
@@ -99,6 +101,28 @@ class WorkoutScreenViewModel(
 
             delay(1000.milliseconds)
         }
+    }
+
+    private fun markSetStarted(id: Long) {
+        val now = LocalDateTime.now()
+        _exercises.update { currentExercises ->
+            currentExercises.map { exercise ->
+                if (exercise.sets.any { it.id == id }) {
+                    exercise.copy(
+                        sets = exercise.sets.map { set ->
+                            if (set.id == id && set.startedAt == null) {
+                                set.copy(startedAt = now)
+                            } else {
+                                set
+                            }
+                        }.toImmutableList()
+                    )
+                } else {
+                    exercise
+                }
+            }
+        }
+        syncToRepository()
     }
 
     private val workoutId = route.workoutId
@@ -343,12 +367,28 @@ class WorkoutScreenViewModel(
     }
 
     fun updateSetCompleted(completed: Boolean, id: Long) {
+        val now = LocalDateTime.now()
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
                 if (exercise.sets.any { it.id == id }) {
                     exercise.copy(
                         sets = exercise.sets.map {
-                            if (it.id == id) it.copy(completed = completed) else it
+                            if (it.id == id) {
+                                it.copy(
+                                    completed = completed,
+                                    startedAt = when {
+                                        completed && it.startedAt == null && it.elapsedTime > 0 -> {
+                                            now.minusSeconds(it.elapsedTime.toLong())
+                                        }
+                                        completed && it.startedAt == null -> now
+                                        !completed -> null
+                                        else -> it.startedAt
+                                    },
+                                    completedAt = if (completed) now else null
+                                )
+                            } else {
+                                it
+                            }
                         }.toImmutableList()
                     )
                 } else exercise

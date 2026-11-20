@@ -21,5 +21,9 @@ data class Measurement(
     @get:IntRange(0, 100) val bodyFatPercentage: Int = 0,
     @get:IntRange(0, 100) val muscleMassPercentage: Int = 0,
     val date: LocalDateTime = LocalDateTime.now(),
-    val notes: String = ""
+    val notes: String = "",
+    // Origins are stored per value so imported fat does not block a local weight export.
+    val healthConnectWeightRecordId: String? = null,
+    val healthConnectBodyFatRecordId: String? = null,
+    val healthConnectRecordVersion: Long = 0
 )

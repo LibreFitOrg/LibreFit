@@ -10,6 +10,7 @@ ksp = "2.3.6"
 lottieCompose = "6.7.1"
 coreSplashscreen = "1.2.0"
 composeM3 = "3.3.1"
+healthConnect = "1.1.0"
 aboutLibraries = "15.2.0"
 aboutlibrariesComposeM3 = "15.2.0"
 kotlinxCoroutinesTest = "1.11.0"
@@ -50,6 +51,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "composeM3" }
+androidx-health-connect = { group = "androidx.health.connect", name = "connect-client", version.ref = "healthConnect" }
 aboutlibraries-compose-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibrariesComposeM3" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }

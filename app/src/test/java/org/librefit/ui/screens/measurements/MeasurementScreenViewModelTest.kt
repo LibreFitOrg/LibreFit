@@ -113,6 +113,7 @@ class MeasurementScreenViewModelTest {
                 currentList.add(upsertedItem)
             }
             measurementsFlow.value = currentList
+            upsertedItem.id
         }
         coEvery { measurementRepository.deleteById(capture(idMeasurementToDelete)) } answers {
             val updatedList =
@@ -319,7 +320,6 @@ class MeasurementScreenViewModelTest {
             assertEquals(updatedMeasurements, awaitItem())
         }
     }
-
 
     @Test
     fun `when updating a measurement without measurement card state as NEW - measurements flow should NOT emit the right updated list`() =
