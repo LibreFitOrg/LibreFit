@@ -41,13 +41,16 @@
     <string name="url_website" translatable="false">https://librefit.org</string>
     <string name="contributors">Contributors</string>
     <string name="url_IamDg" translatable="false">https://github.com/IamDg</string>
+    <string name="IamDg" translatable="false">IamDg</string>
     <string name="founder">Founder</string>
     <string name="translators">Translators</string>
     <string name="contributed_to">Contributed to: </string>
+    <string name="contributed_to_language">Contributed to: %1$s</string>
     <string name="view_online_version">View online version</string>
     <string name="url_gpl3" translatable="false">https://www.gnu.org/licenses/gpl-3.0.en.html#license-text</string>
     <string name="github" translatable="false">GitHub</string>
     <string name="version">Version</string>
+    <string name="version_name">Version: %1$s</string>
     <string name="dependencies">Dependencies</string>
     <string name="lets_build_it_together">Let\'s build it together</string>
     <string name="tutorial_desc">Learn how to create routines and track your workouts.</string>
