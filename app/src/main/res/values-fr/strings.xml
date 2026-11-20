@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LibreFit</string>
-    <string name="home">Home</string>
+    <string name="home">Accueil</string>
     <string name="profile">Profil</string>
     <string name="settings">Paramètres</string>
     <string name="about">À propos</string>
@@ -375,4 +375,20 @@
     <string name="quit_workout_text">Êtes-vous certain de vouloir quitter ? Votre entraînement ne sera pas sauvegardé</string>
     <string name="unit_system">Unité de mesure</string>
     <string name="discard_running_workout_and_select_routine_text">Pour commencer cette routine l\'entraînement en cours non enregistré doit être abandonné. Êtes vous certain de vouloir l\'annuler ? Cette action est irréversible.</string>
+    <string name="language_portuguese">Portugais</string>
+    <string name="barbell_calculator">Calculateur de charge pour barre</string>
+    <string name="target_weight">Poids cible</string>
+    <string name="barbell_weight">Poids de barre</string>
+    <string name="plates_per_side">Disques par côté</string>
+    <string name="weight_le_bar">Le poids est inférieur ou égal à la barre</string>
+    <string name="closest_achievable">Réalisable au plus proche : %1$s</string>
+    <string name="plate_weight_description">%1$s disque</string>
+    <string name="chip_selected">Sélectionné</string>
+    <string name="chip_not_selected">Non sélectionné</string>
+    <string name="decrease_weight_by_10">Réduire poids de 10</string>
+    <string name="increase_weight_by_10">Augmenter poids de 10</string>
+    <string name="decrease_reps_by_5">Réduire répétitions de 5</string>
+    <string name="increase_reps_by_5">Augmenter répétitions de 5</string>
+    <string name="decrease_time_by_30_seconds">Réduire temps de 30 secondes</string>
+    <string name="increase_time_by_30_seconds">Augmenter temps de 30 secondes</string>
 </resources>
