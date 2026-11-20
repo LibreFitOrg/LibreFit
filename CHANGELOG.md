@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - New (12) exercises [#132](https://github.com/LibreFitOrg/LibreFit/pull/132)
 - Option to update routines with the values of completed sets at the end of a workout [#44](https://github.com/LibreFitOrg/LibreFit/issues/44)
+- Option to play a sound and stop the stopwatch when the target duration of a set is reached [#101](https://github.com/LibreFitOrg/LibreFit/issues/101)
 
 ### Changed
 
@@ -26,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--
+- Progress of a set's stopwatch is lost when an interrupted workout is resumed
 
 ## [0.5.0] - 2026-09-18
 

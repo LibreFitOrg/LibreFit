@@ -35,6 +35,9 @@ import kotlin.random.Random
  * @property reps The number of repetitions performed in the set.
  * @property elapsedTime The time taken to complete the set, in seconds.
  * @property completed Indicates whether the set has been completed.
+ * @property targetTime The target duration of the set, in seconds. It is assigned the first time the
+ * stopwatch of the set is started in [org.librefit.ui.screens.workout.WorkoutScreen] and it is `null`
+ * as long as the stopwatch has never been started.
  * @property exerciseId This is a foreign key reference to the [Exercise] entity.
  *
  */
@@ -57,5 +60,6 @@ data class Set(
     val reps: Int = 0,
     val elapsedTime: Int = 0,
     val completed: Boolean = false,
+    val targetTime: Int? = null,
     val exerciseId: Long = 0// Foreign key reference to Exercise
 )

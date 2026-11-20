@@ -82,6 +82,8 @@ fun SettingsScreen(
 
     val restTimerSoundOn by viewModel.restTimerSoundOn.collectAsStateWithLifecycle()
 
+    val durationSetAlertOn by viewModel.durationSetAlertOn.collectAsStateWithLifecycle()
+
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
 
     val currentPreference by viewModel.currentPreference.collectAsStateWithLifecycle()
@@ -135,6 +137,7 @@ fun SettingsScreen(
         selectedLanguage = selectedLanguage,
         keepWorkoutScreenOn = keepWorkoutScreenOn,
         restTimerSoundOn = restTimerSoundOn,
+        durationSetAlertOn = durationSetAlertOn,
         isSupporter = isSupporter,
         useScrollWheelForInput = useScrollWheelForInput,
         showExercisesImages = showExercisesImages,
@@ -146,6 +149,7 @@ fun SettingsScreen(
         onMaterialModeChange = viewModel::saveMaterialMode,
         onKeepWorkoutScreenOnChange = viewModel::saveWorkoutScreenOn,
         onRestTimerSoundOnChange = viewModel::saveRestTimerSoundOn,
+        onDurationSetAlertOnChange = viewModel::saveDurationSetAlertOn,
         onIsWorkoutHeaderStickyChange = viewModel::saveIsWorkoutHeaderSticky,
         onUseScrollWheelForInputChange = viewModel::saveUseScrollWheelForInput,
         onShowExercisesImagesChange = viewModel::saveShowExercisesImages,
@@ -166,6 +170,7 @@ private fun SettingsScreenContent(
     selectedLanguage: Language,
     keepWorkoutScreenOn: Boolean,
     restTimerSoundOn: Boolean,
+    durationSetAlertOn: Boolean,
     isSupporter: Boolean,
     isWorkoutHeaderSticky: Boolean,
     useScrollWheelForInput: Boolean,
@@ -177,6 +182,7 @@ private fun SettingsScreenContent(
     onMaterialModeChange: (Boolean) -> Unit,
     onKeepWorkoutScreenOnChange: (Boolean) -> Unit,
     onRestTimerSoundOnChange: (Boolean) -> Unit,
+    onDurationSetAlertOnChange: (Boolean) -> Unit,
     onIsWorkoutHeaderStickyChange: (Boolean) -> Unit,
     onUseScrollWheelForInputChange: (Boolean) -> Unit,
     onShowExercisesImagesChange: (Boolean) -> Unit,
@@ -269,6 +275,18 @@ private fun SettingsScreenContent(
                         id = if (restTimerSoundOn) R.string.rest_timer_sound_on_desc else R.string.rest_timer_sound_off_desc
                     ),
                     isChecked = restTimerSoundOn
+                )
+            }
+
+            item {
+                SettingItem(
+                    onClick = { onDurationSetAlertOnChange(!durationSetAlertOn) },
+                    icon = painterResource(R.drawable.ic_timer),
+                    settingName = stringResource(id = R.string.duration_set_alert),
+                    settingDesc = stringResource(
+                        id = if (durationSetAlertOn) R.string.duration_set_alert_on_desc else R.string.duration_set_alert_off_desc
+                    ),
+                    isChecked = durationSetAlertOn
                 )
             }
 
@@ -408,6 +426,7 @@ fun SettingsScreenPreview() {
     var materialModeOn by remember { mutableStateOf(Random.nextBoolean()) }
     var keepWorkoutScreenOn by remember { mutableStateOf(Random.nextBoolean()) }
     var restTimerSoundOn by remember { mutableStateOf(Random.nextBoolean()) }
+    var durationSetAlertOn by remember { mutableStateOf(Random.nextBoolean()) }
     var isWorkoutHeaderSticky by remember { mutableStateOf(Random.nextBoolean()) }
     var dismissScrollWheelInputAutomatically by remember { mutableStateOf(Random.nextBoolean()) }
     var useScrollWheelForInput by remember { mutableStateOf(Random.nextBoolean()) }
@@ -424,6 +443,7 @@ fun SettingsScreenPreview() {
             selectedLanguage = Language.SYSTEM,
             keepWorkoutScreenOn = keepWorkoutScreenOn,
             restTimerSoundOn = restTimerSoundOn,
+            durationSetAlertOn = durationSetAlertOn,
             updatePreferences = {},
             isSupporter = Random.nextBoolean(),
             isWorkoutHeaderSticky = isWorkoutHeaderSticky,
@@ -435,6 +455,7 @@ fun SettingsScreenPreview() {
             onMaterialModeChange = { materialModeOn = it },
             onKeepWorkoutScreenOnChange = { keepWorkoutScreenOn = it },
             onRestTimerSoundOnChange = { restTimerSoundOn = it },
+            onDurationSetAlertOnChange = { durationSetAlertOn = it },
             onIsWorkoutHeaderStickyChange = { isWorkoutHeaderSticky = it },
             onUseScrollWheelForInputChange = { useScrollWheelForInput = it },
             onShowExercisesImagesChange = { displayExercisesImages = it },

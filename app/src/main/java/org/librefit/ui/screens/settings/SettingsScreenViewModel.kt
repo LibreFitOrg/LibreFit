@@ -34,6 +34,7 @@ class SettingsScreenViewModel(
     val keepScreenOn = userPreferences.workoutScreenOn
     val language = userPreferences.language
     val restTimerSoundOn = userPreferences.restTimerSoundOn
+    val durationSetAlertOn = userPreferences.durationSetAlertOn
     val isSupporter = userPreferences.isSupporter
     val isWorkoutHeaderSticky = userPreferences.isWorkoutHeaderSticky
     val useScrollWheelForInput = userPreferences.useScrollWheelForInput
@@ -60,6 +61,10 @@ class SettingsScreenViewModel(
 
     fun saveRestTimerSoundOn(isOn: Boolean) {
         viewModelScope.launch { userPreferences.saveRestTimerSoundOn(isOn) }
+    }
+
+    fun saveDurationSetAlertOn(isOn: Boolean) {
+        viewModelScope.launch { userPreferences.saveDurationSetAlertOn(isOn) }
     }
 
     fun saveIsWorkoutHeaderSticky(isSticky: Boolean) {

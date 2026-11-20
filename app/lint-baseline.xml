@@ -222,6 +222,72 @@
 
     <issue
         id="RestrictedApi"
+        message="Column can only be called from within the same library group prefix (referenced groupId=`androidx.room` with prefix androidx from groupId=`LibreFit`)"
+        errorLine1="        _columnsDataset.put(&quot;isCustomExercise&quot;, TableInfo.Column(&quot;isCustomExercise&quot;, &quot;INTEGER&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY))"
+        errorLine2="                                                          ~~~~~~">
+        <location
+            file="build/generated/ksp/debug/kotlin/org/librefit/db/AppDatabase_Impl.kt"
+            line="192"
+            column="59"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="Column can only be called from within the same library group prefix (referenced groupId=`androidx.room` with prefix androidx from groupId=`LibreFit`)"
+        errorLine1="        _columnsDataset.put(&quot;isCustomExercise&quot;, TableInfo.Column(&quot;isCustomExercise&quot;, &quot;INTEGER&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY))"
+        errorLine2="                                                                 ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build/generated/ksp/debug/kotlin/org/librefit/db/AppDatabase_Impl.kt"
+            line="192"
+            column="66"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="Column can only be called from within the same library group prefix (referenced groupId=`androidx.room` with prefix androidx from groupId=`LibreFit`)"
+        errorLine1="        _columnsDataset.put(&quot;isCustomExercise&quot;, TableInfo.Column(&quot;isCustomExercise&quot;, &quot;INTEGER&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY))"
+        errorLine2="                                                                                     ~~~~~~~~~">
+        <location
+            file="build/generated/ksp/debug/kotlin/org/librefit/db/AppDatabase_Impl.kt"
+            line="192"
+            column="86"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="Column can only be called from within the same library group prefix (referenced groupId=`androidx.room` with prefix androidx from groupId=`LibreFit`)"
+        errorLine1="        _columnsDataset.put(&quot;isCustomExercise&quot;, TableInfo.Column(&quot;isCustomExercise&quot;, &quot;INTEGER&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY))"
+        errorLine2="                                                                                                         ~~~~">
+        <location
+            file="build/generated/ksp/debug/kotlin/org/librefit/db/AppDatabase_Impl.kt"
+            line="192"
+            column="106"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="TableInfo.CREATED_FROM_ENTITY can only be accessed from within the same library group prefix (referenced groupId=`androidx.room` with prefix androidx from groupId=`LibreFit`)"
+        errorLine1="        _columnsDataset.put(&quot;isCustomExercise&quot;, TableInfo.Column(&quot;isCustomExercise&quot;, &quot;INTEGER&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY))"
+        errorLine2="                                                                                                                         ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build/generated/ksp/debug/kotlin/org/librefit/db/AppDatabase_Impl.kt"
+            line="192"
+            column="122"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="TableInfo.Companion can only be accessed from within the same library group prefix (referenced groupId=`androidx.room` with prefix androidx from groupId=`LibreFit`)"
+        errorLine1="        _columnsDataset.put(&quot;isCustomExercise&quot;, TableInfo.Column(&quot;isCustomExercise&quot;, &quot;INTEGER&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY))"
+        errorLine2="                                                                                                               ~~~~~~~~~">
+        <location
+            file="build/generated/ksp/debug/kotlin/org/librefit/db/AppDatabase_Impl.kt"
+            line="192"
+            column="112"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
         message="RoomDatabase.createOpenDelegate can only be called from within the same library group prefix (referenced groupId=`androidx.room` with prefix androidx from groupId=`LibreFit`)"
         errorLine1="  protected override fun createOpenDelegate(): RoomOpenDelegate {"
         errorLine2="                         ~~~~~~~~~~~~~~~~~~">
@@ -5443,6 +5509,17 @@
             file="build/generated/ksp/debug/kotlin/org/librefit/db/dao/MeasurementDao_Impl.kt"
             line="231"
             column="12"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="SQLiteStatementUtil__StatementUtilKt.getColumnIndexOrThrow can only be called from within the same library group prefix (referenced groupId=`androidx.room` with prefix androidx from groupId=`LibreFit`)"
+        errorLine1="        val _columnIndexOfCompleted: Int = getColumnIndexOrThrow(_stmt, &quot;completed&quot;)"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build/generated/ksp/debug/kotlin/org/librefit/db/dao/WorkoutDao_Impl.kt"
+            line="1053"
+            column="44"/>
     </issue>
 
     <issue

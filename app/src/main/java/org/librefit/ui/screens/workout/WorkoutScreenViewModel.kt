@@ -47,10 +47,13 @@ import org.librefit.ui.models.UiExerciseWithSets
 import org.librefit.ui.models.UiSet
 import org.librefit.ui.models.UiWorkout
 import org.librefit.ui.models.UiWorkoutWithExercisesAndSets
+import org.librefit.ui.models.hasReachedTargetTime
 import org.librefit.ui.models.mappers.toEntity
 import org.librefit.ui.models.mappers.toUi
 import org.librefit.ui.models.moveExercise
+import org.librefit.ui.models.withEditedTime
 import org.librefit.ui.models.withNormalizedExercisePositions
+import org.librefit.ui.models.withStartedStopwatch
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -66,11 +69,6 @@ class WorkoutScreenViewModel(
     private val mainDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
-    private val _idsOfSetsWithStopwatchNotStartedAtLeastOnce =
-        MutableStateFlow<Set<Long>>(emptySet())
-    val idsOfSetsWithStopwatchNotStartedAtLeastOnce =
-        _idsOfSetsWithStopwatchNotStartedAtLeastOnce.asStateFlow()
-
     private val _idSetWithRunningStopwatch = MutableStateFlow<Long?>(null)
     val idSetWithRunningStopwatch = _idSetWithRunningStopwatch.asStateFlow()
 
@@ -80,22 +78,25 @@ class WorkoutScreenViewModel(
 
     private suspend fun startSetStopwatch(set: UiSet) {
         val startTime = System.currentTimeMillis()
-        val id = set.id
-        val initialElapsedTime = if (id in idsOfSetsWithStopwatchNotStartedAtLeastOnce.value) {
-            _idsOfSetsWithStopwatchNotStartedAtLeastOnce.update { set ->
-                set.filter { it != id }.toSet()
-            }
-            0
-        } else {
-            set.elapsedTime
-        }
+        val startedSet = set.withStartedStopwatch()
+        updateSet(set.id) { startedSet }
+        val initialElapsedTime = startedSet.elapsedTime
 
         // The loop is infinite, but the coroutine will be stopped when its Job is canceled
+        // or when the target duration of the set is reached
         while (true) {
             val currentTime = System.currentTimeMillis()
-            val newElapsedTime = initialElapsedTime + ((currentTime - startTime) / 1000)
+            val newElapsedTime = initialElapsedTime + ((currentTime - startTime) / 1000).toInt()
 
-            updateSetTime(newElapsedTime.toInt(), set.id)
+            updateSet(set.id) { it.copy(elapsedTime = newElapsedTime.coerceAtMost(MAX_SET_TIME)) }
+
+            if (userPreferences.durationSetAlertOn.value &&
+                startedSet.hasReachedTargetTime(initialElapsedTime, newElapsedTime)
+            ) {
+                soundPlayer.playAlert()
+                updateIdSetWithRunningStopwatch(null)
+                return
+            }
 
             delay(1000.milliseconds)
         }
@@ -204,12 +205,18 @@ class WorkoutScreenViewModel(
                     workoutServiceManager.setInitialTimeElapsed(workoutWithExercisesAndSets.workout.timeElapsed)
                 }
 
+                // Only the sets of an interrupted workout keep the progress of their stopwatches.
+                // For the others, the time of the sets is the target duration
                 _exercises.update {
-                    workoutWithExercisesAndSets.exercisesWithSets
-                }
-
-                _idsOfSetsWithStopwatchNotStartedAtLeastOnce.update {
-                    exercises.value.flatMap { it.sets }.map { it.id }.toSet()
+                    if (workoutWithExercisesAndSets.workout.state == WorkoutState.RUNNING) {
+                        workoutWithExercisesAndSets.exercisesWithSets
+                    } else {
+                        workoutWithExercisesAndSets.exercisesWithSets.map { eWs ->
+                            eWs.copy(
+                                sets = eWs.sets.map { it.copy(targetTime = null) }.toImmutableList()
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -280,7 +287,7 @@ class WorkoutScreenViewModel(
             exercises.map { exercise ->
                 if (exercise.exercise.id == exerciseId) {
                     val newSet = exercise.sets
-                        .lastOrNull()?.copy(id = newId)
+                        .lastOrNull()?.copy(id = newId, targetTime = null)
                         ?: UiSet()
 
                     val newSets = exercise.sets.toMutableList() + newSet
@@ -288,22 +295,31 @@ class WorkoutScreenViewModel(
                 } else exercise
             }
         }
-
-        _idsOfSetsWithStopwatchNotStartedAtLeastOnce.update {
-            it + newId
-        }
         syncToRepository()
     }
 
+    /**
+     * Updates the time of a set changed by the user. If the stopwatch of the set is not running,
+     * the new time is the new target duration of the set (see [withEditedTime]).
+     */
     fun updateSetTime(time: Int, id: Long) {
+        val newTime = time.coerceAtMost(MAX_SET_TIME)
+        updateSet(id) { set ->
+            if (idSetWithRunningStopwatch.value == id) {
+                set.copy(elapsedTime = newTime)
+            } else {
+                set.withEditedTime(newTime)
+            }
+        }
+    }
+
+    private fun updateSet(id: Long, transform: (UiSet) -> UiSet) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
                 if (exercise.sets.any { it.id == id }) {
                     exercise.copy(
                         sets = exercise.sets.map {
-                            if (it.id == id) it.copy(
-                                elapsedTime = time.coerceAtMost(60 * 100) // max = 99:59
-                            ) else it
+                            if (it.id == id) transform(it) else it
                         }.toImmutableList()
                     )
                 } else exercise
@@ -408,9 +424,9 @@ class WorkoutScreenViewModel(
 
     fun deleteExercise(exerciseId: Long) {
         val exerciseWithSets = exercises.value.find { it.exercise.id == exerciseId }!!
-        // If there's the match, then the set has a running stopwatch and it has to be stopped by assign 0
+        // If there's the match, then the set has a running stopwatch and it has to be stopped by assigning null
         if (exerciseWithSets.sets.any { it.id == idSetWithRunningStopwatch.value }) {
-            _idSetWithRunningStopwatch.update { 0L }
+            _idSetWithRunningStopwatch.update { null }
         }
         _exercises.update { currentExercises ->
             currentExercises
@@ -584,5 +600,9 @@ class WorkoutScreenViewModel(
         viewModelScope.launch {
             userPreferences.saveDefaultBarWeight(value)
         }
+    }
+
+    private companion object {
+        const val MAX_SET_TIME = 60 * 100 // max = 99:59
     }
 }

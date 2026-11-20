@@ -41,6 +41,7 @@ private val MATERIAL_MODE_KEY = booleanPreferencesKey("material_mode")
 private val KEEP_ON_WORKOUT_SCREEN_KEY = booleanPreferencesKey("workout_screen_on")
 private val REQUEST_PERMISSIONS_NEXT_TIME_KEY = booleanPreferencesKey("ask_permission_again")
 private val REST_TIMER_SOUND_KEY = booleanPreferencesKey("alert_sound")
+private val DURATION_SET_ALERT_KEY = booleanPreferencesKey("duration_set_alert")
 private val SHOW_WELCOME_SCREEN_KEY = booleanPreferencesKey("show_welcome_screen")
 private val IS_SUPPORTER_KEY = booleanPreferencesKey("is_supporter")
 private val PAST_VERSION_CODE_KEY = longPreferencesKey("pastVersionCode")
@@ -120,6 +121,14 @@ class UserPreferencesRepository(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
             initialValue = true
+        )
+
+    val durationSetAlertOn: StateFlow<Boolean> = dataStore.data
+        .map { preferences -> preferences[DURATION_SET_ALERT_KEY] == true }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
         )
 
     val showWelcomeScreen: StateFlow<Boolean> = dataStore.data
@@ -307,6 +316,10 @@ class UserPreferencesRepository(
 
     suspend fun saveRestTimerSoundOn(isOn: Boolean) {
         dataStore.edit { preferences -> preferences[REST_TIMER_SOUND_KEY] = isOn }
+    }
+
+    suspend fun saveDurationSetAlertOn(isOn: Boolean) {
+        dataStore.edit { preferences -> preferences[DURATION_SET_ALERT_KEY] = isOn }
     }
 
     suspend fun saveShowWelcomeScreen(show: Boolean) {

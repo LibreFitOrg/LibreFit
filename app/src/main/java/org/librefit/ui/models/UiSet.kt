@@ -27,5 +27,6 @@ data class UiSet(
     val reps: Int = 0,
     val elapsedTime: Int = 0,
     val completed: Boolean = false,
+    val targetTime: Int? = null,
     val exerciseId: Long = 0
 )
