@@ -1,10 +1,9 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2025-2026. The LibreFit Contributors
+ * Copyright (c) 2024-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
- *
  */
 
 package org.librefit.ui.screens.editWorkout
@@ -317,7 +316,7 @@ class EditWorkoutScreenViewModel(
         }
     }
 
-    fun addWarmups(exerciseId: Long, target: Double) {
+    fun addWarmups(exerciseId: Long, target: Weight) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
                 if (exercise.exercise.id == exerciseId) {
@@ -325,7 +324,8 @@ class EditWorkoutScreenViewModel(
                         exercise.sets.filter { !it.warmup }
                     val completedWarmups = exercise.sets.filter { it.warmup && it.completed }
                     val warmupSets =
-                        WarmupMode.DEFAULT.createUiSets(target);
+                        WarmupMode.modesForSetMode(exercise.exercise.setMode).first()
+                            .createUiSets(target);
                     exercise.copy(sets = (completedWarmups + warmupSets + setsWithoutWarmups).toImmutableList())
                 } else exercise
             }
@@ -351,7 +351,7 @@ class EditWorkoutScreenViewModel(
         syncToRepository()
     }
 
-    fun updateWarmupMode(warmupMode: WarmupMode, target: Double, exerciseId: Long) {
+    fun updateWarmupMode(warmupMode: WarmupMode, target: Weight, exerciseId: Long) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
                 if (exercise.exercise.id == exerciseId) {
@@ -370,7 +370,7 @@ class EditWorkoutScreenViewModel(
         syncToRepository()
     }
 
-    fun updateWarmupTarget(target: Double, exerciseId: Long) {
+    fun updateWarmupTarget(target: Weight, exerciseId: Long) {
         _exercises.update { currentExercises ->
             currentExercises.map { exercise ->
                 if (exercise.exercise.id == exerciseId) {

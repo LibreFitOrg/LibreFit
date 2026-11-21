@@ -307,9 +307,9 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     onSelectedExerciseIdChange: (Long, String) -> Unit,
     showInfo: (InfoMode) -> Unit,
     addEmptyWarmup: (Long) -> Unit,
-    updateWarmupTarget: (Double, Long) -> Unit,
-    addWarmups: (Long) -> Unit,
-    updateWarmupMode: (WarmupMode, Long) -> Unit,
+    updateWarmupTarget: (Weight, Long) -> Unit,
+    addWarmups: (Long, Weight) -> Unit,
+    updateWarmupMode: (WarmupMode, Weight, Long) -> Unit,
     applyPreviousSetPerformance: (Long) -> Unit,
     saveDefaultBarWeight: (Double) -> Unit,
 ) {

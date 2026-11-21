@@ -190,10 +190,10 @@ private fun SharedTransitionScope.EditWorkoutScreenContent(
     updateExerciseSetMode: (SetMode, Long) -> Unit,
     moveExercise: (Int, Int) -> Unit,
     saveWorkoutWithExercisesInDB: () -> Unit,
-    addWarmups: (Long, Double) -> Unit,
+    addWarmups: (Long, Weight) -> Unit,
     addEmptyWarmup: (Long) -> Unit,
-    updateWarmupMode: (WarmupMode, Double, Long) -> Unit,
-    updateWarmupTarget: (Double, Long) -> Unit,
+    updateWarmupMode: (WarmupMode, Weight, Long) -> Unit,
+    updateWarmupTarget: (Weight, Long) -> Unit,
     saveDefaultBarWeight: (Double) -> Unit,
 ) {
 
@@ -472,8 +472,7 @@ private fun EditWorkoutScreenPreview() {
                     updateSetTime = { _, _ -> },
                     updateSetReps = { _, _ -> },
                     updateSetLoad = { _, _ -> },
-                    addWarmups = { _ -> },
-                    updateWarmupMode = { _, _ -> },
+                    updateWarmupMode = { _, _, _ -> },
                     updateSetCompleted = { _, _ -> },
                     addWarmups = { _, _ -> },
                     addEmptyWarmup = {},
