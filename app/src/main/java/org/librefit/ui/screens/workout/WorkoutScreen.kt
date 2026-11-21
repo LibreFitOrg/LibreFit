@@ -80,6 +80,7 @@ import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.PreviousPerformanceSet
 import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
@@ -255,12 +256,14 @@ fun SharedTransitionScope.WorkoutScreen(
                 moveExercise = viewModel::moveExercise,
                 showInfo = { infoMode.value = it },
                 applyPreviousSetPerformance = viewModel::applyPreviousSetPerformance,
-                saveDefaultBarWeight = viewModel::saveDefaultBarWeight
+                addWarmups = viewModel::addWarmups,
+                addEmptyWarmup = viewModel::addEmptyWarmup,
+                updateWarmupMode = viewModel::updateWarmupMode,
+                saveDefaultBarWeight = viewModel::saveDefaultBarWeight,
+                updateWarmupTarget = viewModel::updateWarmupTarget,
             )
         }
     }
-
-
 
 
     // Keep track of focus to play alter sound or not
@@ -303,6 +306,10 @@ private fun SharedTransitionScope.WorkoutScreenContent(
     moveExercise: (Int, Int) -> Unit,
     onSelectedExerciseIdChange: (Long, String) -> Unit,
     showInfo: (InfoMode) -> Unit,
+    addEmptyWarmup: (Long) -> Unit,
+    updateWarmupTarget: (Weight, Long) -> Unit,
+    addWarmups: (Long, Weight) -> Unit,
+    updateWarmupMode: (WarmupMode, Weight, Long) -> Unit,
     applyPreviousSetPerformance: (Long) -> Unit,
     saveDefaultBarWeight: (Double) -> Unit,
 ) {
@@ -439,17 +446,18 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                 items = exercisesWithSets,
                 key = { _, exercise -> exercise.exercise.id }
             ) { i, exerciseWithSets ->
-                ReorderableItem(reorderableLazyListState, key = exerciseWithSets.exercise.id) { isDragging ->
-
+                ReorderableItem(
+                    reorderableLazyListState,
+                    key = exerciseWithSets.exercise.id
+                ) { isDragging ->
                     val interactionSource = remember { MutableInteractionSource() }
                     ExerciseCard(
                         modifier = Modifier.animateItem(),
                         animatedVisibilityScope = animatedVisibilityScope,
                         exerciseWithSets = exerciseWithSets,
                         previousPerformances = previousPerformances.getOrNull(i),
-                        idSetWithRunningStopwatch = idSetWithRunningStopwatch,
-                        useScrollWheelForInput = useScrollWheelForInput,
                         workout = true,
+                        idSetWithRunningStopwatch = idSetWithRunningStopwatch,
                         addSet = addSetToExercise,
                         onDetail = onSelectedExerciseIdChange,
                         onDelete = deleteExercise,
@@ -466,12 +474,11 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                             }
                         ),
                         isDragging = isDragging,
+                        useScrollWheelForInput = useScrollWheelForInput,
                         defaultBarWeight = defaultBarWeight,
                         dismissScrollWheelInputAutomatically = dismissScrollWheelInputAutomatically,
                         onReorderRequest = { isReorderingEnabled = true },
                         deleteSet = deleteSet,
-                        showInfo = showInfo,
-                        updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
                         updateExerciseNotes = updateExerciseNotes,
                         updateExerciseRestTime = updateExerciseRestTime,
                         updateExerciseSetMode = updateExerciseSetMode,
@@ -479,7 +486,13 @@ private fun SharedTransitionScope.WorkoutScreenContent(
                         updateSetReps = updateSetReps,
                         updateSetLoad = updateSetLoad,
                         updateSetCompleted = updateSetCompleted,
+                        showInfo = showInfo,
+                        updateIdSetWithRunningStopwatch = updateIdSetWithRunningStopwatch,
                         applyPreviousSetPerformance = applyPreviousSetPerformance,
+                        addWarmups = addWarmups,
+                        addEmptyWarmup = addEmptyWarmup,
+                        updateWarmupMode = updateWarmupMode,
+                        updateWarmupTarget = updateWarmupTarget,
                         saveDefaultBarWeight = saveDefaultBarWeight
                     )
                 }
@@ -593,7 +606,11 @@ private fun BoxScope.FloatingWorkoutActionBar(
 private fun WorkoutScreenPreview() {
     val e = listOf(
         UiExerciseWithSets(
-            exercise = UiExercise(setMode = SetMode.DURATION, restTime = 0, notes="Easy pace just to warm up"),
+            exercise = UiExercise(
+                setMode = SetMode.DURATION,
+                restTime = 0,
+                notes = "Easy pace just to warm up"
+            ),
             exerciseDC = UiExerciseDC(
                 name = "Running, Treadmill",
                 images = persistentListOf("Running_Treadmill/0.webp"),
@@ -601,7 +618,8 @@ private fun WorkoutScreenPreview() {
                 category = Category.CARDIO
             ),
             sets = persistentListOf(
-                UiSet(elapsedTime = 605, completed = true))
+                UiSet(elapsedTime = 605, completed = true)
+            )
         ),
         UiExerciseWithSets(
             exercise = UiExercise(
@@ -711,6 +729,10 @@ private fun WorkoutScreenPreview() {
                             onSelectedExerciseIdChange = { _, _ -> },
                             showInfo = {},
                             applyPreviousSetPerformance = {},
+                            addWarmups = { _, _ -> },
+                            addEmptyWarmup = {},
+                            updateWarmupMode = { _, _, _ -> },
+                            updateWarmupTarget = { _, _ -> },
                             saveDefaultBarWeight = {}
                         )
                         FloatingWorkoutActionBar(

@@ -22,7 +22,6 @@
     <string name="library">Library</string>
 
 
-
     <!--About screen-->
     <string name="open">Open</string>
     <string name="copy">Copy</string>
@@ -196,6 +195,7 @@
     <string name="quit_routine_creation_question">Quit routine creation?</string>
     <string name="warning_delete_exercise_from_routine">Warning! Deleting exercises from existing routines will unlink all exercises of derivative workouts.</string>
     <string name="reorder">Reorder</string>
+    <string name="add_warmup">Add Warmup</string>
 
 
     <!-- Error screen-->
@@ -497,6 +497,8 @@
     <!--Info modal bottom sheet-->
     <string name="rest_time_desc">The rest period is activated upon completion of a set, immediately starting the countdown. An alert is issued when the rest ends.</string>
     <string name="type_of_set_desc">- **Load**: A specified number of repetitions performed against an external resistance. *Examples: bench press, dumbbell curls.*\n- **Bodyweight**: A specified number of repetitions performed using the body as a resistance. *Examples: pullups, pushups, sit ups.*\n- **Bodyweight with load**: A specified number of repetitions performed using the body and a load as resistance. *Examples: weighted pullups, weighted dips.*\n- **Duration**: It measures time execution of the reps. *Examples: planks, warm up, stretching.*</string>
+    <string name="warmup_mode_desc">Adding a warmup to your workout can help to prepare your body for strenuous exercise and allow you to practice movements and spot stiffness or aches.\n- **40/60/80**: This is 3 warmup sets, one comprised of 40% of your target weight, another of 60%, and the last of 80%.</string>
+    <string name="warmup_target_desc">This warmup target is used to automatically calculate your warmup sets based on your selected warmup mode.\nBy default, it will use the value of your first non-warmup set as the target, but you may also set this manually.</string>
     <string name="statistics_desc">- **Time elapsed**: the total duration of the workout session.\n- **Date**: indicates the date on which the workout was completed.\n- **Volume**: the total amount of weight lifted during a workout, calculated by multiplying for each completed set the number of repetitions performed by the weight lifted. Higher volume is associated with greater muscle hypertrophy and strength gains over time.\n- **Exercises**: the total count of exercises included in this workout.\n- **Total sets**: the cumulative number of sets planned for each exercise in a workout. A set is a group of consecutive repetitions performed without resting.\n- **Completed sets**: the number of sets that were finished as planned by the workout.</string>
     <string name="muscle_distribution_desc">- This chart shows the **average performance of each muscle over specific time periods**, based on the chosen parameter.\n- The legend identifies the time period represented by each column.\n- The **Historical** column includes all workouts completed before every time period shown.\n- The parameter can be changed by selecting a new one above the chart.</string>
     <string name="exercises_distribution_desc">- This chart shows the **average performance of each exercise over specific time periods**, based on the chosen parameter.\n- The legend identifies the time period represented by each column.\n- The **Historical** column includes all workouts completed before every time period shown.\n- The parameter can be changed by selecting a new one above the chart.</string>
@@ -507,13 +509,15 @@
     <string name="weight">Weight</string>
 
 
-
     <!--Exercise card-->
     <string name="rest_time">Rest time</string>
     <string name="kg" translatable="false">kg</string>
     <string name="lb" translatable="false">lb</string>
     <string name="type_of_set">Type of set</string>
     <string name="previous">Previous</string>
+    <string name="warmup_mode">Warmup mode</string>
+    <string name="warmup_target">Warmup target</string>
+    <string name="add_warmup_set">Add Warmup Set</string>
 
 
     <!--Chart-->
@@ -632,6 +636,10 @@
     <string name="do_not_show_again">Do not show again</string>
     <string name="undo">Undo</string>
     <string name="clear">Clear</string>
+
+    <!--Warmup Modes-->
+    <string name="forty_sixty_eighty_warmup_mode">40/60/80</string>
+    <string name="custom">Custom</string>
 
     <!-- Input modal bottom sheet -->
     <string name="decrease_weight_by_10">Decrease weight by 10</string>

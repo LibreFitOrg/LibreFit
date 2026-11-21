@@ -1,6 +1,6 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2025-2026. The LibreFit Contributors
+ * Copyright (c) 2024-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -45,14 +43,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import org.librefit.R
 import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
+import org.librefit.enums.createUiSets
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.models.Weight
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
@@ -176,95 +181,65 @@ fun SharedTransitionScope.ExerciseCardSmall(
                     )
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 5.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
-                        Text(stringResource(R.string.set))
+                        Text(
+                            stringResource(R.string.set), textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
                         if (setMode == SetMode.DURATION) {
-                            Text(stringResource(R.string.time))
+                            Text(
+                                stringResource(R.string.time), textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            )
                         } else {
                             if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                                 Text(
-                                    stringResource(R.string.load) + " (" + autoUnitSuffix() + ")"
+                                    stringResource(R.string.load) + " (" + autoUnitSuffix() + ")",
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
                                 )
                             }
-                            Text(stringResource(R.string.reps))
+                            Text(
+                                stringResource(R.string.reps), textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            )
                         }
                         if (!isRoutine) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_check),
-                                contentDescription = stringResource(R.string.done)
+                                contentDescription = stringResource(R.string.done),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
                             )
                         }
                     }
                     Column {
-                        exerciseWithSets.sets.forEachIndexed { index, set ->
-                            val backgroundColor by animateColorAsState(
-                                targetValue = if (set.completed) {
-                                    MaterialTheme.colorScheme.tertiaryContainer
-                                } else {
-                                    MaterialTheme.colorScheme.surfaceContainerHighest
-                                },
-                                label = "animated_color_for_set_background"
-                            )
-                            val contentColor by animateColorAsState(
-                                targetValue = if (set.completed) {
-                                    MaterialTheme.colorScheme.onTertiaryContainer
-                                } else {
-                                    MaterialTheme.colorScheme.onSurface
-                                },
-                                label = "animated_color_for_set_content"
-                            )
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(
-                                        RoundedCornerShape(
-                                            topStart = CornerSize(if (index == 0) 45 else 0),
-                                            topEnd = CornerSize(if (index == 0) 45 else 0),
-                                            bottomEnd = CornerSize(
-                                                if (index == exerciseWithSets.sets.lastIndex) 45 else 0
-                                            ),
-                                            bottomStart = CornerSize(
-                                                if (index == exerciseWithSets.sets.lastIndex) 45 else 0
-                                            ),
-                                        )
-                                    )
-                                    .background(backgroundColor)
-                                    .padding(5.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceAround
-                            ) {
-                                Text(
-                                    text = "${index + 1}",
-                                    color = contentColor
-                                )
-                                if (setMode == SetMode.DURATION) {
-                                    Text(
-                                        text = formatTime(set.elapsedTime).substring(3),
-                                        color = contentColor
-                                    )
-                                } else {
-                                    if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
-                                        Text(
-                                            text = set.load.doubleValue().toString(),
-                                            color = contentColor
-                                        )
-                                    }
-                                    Text(
-                                        text = "${set.reps}",
-                                        color = contentColor
-                                    )
-                                }
-                                if (!isRoutine) {
-                                    Checkbox(
-                                        checked = set.completed,
-                                        onCheckedChange = null
+                        exerciseWithSets.sets.groupBy { set -> set.warmup }
+                            .forEach { (isWarmup, sets) ->
+                                sets.forEachIndexed { index, set ->
+                                    CreateSetRow(
+                                        index,
+                                        set,
+                                        setMode,
+                                        isRoutine,
+                                        prefix = if (isWarmup) "W" else ""
                                     )
                                 }
                             }
-                        }
                     }
                 }
             }
@@ -272,26 +247,142 @@ fun SharedTransitionScope.ExerciseCardSmall(
     }
 }
 
+
+@Composable
+fun CreateSetRow(
+    index: Int,
+    set: UiSet,
+    setMode: SetMode,
+    isRoutine: Boolean,
+    prefix: String? = null
+) {
+    val backgroundColor by animateColorAsState(
+        targetValue = if (set.completed) {
+            MaterialTheme.colorScheme.tertiaryContainer
+        } else if (set.warmup) {
+            MaterialTheme.colorScheme.surfaceContainerHigh
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerHighest
+        },
+        label = "animated_color_for_set_background"
+    )
+    val contentColor by animateColorAsState(
+        targetValue = if (set.completed) {
+            MaterialTheme.colorScheme.onTertiaryContainer
+        } else {
+            MaterialTheme.colorScheme.onSurface
+        },
+        label = "animated_color_for_set_content"
+    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(backgroundColor)
+            .padding(5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Text(
+            text = "${
+                if (!prefix.isNullOrEmpty()) {
+                    prefix
+                } else {
+                    ""
+                }
+            }${index + 1}",
+            color = contentColor,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        )
+        if (setMode == SetMode.DURATION) {
+            Text(
+                text = formatTime(set.elapsedTime).substring(3),
+                color = contentColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
+        } else {
+            if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
+                Text(
+                    text = set.load.doubleValue().toString(),
+                    color = contentColor,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+            }
+            Text(
+                text = "${set.reps}",
+                color = contentColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
+        }
+        if (!isRoutine) {
+            Checkbox(
+                checked = set.completed,
+                onCheckedChange = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
+        }
+    }
+}
+
+class ExerciseCardSmallPreviewProvider : PreviewParameterProvider<UiExerciseWithSets> {
+    private val warmupModesWithNull = WarmupMode.entries + null;
+    private val defaultSets = listOf(
+        UiSet(completed = true),
+        UiSet(elapsedTime = 100)
+    );
+    private val previewList = SetMode.entries.flatMap { setMode ->
+        warmupModesWithNull.map { warmupMode ->
+            val warmupSets = warmupMode?.createUiSets(Weight.kilograms(10.0));
+            UiExerciseWithSets(
+                exercise = UiExercise(
+                    notes = "This is a note!",
+                    restTime = 90,
+                    setMode = setMode,
+                    warmupMode = warmupMode ?: WarmupMode.FORTYSIXTYEIGHTY
+                ),
+                sets = (if (warmupSets != null) (warmupSets + defaultSets) else defaultSets).toPersistentList(),
+                exerciseDC = UiExerciseDC(
+                    name = "Exercise name",
+                    images = persistentListOf("3_4_Sit-Up/0.jpg")
+                )
+            )
+        }
+    }
+
+    override val values = previewList.asSequence();
+    override fun getDisplayName(index: Int): String? {
+        val exercise = previewList.getOrNull(index) ?: return null
+        return "Exercise with ${exercise.exercise.setMode} sets and ${exercise.exercise.warmupMode} warmups"
+    }
+}
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
-private fun ExerciseCardSmallPreview() {
+private fun ExerciseCardSmallPreview(
+    @PreviewParameter(
+        ExerciseCardSmallPreviewProvider::class,
+        limit = 1
+    ) exercise: UiExerciseWithSets
+) {
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
                 ExerciseCardSmall(
-                    exerciseWithSets = UiExerciseWithSets(
-                        exercise = UiExercise(
-                            notes = "Notes",
-                            restTime = 100,
-                            setMode = SetMode.BODYWEIGHT
-                        ),
-                        exerciseDC = UiExerciseDC(
-                            name = "Name exercise long long long long",
-                            images = persistentListOf("3_4_Sit-Up/0.jpg")
-                        ),
-                        sets = persistentListOf(UiSet(completed = true), UiSet(reps = 10), UiSet())
-                    ),
+                    exerciseWithSets = exercise,
                     showExercisesImages = null,
                     animatedVisibilityScope = this
                 ) { }

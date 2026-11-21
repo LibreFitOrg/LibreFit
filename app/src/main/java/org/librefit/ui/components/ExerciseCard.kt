@@ -29,10 +29,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -56,6 +52,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedIconButton
@@ -93,16 +90,21 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.collectLatest
 import org.librefit.R
 import org.librefit.enums.InfoMode
 import org.librefit.enums.PreviousPerformanceSet
 import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
+import org.librefit.enums.createUiSets
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.userPreferences.ThemeMode
 import org.librefit.models.Weight
@@ -215,10 +217,15 @@ fun SharedTransitionScope.ExerciseCard(
     updateSetCompleted: (Boolean, Long) -> Unit,
     showInfo: (InfoMode) -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit = {},
+    addWarmups: (Long, Weight) -> Unit,
+    updateWarmupMode: (WarmupMode, Weight, Long) -> Unit,
     applyPreviousSetPerformance: (Long) -> Unit = {},
+    addEmptyWarmup: (Long) -> Unit,
     saveDefaultBarWeight: (Double) -> Unit,
+    updateWarmupTarget: (Weight, Long) -> Unit,
 ) {
     val unit = autoUnitSuffix()
+    val unitSystem = LocalUnitSystem.current
 
     val elevation by animateDpAsState(
         targetValue = if (isDragging) 10.dp else 0.dp,
@@ -227,6 +234,40 @@ fun SharedTransitionScope.ExerciseCard(
 
     var showMenu by rememberSaveable { mutableStateOf(false) }
     val shape = MaterialTheme.shapes.extraLarge
+
+    var inputModalBottomSheetState by remember { mutableStateOf<InputModalBottomSheetState?>(null) }
+    var warmupTarget by remember { mutableStateOf(exerciseWithSets.sets.first { set -> !set.warmup }.load) };
+    var warmupTargetLinkedToSet by remember {
+        mutableStateOf<Boolean>(
+            true
+        )
+    };
+
+    inputModalBottomSheetState?.let {
+        InputModalBottomSheet(
+            state = it,
+            onValueChange = { newState ->
+                inputModalBottomSheetState = newState
+                when (newState) {
+                    is InputModalBottomSheetState.Weight -> {
+                        val newWeight = Weight.auto(newState.totalWeight, unitSystem)
+                        warmupTarget = newWeight
+                        updateWarmupTarget(
+                            newWeight, exerciseWithSets.exercise.id
+                        )
+                    }
+
+                    else -> error("newState in ExerciseCard should not have this value: $newState")
+                }
+
+            },
+            onDismiss = {
+                inputModalBottomSheetState = null
+            },
+            dismissAutomatically = dismissScrollWheelInputAutomatically
+        )
+    }
+
     ElevatedCard(
         modifier = modifier.shadow(
             elevation = elevation,
@@ -316,6 +357,22 @@ fun SharedTransitionScope.ExerciseCard(
                                     shapes = MenuDefaults.groupShape(0, 1) // Top-level group shape
                                 ) {
                                     // MenuDefaults.Label { Text("Header") }
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.add_warmup)) },
+                                        leadingIcon = {
+                                            Icon(
+                                                painterResource(R.drawable.ic_add_circle),
+                                                stringResource(R.string.add_warmup)
+                                            )
+                                        },
+                                        onClick = {
+                                            addWarmups(
+                                                exerciseWithSets.exercise.id,
+                                                warmupTarget
+                                            )
+                                            showMenu = false
+                                        }
+                                    )
                                     DropdownMenuItem(
                                         text = { Text(stringResource(R.string.reorder)) },
                                         leadingIcon = {
@@ -438,6 +495,222 @@ fun SharedTransitionScope.ExerciseCard(
                         }
                     }
 
+                    // Warmup Mode Selector
+                    if (exerciseWithSets.sets.any { it.warmup }) {
+                        HorizontalDivider()
+
+                        // Warmup mode selection
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                modifier = Modifier.weight(0.5f),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                IconButton(
+                                    onClick = { showInfo(InfoMode.WARMUP_MODE) }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_info),
+                                        contentDescription = stringResource(R.string.info) + ":"
+                                    )
+                                }
+                                Text(stringResource(R.string.warmup_mode))
+                            }
+
+                            var expanded by remember { mutableStateOf(false) }
+
+
+                            // Type of warmup selector
+                            ExposedDropdownMenuBox(
+                                expanded = expanded,
+                                onExpandedChange = { expanded = it },
+                                modifier = Modifier
+                                    .padding(start = 10.dp, end = 10.dp)
+                                    .weight(0.5f)
+                            ) {
+                                OutlinedTextField(
+                                    shape = MaterialTheme.shapes.large,
+                                    readOnly = true,
+                                    value = stringResource(
+                                        Formatter.warmupModeToStringId(
+                                            exerciseWithSets.exercise.warmupMode
+                                        )
+                                    ),
+                                    onValueChange = {},
+                                    singleLine = true,
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                    },
+                                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+                                )
+                                ExposedDropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false },
+                                    // Allow DropdownMenuGroup to control styling, shape, and elevation
+                                    containerColor = Color.Transparent,
+                                    shadowElevation = 0.dp,
+                                    border = null
+                                ) {
+                                    // Wrap items inside Expressive DropdownMenuGroup
+                                    DropdownMenuGroup(
+                                        shapes = MenuDefaults.groupShape(0, 1)
+                                    ) {
+                                        val availableWarmupModes =
+                                            WarmupMode.modesForSetMode(exerciseWithSets.exercise.setMode);
+                                        val itemCount = availableWarmupModes.size
+
+                                        availableWarmupModes.forEachIndexed { index, mode ->
+                                            val isSelected =
+                                                mode == exerciseWithSets.exercise.warmupMode
+
+                                            CheckableDropdownMenuItem(
+                                                checked = isSelected,
+                                                onCheckedChange = {
+                                                    updateWarmupMode(
+                                                        mode,
+                                                        warmupTarget,
+                                                        exerciseWithSets.exercise.id
+                                                    )
+                                                    expanded = false
+                                                },
+                                                text = {
+                                                    Text(
+                                                        text = stringResource(
+                                                            Formatter.warmupModeToStringId(
+                                                                mode
+                                                            )
+                                                        )
+                                                    )
+                                                },
+                                                trailingContent = if (exerciseWithSets.exercise.warmupMode == mode) {
+                                                    {
+                                                        Icon(
+                                                            painter = painterResource(R.drawable.ic_check),
+                                                            contentDescription = stringResource(R.string.checkbox)
+                                                        )
+                                                    }
+                                                } else null,
+                                                // Expressive rounded shapes per item position in group
+                                                shapes = MenuDefaults.itemShape(index, itemCount),
+                                            )
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (exerciseWithSets.exercise.warmupMode !== WarmupMode.CUSTOM) {
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    IconButton(
+                                        // Refer to InfoModalBottomSheet to know the reason behind this value.
+                                        // Do NOT change it.
+                                        onClick = { showInfo(InfoMode.WARMUP_TARGET) }
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_info),
+                                            contentDescription = stringResource(R.string.info) + ":"
+                                        )
+                                    }
+                                    Text(stringResource(R.string.warmup_target))
+                                }
+
+
+                                // Warmup target selector
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp, end = 5.dp)
+                                        .weight(.75f),
+                                ) {
+                                    OutlinedTextField(
+                                        shape = MaterialTheme.shapes.large,
+                                        value = Formatter.normalizeNumericString(warmupTarget.toString()),
+                                        onValueChange = { string ->
+                                            warmupTarget =
+                                                Weight.auto(
+                                                    Formatter.parseDoubleFromString(string) ?: 0.0,
+                                                    unitSystem
+                                                )
+                                            updateWarmupTarget(
+                                                warmupTarget,
+                                                exerciseWithSets.exercise.id
+                                            )
+                                        },
+                                        singleLine = true,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                        colors = OutlinedTextFieldDefaults.colors(),
+                                        readOnly = useScrollWheelForInput,
+                                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                                        enabled = !warmupTargetLinkedToSet
+                                    )
+                                    if (useScrollWheelForInput) {
+                                        Box(
+                                            modifier = Modifier
+                                                .matchParentSize()
+                                                .clip(MaterialTheme.shapes.extraLarge)
+                                                .clickable {
+                                                    if (!warmupTargetLinkedToSet) {
+                                                        val value =
+                                                            warmupTarget.doubleValue(unitSystem)
+                                                        inputModalBottomSheetState =
+                                                            InputModalBottomSheetState.Weight.create(
+                                                                integerWeight = value.toInt(),
+                                                                decimalWeight = value.getDecimalDigitsAsInteger()
+                                                            )
+                                                    }
+                                                }
+                                        ) { }
+                                    }
+
+                                }
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 5.dp, end = 10.dp)
+                                        .weight(.25f)
+                                ) {
+                                    IconButton(
+                                        onClick = {
+                                            warmupTargetLinkedToSet = !warmupTargetLinkedToSet
+                                            if (warmupTargetLinkedToSet) {
+                                                warmupTarget =
+                                                    exerciseWithSets.sets.first { set -> !set.warmup }.load
+
+                                                updateWarmupTarget(
+                                                    warmupTarget,
+                                                    exerciseWithSets.exercise.id
+                                                )
+                                            }
+                                        }
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(if (warmupTargetLinkedToSet) R.drawable.ic_unlink else R.drawable.ic_link),
+                                            contentDescription = stringResource(R.string.info) + ":"
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+
+
                     HorizontalDivider()
 
                     // Set mode selection
@@ -467,7 +740,6 @@ fun SharedTransitionScope.ExerciseCard(
                         var expanded by remember { mutableStateOf(false) }
 
 
-                        // Type of set selector
                         ExposedDropdownMenuBox(
                             expanded = expanded,
                             onExpandedChange = { expanded = it },
@@ -478,7 +750,11 @@ fun SharedTransitionScope.ExerciseCard(
                             OutlinedTextField(
                                 shape = MaterialTheme.shapes.large,
                                 readOnly = true,
-                                value = stringResource(Formatter.setModeToStringId(exerciseWithSets.exercise.setMode)),
+                                value = stringResource(
+                                    Formatter.setModeToStringId(
+                                        exerciseWithSets.exercise.setMode
+                                    )
+                                ),
                                 onValueChange = {},
                                 singleLine = true,
                                 trailingIcon = {
@@ -489,114 +765,131 @@ fun SharedTransitionScope.ExerciseCard(
                             )
                             ExposedDropdownMenu(
                                 expanded = expanded,
-                                onDismissRequest = { expanded = false },
-                                // Allow DropdownMenuGroup to control styling, shape, and elevation
-                                containerColor = Color.Transparent,
-                                shadowElevation = 0.dp,
-                                border = null
+                                onDismissRequest = { expanded = false }
                             ) {
-                                // Wrap items inside Expressive DropdownMenuGroup
-                                DropdownMenuGroup(
-                                    shapes = MenuDefaults.groupShape(0, 1)
-                                ) {
-                                    val itemCount = SetMode.entries.size
-
-                                    SetMode.entries.forEachIndexed { index, mode ->
-                                        val isSelected = mode == exerciseWithSets.exercise.setMode
-
-                                        CheckableDropdownMenuItem(
-                                            checked = isSelected,
-                                            onCheckedChange = {
-                                                updateExerciseSetMode(
-                                                    mode,
-                                                    exerciseWithSets.exercise.id
-                                                )
-                                                expanded = false
-                                            },
-                                            text = {
-                                                Text(
-                                                    text = stringResource(
-                                                        Formatter.setModeToStringId(
-                                                            mode
-                                                        )
+                                SetMode.entries.forEachIndexed { _, mode ->
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            updateExerciseSetMode(
+                                                mode,
+                                                exerciseWithSets.exercise.id
+                                            )
+                                            expanded = false
+                                        },
+                                        text = {
+                                            Text(
+                                                text = stringResource(
+                                                    Formatter.setModeToStringId(
+                                                        mode
                                                     )
                                                 )
-                                            },
-                                            trailingContent = if (exerciseWithSets.exercise.setMode == mode) {
-                                                {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.ic_check),
-                                                        contentDescription = stringResource(R.string.checkbox)
-                                                    )
-                                                }
-                                            } else null,
-                                            // Expressive rounded shapes per item position in group
-                                            shapes = MenuDefaults.itemShape(index, itemCount),
+                                            )
+                                        },
+                                        trailingIcon = if (exerciseWithSets.exercise.setMode == mode) {
+                                            {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.ic_check),
+                                                    contentDescription = stringResource(R.string.checkbox)
+                                                )
+                                            }
+                                        } else null,
+                                        modifier = Modifier.background(
+                                            if (exerciseWithSets.exercise.setMode == mode) MaterialTheme.colorScheme.inversePrimary.copy(
+                                                0.3f
+                                            ) else Color.Unspecified
                                         )
-                                    }
-
+                                    )
                                 }
                             }
                         }
                     }
+                }
+            }
 
-                    ElevatedCard(
-                        shape = MaterialTheme.shapes.extraLarge,
-                        colors = CardDefaults.elevatedCardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                        )
-                    ) {
-                        //Headline set
-                        Row(
+            ElevatedCard(
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                )
+            ) {
+                //Headline set
+                Row(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Spacer(
+                        Modifier
+                            .fillMaxWidth(.1f)
+                    )
+                    if (previousPerformances != null) {
+                        Text(
+                            text = stringResource(R.string.previous),
+                            color = MaterialTheme.colorScheme.secondary,
+                            textAlign = TextAlign.Center,
                             modifier = Modifier
-                                .padding(10.dp)
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
+                    }
+                    if (exerciseWithSets.exercise.setMode == SetMode.DURATION) {
+                        Text(
+                            text = stringResource(R.string.time),
+                            color = MaterialTheme.colorScheme.secondary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
+                    } else {
+                        if (exerciseWithSets.exercise.setMode == SetMode.LOAD ||
+                            exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
                         ) {
-                            Spacer(Modifier)
-                            if (previousPerformances != null) {
-                                Text(
-                                    text = stringResource(R.string.previous),
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            }
-                            if (exerciseWithSets.exercise.setMode == SetMode.DURATION) {
-                                Text(
-                                    text = stringResource(R.string.time),
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            } else {
-                                if (exerciseWithSets.exercise.setMode == SetMode.LOAD ||
-                                    exerciseWithSets.exercise.setMode == SetMode.BODYWEIGHT_WITH_LOAD
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.load) + " (" + unit + ")",
-                                        color = MaterialTheme.colorScheme.secondary
-                                    )
-                                }
-                                Text(
-                                    text = stringResource(id = R.string.reps),
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            }
-                            if (workout) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_check),
-                                    contentDescription = stringResource(R.string.done)
-                                )
-                            }
+                            Text(
+                                text = stringResource(R.string.load) + " (" + unit + ")",
+                                color = MaterialTheme.colorScheme.secondary,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            )
                         }
+                        Text(
+                            text = stringResource(id = R.string.reps),
+                            color = MaterialTheme.colorScheme.secondary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
+                    }
+                    if (workout) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_check),
+                            contentDescription = stringResource(R.string.done),
+                            modifier = Modifier
+                                .fillMaxWidth(.15f)
+                        )
+                    }
+                }
 
-                        //Sets
-                        Column(modifier = Modifier.animateContentSize()) {
-                            exerciseWithSets.sets.forEachIndexed { i, set ->
+                //Sets
+                Column(
+                    modifier = Modifier
+                        .animateContentSize()
+                        .fillMaxWidth()
+                ) {
+                    exerciseWithSets.sets.groupBy { set -> set.warmup }
+                        .forEach { (_, sets) ->
+                            sets.forEachIndexed { i, set ->
                                 key(set.id) {
                                     Set(
                                         i = i,
                                         set = set,
                                         previousSet = previousPerformances?.getOrNull(i),
-                                        lastIndex = exerciseWithSets.sets.lastIndex,
+                                        showPreviousSet = !previousPerformances.isNullOrEmpty(),
                                         setMode = exerciseWithSets.exercise.setMode,
                                         isStopwatchRunning = idSetWithRunningStopwatch == null,
                                         isThisSetStopwatchRunning = idSetWithRunningStopwatch == set.id,
@@ -609,79 +902,87 @@ fun SharedTransitionScope.ExerciseCard(
                                         updateSetReps = updateSetReps,
                                         updateSetLoad = updateSetLoad,
                                         updateSetCompleted = updateSetCompleted,
-                                        applyPreviousSet = applyPreviousSetPerformance
+                                        applyPreviousSet = applyPreviousSetPerformance,
+                                        updateWarmupTarget = { target: Weight, exerciseId: Long ->
+                                            warmupTarget = target;
+                                            updateWarmupTarget(target, exerciseId);
+                                        },
+                                        exerciseId = exerciseWithSets.exercise.id
                                     )
                                 }
                             }
                         }
+                }
+            }
+
+            if (exerciseWithSets.sets.any { it.warmup } && exerciseWithSets.exercise.warmupMode === WarmupMode.CUSTOM) {
+                LibreFitButton(
+                    text = stringResource(R.string.add_warmup_set),
+                    icon = painterResource(R.drawable.ic_add_circle),
+                    onClick = { addEmptyWarmup(exerciseWithSets.exercise.id) },
+                    elevated = true,
+                )
+            }
+            //Add set button + barbell calculator (if exercise requires barbell)
+            if (exerciseWithSets.exerciseDC.equipment != Equipment.BARBELL) {
+                LibreFitButton(
+                    text = stringResource(id = R.string.add_set),
+                    icon = painterResource(R.drawable.ic_add_circle),
+                    onClick = { addSet(exerciseWithSets.exercise.id) },
+                    elevated = false,
+                )
+            } else {
+                var showBarbellCalculator by rememberSaveable { mutableStateOf(false) }
+                if (showBarbellCalculator) {
+                    val lastSet = exerciseWithSets.sets.lastOrNull { !it.completed }
+                        ?: exerciseWithSets.sets.lastOrNull()
+
+                    BarbellCalculatorModalBottomSheet(
+                        initialTargetWeight = lastSet?.load ?: Weight.auto(50.0),
+                        defaultBarWeight = defaultBarWeight,
+                        onSaveDefaultBarWeight = saveDefaultBarWeight
+                    ) {
+                        showBarbellCalculator = false
                     }
+                }
 
-                    //Add set button + barbell calculator (if exercise requires barbell)
-
-                    if (exerciseWithSets.exerciseDC.equipment != Equipment.BARBELL) {
-                        LibreFitButton(
-                            text = stringResource(id = R.string.add_set),
-                            icon = painterResource(R.drawable.ic_add_circle),
-                            onClick = { addSet(exerciseWithSets.exercise.id) },
-                            elevated = false
-                        )
-                    } else {
-                        var showBarbellCalculator by rememberSaveable { mutableStateOf(false) }
-
-                        if (showBarbellCalculator) {
-                            val lastSet = exerciseWithSets.sets.lastOrNull { !it.completed }
-                                ?: exerciseWithSets.sets.lastOrNull()
-
-                            BarbellCalculatorModalBottomSheet(
-                                initialTargetWeight = lastSet?.load ?: Weight.auto(50.0),
-                                defaultBarWeight = defaultBarWeight,
-                                onSaveDefaultBarWeight = saveDefaultBarWeight
+                val interactionSources = remember { List(2) { MutableInteractionSource() } }
+                ButtonGroup(
+                    overflowIndicator = {}
+                ) {
+                    customItem(
+                        buttonGroupContent = {
+                            OutlinedIconButton(
+                                onClick = {
+                                    showBarbellCalculator = true
+                                },
+                                shapes = IconButtonDefaults.shapes(),
+                                interactionSource = interactionSources[0],
+                                modifier = Modifier.animateWidth(interactionSources[0])
                             ) {
-                                showBarbellCalculator = false
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_barbell),
+                                    contentDescription = stringResource(R.string.barbell_calculator)
+                                )
                             }
-                        }
-
-                        val interactionSources = remember { List(2) { MutableInteractionSource() } }
-                        ButtonGroup(
-                            overflowIndicator = {}
-                        ) {
-                            customItem(
-                                buttonGroupContent = {
-                                    OutlinedIconButton(
-                                        onClick = {
-                                            showBarbellCalculator = true
-                                        },
-                                        shapes = IconButtonDefaults.shapes(),
-                                        interactionSource = interactionSources[0],
-                                        modifier = Modifier.animateWidth(interactionSources[0])
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.ic_barbell),
-                                            contentDescription = stringResource(R.string.barbell_calculator)
-                                        )
-                                    }
-                                },
-                                menuContent = {}
+                        },
+                        menuContent = {}
+                    )
+                    customItem(
+                        buttonGroupContent = {
+                            LibreFitButton(
+                                text = stringResource(id = R.string.add_set),
+                                icon = painterResource(R.drawable.ic_add_circle),
+                                onClick = { addSet(exerciseWithSets.exercise.id) },
+                                elevated = false,
+                                interactionSource = interactionSources[1],
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .animateWidth(interactionSources[1])
                             )
-                            customItem(
-                                buttonGroupContent = {
-                                    LibreFitButton(
-                                        text = stringResource(id = R.string.add_set),
-                                        icon = painterResource(R.drawable.ic_add_circle),
-                                        onClick = { addSet(exerciseWithSets.exercise.id) },
-                                        elevated = false,
-                                        interactionSource = interactionSources[1],
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .animateWidth(interactionSources[1])
-                                    )
-                                },
-                                menuContent = {}
-                            )
-                        }
-                    }
-
-
+                        },
+                        menuContent = {}
+                    )
                 }
             }
         }
@@ -694,7 +995,7 @@ private fun Set(
     i: Int,
     set: UiSet,
     previousSet: PreviousPerformanceSet? = null,
-    lastIndex: Int,
+    showPreviousSet: Boolean,
     setMode: SetMode,
     isStopwatchRunning: Boolean,
     isThisSetStopwatchRunning: Boolean,
@@ -707,7 +1008,9 @@ private fun Set(
     updateSetLoad: (Weight, Long) -> Unit,
     updateSetCompleted: (Boolean, Long) -> Unit,
     updateIdSetWithRunningStopwatch: (Long?) -> Unit,
-    applyPreviousSet: (Long) -> Unit
+    applyPreviousSet: (Long) -> Unit,
+    updateWarmupTarget: (Weight, Long) -> Unit,
+    exerciseId: Long
 ) {
     val unitSystem = LocalUnitSystem.current
 
@@ -721,6 +1024,11 @@ private fun Set(
             set.load.doubleValue(unitSystem).toString()
         )
     }
+    var warmupTarget by remember {
+        mutableStateOf(
+            Weight.zero()
+        )
+    };
 
     // Sync elapsed time with time text field
     LaunchedEffect(set.elapsedTime) {
@@ -751,6 +1059,12 @@ private fun Set(
     var inputModalBottomSheetState by remember { mutableStateOf<InputModalBottomSheetState?>(null) }
     var inputSetId by rememberSaveable { mutableStateOf<Long?>(null) }
 
+    var warmupTargetLinkedToSet by remember {
+        mutableStateOf<Boolean>(
+            true
+        )
+    };
+
     inputModalBottomSheetState?.let {
         InputModalBottomSheet(
             state = it,
@@ -759,6 +1073,12 @@ private fun Set(
                 inputSetId?.let { id ->
                     when (newState) {
                         is InputModalBottomSheetState.Weight -> {
+                            if (!set.warmup && i == 0 && warmupTargetLinkedToSet) {
+                                updateWarmupTarget(
+                                    Weight.auto(newState.totalWeight, unitSystem), exerciseId
+                                )
+                            }
+
                             updateSetLoad(
                                 Weight.auto(newState.totalWeight, unitSystem),
                                 id
@@ -796,19 +1116,9 @@ private fun Set(
         state = swipeToDismissBoxState,
         onDismiss = { deleteSet(set.id) },
         backgroundContent = {
-            val cornerShape = remember(i, lastIndex) {
-                RoundedCornerShape(
-                    topStart = CornerSize(if (i == 0) 50 else 0),
-                    topEnd = CornerSize(if (i == 0) 50 else 0),
-                    bottomEnd = CornerSize(if (i == lastIndex) 50 else 0),
-                    bottomStart = CornerSize(if (i == lastIndex) 50 else 0),
-                )
-            }
-
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(cornerShape)
                     .background(
                         when (swipeToDismissBoxState.dismissDirection) {
                             SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.errorContainer
@@ -835,6 +1145,8 @@ private fun Set(
         val backgroundColor by animateColorAsState(
             targetValue = if (set.completed) {
                 MaterialTheme.colorScheme.tertiaryContainer
+            } else if (set.warmup) {
+                MaterialTheme.colorScheme.surfaceContainerHigh
             } else {
                 MaterialTheme.colorScheme.surfaceContainerHighest
             },
@@ -850,53 +1162,59 @@ private fun Set(
         )
         Row(
             modifier = Modifier
-                .clip(
-                    RoundedCornerShape(
-                        topStart = CornerSize(if (i == 0) 45 else 0),
-                        topEnd = CornerSize(if (i == 0) 45 else 0),
-                        bottomEnd = CornerSize(
-                            if (i == lastIndex) 45 else 0
-                        ),
-                        bottomStart = CornerSize(
-                            if (i == lastIndex) 45 else 0
-                        ),
-                    )
-                )
                 .background(backgroundColor)
+                .padding(horizontal = 10.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "${i + 1}",
+                text = "${if (set.warmup) "W" else ""}${i + 1}",
                 color = contentColor,
-                modifier = Modifier.padding(start = 20.dp)
+                modifier = Modifier.fillMaxWidth(.1f),
+                textAlign = TextAlign.Center,
             )
 
-            previousSet?.let { values ->
-                TextButton(
-                    onClick = { applyPreviousSet(set.id) },
-                    modifier = Modifier.wrapContentWidth()
-                ) {
-                    val (previousReps, previousLoad, previousTime) = values
-                    val text = when (setMode) {
-                        SetMode.LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
-                        SetMode.BODYWEIGHT -> "$previousReps"
-                        SetMode.BODYWEIGHT_WITH_LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
-                        SetMode.DURATION -> Formatter.formateSecondsInMinutesAndSeconds(previousTime)
+            if (previousSet != null) {
+                previousSet.let { values ->
+                    TextButton(
+                        onClick = { applyPreviousSet(set.id) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                    ) {
+                        val (previousReps, previousLoad, previousTime) = values
+                        val text = when (setMode) {
+                            SetMode.LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
+                            SetMode.BODYWEIGHT -> "$previousReps"
+                            SetMode.BODYWEIGHT_WITH_LOAD -> "${previousLoad.formatToText()}\n* $previousReps"
+                            SetMode.DURATION -> Formatter.formateSecondsInMinutesAndSeconds(
+                                previousTime
+                            )
+                        }
+                        Text(
+                            text = text,
+                            color = contentColor,
+                            textAlign = TextAlign.Center,
+                        )
                     }
-                    Text(
-                        text = text,
-                        color = contentColor,
-                        textAlign = TextAlign.Center,
-                    )
                 }
+            } else if (showPreviousSet) {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
             }
 
             if (setMode == SetMode.DURATION) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
                     if (workout) {
-
                         IconButton(
                             enabled = (isStopwatchRunning || isThisSetStopwatchRunning)
                                     && !set.completed,
@@ -906,7 +1224,10 @@ private fun Set(
                             onClick = {
                                 val newId = if (isThisSetStopwatchRunning) null else set.id
                                 updateIdSetWithRunningStopwatch(newId)
-                            }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.5f),
                         ) {
                             Icon(
                                 painter = painterResource(
@@ -923,7 +1244,6 @@ private fun Set(
                     Box {
                         OutlinedTextField(
                             shape = MaterialTheme.shapes.large,
-                            modifier = Modifier.width(80.dp),
                             state = timeTextFieldState,
                             lineLimits = TextFieldLineLimits.SingleLine,
                             inputTransformation = TimeInputTransformation(),
@@ -936,7 +1256,8 @@ private fun Set(
                                 focusedTextColor = contentColor,
                                 unfocusedTextColor = contentColor,
                             ),
-                            readOnly = useScrollWheelForInput
+                            readOnly = useScrollWheelForInput,
+                            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
                         )
                         if (useScrollWheelForInput) {
                             Box(
@@ -960,13 +1281,28 @@ private fun Set(
             } else {
                 if (setMode == SetMode.LOAD || setMode == SetMode.BODYWEIGHT_WITH_LOAD) {
                     //Weight
-                    Box {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                    ) {
                         OutlinedTextField(
                             shape = MaterialTheme.shapes.large,
-                            modifier = Modifier.width(80.dp),
                             value = weightValue,
                             onValueChange = { string ->
                                 weightValue = Formatter.normalizeNumericString(string)
+
+                                if (!set.warmup && i == 0 && warmupTargetLinkedToSet) {
+                                    warmupTarget =
+                                        Weight.auto(
+                                            Formatter.parseDoubleFromString(string) ?: 0.0,
+                                            unitSystem
+                                        )
+                                    updateWarmupTarget(
+                                        warmupTarget, exerciseId
+                                    )
+                                }
+
 
                                 updateSetLoad(
                                     Weight.auto(
@@ -985,7 +1321,8 @@ private fun Set(
                                 focusedTextColor = contentColor,
                                 unfocusedTextColor = contentColor,
                             ),
-                            readOnly = useScrollWheelForInput
+                            readOnly = useScrollWheelForInput,
+                            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
                         )
                         if (useScrollWheelForInput) {
                             Box(
@@ -1006,10 +1343,13 @@ private fun Set(
                     }
                 }
                 //Reps
-                Box {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
                     OutlinedTextField(
                         shape = MaterialTheme.shapes.large,
-                        modifier = Modifier.width(80.dp),
                         value = repValue,
                         onValueChange = { string ->
                             repValue = Formatter.normalizeNumericString(string)
@@ -1026,7 +1366,8 @@ private fun Set(
                             focusedTextColor = contentColor,
                             unfocusedTextColor = contentColor,
                         ),
-                        readOnly = useScrollWheelForInput
+                        readOnly = useScrollWheelForInput,
+                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
                     )
                     if (useScrollWheelForInput) {
                         Box(
@@ -1052,52 +1393,84 @@ private fun Set(
                             updateIdSetWithRunningStopwatch(null)
                         }
                         updateSetCompleted(checked, set.id)
-                    }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(.15f)
                 )
             }
         }
     }
-
 }
 
-
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)
-@Composable
-private fun ExerciseCardPreview() {
-    val currentIdSetWithRunningSet = remember { mutableStateOf<Long?>(null) }
-
-    val e = remember {
-        mutableStateOf(
-            UiExerciseWithSets(
+class ExerciseCardPreviewProvider :
+    PreviewParameterProvider<Pair<UiExerciseWithSets, List<PreviousPerformanceSet>>> {
+    private val warmupModesWithNull = WarmupMode.entries + null
+    private val defaultSets = listOf(
+        UiSet(completed = true),
+        UiSet(elapsedTime = 100)
+    );
+    private val previewList = SetMode.entries.flatMap { setMode ->
+        warmupModesWithNull.map { warmupMode ->
+            val warmupSets = warmupMode?.createUiSets(Weight.kilograms(10.0))
+            val exercise = UiExerciseWithSets(
                 exercise = UiExercise(
                     notes = "This is a note!",
                     restTime = 90,
-                    setMode = SetMode.LOAD
+                    setMode = setMode,
+                    warmupMode = warmupMode ?: WarmupMode.FORTYSIXTYEIGHTY
                 ),
-                sets = persistentListOf(UiSet(completed = true), UiSet(elapsedTime = 100)),
+                sets = (if (warmupSets != null) (warmupSets + defaultSets) else defaultSets).toPersistentList(),
                 exerciseDC = UiExerciseDC(
                     name = "Exercise name",
                     images = persistentListOf("3_4_Sit-Up/0.jpg"),
                     equipment = Equipment.BARBELL
                 )
             )
-        )
-    }
 
-    val previousPerformances = e.value.sets.map { _ ->
-        when (e.value.exercise.setMode) {
-            SetMode.BODYWEIGHT -> PreviousPerformanceSet(reps = 10)
-            SetMode.DURATION -> PreviousPerformanceSet(time = 124)
-            SetMode.BODYWEIGHT_WITH_LOAD -> PreviousPerformanceSet(
-                reps = 10,
-                load = Weight.kilograms(12.0)
+            Pair(
+                exercise, exercise.sets.map {
+                    when (setMode) {
+                        SetMode.BODYWEIGHT -> PreviousPerformanceSet(reps = 10)
+                        SetMode.DURATION -> PreviousPerformanceSet(time = 124)
+                        SetMode.BODYWEIGHT_WITH_LOAD ->
+                            PreviousPerformanceSet(
+                                reps = 10,
+                                load = Weight.kilograms(12.0)
+                            )
+
+                        SetMode.LOAD -> PreviousPerformanceSet(
+                            reps = 10,
+                            load = Weight.kilograms(12.0)
+                        )
+                    }
+                }
             )
-
-            SetMode.LOAD -> PreviousPerformanceSet(reps = 10, load = Weight.kilograms(12.0))
         }
     }
 
+    override val values = previewList.asSequence()
+    override fun getDisplayName(index: Int): String? {
+        val (exercise, _) = previewList.getOrNull(index) ?: return null
+        return "Exercise with ${exercise.exercise.setMode} sets and ${exercise.exercise.warmupMode} warmups"
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)
+@Composable
+private fun ExerciseCardPreview(
+    @PreviewParameter(
+        ExerciseCardPreviewProvider::class,
+        limit = 2
+    ) data: Pair<UiExerciseWithSets, List<PreviousPerformanceSet>>
+) {
+    val (exercise, previousPerformances) = data
+
+    val e = remember {
+        mutableStateOf(exercise)
+    }
+
+    val currentIdSetWithRunningSet = remember { mutableStateOf<Long?>(null) }
     LibreFitTheme(dynamicColor = true, themeMode = ThemeMode.DARK) {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {
@@ -1185,6 +1558,17 @@ private fun ExerciseCardPreview() {
                         }
                     },
                     onReorderRequest = {},
+                    addWarmups = { _, _ ->
+                        e.value = e.value.copy(
+                            sets = listOf(
+                                UiSet(warmup = true),
+                                *e.value.sets.toTypedArray()
+                            ).toImmutableList()
+                        )
+                    },
+                    addEmptyWarmup = {},
+                    updateWarmupMode = { _, _, _ -> },
+                    updateWarmupTarget = { _, _ -> },
                     saveDefaultBarWeight = {},
                 )
             }

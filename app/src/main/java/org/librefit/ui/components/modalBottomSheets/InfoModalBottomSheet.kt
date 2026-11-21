@@ -56,6 +56,8 @@ fun InfoModalBottomSheet(
         val title = when (infoMode) {
             InfoMode.REST_TIMER -> stringResource(R.string.rest_time)
             InfoMode.TYPE_OF_SET -> stringResource(R.string.type_of_set)
+            InfoMode.WARMUP_MODE -> stringResource(R.string.warmup_mode)
+            InfoMode.WARMUP_TARGET -> stringResource(R.string.warmup_target)
             InfoMode.BEFORE_SAVING_STATS -> stringResource(R.string.statistics)
             InfoMode.MUSCLE_DISTRIBUTION -> stringResource(R.string.muscles_distribution)
             InfoMode.EXERCISES_DISTRIBUTION -> stringResource(R.string.exercises_distribution)
@@ -65,6 +67,8 @@ fun InfoModalBottomSheet(
         val text = when (infoMode) {
             InfoMode.REST_TIMER -> stringResource(R.string.rest_time_desc)
             InfoMode.TYPE_OF_SET -> stringResource(R.string.type_of_set_desc)
+            InfoMode.WARMUP_MODE -> stringResource(R.string.warmup_mode_desc)
+            InfoMode.WARMUP_TARGET -> stringResource(R.string.warmup_target_desc)
             InfoMode.BEFORE_SAVING_STATS -> stringResource(R.string.statistics_desc)
             InfoMode.MUSCLE_DISTRIBUTION -> stringResource(R.string.muscle_distribution_desc)
             InfoMode.EXERCISES_DISTRIBUTION -> stringResource(R.string.exercises_distribution_desc)
@@ -116,6 +120,8 @@ fun InfoModalBottomSheet(
                     when (infoMode) {
                         InfoMode.REST_TIMER -> AlarmLottie()
                         InfoMode.TYPE_OF_SET -> TrainingLottie()
+                        InfoMode.WARMUP_MODE -> TrainingLottie()
+                        InfoMode.WARMUP_TARGET -> TrainingLottie()
                         InfoMode.BEFORE_SAVING_STATS -> StatsLottie()
                         InfoMode.MUSCLE_DISTRIBUTION -> StatsLottie()
                         InfoMode.EXERCISES_DISTRIBUTION -> StatsLottie()

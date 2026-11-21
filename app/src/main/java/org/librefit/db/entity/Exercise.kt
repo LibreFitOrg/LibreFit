@@ -1,6 +1,6 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2025-2026. The LibreFit Contributors
+ * Copyright (c) 2024-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
@@ -15,6 +15,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
 import kotlin.random.Random
 
 /**
@@ -31,7 +32,9 @@ import kotlin.random.Random
  * and [org.librefit.ui.screens.editWorkout.EditWorkoutScreen]
  * @property setMode The mode of the exercise set editable by the user in
  * [org.librefit.ui.screens.workout.WorkoutScreen] and [org.librefit.ui.screens.editWorkout.EditWorkoutScreen]
- * @property restTime The rest time between sets in seconds editable by the user in
+ * @property warmupMode How to calculate the warmup sets for an exercise
+ * @property restTime The rest time between sets in seconds editable by the user in, editable by the user in
+ *  * [org.librefit.ui.screens.workout.WorkoutScreen] and [org.librefit.ui.screens.editWorkout.EditWorkoutScreen]
  * [org.librefit.ui.screens.workout.WorkoutScreen] and [org.librefit.ui.screens.editWorkout.EditWorkoutScreen]
  * @property position The explicit position of the exercise in its parent workout. It is used to
  * keep exercise order stable across reloads and edits.
@@ -66,6 +69,10 @@ data class Exercise(
     val idExerciseDC: String = "",
     val notes: String = "",
     val setMode: SetMode = SetMode.LOAD,
+    @ColumnInfo(
+        name = "warmupMode",
+        defaultValue = "CUSTOM"
+    ) val warmupMode: WarmupMode = WarmupMode.CUSTOM,
     val restTime: Int = 0,
     @ColumnInfo(defaultValue = "0")
     val position: Int = 0,

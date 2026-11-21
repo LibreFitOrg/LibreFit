@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import org.librefit.R
 import org.librefit.enums.SetMode
+import org.librefit.enums.WarmupMode
 import org.librefit.enums.exercise.Category
 import org.librefit.enums.exercise.Equipment
 import org.librefit.enums.exercise.ExerciseProperty
@@ -94,6 +95,13 @@ object Formatter {
             SetMode.BODYWEIGHT_WITH_LOAD -> R.string.bodyweight_with_load
             SetMode.BODYWEIGHT -> R.string.bodyweight
             SetMode.DURATION -> R.string.duration
+        }
+    }
+
+    fun warmupModeToStringId(warmupMode: WarmupMode): Int {
+        return when (warmupMode) {
+            WarmupMode.FORTYSIXTYEIGHTY -> R.string.forty_sixty_eighty_warmup_mode
+            WarmupMode.CUSTOM -> R.string.custom
         }
     }
 
