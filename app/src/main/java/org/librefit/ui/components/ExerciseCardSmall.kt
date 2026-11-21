@@ -1,6 +1,6 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2025-2026. The LibreFit Contributors
+ * Copyright (c) 2024-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
@@ -57,6 +57,7 @@ import org.librefit.enums.SetMode
 import org.librefit.enums.WarmupMode
 import org.librefit.enums.createUiSets
 import org.librefit.enums.userPreferences.ThemeMode
+import org.librefit.models.Weight
 import org.librefit.ui.models.UiExercise
 import org.librefit.ui.models.UiExerciseDC
 import org.librefit.ui.models.UiExerciseWithSets
@@ -344,13 +345,13 @@ class ExerciseCardSmallPreviewProvider : PreviewParameterProvider<UiExerciseWith
     );
     private val previewList = SetMode.entries.flatMap { setMode ->
         warmupModesWithNull.map { warmupMode ->
-            val warmupSets = warmupMode?.createUiSets(10.0);
+            val warmupSets = warmupMode?.createUiSets(Weight.kilograms(10.0));
             UiExerciseWithSets(
                 exercise = UiExercise(
                     notes = "This is a note!",
                     restTime = 90,
                     setMode = setMode,
-                    warmupMode = warmupMode ?: WarmupMode.DEFAULT
+                    warmupMode = warmupMode ?: WarmupMode.FORTYSIXTYEIGHTY
                 ),
                 sets = (if (warmupSets != null) (warmupSets + defaultSets) else defaultSets).toPersistentList(),
                 exerciseDC = UiExerciseDC(
@@ -371,7 +372,12 @@ class ExerciseCardSmallPreviewProvider : PreviewParameterProvider<UiExerciseWith
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
-private fun ExerciseCardSmallPreview(@PreviewParameter(ExerciseCardSmallPreviewProvider::class) exercise: UiExerciseWithSets) {
+private fun ExerciseCardSmallPreview(
+    @PreviewParameter(
+        ExerciseCardSmallPreviewProvider::class,
+        limit = 1
+    ) exercise: UiExerciseWithSets
+) {
     LibreFitTheme(dynamicColor = false, themeMode = ThemeMode.DARK) {
         SharedTransitionLayout {
             AnimatedVisibility(visible = true) {

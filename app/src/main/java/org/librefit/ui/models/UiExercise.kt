@@ -1,6 +1,6 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (c) 2025-2026. The LibreFit Contributors
+ * Copyright (c) 2024-2026. The LibreFit Contributors
  *
  * LibreFit is subject to additional terms covering author attribution and trademark usage;
  * see the ADDITIONAL_TERMS.md and TRADEMARK_POLICY.md files in the project root.
@@ -26,7 +26,7 @@ data class UiExercise(
     val id: Long = Random.nextLong(),
     val idExerciseDC: String = "",
     val notes: String = "",
-    val warmupMode: WarmupMode = WarmupMode.DEFAULT,
+    val warmupMode: WarmupMode = WarmupMode.CUSTOM,
     val setMode: SetMode = SetMode.LOAD,
     val restTime: Int = 0,
     val position: Int = 0,
